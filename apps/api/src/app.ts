@@ -8,6 +8,8 @@ import adminPortalRoutes from './routes/admin-portal.routes';
 import customerPortalRoutes from './routes/customer-portal.routes';
 import vendorPortalRoutes from './routes/vendor-portal.routes';
 import businessRuleRoutes from './routes/business-rule.routes';
+import onboardingRoutes from './routes/onboarding.routes';
+import adminOnboardingRoutes from './routes/admin-onboarding.routes';
 
 const app: Express = express();
 
@@ -35,9 +37,12 @@ app.get('/health', (req: Request, res: Response) => {
 app.use(`${config.apiPrefix}/auth`, authRoutes);
 app.use(`${config.apiPrefix}/tech`, techPortalRoutes);
 app.use(`${config.apiPrefix}/admin`, adminPortalRoutes);
+app.use(`${config.apiPrefix}/admin`, adminOnboardingRoutes);
 app.use(`${config.apiPrefix}/customer`, customerPortalRoutes);
 app.use(`${config.apiPrefix}/vendor`, vendorPortalRoutes);
 app.use(`${config.apiPrefix}/business-rules`, businessRuleRoutes);
+// Public onboarding routes (no auth required)
+app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

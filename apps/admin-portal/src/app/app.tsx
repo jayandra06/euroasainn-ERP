@@ -11,6 +11,9 @@ import { OrganizationsPage } from '../pages/Organizations/OrganizationsPage';
 import { OrganizationProfilePage } from '../pages/Organizations/OrganizationProfilePage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
+import { CustomerOnboardingPage } from '../pages/Onboarding/CustomerOnboardingPage';
+import { VendorOnboardingPage } from '../pages/Onboarding/VendorOnboardingPage';
+import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -33,6 +36,9 @@ export function App() {
               <ToastProvider>
                 <Routes>
                   <Route path="/login" element={<Login />} />
+                  {/* Public onboarding routes (no auth required) */}
+                  <Route path="/onboarding/customer" element={<CustomerOnboardingPage />} />
+                  <Route path="/onboarding/vendor" element={<VendorOnboardingPage />} />
                   <Route
                     path="/"
                     element={
@@ -46,6 +52,7 @@ export function App() {
                     <Route path="organizations" element={<OrganizationsPage />} />
                     <Route path="organizations/:id" element={<OrganizationProfilePage />} />
                     <Route path="licenses" element={<LicensesPage />} />
+                    <Route path="onboarding-data" element={<OnboardingDataPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                   </Route>
                 </Routes>

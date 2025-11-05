@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { organizationService } from '../services/organization.service';
 import { userService } from '../services/user.service';
+import { invitationService } from '../services/invitation.service';
 import { PortalType, OrganizationType } from '@euroasiann/shared';
 import { logger } from '../config/logger';
 
@@ -20,7 +21,7 @@ export class OrganizationController {
       // Create the organization first
       const organization = await organizationService.createOrganization(orgData);
 
-      // If adminEmail is provided, create the admin user for this organization
+      // If adminEmail is provided, create invitation token and send invitation email
       if (adminEmail) {
         try {
           // Determine role based on organization type
@@ -38,23 +39,43 @@ export class OrganizationController {
           const tempPassword = `Temp${Math.random().toString(36).slice(-8)}${Date.now().toString().slice(-4)}`;
           
           // Create admin user for this organization
-          await userService.createUser({
+          const user = await userService.createUser({
             email: adminEmail,
             firstName,
             lastName,
-            password: tempPassword, // Temporary password (should be sent via email)
+            password: tempPassword,
             portalType: orgData.portalType as PortalType,
             role,
             organizationId: organization._id.toString(),
           });
 
-          // Log the temporary password (in production, this should be sent via email)
-          logger.info(`Created admin user ${adminEmail} for organization ${organization.name}`);
-          logger.info(`Temporary password: ${tempPassword}`);
-          logger.warn(`⚠️  IMPORTANT: Send the temporary password to ${adminEmail} via email`);
+          // Create invitation token
+          const { invitationLink } = await invitationService.createInvitationToken({
+            email: adminEmail,
+            organizationId: organization._id.toString(),
+            organizationType: orgData.type as OrganizationType,
+            portalType: orgData.portalType as PortalType,
+            role,
+            organizationName: organization.name,
+          });
+
+          // Send invitation email with link and temporary password
+          await invitationService.sendInvitationEmail({
+            email: adminEmail,
+            firstName,
+            lastName,
+            organizationName: organization.name,
+            organizationType: orgData.type as OrganizationType,
+            invitationLink,
+            temporaryPassword: tempPassword,
+          });
+
+          logger.info(`✅ Invitation sent to ${adminEmail} for organization ${organization.name}`);
+          logger.info(`   Invitation link: ${invitationLink}`);
+          logger.info(`   Temporary password: ${tempPassword}`);
         } catch (userError: any) {
-          logger.error('Error creating admin user:', userError);
-          // Don't fail the organization creation if user creation fails
+          logger.error('Error creating admin user and sending invitation:', userError);
+          // Don't fail the organization creation if invitation fails
           // Just log the error
         }
       }
