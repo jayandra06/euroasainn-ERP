@@ -1,6 +1,6 @@
 /**
  * Ultra-Modern Layout Component
- * Professional Admin Portal Design
+ * World-Class SaaS ERP Platform Design
  */
 
 import React, { useState } from 'react';

@@ -1,6 +1,6 @@
 /**
  * Ultra-Modern Header Component
- * Professional Admin Portal Design
+ * World-Class SaaS ERP Platform Design
  */
 
 import React, { useState } from 'react';
@@ -139,7 +139,7 @@ export function Header({ sidebarCollapsed = false, onMenuClick }: HeaderProps) {
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {user?.firstName && user?.lastName
                     ? `${user.firstName} ${user.lastName}`
-                    : user?.email || 'Admin'}
+                    : user?.email || 'User'}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">{user?.role || 'Admin'}</span>
               </div>
@@ -167,7 +167,7 @@ export function Header({ sidebarCollapsed = false, onMenuClick }: HeaderProps) {
                         <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                           {user?.firstName && user?.lastName
                             ? `${user.firstName} ${user.lastName}`
-                            : user?.email || 'Admin'}
+                            : user?.email || 'User'}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
                       </div>

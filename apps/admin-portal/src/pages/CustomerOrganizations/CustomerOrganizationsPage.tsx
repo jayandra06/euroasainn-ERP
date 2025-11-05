@@ -1,6 +1,6 @@
 /**
  * Customer Organizations Page
- * Professional Admin Portal Design
+ * World-Class SaaS ERP Platform Design
  */
 
 import React, { useState } from 'react';
@@ -149,56 +149,63 @@ export function CustomerOrganizationsPage() {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Customer Organizations</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage customer organizations and their settings</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            Customer Organizations
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+            Manage customer organizations and their settings
+          </p>
         </div>
         <button
           onClick={handleCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-colors font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
         >
           <MdAdd className="w-5 h-5" />
-          <span>Add Customer Org</span>
+          Add Customer Org
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-        <MdFilterList className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
+      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <MdFilterList className="w-5 h-5" />
+            <span>Filters:</span>
+          </div>
           <select
             value={filterActive}
             onChange={(e) => setFilterActive(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
           >
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="all">All Status</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
           </select>
         </div>
       </div>
 
-      {/* Data Table */}
-      <DataTable
-        columns={columns}
-        data={orgsData || []}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        emptyMessage="No customer organizations found"
-      />
+      {/* Table */}
+      {isLoading ? (
+        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading organizations...</p>
+        </div>
+      ) : (
+        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+          <DataTable
+            columns={columns}
+            data={orgsData || []}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            emptyMessage="No customer organizations found."
+          />
+        </div>
+      )}
 
       {/* Modal */}
       <Modal

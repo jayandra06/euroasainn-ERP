@@ -1,5 +1,5 @@
 /**
- * Polished Modern Login Page for Admin Portal
+ * Polished Modern Login Page
  * Professional Enterprise Authentication
  */
 
@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { MdRocketLaunch, MdEmail, MdLock, MdVisibility, MdVisibilityOff, MdError } from 'react-icons/md';
 import { cn } from '../lib/utils';
 
-export default function Login() {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +53,7 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div
-                className="flex items-center gap-3 p-4 mb-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 animate-fade-in"
+                className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 animate-fade-in"
                 role="alert"
               >
                 <MdError className="w-5 h-5 flex-shrink-0" />
@@ -67,7 +67,7 @@ export default function Login() {
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <MdEmail className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 </div>
                 <input
@@ -76,7 +76,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-14 pr-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -88,7 +88,7 @@ export default function Login() {
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <MdLock className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 </div>
                 <input
@@ -97,13 +97,13 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-14 pr-12 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                  className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-10"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
                   {showPassword ? (
                     <MdVisibilityOff className="w-5 h-5" />
@@ -155,4 +155,6 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login;
 

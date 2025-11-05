@@ -3,13 +3,14 @@
  * Professional Admin Portal Design
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
-import { MdVpnKey, MdFilterList } from 'react-icons/md';
+import { MdFilterList } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Use relative URL in development (with Vite proxy) or env var, otherwise default to localhost:3000
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
 
 interface License {
   _id: string;
@@ -103,48 +104,56 @@ export function LicensesPage() {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Licenses</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage organization licenses and subscriptions</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+            Licenses
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+            Manage organization licenses and subscriptions
+          </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-        <MdFilterList className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
+      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <MdFilterList className="w-5 h-5" />
+            <span>Filters:</span>
+          </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
           >
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="expired">Expired</option>
-            <option value="pending">Pending</option>
+            <option value="all">All Status</option>
+            <option value="active">Active Only</option>
+            <option value="expired">Expired Only</option>
+            <option value="pending">Pending Only</option>
           </select>
         </div>
       </div>
 
-      {/* Data Table */}
-      <DataTable
-        columns={columns}
-        data={licensesData || []}
-        emptyMessage="No licenses found"
-      />
+      {/* Table */}
+      {isLoading ? (
+        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-emerald-600"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading licenses...</p>
+        </div>
+      ) : (
+        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+          <DataTable
+            columns={columns}
+            data={licensesData || []}
+            emptyMessage="No licenses found."
+          />
+        </div>
+      )}
     </div>
   );
 }

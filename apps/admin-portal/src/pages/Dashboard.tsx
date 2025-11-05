@@ -1,6 +1,6 @@
 /**
  * Ultra-Modern Admin Dashboard
- * Professional Admin Portal Design
+ * World-Class SaaS ERP Platform Design
  */
 
 import React, { useState, useEffect } from 'react';
@@ -192,9 +192,9 @@ export function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-            Welcome back, {user?.firstName || 'Admin'}! 👋
+            Welcome back, {user?.firstName || 'User'}! 👋
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">Admin Portal Overview</p>
+          <p className="text-gray-600 dark:text-gray-400">Here's what's happening with your platform today</p>
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400">
           {new Date().toLocaleDateString('en-US', {
@@ -218,7 +218,7 @@ export function Dashboard() {
               key={index}
               onClick={() => stat.path && navigate(stat.path)}
               className={cn(
-                'relative p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all cursor-pointer transform hover:scale-[1.02]',
+                'relative p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all cursor-pointer',
                 stat.bgColor,
                 stat.path && 'cursor-pointer'
               )}

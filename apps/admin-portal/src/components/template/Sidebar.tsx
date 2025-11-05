@@ -1,6 +1,6 @@
 /**
  * Ultra-Modern Sidebar Component
- * Professional Admin Portal Design
+ * World-Class SaaS ERP Platform Design
  */
 
 import React from 'react';
@@ -139,7 +139,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                 {user?.firstName && user?.lastName
                   ? `${user.firstName} ${user.lastName}`
-                  : user?.email || 'Admin'}
+                  : user?.email || 'Admin User'}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.role || 'Admin'}</p>
             </div>
