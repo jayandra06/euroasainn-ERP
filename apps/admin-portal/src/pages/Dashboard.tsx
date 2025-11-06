@@ -1,6 +1,7 @@
 /**
  * Ultra-Modern Admin Dashboard
  * World-Class SaaS ERP Platform Design
+ * Enhanced with new widgets and improved organization
  */
 
 import React, { useState, useEffect } from 'react';
@@ -13,6 +14,16 @@ import {
   MdVpnKey,
   MdArrowUpward,
   MdArrowDownward,
+  MdNotifications,
+  MdSchedule,
+  MdCheckCircle,
+  MdWarning,
+  MdRefresh,
+  MdAttachMoney,
+  MdPersonAdd,
+  MdBusiness,
+  MdDescription,
+  MdCardMembership,
 } from 'react-icons/md';
 import {
   AreaChart,
@@ -44,6 +55,9 @@ interface DashboardStats {
   customerOrgGrowth: number;
   vendorOrgGrowth: number;
   licenseGrowth: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
+  revenueGrowth: number;
 }
 
 const statCards = [
@@ -54,7 +68,7 @@ const statCards = [
     icon: MdBusinessCenter,
     gradient: 'from-blue-500 to-indigo-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
-    path: '/customer-organizations',
+    path: '/organizations',
   },
   {
     title: 'Vendor Organizations',
@@ -63,7 +77,7 @@ const statCards = [
     icon: MdBusinessCenter,
     gradient: 'from-purple-500 to-pink-600',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
-    path: '/vendor-organizations',
+    path: '/organizations',
   },
   {
     title: 'Total Licenses',
@@ -81,6 +95,25 @@ const statCards = [
     icon: MdPeople,
     gradient: 'from-orange-500 to-amber-600',
     bgColor: 'bg-orange-50 dark:bg-orange-950/20',
+    path: '/users',
+  },
+  {
+    title: 'Total Revenue',
+    key: 'totalRevenue',
+    changeKey: 'revenueGrowth',
+    icon: MdAttachMoney,
+    gradient: 'from-green-500 to-emerald-600',
+    bgColor: 'bg-green-50 dark:bg-green-950/20',
+    format: (value: number) => `$${value.toLocaleString()}`,
+  },
+  {
+    title: 'Monthly Revenue',
+    key: 'monthlyRevenue',
+    changeKey: 'revenueGrowth',
+    icon: MdAttachMoney,
+    gradient: 'from-teal-500 to-cyan-600',
+    bgColor: 'bg-teal-50 dark:bg-teal-950/20',
+    format: (value: number) => `$${value.toLocaleString()}`,
   },
 ];
 
@@ -121,8 +154,13 @@ export function Dashboard() {
     customerOrgGrowth: 0,
     vendorOrgGrowth: 0,
     licenseGrowth: 0,
+    totalRevenue: 0,
+    monthlyRevenue: 0,
+    revenueGrowth: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshed, setIsRefreshed] = useState(false);
 
   useEffect(() => {
     fetchDashboardStats();
@@ -156,6 +194,9 @@ export function Dashboard() {
         customerOrgGrowth: 12.5,
         vendorOrgGrowth: 8.3,
         licenseGrowth: 15.2,
+        totalRevenue: 2450000,
+        monthlyRevenue: 185000,
+        revenueGrowth: 18.5,
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -196,37 +237,62 @@ export function Dashboard() {
           </h1>
           <p className="text-gray-600 dark:text-gray-400">Here's what's happening with your platform today</p>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {new Date().toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => {
+              setIsRefreshing(true);
+              setIsRefreshed(false);
+              fetchDashboardStats();
+              setTimeout(() => {
+                setIsRefreshing(false);
+                setIsRefreshed(true);
+                // Hide tick mark after 2 seconds
+                setTimeout(() => setIsRefreshed(false), 2000);
+              }, 1000);
+            }}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isRefreshed ? (
+              <MdCheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            ) : (
+              <MdRefresh className={cn('w-4 h-4', isRefreshing && 'animate-spin')} />
+            )}
+            {isRefreshed ? 'Up to date' : 'Refresh'}
+          </button>
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </div>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           const value = stats[stat.key as keyof DashboardStats] as number;
           const change = stat.changeKey ? stats[stat.changeKey as keyof DashboardStats] as number : 0;
+          const displayValue = stat.format ? stat.format(value) : value;
           
           return (
             <div
               key={index}
               onClick={() => stat.path && navigate(stat.path)}
               className={cn(
-                'relative p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all cursor-pointer',
-                stat.bgColor,
-                stat.path && 'cursor-pointer'
+                'relative p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all',
+                stat.path && 'cursor-pointer',
+                stat.bgColor
               )}
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{value}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{displayValue}</p>
                   {formatChange(change)}
                 </div>
                 <div className={cn('w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md', stat.gradient)}>
@@ -236,6 +302,151 @@ export function Dashboard() {
             </div>
           );
         })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Quick Actions</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Common administrative tasks</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button
+            onClick={() => navigate('/users?create=true')}
+            className="flex flex-col items-center gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-950/30 dark:hover:to-indigo-950/30 transition-all group"
+          >
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+              <MdPersonAdd className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">Add Admin User</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Create new admin user</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => navigate('/organizations')}
+            className="flex flex-col items-center gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-950/30 dark:hover:to-pink-950/30 transition-all group"
+          >
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+              <MdBusiness className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">Add Organization</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Create new organization</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => navigate('/reports')}
+            className="flex flex-col items-center gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 hover:from-orange-100 hover:to-amber-100 dark:hover:from-orange-950/30 dark:hover:to-amber-950/30 transition-all group"
+          >
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+              <MdDescription className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">Generate Report</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Create custom reports</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => navigate('/licenses')}
+            className="flex flex-col items-center gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 hover:from-emerald-100 hover:to-teal-100 dark:hover:from-emerald-950/30 dark:hover:to-teal-950/30 transition-all group"
+          >
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+              <MdCardMembership className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">Manage Subscription</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">View and manage licenses</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Actions & Alerts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                <MdNotifications className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pending Actions</h3>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+              <div className="flex items-center gap-2">
+                <MdWarning className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">License Expiring</span>
+              </div>
+              <span className="text-sm font-bold text-amber-600 dark:text-amber-400">5</span>
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2">
+                <MdSchedule className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">Onboarding Pending</span>
+              </div>
+              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">12</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+                <MdCheckCircle className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">New organization added</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">2 hours ago</p>
+            </div>
+            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">License activated</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">5 hours ago</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
+                <MdTrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Performance</h3>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
+                <span className="text-sm font-bold text-gray-900 dark:text-white">99.9%</span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '99.9%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">API Response Time</span>
+                <span className="text-sm font-bold text-gray-900 dark:text-white">120ms</span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '95%' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Charts Grid */}

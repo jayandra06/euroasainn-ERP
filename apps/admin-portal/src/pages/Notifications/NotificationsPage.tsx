@@ -1,0 +1,261 @@
+/**
+ * Notifications Page
+ * Admin portal page to view and manage notifications
+ */
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MdNotifications, MdCheckCircle, MdCancel, MdDelete, MdSettings, MdMarkEmailRead } from 'react-icons/md';
+import { cn } from '../../lib/utils';
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  read: boolean;
+  timestamp: string;
+  category: string;
+}
+
+// Mock notifications data
+const mockNotifications: Notification[] = [
+  {
+    id: '1',
+    title: 'New Organization Created',
+    message: 'Acme Corp has been added to the platform',
+    type: 'success',
+    read: false,
+    timestamp: new Date().toISOString(),
+    category: 'Organizations',
+  },
+  {
+    id: '2',
+    title: 'License Expiring Soon',
+    message: 'Tech Solutions license expires in 7 days',
+    type: 'warning',
+    read: false,
+    timestamp: new Date(Date.now() - 3600000).toISOString(),
+    category: 'Licenses',
+  },
+  {
+    id: '3',
+    title: 'User Login Failed',
+    message: 'Multiple failed login attempts detected',
+    type: 'error',
+    read: true,
+    timestamp: new Date(Date.now() - 7200000).toISOString(),
+    category: 'Security',
+  },
+];
+
+export function NotificationsPage() {
+  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [filterType, setFilterType] = useState<string>('all');
+  const [filterRead, setFilterRead] = useState<string>('all');
+
+  const handleSettings = () => {
+    // Navigate to settings page or open settings modal
+    // For now, show a message
+    alert('Notification settings will be implemented soon');
+    // TODO: Navigate to settings or open settings modal
+  };
+
+  const filteredNotifications = notifications.filter((notif) => {
+    if (filterType !== 'all' && notif.type !== filterType) return false;
+    if (filterRead === 'read' && !notif.read) return false;
+    if (filterRead === 'unread' && notif.read) return false;
+    return true;
+  });
+
+  const handleMarkAsRead = (id: string) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  };
+
+  const handleDelete = (id: string) => {
+    setNotifications(notifications.filter(n => n.id !== id));
+  };
+
+  const getTypeStyles = (type: string) => {
+    switch (type) {
+      case 'success':
+        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+      case 'warning':
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+      case 'error':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-200 dark:border-red-800';
+      default:
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-800';
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  return (
+    <div className="w-full space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Notifications
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+            Manage your notifications and preferences
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <button
+              onClick={handleMarkAllAsRead}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-colors font-semibold text-sm"
+            >
+              <MdMarkEmailRead className="w-4 h-4" />
+              Mark All Read
+            </button>
+          )}
+          <button
+            onClick={handleSettings}
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors font-semibold text-sm text-gray-700 dark:text-gray-300"
+          >
+            <MdSettings className="w-4 h-4" />
+            Settings
+          </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Notifications</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{notifications.length}</p>
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+              <MdNotifications className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Unread</p>
+              <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{unreadCount}</p>
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
+              <MdCancel className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Read</p>
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                {notifications.length - unreadCount}
+              </p>
+            </div>
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+              <MdCheckCircle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="flex flex-wrap items-center gap-4">
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 font-medium"
+          >
+            <option value="all">All Types</option>
+            <option value="info">Info</option>
+            <option value="success">Success</option>
+            <option value="warning">Warning</option>
+            <option value="error">Error</option>
+          </select>
+          <select
+            value={filterRead}
+            onChange={(e) => setFilterRead(e.target.value)}
+            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 font-medium"
+          >
+            <option value="all">All Notifications</option>
+            <option value="unread">Unread Only</option>
+            <option value="read">Read Only</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Notifications List */}
+      <div className="space-y-4">
+        {filteredNotifications.length === 0 ? (
+          <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+            <MdNotifications className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">No notifications found</p>
+          </div>
+        ) : (
+          filteredNotifications.map((notif) => (
+            <div
+              key={notif.id}
+              className={cn(
+                'p-6 rounded-xl border shadow-sm transition-all',
+                notif.read
+                  ? 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800'
+                  : 'bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-800'
+              )}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={cn('px-3 py-1 text-xs font-bold rounded-full border', getTypeStyles(notif.type))}>
+                      {notif.type.toUpperCase()}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{notif.category}</span>
+                    {!notif.read && (
+                      <span className="w-2 h-2 bg-indigo-600 rounded-full"></span>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                    {notif.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {notif.message}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(notif.timestamp).toLocaleString()}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 ml-4">
+                  {!notif.read && (
+                    <button
+                      onClick={() => handleMarkAsRead(notif.id)}
+                      className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900 transition-colors"
+                      title="Mark as read"
+                    >
+                      <MdCheckCircle className="w-5 h-5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(notif.id)}
+                    className="p-2 rounded-lg bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900 transition-colors"
+                    title="Delete"
+                  >
+                    <MdDelete className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
