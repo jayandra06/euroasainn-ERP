@@ -252,38 +252,45 @@ export function OrganizationProfilePage() {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <button
-          onClick={() => navigate('/licenses')}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          <MdArrowBack className="w-6 h-6 text-gray-600 dark:text-gray-400" />
-        </button>
-        <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            {organization.name}
-          </h1>
-          <div className="flex items-center gap-3">
-            <span
-              className={cn(
-                'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
-                organization.type === 'customer'
-                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-                  : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+      <div className="mb-6">
+        <div className="flex items-center gap-4 mb-4">
+          <button
+            onClick={() => navigate('/organizations')}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <MdArrowBack className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              {organization.name}
+            </h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <span
+                className={cn(
+                  'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+                  organization.type === 'customer'
+                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
+                    : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+                )}
+              >
+                {organization.type === 'customer' ? 'Customer' : 'Vendor'}
+              </span>
+              <span
+                className={cn(
+                  'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+                  organization.isActive
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
+                )}
+              >
+                {organization.isActive ? 'Active' : 'Inactive'}
+              </span>
+              {organization.createdAt && (
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Created {new Date(organization.createdAt).toLocaleDateString()}
+                </span>
               )}
-            >
-              {organization.type === 'customer' ? 'Customer' : 'Vendor'}
-            </span>
-            <span
-              className={cn(
-                'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
-                organization.isActive
-                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
-                  : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
-              )}
-            >
-              {organization.isActive ? 'Active' : 'Inactive'}
-            </span>
+            </div>
           </div>
         </div>
       </div>

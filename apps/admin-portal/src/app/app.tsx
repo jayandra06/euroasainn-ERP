@@ -14,6 +14,13 @@ import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
 import { CustomerOnboardingPage } from '../pages/Onboarding/CustomerOnboardingPage';
 import { VendorOnboardingPage } from '../pages/Onboarding/VendorOnboardingPage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
+import { UsersPage } from '../pages/Users/UsersPage';
+import { ActivityLogPage } from '../pages/ActivityLog/ActivityLogPage';
+import { ReportsPage } from '../pages/Reports/ReportsPage';
+import { NotificationsPage } from '../pages/Notifications/NotificationsPage';
+import { SupportPage } from '../pages/Support/SupportPage';
+import { SubscriptionPage } from '../pages/Subscription/SubscriptionPage';
+import { LoginsPage } from '../pages/Logins/LoginsPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -54,6 +61,13 @@ export function App() {
                     <Route path="licenses" element={<LicensesPage />} />
                     <Route path="onboarding-data" element={<OnboardingDataPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
+                    <Route path="users" element={<UsersPage />} />
+                    <Route path="activity-log" element={<ActivityLogPage />} />
+                    <Route path="reports" element={<ReportsPage />} />
+                    <Route path="notifications" element={<NotificationsPage />} />
+                    <Route path="support" element={<SupportPage />} />
+                    <Route path="subscription" element={<SubscriptionPage />} />
+                    <Route path="logins" element={<LoginsPage />} />
                   </Route>
                 </Routes>
               </ToastProvider>

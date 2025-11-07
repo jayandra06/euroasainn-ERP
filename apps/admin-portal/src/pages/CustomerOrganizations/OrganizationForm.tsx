@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { MdSave, MdCancel } from 'react-icons/md';
 import { cn } from '../../lib/utils';
+import { useToast } from '../../components/shared/Toast';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -26,6 +27,7 @@ interface OrganizationFormProps {
 }
 
 export function OrganizationForm({ organization, organizationType, onSuccess, onCancel }: OrganizationFormProps) {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: organization?.name || '',
     portalType: organization?.portalType || 'customer',
@@ -36,59 +38,95 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      const endpoint = organizationType === 'customer' ? 'customer-orgs' : 'vendor-orgs';
-      const response = await fetch(`${API_URL}/api/v1/admin/${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify({
-          name: data.name,
-          type: organizationType,
-          portalType: data.portalType,
-          isActive: data.isActive,
-          adminEmail: data.adminEmail,
-        }),
-      });
+      try {
+        const endpoint = organizationType === 'customer' ? 'customer-orgs' : 'vendor-orgs';
+        const response = await fetch(`${API_URL}/api/v1/admin/${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify({
+            name: data.name,
+            type: organizationType,
+            portalType: data.portalType,
+            isActive: data.isActive,
+            adminEmail: data.adminEmail,
+          }),
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create organization');
+        if (!response.ok) {
+          let errorMessage = 'Failed to create organization';
+          try {
+            const error = await response.json();
+            errorMessage = error.error || error.message || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      } catch (error: any) {
+        // Handle network errors
+        if (error.name === 'TypeError' || error.message.includes('fetch')) {
+          throw new Error('Network error: Unable to connect to server. Please check your connection.');
+        }
+        throw error;
       }
-      return response.json();
     },
-    onSuccess,
+    onSuccess: () => {
+      showToast('Organization created successfully!', 'success');
+      onSuccess();
+    },
     onError: (error: Error) => {
       setErrors({ submit: error.message });
+      showToast(error.message, 'error');
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const endpoint = organizationType === 'customer' ? 'customer-orgs' : 'vendor-orgs';
-      const response = await fetch(`${API_URL}/api/v1/admin/${endpoint}/${organization?._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify({
-          name: data.name,
-          portalType: data.portalType,
-          isActive: data.isActive,
-        }),
-      });
+      try {
+        const endpoint = organizationType === 'customer' ? 'customer-orgs' : 'vendor-orgs';
+        const response = await fetch(`${API_URL}/api/v1/admin/${endpoint}/${organization?._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify({
+            name: data.name,
+            portalType: data.portalType,
+            isActive: data.isActive,
+          }),
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update organization');
+        if (!response.ok) {
+          let errorMessage = 'Failed to update organization';
+          try {
+            const error = await response.json();
+            errorMessage = error.error || error.message || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      } catch (error: any) {
+        // Handle network errors
+        if (error.name === 'TypeError' || error.message.includes('fetch')) {
+          throw new Error('Network error: Unable to connect to server. Please check your connection.');
+        }
+        throw error;
       }
-      return response.json();
     },
-    onSuccess,
+    onSuccess: () => {
+      showToast('Organization updated successfully!', 'success');
+      onSuccess();
+    },
     onError: (error: Error) => {
       setErrors({ submit: error.message });
+      showToast(error.message, 'error');
     },
   });
 

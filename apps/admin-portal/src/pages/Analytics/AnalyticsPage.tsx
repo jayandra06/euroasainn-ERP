@@ -3,7 +3,10 @@
  * Professional Admin Portal Design
  */
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '../../components/shared/Toast';
+import { cn } from '../../lib/utils';
 import {
   BarChart,
   Bar,
@@ -19,7 +22,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { MdTrendingUp, MdBusinessCenter, MdPeople, MdVpnKey } from 'react-icons/md';
+import { MdTrendingUp, MdBusinessCenter, MdPeople, MdVpnKey, MdDownload, MdRefresh } from 'react-icons/md';
 
 const orgTypeData = [
   { name: 'Customer', value: 65, color: '#3b82f6' },
@@ -52,12 +55,50 @@ const activityData = [
 ];
 
 export function AnalyticsPage() {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    queryClient.invalidateQueries({ queryKey: ['organizations'] });
+    queryClient.invalidateQueries({ queryKey: ['licenses'] });
+    setTimeout(() => {
+      setIsRefreshing(false);
+      showToast('Analytics data refreshed', 'success');
+    }, 1000);
+  };
+
+  const handleExport = () => {
+    showToast('Export functionality will be implemented soon', 'info');
+    // TODO: Implement export functionality
+  };
+
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Analytics & Insights</h1>
-        <p className="text-gray-600 dark:text-gray-400">Platform analytics and performance metrics</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Analytics & Insights</h1>
+          <p className="text-gray-600 dark:text-gray-400">Platform analytics and performance metrics</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <MdRefresh className={cn('w-4 h-4', isRefreshing && 'animate-spin')} />
+            Refresh
+          </button>
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-colors font-semibold text-sm shadow-lg shadow-blue-500/30"
+          >
+            <MdDownload className="w-4 h-4" />
+            Export Report
+          </button>
+        </div>
       </div>
 
       {/* Stats Grid */}
