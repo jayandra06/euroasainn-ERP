@@ -2,11 +2,13 @@ import { CustomerOnboarding, ICustomerOnboarding } from '../models/customer-onbo
 import { VendorOnboarding, IVendorOnboarding } from '../models/vendor-onboarding.model';
 import { InvitationToken } from '../models/invitation-token.model';
 import { Organization } from '../models/organization.model';
-import { User } from '../models/user.model';
 import { logger } from '../config/logger';
 import { emailService } from './email.service';
 import { licenseService } from './license.service';
 import { OrganizationType } from '@euroasiann/shared';
+
+const INVITATION_STATUS_PENDING = 'pending';
+const INVITATION_STATUS_USED = 'used';
 
 export class OnboardingService {
   async getInvitationByToken(token: string) {
@@ -14,10 +16,19 @@ export class OnboardingService {
       token,
       used: false,
       expiresAt: { $gt: new Date() },
+      $or: [
+        { status: INVITATION_STATUS_PENDING },
+        { status: { $exists: false } },
+      ],
     });
 
     if (!invitation) {
       throw new Error('Invalid or expired invitation token');
+    }
+
+    if (!invitation.status) {
+      invitation.status = INVITATION_STATUS_PENDING;
+      await invitation.save();
     }
 
     return invitation;
@@ -61,6 +72,7 @@ export class OnboardingService {
 
     // Mark invitation token as used
     invitation.used = true;
+    invitation.status = INVITATION_STATUS_USED;
     invitation.usedAt = new Date();
     await invitation.save();
 
@@ -136,6 +148,7 @@ export class OnboardingService {
 
     // Mark invitation token as used
     invitation.used = true;
+    invitation.status = INVITATION_STATUS_USED;
     invitation.usedAt = new Date();
     await invitation.save();
 
@@ -447,4 +460,5 @@ export class OnboardingService {
 }
 
 export const onboardingService = new OnboardingService();
+
 

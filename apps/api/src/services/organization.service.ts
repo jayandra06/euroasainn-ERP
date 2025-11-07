@@ -1,5 +1,5 @@
 import { Organization, IOrganization } from '../models/organization.model';
-import { OrganizationType, PortalType } from '@euroasiann/shared';
+import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 export class OrganizationService {
   async createOrganization(data: {

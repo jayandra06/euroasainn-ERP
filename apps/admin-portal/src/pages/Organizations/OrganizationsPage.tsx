@@ -9,10 +9,18 @@ import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { OrganizationForm } from '../CustomerOrganizations/OrganizationForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdAdd, MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import {
+  MdAdd,
+  MdFilterList,
+  MdSearch,
+  MdDownload,
+  MdDelete,
+  MdCheckBox,
+  MdCheckBoxOutlineBlank,
+} from 'react-icons/md';
 import { cn } from '../../lib/utils';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { apiFetch } from '../../utils/api';
+import { OrganizationInvitationsModal } from './OrganizationInvitationsModal';
 
 interface Organization {
   _id: string;
@@ -32,7 +40,18 @@ export function OrganizationsPage() {
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOrgs, setSelectedOrgs] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [isInvitationsModalOpen, setIsInvitationsModalOpen] = useState(false);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+
+  const handleOpenInvitations = (org: Organization) => {
+    setSelectedOrganization(org);
+    setIsInvitationsModalOpen(true);
+  };
+
+  const handleCloseInvitations = () => {
+    setSelectedOrganization(null);
+    setIsInvitationsModalOpen(false);
+  };
 
   // Mock data for development
   const getMockOrganizations = (): Organization[] => {
@@ -137,11 +156,7 @@ export function OrganizationsPage() {
           params.append('search', searchQuery);
         }
 
-        const response = await fetch(`${API_URL}/api/v1/admin/organizations?${params}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
+        const response = await apiFetch(`/api/v1/admin/organizations?${params.toString()}`);
 
         if (!response.ok) {
           // Return mock data if API doesn't exist yet or returns error
@@ -168,11 +183,8 @@ export function OrganizationsPage() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (orgId: string) => {
-      const response = await fetch(`${API_URL}/api/v1/admin/organizations/${orgId}`, {
+      const response = await apiFetch(`/api/v1/admin/organizations/${orgId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
       });
 
       if (!response.ok) {
@@ -351,6 +363,21 @@ export function OrganizationsPage() {
       ),
     },
     {
+      key: 'invitations',
+      header: 'Invitations',
+      render: (org: Organization) => (
+        <button
+          onClick={(event) => {
+            event.stopPropagation();
+            handleOpenInvitations(org);
+          }}
+          className="px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
+        >
+          Manage
+        </button>
+      ),
+    },
+    {
       key: 'createdAt',
       header: 'Created',
       render: (org: Organization) => (
@@ -485,8 +512,16 @@ export function OrganizationsPage() {
           onCancel={handleClose}
         />
       </Modal>
+
+      <OrganizationInvitationsModal
+        organization={selectedOrganization}
+        isOpen={isInvitationsModalOpen}
+        onClose={handleCloseInvitations}
+        apiBasePath="/api/v1/admin"
+      />
     </div>
   );
 }
+
 
 

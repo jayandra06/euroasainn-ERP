@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../config/jwt';
 import { redisService } from '../services/redis.service';
 import { logger } from '../config/logger';
-import { JwtPayload } from '@euroasiann/shared';
+import { JwtPayload } from '../../../../packages/shared/src/types/index.ts';
 
 export interface AuthRequest extends Request {
   user?: JwtPayload;

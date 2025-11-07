@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { PortalType } from '@euroasiann/shared';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 import { AuthRequest } from './auth.middleware';
 import { logger } from '../config/logger';
 

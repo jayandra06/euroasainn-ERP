@@ -3,7 +3,7 @@ import { connectDatabase } from '../config/database';
 import { User } from '../models/user.model';
 import { Organization } from '../models/organization.model';
 import { License } from '../models/license.model';
-import { PortalType, OrganizationType } from '@euroasiann/shared';
+import { PortalType, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
 import { logger } from '../config/logger';
 
 async function seed() {

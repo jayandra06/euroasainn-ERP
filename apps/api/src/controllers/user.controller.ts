@@ -3,7 +3,7 @@ import { userService } from '../services/user.service';
 import { emailService } from '../services/email.service';
 import { Organization } from '../models/organization.model';
 import { logger } from '../config/logger';
-import { PortalType } from '@euroasiann/shared';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 export class UserController {
   async createUser(req: Request, res: Response) {

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { config } from './environment';
-import { JwtPayload } from '@euroasiann/shared';
+import { JwtPayload } from '../../../../packages/shared/src/types/index.ts';
 
 export function generateAccessToken(payload: JwtPayload): string {
   return jwt.sign(payload, config.jwt.secret, {

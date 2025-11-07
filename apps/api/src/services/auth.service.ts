@@ -3,7 +3,7 @@ import { User, IUser } from '../models/user.model';
 import { RefreshToken } from '../models/refresh-token.model';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '../config/jwt';
 import { getRedisClient } from '../config/redis';
-import { JwtPayload } from '@euroasiann/shared';
+import { JwtPayload } from '../../../../packages/shared/src/types/index.ts';
 import { logger } from '../config/logger';
 
 export class AuthService {

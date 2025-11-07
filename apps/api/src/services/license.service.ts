@@ -1,5 +1,5 @@
 import { License, ILicense } from '../models/license.model';
-import { LicenseStatus, OrganizationType } from '@euroasiann/shared';
+import { LicenseStatus, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
 import { v4 as uuidv4 } from 'uuid';
 import mongoose from 'mongoose';
 import { logger } from '../config/logger';

@@ -3,10 +3,11 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { userController } from '../controllers/user.controller';
 import { organizationController } from '../controllers/organization.controller';
+import { onboardingController } from '../controllers/onboarding.controller';
 import { licenseService } from '../services/license.service';
 import { License } from '../models/license.model';
 import { Organization } from '../models/organization.model';
-import { PortalType, OrganizationType } from '@euroasiann/shared';
+import { PortalType, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
 
 const router = Router();
 
@@ -57,6 +58,9 @@ router.post('/organizations/invite', organizationController.inviteOrganizationAd
 router.get('/organizations/:id', organizationController.getOrganizationById.bind(organizationController));
 router.put('/organizations/:id', organizationController.updateOrganization.bind(organizationController));
 router.delete('/organizations/:id', organizationController.deleteOrganization.bind(organizationController));
+router.get('/organizations/:id/invitations', organizationController.getOrganizationInvitations.bind(organizationController));
+router.post('/organizations/:id/invitations/:invitationId/resend', organizationController.resendOrganizationInvitation.bind(organizationController));
+router.post('/organizations/:id/invitations/:invitationId/revoke', organizationController.revokeOrganizationInvitation.bind(organizationController));
 
 // Licenses routes
 router.get('/licenses', async (req, res) => {
@@ -206,5 +210,11 @@ router.delete('/licenses/:id', async (req, res) => {
     });
   }
 });
+
+// Onboarding data routes (shared with Admin Portal)
+router.get('/customer-onboardings', onboardingController.getCustomerOnboardings.bind(onboardingController));
+router.get('/vendor-onboardings', onboardingController.getVendorOnboardings.bind(onboardingController));
+router.get('/customer-onboardings/:id', onboardingController.getCustomerOnboardingById.bind(onboardingController));
+router.get('/vendor-onboardings/:id', onboardingController.getVendorOnboardingById.bind(onboardingController));
 
 export default router;

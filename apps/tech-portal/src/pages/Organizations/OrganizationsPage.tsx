@@ -8,11 +8,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { OrganizationForm } from './OrganizationForm';
+import { useToast } from '../../components/shared/Toast';
 import { MdAdd, MdFilterList } from 'react-icons/md';
 import { Button } from '../../components/ui/button';
 import { cn } from '../../lib/utils';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { apiFetch } from '../../utils/api';
+import { OrganizationInvitationsModal } from './OrganizationInvitationsModal';
 
 interface Organization {
   _id: string;
@@ -26,10 +27,23 @@ interface Organization {
 
 export function OrganizationsPage() {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
+  const [isInvitationsModalOpen, setIsInvitationsModalOpen] = useState(false);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+
+  const handleOpenInvitations = (org: Organization) => {
+    setSelectedOrganization(org);
+    setIsInvitationsModalOpen(true);
+  };
+
+  const handleCloseInvitations = () => {
+    setIsInvitationsModalOpen(false);
+    setSelectedOrganization(null);
+  };
 
   // Fetch organizations with optimized caching
   const { data: orgsData, isLoading } = useQuery({
@@ -43,11 +57,7 @@ export function OrganizationsPage() {
         params.append('type', filterType);
       }
 
-      const response = await fetch(`${API_URL}/api/v1/tech/organizations?${params}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const response = await apiFetch(`/api/v1/tech/organizations?${params}`);
 
       if (!response.ok) throw new Error('Failed to fetch organizations');
       const data = await response.json();
@@ -62,11 +72,8 @@ export function OrganizationsPage() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (orgId: string) => {
-      const response = await fetch(`${API_URL}/api/v1/tech/organizations/${orgId}`, {
+      const response = await apiFetch(`/api/v1/tech/organizations/${orgId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
       });
 
       if (!response.ok) {
@@ -76,10 +83,10 @@ export function OrganizationsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
-      alert('Organization deleted successfully!');
+      showToast('Organization deleted successfully!', 'success');
     },
     onError: (error: Error) => {
-      alert(`Failed to delete organization: ${error.message}`);
+      showToast(`Failed to delete organization: ${error.message}`, 'error');
     },
   });
 
@@ -106,6 +113,10 @@ export function OrganizationsPage() {
 
   const handleSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ['organizations'] });
+    showToast(
+      editingOrg ? 'Organization updated successfully!' : 'Organization created successfully!',
+      'success'
+    );
     handleClose();
   };
 
@@ -121,8 +132,15 @@ export function OrganizationsPage() {
       key: 'type',
       header: 'Type',
       render: (org: Organization) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800">
-          {org.type}
+        <span
+          className={cn(
+            'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+            org.type === 'customer'
+              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
+              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+          )}
+        >
+          {org.type === 'customer' ? 'Customer' : 'Vendor'}
         </span>
       ),
     },
@@ -149,6 +167,21 @@ export function OrganizationsPage() {
         >
           {org.isActive ? 'Active' : 'Inactive'}
         </span>
+      ),
+    },
+    {
+      key: 'invitations',
+      header: 'Invitations',
+      render: (org: Organization) => (
+        <button
+          onClick={(event) => {
+            event.stopPropagation();
+            handleOpenInvitations(org);
+          }}
+          className="px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
+        >
+          Manage
+        </button>
       ),
     },
     {
@@ -212,7 +245,6 @@ export function OrganizationsPage() {
             <option value="all">All Types</option>
             <option value="customer">Customer</option>
             <option value="vendor">Vendor</option>
-            <option value="partner">Partner</option>
           </select>
         </div>
       </div>
@@ -243,6 +275,13 @@ export function OrganizationsPage() {
       >
         <OrganizationForm organization={editingOrg} onSuccess={handleSuccess} onCancel={handleClose} />
       </Modal>
+
+      <OrganizationInvitationsModal
+        organization={selectedOrganization}
+        isOpen={isInvitationsModalOpen}
+        onClose={handleCloseInvitations}
+        apiBasePath="/api/v1/tech"
+      />
     </div>
   );
 }

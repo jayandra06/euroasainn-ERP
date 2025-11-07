@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { onboardingController } from '../controllers/onboarding.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
-import { PortalType } from '@euroasiann/shared';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 const router = Router();
 
@@ -20,4 +20,5 @@ router.post('/vendor-onboardings/:id/approve', onboardingController.approveVendo
 router.post('/vendor-onboardings/:id/reject', onboardingController.rejectVendorOnboarding.bind(onboardingController));
 
 export default router;
+
 

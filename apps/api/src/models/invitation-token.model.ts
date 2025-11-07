@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { OrganizationType, PortalType } from '@euroasiann/shared';
+import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
+
+export type InvitationStatus = 'pending' | 'used' | 'revoked' | 'expired';
 
 export interface IInvitationToken extends Document {
   token: string;
@@ -11,6 +13,9 @@ export interface IInvitationToken extends Document {
   expiresAt: Date;
   used: boolean;
   usedAt?: Date;
+  status: InvitationStatus;
+  revokedAt?: Date;
+  resendCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -60,6 +65,19 @@ const InvitationTokenSchema = new Schema<IInvitationToken>(
     usedAt: {
       type: Date,
     },
+    status: {
+      type: String,
+      enum: ['pending', 'used', 'revoked', 'expired'],
+      default: 'pending',
+      index: true,
+    },
+    revokedAt: {
+      type: Date,
+    },
+    resendCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
@@ -68,7 +86,9 @@ const InvitationTokenSchema = new Schema<IInvitationToken>(
 
 InvitationTokenSchema.index({ token: 1, used: 1 });
 InvitationTokenSchema.index({ email: 1, used: 1 });
+InvitationTokenSchema.index({ organizationId: 1, status: 1 });
 InvitationTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const InvitationToken = mongoose.model<IInvitationToken>('InvitationToken', InvitationTokenSchema);
+
 

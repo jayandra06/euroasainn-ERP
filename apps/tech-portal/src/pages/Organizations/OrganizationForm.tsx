@@ -1,73 +1,69 @@
 /**
- * Ultra-Modern Organization Form Component
- * World-Class SaaS ERP Platform Design
+ * Organization Form Component
+ * Professional Tech Portal Design
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { MdBusiness, MdWork, MdEmail, MdPerson } from 'react-icons/md';
+import { MdSave, MdCancel } from 'react-icons/md';
+import { cn } from '../../lib/utils';
 import { useToast } from '../../components/shared/Toast';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { apiFetch } from '../../utils/api';
 
 interface Organization {
-  _id: string;
+  _id?: string;
   name: string;
   type: string;
   portalType: string;
   isActive: boolean;
-  licenseKey?: string;
 }
 
 interface OrganizationFormProps {
   organization?: Organization | null;
+  organizationType?: 'customer' | 'vendor';
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export function OrganizationForm({ organization, onSuccess, onCancel }: OrganizationFormProps) {
-  const toast = useToast();
+export function OrganizationForm({ organization, organizationType, onSuccess, onCancel }: OrganizationFormProps) {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
-    name: '',
-    type: 'customer',
-    adminEmail: '',
-    firstName: '',
-    lastName: '',
+    name: organization?.name || '',
+    type: organization?.type || organizationType || 'customer',
+    portalType: organization?.portalType || organizationType || 'customer',
+    isActive: organization?.isActive ?? true,
+    adminEmail: '', // Admin email for the organization
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    if (organization) {
-      setFormData({
-        name: organization.name || '',
-        type: organization.type || 'customer',
-        adminEmail: '',
-        firstName: '',
-        lastName: '',
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiFetch('/api/v1/tech/organizations', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: data.name,
+          type: data.type,
+          portalType: data.portalType,
+          isActive: data.isActive,
+          adminEmail: data.adminEmail,
+        }),
       });
-    }
-  }, [organization]);
 
-  const validate = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Organization name is required';
-    }
-
-    if (!formData.type) {
-      newErrors.type = 'Organization type is required';
-    }
-
-    if (!formData.adminEmail.trim()) {
-      newErrors.adminEmail = 'Organization admin email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.adminEmail)) {
-      newErrors.adminEmail = 'Please enter a valid email address';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create organization');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      showToast('Organization created successfully!', 'success');
+      onSuccess();
+    },
+    onError: (error: Error) => {
+      setErrors({ submit: error.message });
+      showToast(`Failed to create organization: ${error.message}`, 'error');
+    },
+  });
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -149,8 +145,10 @@ export function OrganizationForm({ organization, onSuccess, onCancel }: Organiza
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validate()) {
+    setErrors({});
+
+    if (!formData.name.trim()) {
+      setErrors({ name: 'Organization name is required' });
       return;
     }
 
@@ -158,156 +156,104 @@ export function OrganizationForm({ organization, onSuccess, onCancel }: Organiza
     createMutation.mutate(formData);
   };
 
-  const organizationTypes = [
-    { value: 'customer', label: 'Customer' },
-    { value: 'vendor', label: 'Vendor' },
-  ];
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Organization Name */}
+      {/* Name */}
       <div>
-        <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdBusiness className="w-4 h-4 text-gray-400" />
-          Organization Name *
+        <label htmlFor="name" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          Organization Name <span className="text-red-500">*</span>
         </label>
         <input
           id="name"
           type="text"
           value={formData.name}
-          onChange={(e) => {
-            setFormData({ ...formData, name: e.target.value });
-            setErrors({ ...errors, name: '' });
-          }}
-          className={`w-full px-4 py-3 rounded-xl border ${
-            errors.name
-              ? 'border-red-300 dark:border-red-700'
-              : 'border-gray-300 dark:border-gray-700'
-          } bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className={cn(
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
+            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
+            errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+          )}
           placeholder="Enter organization name"
-          required
         />
-        {errors.name && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.name}</p>
-        )}
+        {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
       </div>
 
-      {/* Organization Type */}
+      {/* Admin Email */}
+      {!organization && (
+        <div>
+          <label htmlFor="adminEmail" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            Admin Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="adminEmail"
+            type="email"
+            value={formData.adminEmail}
+            onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
+            className={cn(
+              'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
+              errors.adminEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            )}
+            placeholder="admin@organization.com"
+          />
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            This will be the top-level admin account for this organization
+          </p>
+          {errors.adminEmail && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.adminEmail}</p>}
+        </div>
+      )}
+
+      {/* Portal Type */}
       <div>
-        <label htmlFor="type" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdWork className="w-4 h-4 text-gray-400" />
-          Organization Type *
+        <label htmlFor="portalType" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          Portal Type
         </label>
         <select
-          id="type"
-          value={formData.type}
+          id="portalType"
+          value={formData.portalType}
           onChange={(e) => {
-            setFormData({ ...formData, type: e.target.value });
-            setErrors({ ...errors, type: '' });
+            const newPortalType = e.target.value;
+            setFormData({ ...formData, portalType: newPortalType, type: newPortalType });
           }}
-          className={`w-full px-4 py-3 rounded-xl border ${
-            errors.type
-              ? 'border-red-300 dark:border-red-700'
-              : 'border-gray-300 dark:border-gray-700'
-          } bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-          required
+          className="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         >
-          {organizationTypes.map((type) => (
-            <option key={type.value} value={type.value}>
-              {type.label}
-            </option>
-          ))}
+          <option value="customer">Customer</option>
+          <option value="vendor">Vendor</option>
         </select>
-        {errors.type && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.type}</p>
-        )}
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          Portal type will be automatically set to match organization type ({formData.type === 'customer' ? 'Customer' : 'Vendor'} Portal)
-        </p>
       </div>
 
-      {/* Organization Admin Email */}
-      <div>
-        <label htmlFor="adminEmail" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdEmail className="w-4 h-4 text-gray-400" />
-          Organization Admin Email *
-        </label>
+      {/* Active Status */}
+      <div className="flex items-center gap-3">
         <input
-          id="adminEmail"
-          type="email"
-          value={formData.adminEmail}
-          onChange={(e) => {
-            setFormData({ ...formData, adminEmail: e.target.value });
-            setErrors({ ...errors, adminEmail: '' });
-          }}
-          className={`w-full px-4 py-3 rounded-xl border ${
-            errors.adminEmail
-              ? 'border-red-300 dark:border-red-700'
-              : 'border-gray-300 dark:border-gray-700'
-          } bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-          placeholder={`Enter ${formData.type === 'customer' ? 'customer' : 'vendor'} organization admin email`}
-          required
+          id="isActive"
+          type="checkbox"
+          checked={formData.isActive}
+          onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+          className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
-        {errors.adminEmail && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.adminEmail}</p>
-        )}
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          An invitation email will be sent to this address with login credentials
-        </p>
-      </div>
-
-      {/* First Name (Optional) */}
-      <div>
-        <label htmlFor="firstName" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdPerson className="w-4 h-4 text-gray-400" />
-          First Name (Optional)
+        <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Active Organization
         </label>
-        <input
-          id="firstName"
-          type="text"
-          value={formData.firstName}
-          onChange={(e) => {
-            setFormData({ ...formData, firstName: e.target.value });
-            setErrors({ ...errors, firstName: '' });
-          }}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-          placeholder="Enter first name (will be extracted from email if not provided)"
-        />
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          If not provided, will be extracted from email address
-        </p>
       </div>
 
-      {/* Last Name (Optional) */}
-      <div>
-        <label htmlFor="lastName" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdPerson className="w-4 h-4 text-gray-400" />
-          Last Name (Optional)
-        </label>
-        <input
-          id="lastName"
-          type="text"
-          value={formData.lastName}
-          onChange={(e) => {
-            setFormData({ ...formData, lastName: e.target.value });
-            setErrors({ ...errors, lastName: '' });
-          }}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-          placeholder="Enter last name (will be extracted from email if not provided)"
-        />
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          If not provided, will be extracted from email address
-        </p>
-      </div>
+      {errors.submit && (
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+          {errors.submit}
+        </div>
+      )}
 
-      {/* Form Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          disabled={isLoading}
+          className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
         >
-          Cancel
+          <MdCancel className="w-4 h-4" />
+          <span>Cancel</span>
         </button>
         <button
           type="submit"

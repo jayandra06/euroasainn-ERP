@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { validateLicense } from '../middleware/license.middleware';
-import { PortalType } from '@euroasiann/shared';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 import { rfqService } from '../services/rfq.service';
 import { vesselService } from '../services/vessel.service';
 import { employeeService } from '../services/employee.service';
