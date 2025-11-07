@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { LicenseStatus, OrganizationType } from '@euroasiann/shared';
+import { LicenseStatus, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
 
 export interface ILicense extends Document {
   licenseKey: string;

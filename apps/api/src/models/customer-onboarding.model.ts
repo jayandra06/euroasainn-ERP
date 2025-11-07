@@ -114,3 +114,5 @@ CustomerOnboardingSchema.index({ invitationToken: 1 });
 
 export const CustomerOnboarding = mongoose.model<ICustomerOnboarding>('CustomerOnboarding', CustomerOnboardingSchema);
 
+
+

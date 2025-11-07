@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { OrganizationType, PortalType } from '@euroasiann/shared';
+import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 export interface IOrganization extends Document {
   name: string;

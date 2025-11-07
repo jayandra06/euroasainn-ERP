@@ -1,8 +1,12 @@
 import bcrypt from 'bcryptjs';
 import { User, IUser } from '../models/user.model';
 import { Organization } from '../models/organization.model';
-import { PortalType, TechRole, OrganizationType } from '@euroasiann/shared';
+import { PortalType, TechRole, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
 import { logger } from '../config/logger';
+
+function generateTemporaryPassword() {
+  return `${Math.random().toString(36).slice(-6)}${Math.random().toString(36).slice(-6).toUpperCase()}`;
+}
 
 export class UserService {
   async createUser(data: {
@@ -133,7 +137,7 @@ export class UserService {
     }
 
     // Generate temporary password
-    const temporaryPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12).toUpperCase();
+    const temporaryPassword = generateTemporaryPassword();
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
 
     // Create user with temporary password
@@ -149,6 +153,21 @@ export class UserService {
     const userDoc = user.toObject();
     delete userDoc.password;
     return { ...userDoc, temporaryPassword };
+  }
+
+  async resetUserTemporaryPassword(email: string, portalType: PortalType) {
+    const user = await User.findOne({ email, portalType });
+    if (!user) {
+      throw new Error('User not found for invitation');
+    }
+
+    const temporaryPassword = generateTemporaryPassword();
+    user.password = await bcrypt.hash(temporaryPassword, 10);
+    await user.save();
+
+    const userDoc = user.toObject();
+    delete userDoc.password;
+    return { user: userDoc, temporaryPassword };
   }
 }
 

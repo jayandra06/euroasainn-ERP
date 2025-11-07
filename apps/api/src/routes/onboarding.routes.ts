@@ -10,3 +10,5 @@ router.post('/vendor', onboardingController.submitVendorOnboarding.bind(onboardi
 
 export default router;
 
+
+

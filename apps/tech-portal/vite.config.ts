@@ -13,6 +13,14 @@ export default defineConfig({
       // Allow serving files from root directory
       allow: ['..'],
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+    },
   },
   resolve: {
     alias: {

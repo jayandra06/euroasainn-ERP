@@ -16,6 +16,7 @@ import {
   MdChevronRight,
   MdRocketLaunch,
   MdLogout,
+  MdAssignment,
 } from 'react-icons/md';
 import { HiOutlineDocumentText } from 'react-icons/hi';
 import { IconType } from 'react-icons';
@@ -36,6 +37,7 @@ const navItems: NavItem[] = [
   { path: '/users', label: 'Users', icon: MdPeople },
   { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
   { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
+  { path: '/onboarding-data', label: 'Onboarding Data', icon: MdAssignment },
   { path: '/admin-users', label: 'Admin Users', icon: MdAdminPanelSettings },
   { path: '/settings', label: 'Settings', icon: MdSettings },
 ];

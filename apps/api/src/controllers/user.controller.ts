@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { userService } from '../services/user.service';
 import { logger } from '../config/logger';
-import { PortalType } from '@euroasiann/shared';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 export class UserController {
   async createUser(req: Request, res: Response) {

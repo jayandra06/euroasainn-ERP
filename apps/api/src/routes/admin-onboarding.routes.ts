@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { onboardingController } from '../controllers/onboarding.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
-import { PortalType } from '@euroasiann/shared';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 const router = Router();
 
@@ -16,4 +16,5 @@ router.get('/customer-onboardings/:id', onboardingController.getCustomerOnboardi
 router.get('/vendor-onboardings/:id', onboardingController.getVendorOnboardingById.bind(onboardingController));
 
 export default router;
+
 

@@ -11,7 +11,9 @@ import { BusinessRulesPage } from '../pages/BusinessRules/BusinessRulesPage';
 import { BusinessRuleEditorPage } from '../pages/BusinessRuleEditor/BusinessRuleEditorPage';
 import { UsersPage } from '../pages/Users/UsersPage';
 import { OrganizationsPage } from '../pages/Organizations/OrganizationsPage';
+import { OrganizationProfilePage } from '../pages/Organizations/OrganizationProfilePage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
+import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
 import { AdminUsersPage } from '../pages/AdminUsers/AdminUsersPage';
 import { SettingsPage } from '../pages/Settings/SettingsPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
@@ -51,7 +53,9 @@ export function App() {
                   <Route path="business-rules/:id/edit" element={<BusinessRuleEditorPage />} />
                   <Route path="users" element={<UsersPage />} />
                   <Route path="organizations" element={<OrganizationsPage />} />
+                  <Route path="organizations/:id" element={<OrganizationProfilePage />} />
                   <Route path="licenses" element={<LicensesPage />} />
+                  <Route path="onboarding-data" element={<OnboardingDataPage />} />
                   <Route path="admin-users" element={<AdminUsersPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="profile" element={<div className="p-8">Profile Page - Coming Soon</div>} />
