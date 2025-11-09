@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../context/ThemeContext';
@@ -7,6 +6,7 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ToastProvider } from '../components/shared/Toast';
 import Login from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
+import { UsersPage } from '../pages/Users';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -39,6 +39,7 @@ export function App() {
                 >
                   <Route index element={<Navigate to="/dashboard" replace />} />
                   <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="users" element={<UsersPage />} />
                   <Route path="catalogue" element={<div className="p-8">Catalogue Management - Coming Soon</div>} />
                   <Route path="inventory" element={<div className="p-8">Inventory Management - Coming Soon</div>} />
                   <Route path="quotations" element={<div className="p-8">Quotation Management - Coming Soon</div>} />

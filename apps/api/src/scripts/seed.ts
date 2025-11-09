@@ -5,11 +5,196 @@ import { Organization } from '../models/organization.model';
 import { License } from '../models/license.model';
 import { PortalType, OrganizationType } from '@euroasiann/shared';
 import { logger } from '../config/logger';
+import { Role } from '../models/role.model';
+import { Types } from 'mongoose';
 
 async function seed() {
   try {
     await connectDatabase();
     logger.info('Starting seed...');
+
+    const defaultRoles = [
+      {
+        key: 'admin_superuser',
+        name: 'Super Admin',
+        portalType: PortalType.ADMIN,
+        permissions: ['*'],
+        description: 'Full administrative access across the admin portal',
+      },
+      {
+        key: 'admin_system_admin',
+        name: 'System Admin',
+        portalType: PortalType.ADMIN,
+        permissions: ['users:manage', 'licenses:manage', 'settings:update'],
+        description: 'Manage admin users, licenses, and critical settings',
+      },
+      {
+        key: 'admin_finance_admin',
+        name: 'Finance Admin',
+        portalType: PortalType.ADMIN,
+        permissions: ['invoices:*', 'transactions:read', 'reports:generate'],
+        description: 'Oversees billing, invoices, and financial reporting',
+      },
+      {
+        key: 'admin_hr_admin',
+        name: 'HR Admin',
+        portalType: PortalType.ADMIN,
+        permissions: ['employees:*', 'attendance:read', 'leaves:approve'],
+        description: 'Manages employee records and HR processes',
+      },
+      {
+        key: 'admin_auditor',
+        name: 'Auditor',
+        portalType: PortalType.ADMIN,
+        permissions: ['logs:read', 'invoices:read', 'users:read'],
+        description: 'Provides read-only insight into system records for compliance',
+      },
+      {
+        key: 'admin_support_agent',
+        name: 'Support Agent',
+        portalType: PortalType.ADMIN,
+        permissions: ['tickets:*', 'customers:read'],
+        description: 'Manages customer support tickets and communications',
+      },
+      {
+        key: 'tech_lead',
+        name: 'Tech Lead',
+        portalType: PortalType.TECH,
+        permissions: ['*'],
+        description: 'Full access to the tech portal with leadership responsibilities',
+      },
+      {
+        key: 'tech_developer',
+        name: 'Developer',
+        portalType: PortalType.TECH,
+        permissions: ['apps:develop', 'deployments:manage'],
+        description: 'Develop and deploy technical solutions',
+      },
+      {
+        key: 'tech_devops_engineer',
+        name: 'DevOps Engineer',
+        portalType: PortalType.TECH,
+        permissions: ['pipeline:*', 'health:read', 'servers:update'],
+        description: 'Handles CI/CD pipelines and infrastructure health',
+      },
+      {
+        key: 'tech_qa_engineer',
+        name: 'QA Engineer',
+        portalType: PortalType.TECH,
+        permissions: ['testcases:read', 'bugs:update', 'deployments:read'],
+        description: 'Verifies release quality and manages QA workflows',
+      },
+      {
+        key: 'tech_intern',
+        name: 'Tech Intern',
+        portalType: PortalType.TECH,
+        permissions: ['issues:read', 'deployments:read'],
+        description: 'View-only access for training purposes',
+      },
+      {
+        key: 'vendor_admin',
+        name: 'Vendor Admin',
+        portalType: PortalType.VENDOR,
+        permissions: ['*'],
+        description: 'Oversee vendor operations and approvals',
+      },
+      {
+        key: 'vendor_manager',
+        name: 'Vendor Manager',
+        portalType: PortalType.VENDOR,
+        permissions: ['items:manage', 'quotation:manage', 'inventory:update'],
+        description: 'Manage vendor catalogue, inventory, and quotations',
+      },
+      {
+        key: 'vendor_accountant',
+        name: 'Vendor Accountant',
+        portalType: PortalType.VENDOR,
+        permissions: ['invoices:read', 'transactions:update'],
+        description: 'Handles vendor invoices and financial entries',
+      },
+      {
+        key: 'vendor_staff',
+        name: 'Vendor Staff',
+        portalType: PortalType.VENDOR,
+        permissions: ['orders:read', 'products:read'],
+        description: 'Processes assigned orders with limited access',
+      },
+      {
+        key: 'vendor_viewer',
+        name: 'Vendor Viewer',
+        portalType: PortalType.VENDOR,
+        permissions: ['dashboard:read', 'orders:read'],
+        description: 'Read-only visibility into vendor dashboards and orders',
+      },
+      {
+        key: 'customer_admin',
+        name: 'Customer Admin',
+        portalType: PortalType.CUSTOMER,
+        permissions: ['*'],
+        description: 'Full access to manage customer portal activities',
+      },
+      {
+        key: 'customer_manager',
+        name: 'Customer Manager',
+        portalType: PortalType.CUSTOMER,
+        permissions: ['rfq:manage', 'orders:approve'],
+        description: 'Manage RFQs and customer orders',
+      },
+      {
+        key: 'customer_accountant',
+        name: 'Customer Accountant',
+        portalType: PortalType.CUSTOMER,
+        permissions: ['invoices:read', 'transactions:read'],
+        description: 'Views and reconciles customer financial records',
+      },
+      {
+        key: 'customer_viewer',
+        name: 'Customer Viewer',
+        portalType: PortalType.CUSTOMER,
+        permissions: ['orders:read', 'invoices:read', 'dashboard:read'],
+        description: 'Read-only access to customer dashboards and records',
+      },
+    ];
+
+    for (const roleDef of defaultRoles) {
+      const existingRole = await Role.findOne({ key: roleDef.key });
+      if (!existingRole) {
+        await Role.create({
+          ...roleDef,
+          permissions: roleDef.permissions,
+          isSystem: true,
+        });
+        logger.info(`✅ Seeded default role: ${roleDef.name} [${roleDef.portalType}]`);
+      } else {
+        let updated = false;
+        if (existingRole.name !== roleDef.name) {
+          existingRole.name = roleDef.name;
+          updated = true;
+        }
+        if (existingRole.portalType !== roleDef.portalType) {
+          existingRole.portalType = roleDef.portalType;
+          updated = true;
+        }
+        const existingPermissions = (existingRole.permissions || []).sort().join(',');
+        const desiredPermissions = (roleDef.permissions || []).sort().join(',');
+        if (existingPermissions !== desiredPermissions) {
+          existingRole.permissions = roleDef.permissions;
+          updated = true;
+        }
+        if (roleDef.description && existingRole.description !== roleDef.description) {
+          existingRole.description = roleDef.description;
+          updated = true;
+        }
+        if (!existingRole.isSystem) {
+          existingRole.isSystem = true;
+          updated = true;
+        }
+        if (updated) {
+          await existingRole.save();
+          logger.info(`🔄 Updated default role: ${roleDef.name} [${roleDef.portalType}]`);
+        }
+      }
+    }
 
     // Create Euroasiann Group - Platform Owner Organization
     // This organization owns both tech and admin portals
@@ -35,6 +220,8 @@ async function seed() {
       }
     }
 
+    const euroasiannGroupId = new Types.ObjectId(euroasiannGroup.id);
+
     // Create Tech Admin User
     const techAdminEmail = 'techadmin@euroasiann.com';
     let techAdmin = await User.findOne({ email: techAdminEmail, portalType: PortalType.TECH });
@@ -47,7 +234,7 @@ async function seed() {
         lastName: 'Admin',
         portalType: PortalType.TECH,
         role: 'tech_admin',
-        organizationId: euroasiannGroup._id,
+        organizationId: euroasiannGroupId,
         isActive: true,
       });
       logger.info('✅ Created Tech Admin User');
@@ -56,8 +243,8 @@ async function seed() {
       logger.info(`   Organization: Euroasiann Group`);
     } else {
       // Update existing tech admin to Euroasiann Group
-      if (techAdmin.organizationId?.toString() !== euroasiannGroup._id.toString()) {
-        techAdmin.organizationId = euroasiannGroup._id;
+      if (techAdmin.organizationId?.toString() !== euroasiannGroupId.toString()) {
+        techAdmin.organizationId = euroasiannGroupId;
         await techAdmin.save();
         logger.info('✅ Updated Tech Admin User to Euroasiann Group');
       }
@@ -75,7 +262,7 @@ async function seed() {
         lastName: 'Andra',
         portalType: PortalType.TECH,
         role: 'tech_admin',
-        organizationId: euroasiannGroup._id,
+        organizationId: euroasiannGroupId,
         isActive: true,
       });
       logger.info('✅ Created User: jayandraa5@gmail.com');
@@ -89,7 +276,7 @@ async function seed() {
       jayUser.firstName = 'Jay';
       jayUser.lastName = 'Andra';
       jayUser.role = 'tech_admin';
-      jayUser.organizationId = euroasiannGroup._id;
+      jayUser.organizationId = euroasiannGroupId;
       jayUser.isActive = true;
       await jayUser.save();
       logger.info('✅ Updated User: jayandraa5@gmail.com');
@@ -110,7 +297,7 @@ async function seed() {
         lastName: 'User',
         portalType: PortalType.ADMIN,
         role: 'admin_superuser',
-        organizationId: euroasiannGroup._id, // Same organization as tech users
+        organizationId: euroasiannGroupId, // Same organization as tech users
         isActive: true,
       });
       logger.info('✅ Created Admin User');
@@ -119,8 +306,8 @@ async function seed() {
       logger.info(`   Organization: Euroasiann Group`);
     } else {
       // Update existing admin to Euroasiann Group
-      if (admin.organizationId?.toString() !== euroasiannGroup._id.toString()) {
-        admin.organizationId = euroasiannGroup._id;
+      if (admin.organizationId?.toString() !== euroasiannGroupId.toString()) {
+        admin.organizationId = euroasiannGroupId;
         await admin.save();
         logger.info('✅ Updated Admin User to Euroasiann Group');
       }
@@ -129,8 +316,8 @@ async function seed() {
     // Update any existing tech portal users to Euroasiann Group
     const techUsers = await User.find({ portalType: PortalType.TECH });
     for (const user of techUsers) {
-      if (user.organizationId?.toString() !== euroasiannGroup._id.toString()) {
-        user.organizationId = euroasiannGroup._id;
+      if (user.organizationId?.toString() !== euroasiannGroupId.toString()) {
+        user.organizationId = euroasiannGroupId;
         await user.save();
         logger.info(`✅ Updated tech user ${user.email} to Euroasiann Group`);
       }
@@ -139,8 +326,8 @@ async function seed() {
     // Update any existing admin portal users to Euroasiann Group
     const adminUsers = await User.find({ portalType: PortalType.ADMIN });
     for (const user of adminUsers) {
-      if (user.organizationId?.toString() !== euroasiannGroup._id.toString()) {
-        user.organizationId = euroasiannGroup._id;
+      if (user.organizationId?.toString() !== euroasiannGroupId.toString()) {
+        user.organizationId = euroasiannGroupId;
         await user.save();
         logger.info(`✅ Updated admin user ${user.email} to Euroasiann Group`);
       }
@@ -159,7 +346,7 @@ async function seed() {
         // Migrate users to Euroasiann Group
         await User.updateMany(
           { organizationId: oldTechOrg._id },
-          { organizationId: euroasiannGroup._id }
+          { organizationId: euroasiannGroupId }
         );
         logger.info(`✅ Migrated ${usersInOldOrg.length} users from "Euroasiann Platform Admin" to Euroasiann Group`);
       }
@@ -169,7 +356,7 @@ async function seed() {
         logger.warn(`⚠️  Found ${licensesInOldOrg.length} license(s) associated with "Euroasiann Platform Admin". Moving to Euroasiann Group...`);
         await License.updateMany(
           { organizationId: oldTechOrg._id },
-          { organizationId: euroasiannGroup._id }
+          { organizationId: euroasiannGroupId }
         );
       }
       // Delete the old organization
@@ -189,7 +376,7 @@ async function seed() {
         // Migrate users to Euroasiann Group
         await User.updateMany(
           { organizationId: oldAdminOrg._id },
-          { organizationId: euroasiannGroup._id }
+          { organizationId: euroasiannGroupId }
         );
         logger.info(`✅ Migrated ${usersInOldOrg.length} users from "Admin Portal Organization" to Euroasiann Group`);
       }
@@ -199,7 +386,7 @@ async function seed() {
         logger.warn(`⚠️  Found ${licensesInOldOrg.length} license(s) associated with "Admin Portal Organization". Moving to Euroasiann Group...`);
         await License.updateMany(
           { organizationId: oldAdminOrg._id },
-          { organizationId: euroasiannGroup._id }
+          { organizationId: euroasiannGroupId }
         );
       }
       // Delete the old organization

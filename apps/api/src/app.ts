@@ -8,6 +8,7 @@ import adminPortalRoutes from './routes/admin-portal.routes';
 import customerPortalRoutes from './routes/customer-portal.routes';
 import vendorPortalRoutes from './routes/vendor-portal.routes';
 import businessRuleRoutes from './routes/business-rule.routes';
+import roleRoutes from './routes/role.routes';
 import onboardingRoutes from './routes/onboarding.routes';
 import adminOnboardingRoutes from './routes/admin-onboarding.routes';
 
@@ -41,6 +42,7 @@ app.use(`${config.apiPrefix}/admin`, adminOnboardingRoutes);
 app.use(`${config.apiPrefix}/customer`, customerPortalRoutes);
 app.use(`${config.apiPrefix}/vendor`, vendorPortalRoutes);
 app.use(`${config.apiPrefix}/business-rules`, businessRuleRoutes);
+app.use(`${config.apiPrefix}/roles`, roleRoutes);
 // Public onboarding routes (no auth required)
 app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
 

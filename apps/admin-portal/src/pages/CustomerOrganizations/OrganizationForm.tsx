@@ -3,7 +3,7 @@
  * Professional Admin Portal Design
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { MdSave, MdCancel } from 'react-icons/md';
 import { cn } from '../../lib/utils';
@@ -30,35 +30,37 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
   const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: organization?.name || '',
-    portalType: organization?.portalType || 'customer',
     isActive: organization?.isActive ?? true,
     adminEmail: '', // Admin email for the organization - invitation will be sent to this email
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    if (!organization) {
+      setFormData((prev) => ({
+        ...prev,
+        isActive: true,
+      }));
+    }
+  }, [organization]);
+
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       try {
-        const endpoint = organizationType === 'customer' ? 'customer-orgs' : 'vendor-orgs';
-        
-        // Prepare request data
         const requestData = {
           name: data.name,
           type: organizationType,
-          portalType: data.portalType,
+          portalType: organizationType,
           isActive: data.isActive,
-          adminEmail: data.adminEmail, // Email to send invitation to (e.g., lalithyachavala@gmail.com)
-          // firstName and lastName will be extracted from email by backend if not provided
+          adminEmail: data.adminEmail,
         };
 
         // Log what we're sending
         console.log('📤 Admin Portal: Sending organization creation request');
         console.log('   Organization Name:', requestData.name);
         console.log('   Organization Type:', requestData.type);
-        console.log('   ⭐ Admin Email (will receive invitation):', requestData.adminEmail);
-        console.log('   Note: First name and last name will be extracted from email automatically');
 
-        const response = await fetch(`${API_URL}/api/v1/admin/${endpoint}`, {
+        const response = await fetch(`${API_URL}/api/v1/admin/organizations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -127,8 +129,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
       try {
-        const endpoint = organizationType === 'customer' ? 'customer-orgs' : 'vendor-orgs';
-        const response = await fetch(`${API_URL}/api/v1/admin/${endpoint}/${organization?._id}`, {
+        const response = await fetch(`${API_URL}/api/v1/admin/organizations/${organization?._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -136,7 +137,8 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
           },
           body: JSON.stringify({
             name: data.name,
-            portalType: data.portalType,
+            type: organizationType,
+            portalType: organizationType,
             isActive: data.isActive,
           }),
         });
@@ -238,7 +240,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
               'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
               errors.adminEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
             )}
-            placeholder="lalithyachavala@gmail.com"
+            placeholder="Enter email here"
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             An invitation email with login credentials will be sent to this email address
@@ -246,22 +248,6 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
           {errors.adminEmail && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.adminEmail}</p>}
         </div>
       )}
-
-      {/* Portal Type */}
-      <div>
-        <label htmlFor="portalType" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          Portal Type
-        </label>
-        <select
-          id="portalType"
-          value={formData.portalType}
-          onChange={(e) => setFormData({ ...formData, portalType: e.target.value })}
-          className="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-        >
-          <option value="customer">Customer</option>
-          <option value="vendor">Vendor</option>
-        </select>
-      </div>
 
       {/* Active Status */}
       <div className="flex items-center gap-3">

@@ -33,93 +33,7 @@ export function OrganizationsPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOrgs, setSelectedOrgs] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
-
-  // Mock data for development
-  const getMockOrganizations = (): Organization[] => {
-    const now = Date.now();
-    return [
-      {
-        _id: '1',
-        name: 'Acme Corporation',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 90 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '2',
-        name: 'Tech Solutions Inc',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 75 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '3',
-        name: 'Global Industries',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: true,
-        createdAt: new Date(now - 365 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '4',
-        name: 'Digital Ventures LLC',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 45 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '5',
-        name: 'Innovation Labs',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: false,
-        createdAt: new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '6',
-        name: 'Cloud Systems Group',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 20 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '7',
-        name: 'Enterprise Solutions',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: true,
-        createdAt: new Date(now - 180 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '8',
-        name: 'Startup Hub',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 15 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '9',
-        name: 'Mega Corp',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: false,
-        createdAt: new Date(now - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '10',
-        name: 'Future Tech',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: true,
-        createdAt: new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
-  };
+  const [newOrganizationType, setNewOrganizationType] = useState<'customer' | 'vendor'>('customer');
 
   // Fetch all organizations (customer and vendor)
   const { data: orgsData, isLoading } = useQuery({
@@ -144,22 +58,14 @@ export function OrganizationsPage() {
         });
 
         if (!response.ok) {
-          // Return mock data if API doesn't exist yet or returns error
-          if (response.status === 404) {
-            return getMockOrganizations();
-          }
           const error = await response.json().catch(() => ({ error: 'Failed to fetch organizations' }));
           throw new Error(error.error || 'Failed to fetch organizations');
         }
         const data = await response.json();
-        return data.data || getMockOrganizations();
+        return data.data || [];
       } catch (error: any) {
-        // Return mock data on network errors to prevent UI breaking
-        if (error.name === 'TypeError' || error.message.includes('fetch')) {
-          console.error('Network error fetching organizations:', error);
-          return getMockOrganizations();
-        }
-        throw error;
+        console.error('Error fetching organizations:', error);
+        return [];
       }
     },
     retry: 1,
@@ -196,7 +102,7 @@ export function OrganizationsPage() {
     const query = searchQuery.toLowerCase();
     return orgsData.filter(org => 
       org.name.toLowerCase().includes(query) ||
-      org.portalType.toLowerCase().includes(query)
+      org.type.toLowerCase().includes(query)
     );
   }, [orgsData, searchQuery]);
 
@@ -237,11 +143,13 @@ export function OrganizationsPage() {
 
   const handleCreate = () => {
     setEditingOrg(null);
+    setNewOrganizationType('customer');
     setIsModalOpen(true);
   };
 
   const handleEdit = (org: Organization) => {
     setEditingOrg(org);
+    setNewOrganizationType(org.type === 'vendor' ? 'vendor' : 'customer');
     setIsModalOpen(true);
   };
 
@@ -304,7 +212,7 @@ export function OrganizationsPage() {
     },
     {
       key: 'name',
-      header: 'Organization Name',
+      header: 'Name',
       render: (org: Organization) => (
         <div className="font-semibold text-gray-900 dark:text-white">{org.name}</div>
       ),
@@ -322,15 +230,6 @@ export function OrganizationsPage() {
           )}
         >
           {org.type === 'customer' ? 'Customer' : 'Vendor'}
-        </span>
-      ),
-    },
-    {
-      key: 'portalType',
-      header: 'Portal Type',
-      render: (org: Organization) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-800">
-          {org.portalType}
         </span>
       ),
     },
@@ -390,7 +289,7 @@ export function OrganizationsPage() {
             <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
             <input
               type="text"
-              placeholder="Search organizations by name or portal type..."
+              placeholder="Search organizations by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
@@ -478,12 +377,44 @@ export function OrganizationsPage() {
         title={editingOrg ? 'Edit Organization' : 'Create Organization'}
         size="medium"
       >
-        <OrganizationForm
-          organization={editingOrg}
-          organizationType={editingOrg?.type === 'vendor' ? 'vendor' : 'customer'}
-          onSuccess={handleSuccess}
-          onCancel={handleClose}
-        />
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 bg-white dark:bg-gray-900">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Organization Type</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Choose whether this is a customer or vendor organization.</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <input
+                  type="radio"
+                  name="orgType"
+                  value="customer"
+                  checked={newOrganizationType === 'customer'}
+                  onChange={() => setNewOrganizationType('customer')}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                Customer
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                <input
+                  type="radio"
+                  name="orgType"
+                  value="vendor"
+                  checked={newOrganizationType === 'vendor'}
+                  onChange={() => setNewOrganizationType('vendor')}
+                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                Vendor
+              </label>
+            </div>
+          </div>
+          <OrganizationForm
+            organization={editingOrg}
+            organizationType={newOrganizationType}
+            onSuccess={handleSuccess}
+            onCancel={handleClose}
+          />
+        </div>
       </Modal>
     </div>
   );

@@ -9,7 +9,7 @@ import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { UserForm } from './UserForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdAdd, MdCheckCircle, MdCancel, MdFilterList, MdPeople, MdSearch, MdEmail } from 'react-icons/md';
+import { MdCheckCircle, MdCancel, MdFilterList, MdPeople, MdSearch, MdEmail } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -21,6 +21,13 @@ interface User {
   lastName: string;
   portalType: string;
   role: string;
+  roleId?: string | {
+    _id: string;
+    name: string;
+    key: string;
+    permissions?: string[];
+  };
+  roleName?: string;
   isActive: boolean;
   organizationId?: string;
   lastLogin?: string;
@@ -32,7 +39,6 @@ export function UsersPage() {
   const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [isInviteMode, setIsInviteMode] = useState(false);
   const [filterActive, setFilterActive] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -64,62 +70,6 @@ export function UsersPage() {
     },
   });
 
-  // Create mutation
-  const createMutation = useMutation({
-    mutationFn: async (userData: Partial<User>) => {
-      const response = await fetch(`${API_URL}/api/v1/tech/users`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create user');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tech-users'] });
-      toast.success('User created successfully!');
-      handleClose();
-    },
-    onError: (error: Error) => {
-      toast.error(`Failed to create user: ${error.message}`);
-    },
-  });
-
-  // Update mutation
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<User> }) => {
-      const response = await fetch(`${API_URL}/api/v1/tech/users/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update user');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tech-users'] });
-      toast.success('User updated successfully!');
-      handleClose();
-    },
-    onError: (error: Error) => {
-      toast.error(`Failed to update user: ${error.message}`);
-    },
-  });
-
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
@@ -144,15 +94,8 @@ export function UsersPage() {
     },
   });
 
-  const handleCreate = () => {
-    setEditingUser(null);
-    setIsInviteMode(false);
-    setIsModalOpen(true);
-  };
-
   const handleInvite = () => {
     setEditingUser(null);
-    setIsInviteMode(true);
     setIsModalOpen(true);
   };
 
@@ -170,7 +113,6 @@ export function UsersPage() {
   const handleClose = () => {
     setIsModalOpen(false);
     setEditingUser(null);
-    setIsInviteMode(false);
   };
 
   const handleSuccess = () => {
@@ -182,11 +124,16 @@ export function UsersPage() {
   const filteredUsers = usersData?.filter((user) => {
     if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
+    const roleLabel =
+      typeof user.roleId === 'object'
+        ? user.roleId.name
+        : user.roleName || user.role;
+
     return (
       user.email.toLowerCase().includes(search) ||
       user.firstName.toLowerCase().includes(search) ||
       user.lastName.toLowerCase().includes(search) ||
-      user.role.toLowerCase().includes(search)
+      roleLabel.toLowerCase().includes(search)
     );
   });
 
@@ -213,7 +160,9 @@ export function UsersPage() {
       header: 'Role',
       render: (user: User) => (
         <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-          {user.role.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+          {typeof user.roleId === 'object'
+            ? user.roleId.name
+            : (user.roleName || user.role).replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
         </span>
       ),
     },
@@ -295,13 +244,6 @@ export function UsersPage() {
           >
             <MdEmail className="w-5 h-5" />
             Invite User
-          </button>
-          <button
-            onClick={handleCreate}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-semibold shadow-sm"
-          >
-            <MdAdd className="w-5 h-5" />
-            Add New User
           </button>
         </div>
       </div>
@@ -390,10 +332,10 @@ export function UsersPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={editingUser ? 'Edit User' : isInviteMode ? 'Invite User' : 'Create New User'}
+        title={editingUser ? 'Edit User' : 'Invite User'}
         size="large"
       >
-        <UserForm user={editingUser} onSuccess={handleSuccess} onCancel={handleClose} defaultInviteMode={isInviteMode} />
+        <UserForm user={editingUser} onSuccess={handleSuccess} onCancel={handleClose} />
       </Modal>
     </div>
   );

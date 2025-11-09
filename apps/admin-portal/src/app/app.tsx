@@ -15,6 +15,7 @@ import { CustomerOnboardingPage } from '../pages/Onboarding/CustomerOnboardingPa
 import { VendorOnboardingPage } from '../pages/Onboarding/VendorOnboardingPage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
 import { UsersPage } from '../pages/Users/UsersPage';
+import { UserCreatePage } from '../pages/Users/UserCreatePage';
 import { ActivityLogPage } from '../pages/ActivityLog/ActivityLogPage';
 import { ReportsPage } from '../pages/Reports/ReportsPage';
 import { NotificationsPage } from '../pages/Notifications/NotificationsPage';
@@ -62,6 +63,7 @@ export function App() {
                     <Route path="onboarding-data" element={<OnboardingDataPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="users" element={<UsersPage />} />
+                    <Route path="users/new" element={<UserCreatePage />} />
                     <Route path="activity-log" element={<ActivityLogPage />} />
                     <Route path="reports" element={<ReportsPage />} />
                     <Route path="notifications" element={<NotificationsPage />} />

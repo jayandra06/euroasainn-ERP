@@ -8,39 +8,32 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  MdTrendingUp,
   MdBusinessCenter,
   MdPeople,
   MdVpnKey,
-  MdArrowUpward,
-  MdArrowDownward,
-  MdNotifications,
-  MdSchedule,
-  MdCheckCircle,
-  MdWarning,
   MdRefresh,
-  MdAttachMoney,
+  MdCheckCircle,
   MdPersonAdd,
   MdBusiness,
   MdDescription,
   MdCardMembership,
+  MdTrendingUp,
+  MdTimeline,
+  MdInfo,
 } from 'react-icons/md';
 import {
+  ResponsiveContainer,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
+  CartesianGrid,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   Legend,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
 } from 'recharts';
 import { cn } from '../lib/utils';
 
@@ -52,19 +45,38 @@ interface DashboardStats {
   totalLicenses: number;
   activeLicenses: number;
   totalUsers: number;
-  customerOrgGrowth: number;
-  vendorOrgGrowth: number;
-  licenseGrowth: number;
-  totalRevenue: number;
-  monthlyRevenue: number;
-  revenueGrowth: number;
 }
 
-const statCards = [
+interface TrendDataPoint {
+  name: string;
+  customers: number;
+  vendors: number;
+}
+
+interface LicenseDataPoint {
+  name: string;
+  active: number;
+  inactive: number;
+}
+
+interface UserActivityPoint {
+  name: string;
+  admins: number;
+  invites: number;
+}
+
+const statCards: Array<{
+  title: string;
+  key: keyof DashboardStats;
+  icon: typeof MdBusinessCenter;
+  gradient: string;
+  bgColor: string;
+  path?: string;
+  format?: (value: number) => string;
+}> = [
   {
     title: 'Customer Organizations',
     key: 'totalCustomerOrgs',
-    changeKey: 'customerOrgGrowth',
     icon: MdBusinessCenter,
     gradient: 'from-blue-500 to-indigo-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
@@ -73,7 +85,6 @@ const statCards = [
   {
     title: 'Vendor Organizations',
     key: 'totalVendorOrgs',
-    changeKey: 'vendorOrgGrowth',
     icon: MdBusinessCenter,
     gradient: 'from-purple-500 to-pink-600',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
@@ -82,64 +93,27 @@ const statCards = [
   {
     title: 'Total Licenses',
     key: 'totalLicenses',
-    changeKey: 'licenseGrowth',
     icon: MdVpnKey,
     gradient: 'from-emerald-500 to-teal-600',
     bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
     path: '/licenses',
   },
   {
-    title: 'Active Users',
+    title: 'Active Licenses',
+    key: 'activeLicenses',
+    icon: MdVpnKey,
+    gradient: 'from-emerald-500 to-teal-600',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
+    path: '/licenses',
+  },
+  {
+    title: 'Admin Users',
     key: 'totalUsers',
-    changeKey: '0',
     icon: MdPeople,
     gradient: 'from-orange-500 to-amber-600',
     bgColor: 'bg-orange-50 dark:bg-orange-950/20',
     path: '/users',
   },
-  {
-    title: 'Total Revenue',
-    key: 'totalRevenue',
-    changeKey: 'revenueGrowth',
-    icon: MdAttachMoney,
-    gradient: 'from-green-500 to-emerald-600',
-    bgColor: 'bg-green-50 dark:bg-green-950/20',
-    format: (value: number) => `$${value.toLocaleString()}`,
-  },
-  {
-    title: 'Monthly Revenue',
-    key: 'monthlyRevenue',
-    changeKey: 'revenueGrowth',
-    icon: MdAttachMoney,
-    gradient: 'from-teal-500 to-cyan-600',
-    bgColor: 'bg-teal-50 dark:bg-teal-950/20',
-    format: (value: number) => `$${value.toLocaleString()}`,
-  },
-];
-
-const orgGrowthData = [
-  { name: 'Jan', customer: 45, vendor: 32 },
-  { name: 'Feb', customer: 52, vendor: 38 },
-  { name: 'Mar', customer: 58, vendor: 42 },
-  { name: 'Apr', customer: 65, vendor: 48 },
-  { name: 'May', customer: 72, vendor: 55 },
-  { name: 'Jun', customer: 80, vendor: 62 },
-];
-
-const licenseStatusData = [
-  { name: 'Active', value: 65, color: '#10b981' },
-  { name: 'Expired', value: 20, color: '#ef4444' },
-  { name: 'Pending', value: 15, color: '#f59e0b' },
-];
-
-const monthlyActivityData = [
-  { name: 'Mon', activities: 120 },
-  { name: 'Tue', activities: 150 },
-  { name: 'Wed', activities: 180 },
-  { name: 'Thu', activities: 200 },
-  { name: 'Fri', activities: 220 },
-  { name: 'Sat', activities: 150 },
-  { name: 'Sun', activities: 100 },
 ];
 
 export function Dashboard() {
@@ -151,16 +125,13 @@ export function Dashboard() {
     totalLicenses: 0,
     activeLicenses: 0,
     totalUsers: 0,
-    customerOrgGrowth: 0,
-    vendorOrgGrowth: 0,
-    licenseGrowth: 0,
-    totalRevenue: 0,
-    monthlyRevenue: 0,
-    revenueGrowth: 0,
   });
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isRefreshed, setIsRefreshed] = useState(false);
+  const [orgTrend, setOrgTrend] = useState<TrendDataPoint[]>([]);
+  const [licenseTrend, setLicenseTrend] = useState<LicenseDataPoint[]>([]);
+  const [userTrend, setUserTrend] = useState<UserActivityPoint[]>([]);
 
   useEffect(() => {
     fetchDashboardStats();
@@ -169,54 +140,165 @@ export function Dashboard() {
   const fetchDashboardStats = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      
-      // Fetch customer organizations
-      const customerRes = await fetch(`${API_URL}/api/v1/admin/customer-orgs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const customerData = await customerRes.json();
-      const customerOrgs = customerData.success ? customerData.data?.length || 0 : 0;
+      if (!token) {
+        setStats({
+          totalCustomerOrgs: 0,
+          totalVendorOrgs: 0,
+          totalLicenses: 0,
+          activeLicenses: 0,
+          totalUsers: 0,
+        });
+        return;
+      }
 
-      // Fetch vendor organizations
-      const vendorRes = await fetch(`${API_URL}/api/v1/admin/vendor-orgs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const vendorData = await vendorRes.json();
-      const vendorOrgs = vendorData.success ? vendorData.data?.length || 0 : 0;
+      const headers = { Authorization: `Bearer ${token}` };
 
-      // Calculate growth (mock for now)
+      const [customerRes, vendorRes, licenseRes, userRes] = await Promise.all([
+        fetch(`${API_URL}/api/v1/admin/customer-orgs`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/vendor-orgs`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/licenses`, { headers }),
+        fetch(`${API_URL}/api/v1/admin/users`, { headers }),
+      ]);
+
+      const [customerData, vendorData, licenseData, userData] = await Promise.all([
+        customerRes.json().catch(() => null),
+        vendorRes.json().catch(() => null),
+        licenseRes.json().catch(() => null),
+        userRes.json().catch(() => null),
+      ]);
+
+      const customerOrgs = customerRes.ok && customerData?.success && Array.isArray(customerData.data)
+        ? customerData.data.length
+        : 0;
+
+      const vendorOrgs = vendorRes.ok && vendorData?.success && Array.isArray(vendorData.data)
+        ? vendorData.data.length
+        : 0;
+
+      const licenses = licenseRes.ok && licenseData?.success && Array.isArray(licenseData.data)
+        ? licenseData.data
+        : [];
+
+      const users = userRes.ok && userData?.success && Array.isArray(userData.data)
+        ? userData.data
+        : [];
+
       setStats({
         totalCustomerOrgs: customerOrgs,
         totalVendorOrgs: vendorOrgs,
-        totalLicenses: 85,
-        activeLicenses: 65,
-        totalUsers: 1234,
-        customerOrgGrowth: 12.5,
-        vendorOrgGrowth: 8.3,
-        licenseGrowth: 15.2,
-        totalRevenue: 2450000,
-        monthlyRevenue: 185000,
-        revenueGrowth: 18.5,
+        totalLicenses: licenses.length,
+        activeLicenses: licenses.filter((license: any) => license.status === 'ACTIVE').length,
+        totalUsers: users.length,
       });
+
+      const buildMonthlyBuckets = () => {
+        const months = Array.from({ length: 6 }).map((_, idx) => {
+          const date = new Date();
+          date.setMonth(date.getMonth() - (5 - idx));
+          return {
+            key: `${date.getFullYear()}-${date.getMonth() + 1}`,
+            label: date.toLocaleDateString('en-US', { month: 'short' }),
+          };
+        });
+
+        const bucketOrgs = (items: any[]) =>
+          months.map((month) => (
+            items.filter((item) => {
+              const createdAt = item.createdAt ? new Date(item.createdAt) : null;
+              if (!createdAt) return false;
+              return (
+                createdAt.getFullYear() === Number(month.key.split('-')[0]) &&
+                createdAt.getMonth() + 1 === Number(month.key.split('-')[1])
+              );
+            }).length
+          ));
+
+        const customerBuckets = bucketOrgs(customerData?.data || []);
+        const vendorBuckets = bucketOrgs(vendorData?.data || []);
+
+        setOrgTrend(
+          months.map((month, idx) => ({
+            name: month.label,
+            customers: customerBuckets[idx] ?? 0,
+            vendors: vendorBuckets[idx] ?? 0,
+          }))
+        );
+
+        const licenseBucketsActive = months.map((month) =>
+          licenses.filter((license: any) => {
+            const issued = license.issuedAt || license.createdAt;
+            const createdAt = issued ? new Date(issued) : null;
+            if (!createdAt) return false;
+            const [year, monthIdx] = month.key.split('-');
+            return (
+              createdAt.getFullYear() === Number(year) &&
+              createdAt.getMonth() + 1 === Number(monthIdx) &&
+              license.status === 'ACTIVE'
+            );
+          }).length
+        );
+
+        const licenseBucketsInactive = months.map((month) =>
+          licenses.filter((license: any) => {
+            const issued = license.issuedAt || license.createdAt;
+            const createdAt = issued ? new Date(issued) : null;
+            if (!createdAt) return false;
+            const [year, monthIdx] = month.key.split('-');
+            return (
+              createdAt.getFullYear() === Number(year) &&
+              createdAt.getMonth() + 1 === Number(monthIdx) &&
+              license.status !== 'ACTIVE'
+            );
+          }).length
+        );
+
+        setLicenseTrend(
+          months.map((month, idx) => ({
+            name: month.label,
+            active: licenseBucketsActive[idx] ?? 0,
+            inactive: licenseBucketsInactive[idx] ?? 0,
+          }))
+        );
+
+        const userBuckets = months.map((month) =>
+          users.filter((user: any) => {
+            const createdAt = user.createdAt ? new Date(user.createdAt) : null;
+            if (!createdAt) return false;
+            const [year, monthIdx] = month.key.split('-');
+            return (
+              createdAt.getFullYear() === Number(year) &&
+              createdAt.getMonth() + 1 === Number(monthIdx)
+            );
+          }).length
+        );
+
+        const inviteBuckets = months.map((month) =>
+          users.filter((user: any) => {
+            const invitedAt = user.invitedAt ? new Date(user.invitedAt) : null;
+            if (!invitedAt) return false;
+            const [year, monthIdx] = month.key.split('-');
+            return (
+              invitedAt.getFullYear() === Number(year) &&
+              invitedAt.getMonth() + 1 === Number(monthIdx)
+            );
+          }).length
+        );
+
+        setUserTrend(
+          months.map((month, idx) => ({
+            name: month.label,
+            admins: userBuckets[idx] ?? 0,
+            invites: inviteBuckets[idx] ?? 0,
+          }))
+        );
+      };
+
+      buildMonthlyBuckets();
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatChange = (change: number) => {
-    const isPositive = change >= 0;
-    const Icon = isPositive ? MdArrowUpward : MdArrowDownward;
-    return (
-      <div className={cn('flex items-center gap-1 text-sm font-semibold', 
-        isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
-      )}>
-        <Icon className="w-4 h-4" />
-        <span>{Math.abs(change)}%</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-1">vs last month</span>
-      </div>
-    );
   };
 
   if (loading) {
@@ -276,7 +358,6 @@ export function Dashboard() {
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           const value = stats[stat.key as keyof DashboardStats] as number;
-          const change = stat.changeKey ? stats[stat.changeKey as keyof DashboardStats] as number : 0;
           const displayValue = stat.format ? stat.format(value) : value;
           
           return (
@@ -293,7 +374,6 @@ export function Dashboard() {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{stat.title}</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{displayValue}</p>
-                  {formatChange(change)}
                 </div>
                 <div className={cn('w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md', stat.gradient)}>
                   <Icon className="w-6 h-6 text-white" />
@@ -314,15 +394,15 @@ export function Dashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <button
-            onClick={() => navigate('/users?create=true')}
+            onClick={() => navigate('/users/new')}
             className="flex flex-col items-center gap-3 p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-950/30 dark:hover:to-indigo-950/30 transition-all group"
           >
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
               <MdPersonAdd className="w-6 h-6 text-white" />
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">Add Admin User</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Create new admin user</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">Add User</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Invite a new admin user</p>
             </div>
           </button>
 
@@ -367,198 +447,89 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Quick Actions & Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-                <MdNotifications className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pending Actions</h3>
-            </div>
+    {/* Charts Grid */}
+    <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4">
+      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Organization Trend</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">New orgs created by portal (last 6 months)</p>
           </div>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
-              <div className="flex items-center gap-2">
-                <MdWarning className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">License Expiring</span>
-              </div>
-              <span className="text-sm font-bold text-amber-600 dark:text-amber-400">5</span>
-            </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center gap-2">
-                <MdSchedule className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Onboarding Pending</span>
-              </div>
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">12</span>
-            </div>
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+            <MdTrendingUp className="w-5 h-5 text-white" />
           </div>
         </div>
-
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
-                <MdCheckCircle className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">New organization added</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">2 hours ago</p>
-            </div>
-            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">License activated</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">5 hours ago</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
-                <MdTrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Performance</h3>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
-                <span className="text-sm font-bold text-gray-900 dark:text-white">99.9%</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '99.9%' }}></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">API Response Time</span>
-                <span className="text-sm font-bold text-gray-900 dark:text-white">120ms</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '95%' }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <AreaChart data={orgTrend}>
+            <defs>
+              <linearGradient id="orgCustomers" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="orgVendors" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" className="dark:stroke-gray-700" />
+            <XAxis dataKey="name" stroke="#6b7280" />
+            <YAxis stroke="#6b7280" allowDecimals={false} />
+            <Tooltip contentStyle={{ borderRadius: 8 }} />
+            <Legend />
+            <Area type="monotone" dataKey="customers" stroke="#3b82f6" fill="url(#orgCustomers)" strokeWidth={2} name="Customers" />
+            <Area type="monotone" dataKey="vendors" stroke="#8b5cf6" fill="url(#orgVendors)" strokeWidth={2} name="Vendors" />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Organization Growth */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Organization Growth</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Customer vs Vendor organizations</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-              <MdTrendingUp className="w-5 h-5 text-white" />
-            </div>
+      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">License Activity</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Active vs inactive licenses issued (last 6 months)</p>
           </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={orgGrowthData}>
-              <defs>
-                <linearGradient id="customerGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="vendorGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
-              <XAxis dataKey="name" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip
-                contentStyle={{
-                  background: 'white',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-              <Legend />
-              <Area type="monotone" dataKey="customer" stroke="#3b82f6" fill="url(#customerGradient)" strokeWidth={2} name="Customer Orgs" />
-              <Area type="monotone" dataKey="vendor" stroke="#8b5cf6" fill="url(#vendorGradient)" strokeWidth={2} name="Vendor Orgs" />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+            <MdCardMembership className="w-5 h-5 text-white" />
+          </div>
         </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={licenseTrend}>
+            <CartesianGrid strokeDasharray="3 3" className="dark:stroke-gray-700" />
+            <XAxis dataKey="name" stroke="#6b7280" />
+            <YAxis stroke="#6b7280" allowDecimals={false} />
+            <Tooltip contentStyle={{ borderRadius: 8 }} />
+            <Legend />
+            <Bar dataKey="active" stackId="a" fill="#10b981" name="Active" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="inactive" stackId="a" fill="#f97316" name="Inactive" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
 
-        {/* License Status */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">License Status</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Distribution of licenses</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
-              <MdVpnKey className="w-5 h-5 text-white" />
-            </div>
+      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">User Timeline</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Admins created vs invitations sent (last 6 months)</p>
           </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={licenseStatusData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              >
-                {licenseStatusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: 'white',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Activity Timeline */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm lg:col-span-2">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Weekly Activity</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Platform activity overview</p>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
-              <MdTrendingUp className="w-5 h-5 text-white" />
-            </div>
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
+            <MdTimeline className="w-5 h-5 text-white" />
           </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={monthlyActivityData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
-              <XAxis dataKey="name" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip
-                contentStyle={{
-                  background: 'white',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-              <Line type="monotone" dataKey="activities" stroke="#f59e0b" strokeWidth={2} activeDot={{ r: 8 }} />
-            </LineChart>
-          </ResponsiveContainer>
         </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={userTrend}>
+            <CartesianGrid strokeDasharray="3 3" className="dark:stroke-gray-700" />
+            <XAxis dataKey="name" stroke="#6b7280" />
+            <YAxis stroke="#6b7280" allowDecimals={false} />
+            <Tooltip contentStyle={{ borderRadius: 8 }} />
+            <Legend />
+            <Line type="monotone" dataKey="admins" stroke="#3b82f6" strokeWidth={2} dot radius={4} name="Admins" />
+            <Line type="monotone" dataKey="invites" stroke="#facc15" strokeWidth={2} dot radius={4} name="Invites" />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 

@@ -15,6 +15,7 @@ import {
   MdChevronRight,
   MdRocketLaunch,
   MdLogout,
+  MdPeople,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
@@ -30,6 +31,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/dashboard', label: 'Dashboard', icon: MdDashboard },
+  { path: '/users', label: 'Users', icon: MdPeople },
   { path: '/catalogue', label: 'Catalogue', icon: MdStore },
   { path: '/inventory', label: 'Inventory', icon: MdInventory },
   { path: '/quotations', label: 'Quotations', icon: MdDescription },
