@@ -6,21 +6,11 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
-import { OrganizationForm } from '../CustomerOrganizations/OrganizationForm';
 import { useToast } from '../../components/shared/Toast';
-import {
-  MdAdd,
-  MdFilterList,
-  MdSearch,
-  MdDownload,
-  MdDelete,
-  MdCheckBox,
-  MdCheckBoxOutlineBlank,
-} from 'react-icons/md';
+import { MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { cn } from '../../lib/utils';
-import { apiFetch } from '../../utils/api';
-import { OrganizationInvitationsModal } from './OrganizationInvitationsModal';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface Organization {
   _id: string;
@@ -34,111 +24,10 @@ interface Organization {
 export function OrganizationsPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOrgs, setSelectedOrgs] = useState<Set<string>>(new Set());
-  const [isInvitationsModalOpen, setIsInvitationsModalOpen] = useState(false);
-  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
-
-  const handleOpenInvitations = (org: Organization) => {
-    setSelectedOrganization(org);
-    setIsInvitationsModalOpen(true);
-  };
-
-  const handleCloseInvitations = () => {
-    setSelectedOrganization(null);
-    setIsInvitationsModalOpen(false);
-  };
-
-  // Mock data for development
-  const getMockOrganizations = (): Organization[] => {
-    const now = Date.now();
-    return [
-      {
-        _id: '1',
-        name: 'Acme Corporation',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 90 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '2',
-        name: 'Tech Solutions Inc',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 75 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '3',
-        name: 'Global Industries',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: true,
-        createdAt: new Date(now - 365 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '4',
-        name: 'Digital Ventures LLC',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 45 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '5',
-        name: 'Innovation Labs',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: false,
-        createdAt: new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '6',
-        name: 'Cloud Systems Group',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 20 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '7',
-        name: 'Enterprise Solutions',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: true,
-        createdAt: new Date(now - 180 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '8',
-        name: 'Startup Hub',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: true,
-        createdAt: new Date(now - 15 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '9',
-        name: 'Mega Corp',
-        type: 'customer',
-        portalType: 'customer',
-        isActive: false,
-        createdAt: new Date(now - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '10',
-        name: 'Future Tech',
-        type: 'vendor',
-        portalType: 'vendor',
-        isActive: true,
-        createdAt: new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
-  };
 
   // Fetch all organizations (customer and vendor)
   const { data: orgsData, isLoading } = useQuery({
@@ -156,25 +45,21 @@ export function OrganizationsPage() {
           params.append('search', searchQuery);
         }
 
-        const response = await apiFetch(`/api/v1/admin/organizations?${params.toString()}`);
+        const response = await fetch(`${API_URL}/api/v1/admin/organizations?${params}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
 
         if (!response.ok) {
-          // Return mock data if API doesn't exist yet or returns error
-          if (response.status === 404) {
-            return getMockOrganizations();
-          }
           const error = await response.json().catch(() => ({ error: 'Failed to fetch organizations' }));
           throw new Error(error.error || 'Failed to fetch organizations');
         }
         const data = await response.json();
-        return data.data || getMockOrganizations();
+        return data.data || [];
       } catch (error: any) {
-        // Return mock data on network errors to prevent UI breaking
-        if (error.name === 'TypeError' || error.message.includes('fetch')) {
-          console.error('Network error fetching organizations:', error);
-          return getMockOrganizations();
-        }
-        throw error;
+        console.error('Error fetching organizations:', error);
+        return [];
       }
     },
     retry: 1,
@@ -183,8 +68,11 @@ export function OrganizationsPage() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (orgId: string) => {
-      const response = await apiFetch(`/api/v1/admin/organizations/${orgId}`, {
+      const response = await fetch(`${API_URL}/api/v1/admin/organizations/${orgId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
       });
 
       if (!response.ok) {
@@ -206,9 +94,9 @@ export function OrganizationsPage() {
     if (!orgsData) return [];
     if (!searchQuery) return orgsData;
     const query = searchQuery.toLowerCase();
-    return orgsData.filter((org: Organization) => 
+    return orgsData.filter(org => 
       org.name.toLowerCase().includes(query) ||
-      org.portalType.toLowerCase().includes(query)
+      org.type.toLowerCase().includes(query)
     );
   }, [orgsData, searchQuery]);
 
@@ -216,7 +104,7 @@ export function OrganizationsPage() {
     if (selectedOrgs.size === filteredOrgs.length) {
       setSelectedOrgs(new Set());
     } else {
-      setSelectedOrgs(new Set(filteredOrgs.map((org: Organization) => org._id)));
+      setSelectedOrgs(new Set(filteredOrgs.map(org => org._id)));
     }
   };
 
@@ -247,34 +135,10 @@ export function OrganizationsPage() {
     }
   };
 
-  const handleCreate = () => {
-    setEditingOrg(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (org: Organization) => {
-    setEditingOrg(org);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (org: Organization) => {
     if (window.confirm(`Are you sure you want to delete ${org.name}?`)) {
       deleteMutation.mutate(org._id);
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setEditingOrg(null);
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['organizations'] });
-    showToast(
-      editingOrg ? 'Organization updated successfully!' : 'Organization created successfully!',
-      'success'
-    );
-    handleClose();
   };
 
   const handleExport = () => {
@@ -316,7 +180,7 @@ export function OrganizationsPage() {
     },
     {
       key: 'name',
-      header: 'Organization Name',
+      header: 'Name',
       render: (org: Organization) => (
         <div className="font-semibold text-gray-900 dark:text-white">{org.name}</div>
       ),
@@ -338,15 +202,6 @@ export function OrganizationsPage() {
       ),
     },
     {
-      key: 'portalType',
-      header: 'Portal Type',
-      render: (org: Organization) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-800">
-          {org.portalType}
-        </span>
-      ),
-    },
-    {
       key: 'isActive',
       header: 'Status',
       render: (org: Organization) => (
@@ -360,21 +215,6 @@ export function OrganizationsPage() {
         >
           {org.isActive ? 'Active' : 'Inactive'}
         </span>
-      ),
-    },
-    {
-      key: 'invitations',
-      header: 'Invitations',
-      render: (org: Organization) => (
-        <button
-          onClick={(event) => {
-            event.stopPropagation();
-            handleOpenInvitations(org);
-          }}
-          className="px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
-        >
-          Manage
-        </button>
       ),
     },
     {
@@ -400,27 +240,20 @@ export function OrganizationsPage() {
             Manage customer and vendor organizations
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-colors font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
-        >
-          <MdAdd className="w-5 h-5" />
-          Add Organization
-        </button>
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 backdrop-blur-xl border border-gray-200 dark:border-gray-800 shadow-lg">
+      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
           <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-400 flex-shrink-0" />
+            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
             <input
               type="text"
-              placeholder="Search organizations by name or portal type..."
+              placeholder="Search organizations by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-400"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
@@ -434,20 +267,20 @@ export function OrganizationsPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium appearance-none cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
               >
-                <option value="all" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">All Types</option>
-                <option value="customer" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Customer Only</option>
-                <option value="vendor" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Vendor Only</option>
+                <option value="all">All Types</option>
+                <option value="customer">Customer Only</option>
+                <option value="vendor">Vendor Only</option>
               </select>
               <select
                 value={filterActive}
                 onChange={(e) => setFilterActive(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium appearance-none cursor-pointer"
+                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
               >
-                <option value="all" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">All Status</option>
-                <option value="active" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Active Only</option>
-                <option value="inactive" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Inactive Only</option>
+                <option value="all">All Status</option>
+                <option value="active">Active Only</option>
+                <option value="inactive">Inactive Only</option>
               </select>
             </div>
             {selectedOrgs.size > 0 && (
@@ -470,19 +303,19 @@ export function OrganizationsPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white dark:bg-gray-900 backdrop-blur-xl border border-gray-200 dark:border-gray-800 shadow-lg">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 dark:border-gray-700 border-t-blue-600 dark:border-t-blue-400"></div>
+        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading organizations...</p>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 backdrop-blur-xl border border-gray-200 dark:border-gray-800 shadow-lg">
+        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Showing {filteredOrgs.length} organization{filteredOrgs.length !== 1 ? 's' : ''}
             </p>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-200"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               <MdDownload className="w-4 h-4" />
               Export
@@ -491,37 +324,14 @@ export function OrganizationsPage() {
           <DataTable
             columns={columns}
             data={filteredOrgs}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             emptyMessage="No organizations found."
           />
         </div>
       )}
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title={editingOrg ? 'Edit Organization' : 'Create Organization'}
-        size="medium"
-      >
-        <OrganizationForm
-          organization={editingOrg}
-          organizationType={editingOrg?.type === 'vendor' ? 'vendor' : 'customer'}
-          onSuccess={handleSuccess}
-          onCancel={handleClose}
-        />
-      </Modal>
-
-      <OrganizationInvitationsModal
-        organization={selectedOrganization}
-        isOpen={isInvitationsModalOpen}
-        onClose={handleCloseInvitations}
-        apiBasePath="/api/v1/admin"
-      />
     </div>
   );
 }
-
 
 

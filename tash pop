@@ -1,0 +1,246 @@
+[1mdiff --git a/.nx/workspace-data/file-map.json b/.nx/workspace-data/file-map.json[m
+[1mindex 2713e97..e582d03 100644[m
+[1m--- a/.nx/workspace-data/file-map.json[m
+[1m+++ b/.nx/workspace-data/file-map.json[m
+[36m@@ -29,268 +29,34 @@[m
+     }[m
+   ],[m
+   "fileMap": {[m
+[31m-    "nonProjectFiles": [[m
+[31m-      {[m
+[31m-        "file": ".env.example",[m
+[31m-        "hash": "2863894286761031765"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".vscode/launch.json",[m
+[31m-        "hash": "13975710849595879166"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "GUI_EDITOR_QUICK_START.md",[m
+[31m-        "hash": "3188381554372801161"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".prettierrc.json",[m
+[31m-        "hash": "4196894295746375202"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "package.json",[m
+[31m-        "hash": "16759891412938897758"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/src/seed-policies.js",[m
+[31m-        "hash": "2201952658513736008"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "SERVICES_STATUS.md",[m
+[31m-        "hash": "14682597477091681870"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "MONGODB_ATLAS_TROUBLESHOOTING.md",[m
+[31m-        "hash": "1337624838056679927"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "FIXES_APPLIED.md",[m
+[31m-        "hash": "11933117516134182443"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/api-client/src/types.ts",[m
+[31m-        "hash": "10770875054008843389"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".cursor/worktrees.json",[m
+[31m-        "hash": "15807341515258800370"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "LOGIN_INSTRUCTIONS.md",[m
+[31m-        "hash": "2642865460983883826"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "IMPLEMENTATION_STATUS.md",[m
+[31m-        "hash": "17558819527478326976"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "TESTING_SETUP.md",[m
+[31m-        "hash": "2052679588973853388"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "BLANK_SCREEN_FIX.md",[m
+[31m-        "hash": "15825578043201617973"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/src/seed-policies.ts",[m
+[31m-        "hash": "13615391909774064492"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".prettierrc",[m
+[31m-        "hash": "6820402234827505055"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "BLANK_SCREEN_DEBUG.md",[m
+[31m-        "hash": "6592984082148431808"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".vscode/extensions.json",[m
+[31m-        "hash": "14244474672258854795"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".husky/pre-commit",[m
+[31m-        "hash": "220362945356418324"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/api-client/src/client.ts",[m
+[31m-        "hash": "4023659966195068011"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "nx.json",[m
+[31m-        "hash": "5351305836524991426"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/api-client/package.json",[m
+[31m-        "hash": "16375877309740353502"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/src/seed-policies.d.ts",[m
+[31m-        "hash": "4332728724135718476"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "NEXT_STEPS.md",[m
+[31m-        "hash": "17604002275575404502"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "TECH_PORTAL_PAGES_COMPLETE.md",[m
+[31m-        "hash": "4234058783100402569"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "EMAIL_SETUP_VERIFICATION.md",[m
+[31m-        "hash": "6797188933888338818"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "START_SERVICES.sh",[m
+[31m-        "hash": "13943916794983783462"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/shared/src/index.ts",[m
+[31m-        "hash": "4304625278857484256"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "QUICK_START.md",[m
+[31m-        "hash": "5307705969095916945"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "tsconfig.json",[m
+[31m-        "hash": "6217544499972585"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "ENV_FIX.md",[m
+[31m-        "hash": "5814289805096255933"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/package.json",[m
+[31m-        "hash": "8136601949042255744"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".gitignore",[m
+[31m-        "hash": "9563621418486234261"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "START_INSTRUCTIONS.md",[m
+[31m-        "hash": "12934061058329908787"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "tsconfig.base.json",[m
+[31m-        "hash": "6071606741697366279"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "RUNNING_SERVICES.md",[m
+[31m-        "hash": "7311615518036842285"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "REBUILD_COMPLETE.md",[m
+[31m-        "hash": "307331649876870875"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "BUSINESS_LOGIC_EDITOR_SETUP.md",[m
+[31m-        "hash": "12426584591216505008"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "README.md",[m
+[31m-        "hash": "4244301727487409497"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "RUN_TECH_PORTAL.md",[m
+[31m-        "hash": "10646342700271663589"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "TECH_PORTAL_LOGIN.md",[m
+[31m-        "hash": "5321984329385496069"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".editorconfig",[m
+[31m-        "hash": "11532813898455409296"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".prettierignore",[m
+[31m-        "hash": "17085498363870782104"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "FINAL_STATUS.md",[m
+[31m-        "hash": "14367839209081530189"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "REBUILD_SUMMARY.md",[m
+[31m-        "hash": "5513457390561267991"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".cursorignore",[m
+[31m-        "hash": "11349300793510315973"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/shared/src/types/index.ts",[m
+[31m-        "hash": "13213567125166492440"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/src/seed-policies.d.ts.map",[m
+[31m-        "hash": "8497717059861594618"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/api-client/src/index.ts",[m
+[31m-        "hash": "3726262495973243081"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": ".lintstagedrc.json",[m
+[31m-        "hash": "3945457528545412622"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/shared/package.json",[m
+[31m-        "hash": "3002669549817913641"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "GETTING_STARTED.md",[m
+[31m-        "hash": "5395838317665630981"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/src/seed-policies.js.map",[m
+[31m-        "hash": "4148616629570244429"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/casbin-config/src/model.conf",[m
+[31m-        "hash": "6707469528610785699"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "GUI_EDITOR_USAGE_GUIDE.md",[m
+[31m-        "hash": "6133547227629432270"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "packages/api-client/src/auth.ts",[m
+[31m-        "hash": "9716211796236435765"[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "file": "package-lock.json",[m
+[31m-        "hash": "11383436957028724788"[m
+[31m-      }[m
+[31m-    ],[m
+     "projectFileMap": {[m
+       "@euroasiann/api": [[m
+         {[m
+           "

@@ -1,0 +1,25 @@
+warning: in the working copy of '.nx/workspace-data/d/daemon.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.nx/workspace-data/d/server-process.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.nx/workspace-data/file-map.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.nx/workspace-data/project-graph.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.nx/workspace-data/vite-9347777721732807074.hash', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/admin-portal/src/context/ThemeContext.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/admin-portal/src/pages/Dashboard.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/customer-portal/src/context/ThemeContext.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/customer-portal/src/pages/Login.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/tech-portal/src/context/ThemeContext.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/vendor-portal/src/context/ThemeContext.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/vendor-portal/src/pages/Login.tsx', LF will be replaced by CRLF the next time Git touches it
+ .nx/workspace-data/d/daemon.log                    |  415 [32m+++++[m
+ .nx/workspace-data/d/server-process.json           |    2 [32m+[m[31m-[m
+ .nx/workspace-data/file-map.json                   | 1632 [32m+++++++++[m[31m---------[m
+ .nx/workspace-data/nx_files.nxt                    |  Bin [31m23892[m -> [32m23892[m bytes
+ .nx/workspace-data/project-graph.json              |    2 [32m+[m[31m-[m
+ .nx/workspace-data/vite-9347777721732807074.hash   | 1135 [32m+++++++++++++[m
+ .../src/pages/Users/UserCreatePage.tsx             |    1 [32m+[m
+ apps/api/logs/combined.log                         | 1752 [32m++++++++++++++++++++[m
+ apps/api/logs/error.log                            |  161 [32m++[m
+ apps/api/src/controllers/role.controller.ts        |    1 [32m+[m
+ apps/api/src/models/role.model.ts                  |    1 [32m+[m
+ apps/api/src/routes/role.routes.ts                 |    1 [32m+[m
+ 12 files changed, 4285 insertions(+), 818 deletions(-)

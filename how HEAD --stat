@@ -1,0 +1,46 @@
+[33mcommit d82b7016f03ce1019ff744736f8807ab7a03c369[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mLalithya[m[33m, [m[1;31morigin/Lalithya[m[33m)[m
+Author: Chavala Lalithya <145139531+lalithyachavala@users.noreply.github.com>
+Date:   Sun Nov 9 18:25:39 2025 +0530
+
+    overhaul role/permission handling across portals (new Role model, API routes/services, seeded roles, updated user forms)
+
+ .nx/workspace-data/d/daemon.log                    | 11917 [32m++++++++[m
+ .nx/workspace-data/d/server-process.json           |     2 [32m+[m[31m-[m
+ .nx/workspace-data/file-map.json                   |  1122 [32m+[m[31m-[m
+ .nx/workspace-data/nx_files.nxt                    |   Bin [31m22852[m -> [32m23892[m bytes
+ .nx/workspace-data/project-graph.json              |     2 [32m+[m[31m-[m
+ .nx/workspace-data/vite-9347777721732807074.hash   | 29745 [32m+++++++++++++++++++[m
+ apps/admin-portal/src/app/app.tsx                  |     2 [32m+[m
+ .../src/components/shared/DataTable.tsx            |     4 [32m+[m[31m-[m
+ apps/admin-portal/src/context/ThemeContext.tsx     |    54 [32m+[m[31m-[m
+ .../CustomerOrganizations/OrganizationForm.tsx     |    48 [32m+[m[31m-[m
+ apps/admin-portal/src/pages/Dashboard.tsx          |   567 [32m+[m[31m-[m
+ .../src/pages/Organizations/OrganizationsPage.tsx  |   163 [32m+[m[31m-[m
+ .../src/pages/Users/UserCreatePage.tsx             |    76 [32m+[m
+ apps/admin-portal/src/pages/Users/UserForm.tsx     |   837 [32m+[m[31m-[m
+ apps/admin-portal/src/pages/Users/UsersPage.tsx    |   121 [32m+[m[31m-[m
+ apps/api/logs/combined.log                         | 11053 [32m+++++++[m
+ apps/api/logs/error.log                            |  1594 [32m+[m
+ apps/api/src/app.ts                                |     2 [32m+[m
+ apps/api/src/controllers/role.controller.ts        |    81 [32m+[m
+ apps/api/src/models/role.model.ts                  |    57 [32m+[m
+ apps/api/src/models/user.model.ts                  |     6 [32m+[m
+ apps/api/src/routes/admin-portal.routes.ts         |    12 [32m+[m
+ apps/api/src/routes/customer-portal.routes.ts      |    20 [32m+[m
+ apps/api/src/routes/role.routes.ts                 |    15 [32m+[m
+ apps/api/src/routes/vendor-portal.routes.ts        |    20 [32m+[m
+ apps/api/src/scripts/seed.ts                       |   219 [32m+[m[31m-[m
+ apps/api/src/services/role.service.ts              |   122 [32m+[m
+ apps/api/src/services/user.service.ts              |   154 [32m+[m[31m-[m
+ apps/customer-portal/src/context/ThemeContext.tsx  |    54 [32m+[m[31m-[m
+ apps/customer-portal/src/pages/Login.tsx           |    59 [32m+[m[31m-[m
+ apps/tech-portal/src/context/ThemeContext.tsx      |    59 [32m+[m[31m-[m
+ apps/tech-portal/src/pages/Users/UserForm.tsx      |  1018 [32m+[m[31m-[m
+ apps/tech-portal/src/pages/Users/UsersPage.tsx     |    96 [32m+[m[31m-[m
+ apps/vendor-portal/src/app/app.tsx                 |     3 [32m+[m[31m-[m
+ .../src/components/template/Sidebar.tsx            |     2 [32m+[m
+ apps/vendor-portal/src/context/ThemeContext.tsx    |    54 [32m+[m[31m-[m
+ apps/vendor-portal/src/pages/Login.tsx             |    59 [32m+[m[31m-[m
+ apps/vendor-portal/src/pages/Users.tsx             |   349 [32m+[m
+ packages/shared/src/types/index.ts                 |    12 [32m+[m
+ 39 files changed, 58036 insertions(+), 1744 deletions(-)

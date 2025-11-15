@@ -3,14 +3,11 @@
  * Admin portal page to manage users across all organizations
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
-import { UserForm } from './UserForm';
-import { MdAdd, MdSearch, MdFilterList, MdDownload, MdEdit, MdDelete, MdPerson, MdPersonAdd, MdCheckCircle, MdVpnKey, MdPeople } from 'react-icons/md';
+import { MdSearch, MdFilterList, MdDownload, MdCheckCircle, MdVpnKey, MdPeople } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -21,6 +18,13 @@ interface User {
   firstName: string;
   lastName: string;
   role: string;
+  roleId?: string | {
+    _id: string;
+    name: string;
+    key: string;
+    permissions?: string[];
+  };
+  roleName?: string;
   organizationId?: string;
   organizationName?: string;
   isActive: boolean;
@@ -31,100 +35,10 @@ interface User {
 export function UsersPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleCreate = () => {
-    setEditingUser(null);
-    setIsModalOpen(true);
-  };
-
-  // Check if we should open the modal from query parameter
-  useEffect(() => {
-    const createParam = searchParams.get('create');
-    if (createParam === 'true') {
-      handleCreate();
-      // Remove the query parameter from URL
-      setSearchParams({}, { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  // Mock data for development
-  const getMockUsers = (): User[] => {
-    return [
-      {
-        _id: '1',
-        email: 'admin@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        role: 'admin_user',
-        organizationName: 'Acme Corp',
-        isActive: true,
-        lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '2',
-        email: 'jane.smith@example.com',
-        firstName: 'Jane',
-        lastName: 'Smith',
-        role: 'admin_user',
-        organizationName: 'Tech Solutions',
-        isActive: true,
-        lastLogin: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '3',
-        email: 'michael.brown@example.com',
-        firstName: 'Michael',
-        lastName: 'Brown',
-        role: 'admin_user',
-        organizationName: 'Global Inc',
-        isActive: true,
-        lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '4',
-        email: 'sarah.johnson@example.com',
-        firstName: 'Sarah',
-        lastName: 'Johnson',
-        role: 'admin_user',
-        organizationName: 'Digital Ventures',
-        isActive: false,
-        lastLogin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '5',
-        email: 'david.wilson@example.com',
-        firstName: 'David',
-        lastName: 'Wilson',
-        role: 'admin_user',
-        organizationName: 'Innovation Labs',
-        isActive: true,
-        lastLogin: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        _id: '6',
-        email: 'emily.davis@example.com',
-        firstName: 'Emily',
-        lastName: 'Davis',
-        role: 'admin_user',
-        organizationName: 'Cloud Systems',
-        isActive: true,
-        lastLogin: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
-  };
 
   // Fetch users
   const { data: usersData, isLoading } = useQuery({
@@ -149,18 +63,14 @@ export function UsersPage() {
         });
 
         if (!response.ok) {
-          // Return mock data if API doesn't exist yet
-          return getMockUsers();
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.error || error.message || 'Failed to fetch users');
         }
         const data = await response.json();
         return data.data as User[];
       } catch (error: any) {
-        // Return mock data on network errors
-        if (error.name === 'TypeError' || error.message.includes('fetch')) {
-          console.error('Network error fetching users:', error);
-          return getMockUsers();
-        }
-        throw error;
+        console.error('Error fetching users:', error);
+        return [];
       }
     },
   });
@@ -202,29 +112,10 @@ export function UsersPage() {
     },
   });
 
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (user: User) => {
     if (window.confirm(`Are you sure you want to delete ${user.email}?`)) {
       deleteMutation.mutate(user._id);
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setEditingUser(null);
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    showToast(
-      editingUser ? 'User updated successfully!' : 'User created successfully!',
-      'success'
-    );
-    handleClose();
   };
 
   const columns = [
@@ -238,7 +129,14 @@ export function UsersPage() {
           </div>
           <div>
             <div className="font-semibold text-gray-900 dark:text-white">
-              {user.firstName} {user.lastName}
+              {(() => {
+                const first = user.firstName?.trim() || '';
+                const last = user.lastName?.trim() || '';
+                if (!last || first.toLowerCase() === last.toLowerCase()) {
+                  return first || user.email;
+                }
+                return `${first} ${last}`;
+              })()}
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
           </div>
@@ -259,7 +157,9 @@ export function UsersPage() {
       header: 'Role',
       render: (user: User) => (
         <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800">
-          {user.role}
+          {typeof user.roleId === 'object'
+            ? user.roleId.name
+            : user.roleName || user.role}
         </span>
       ),
     },
@@ -320,13 +220,6 @@ export function UsersPage() {
             Manage admin users and their permissions
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-colors font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
-        >
-          <MdPersonAdd className="w-5 h-5" />
-          Add Admin User
-        </button>
       </div>
 
       {/* Summary Cards */}
@@ -462,27 +355,14 @@ export function UsersPage() {
             <DataTable
               columns={columns}
               data={filteredUsers}
-              onEdit={handleEdit}
               onDelete={handleDelete}
+              actionsLabel="Quick Actions"
               emptyMessage="No users found."
             />
           </>
         )}
       </div>
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title={editingUser ? 'Edit User' : 'Create Admin User'}
-        size="medium"
-      >
-        <UserForm
-          user={editingUser}
-          onSuccess={handleSuccess}
-          onCancel={handleClose}
-        />
-      </Modal>
     </div>
   );
 }

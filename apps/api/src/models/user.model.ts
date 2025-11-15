@@ -8,6 +8,7 @@ export interface IUser extends Document {
   lastName: string;
   portalType: PortalType;
   role: string;
+  roleId?: mongoose.Types.ObjectId;
   organizationId?: mongoose.Types.ObjectId;
   isActive: boolean;
   lastLogin?: Date;
@@ -49,6 +50,11 @@ const UserSchema = new Schema<IUser>(
     role: {
       type: String,
       required: true,
+      index: true,
+    },
+    roleId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Role',
       index: true,
     },
     organizationId: {

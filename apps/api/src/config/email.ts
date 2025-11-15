@@ -3,15 +3,41 @@ import { logger } from './logger';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 
 // Load environment variables from root .env file
+// Note: environment.ts already loads .env, but we try here as well for scripts that use email directly
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const envPath = path.resolve(__dirname, '../../../.env');
+
+// Try multiple locations for .env file
+const possiblePaths = [
+  path.resolve(__dirname, '../../../.env'), // Root of workspace
+  path.resolve(__dirname, '../../../../.env'), // Alternative root path
+  path.resolve(__dirname, '../../.env'), // apps/.env
+  path.resolve(process.cwd(), '.env'), // Current working directory
+];
+
+let envPath: string | undefined;
+for (const possiblePath of possiblePaths) {
+  if (existsSync(possiblePath)) {
+    envPath = possiblePath;
+    break;
+  }
+}
+
+if (!envPath) {
+  // Fallback to default
+  envPath = path.resolve(__dirname, '../../../.env');
+}
+
 const envResult = dotenv.config({ path: envPath });
 
 if (envResult.error) {
-  logger.warn(`Failed to load .env from ${envPath}: ${envResult.error.message}`);
+  // Only warn if file doesn't exist (ENOENT), not if it's already loaded
+  if (envResult.error.message.includes('ENOENT')) {
+    logger.warn(`Failed to load .env from ${envPath}: ${envResult.error.message}`);
+  }
 } else {
   logger.info(`✅ Loaded .env from: ${envPath}`);
   logger.info(`   EMAIL_PASS is ${process.env.EMAIL_PASS ? 'SET' : 'NOT SET'}`);

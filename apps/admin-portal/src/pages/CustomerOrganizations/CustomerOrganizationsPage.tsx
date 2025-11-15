@@ -6,10 +6,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
-import { OrganizationForm } from './OrganizationForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdAdd, MdBusiness, MdFilterList } from 'react-icons/md';
+import { MdBusiness, MdFilterList } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -26,8 +24,6 @@ interface Organization {
 export function CustomerOrganizationsPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
 
   // Fetch customer organizations
@@ -75,34 +71,10 @@ export function CustomerOrganizationsPage() {
     },
   });
 
-  const handleCreate = () => {
-    setEditingOrg(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (org: Organization) => {
-    setEditingOrg(org);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (org: Organization) => {
     if (window.confirm(`Are you sure you want to delete ${org.name}?`)) {
       deleteMutation.mutate(org._id);
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setEditingOrg(null);
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['customer-orgs'] });
-    showToast(
-      editingOrg ? 'Customer organization updated successfully!' : 'Customer organization created successfully!',
-      'success'
-    );
-    handleClose();
   };
 
   const columns = [
@@ -161,13 +133,6 @@ export function CustomerOrganizationsPage() {
             Manage customer organizations and their settings
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-colors font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
-        >
-          <MdAdd className="w-5 h-5" />
-          Add Customer Org
-        </button>
       </div>
 
       {/* Filters */}
@@ -200,27 +165,12 @@ export function CustomerOrganizationsPage() {
           <DataTable
             columns={columns}
             data={orgsData || []}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             emptyMessage="No customer organizations found."
           />
         </div>
       )}
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title={editingOrg ? 'Edit Customer Organization' : 'Create Customer Organization'}
-        size="medium"
-      >
-        <OrganizationForm
-          organization={editingOrg}
-          organizationType="customer"
-          onSuccess={handleSuccess}
-          onCancel={handleClose}
-        />
-      </Modal>
     </div>
   );
 }

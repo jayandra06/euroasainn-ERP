@@ -16,6 +16,7 @@ import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
 import { AdminUsersPage } from '../pages/AdminUsers/AdminUsersPage';
 import { SettingsPage } from '../pages/Settings/SettingsPage';
+import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -57,6 +58,7 @@ export function App() {
                   <Route path="licenses" element={<LicensesPage />} />
                   <Route path="onboarding-data" element={<OnboardingDataPage />} />
                   <Route path="admin-users" element={<AdminUsersPage />} />
+                  <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="profile" element={<div className="p-8">Profile Page - Coming Soon</div>} />
                 </Route>
