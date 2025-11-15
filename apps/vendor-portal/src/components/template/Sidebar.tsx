@@ -16,26 +16,83 @@ import {
   MdRocketLaunch,
   MdLogout,
   MdPeople,
+  MdTrendingUp,
+  MdRequestQuote,
+  MdAssignment,
+  MdCategory,
+  MdBusiness,
+  MdInfo,
+  MdDirectionsBoat,
+  MdBook,
+  MdHelp,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+  MdFolder,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-interface NavItem {
+interface NavSubItem {
   path: string;
   label: string;
   icon: IconType;
+}
+
+interface NavItem {
+  path?: string;
+  label: string;
+  icon: IconType;
   badge?: string;
+  subItems?: NavSubItem[];
+  isExpandable?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', label: 'Dashboard', icon: MdDashboard },
+  {
+    label: 'Vendor Dashboard',
+    icon: MdFolder,
+    isExpandable: true,
+    subItems: [
+      { path: '/dashboard', label: 'Dashboard', icon: MdDashboard },
+      { path: '/rfqs', label: 'RFQs', icon: MdRequestQuote },
+      { path: '/claim-requests', label: 'Claim Requests', icon: MdAssignment },
+      { path: '/categories', label: 'Categories', icon: MdCategory },
+      { path: '/brands', label: 'Brands', icon: MdBusiness },
+      { path: '/orders', label: 'Orders', icon: MdShoppingCart },
+      { path: '/details', label: 'Details', icon: MdInfo },
+    ],
+  },
+  {
+    label: 'Vessel Management',
+    icon: MdDirectionsBoat,
+    isExpandable: true,
+    subItems: [
+      { path: '/vessel-management', label: 'Vessel Management', icon: MdDirectionsBoat },
+      { path: '/vessel-details', label: 'Vessel Details', icon: MdInfo },
+    ],
+  },
+  {
+    label: 'Catalog',
+    icon: MdBook,
+    isExpandable: true,
+    subItems: [
+      { path: '/catalog-management', label: 'Catalog Management', icon: MdInventory },
+    ],
+  },
+  {
+    label: 'Support',
+    icon: MdHelp,
+    isExpandable: true,
+    subItems: [
+      { path: '/support', label: 'Support', icon: MdHelp },
+      { path: '/terms-of-use', label: 'Terms Of Use', icon: MdDescription },
+      { path: '/privacy-policy', label: 'Privacy Policy', icon: MdDescription },
+    ],
+  },
+  { path: '/analytics', label: 'Analytics', icon: MdTrendingUp },
   { path: '/users', label: 'Users', icon: MdPeople },
-  { path: '/catalogue', label: 'Catalogue', icon: MdStore },
-  { path: '/inventory', label: 'Inventory', icon: MdInventory },
-  { path: '/quotations', label: 'Quotations', icon: MdDescription },
-  { path: '/items', label: 'Items', icon: MdShoppingCart },
 ];
 
 interface SidebarProps {
@@ -50,6 +107,35 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [tooltip, setTooltip] = useState<{ label: string; x: number; y: number } | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set(['Vendor Dashboard']));
+
+  // Auto-expand menu if current path matches a sub-item
+  useEffect(() => {
+    navItems.forEach((item) => {
+      if (item.subItems) {
+        const hasActiveSubItem = item.subItems.some((subItem) => location.pathname === subItem.path);
+        if (hasActiveSubItem) {
+          setExpandedMenus((prev) => new Set(prev).add(item.label));
+        }
+      }
+    });
+  }, [location.pathname]);
+
+  const toggleSubmenu = (label: string) => {
+    setExpandedMenus((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(label)) {
+        newSet.delete(label);
+      } else {
+        newSet.add(label);
+      }
+      return newSet;
+    });
+  };
+
+  const isSubmenuExpanded = (label: string) => {
+    return expandedMenus.has(label);
+  };
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -160,12 +246,75 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <nav className={cn('flex-1 overflow-y-auto overflow-x-hidden py-4 space-y-1', collapsed ? 'px-2' : 'px-3')}>
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          
+          // Handle expandable items with submenus
+          if (item.isExpandable && item.subItems) {
+            const isExpanded = isSubmenuExpanded(item.label);
+            const hasActiveSubItem = item.subItems.some((subItem) => location.pathname === subItem.path);
 
+            return (
+              <div key={item.label}>
+                <button
+                  onClick={() => !collapsed && toggleSubmenu(item.label)}
+                  onMouseEnter={(e) => handleMouseEnter(e, item.label)}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  className={cn(
+                    'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 w-full text-left',
+                    collapsed ? 'justify-center px-2' : 'px-3',
+                    hasActiveSubItem
+                      ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  )}
+                >
+                  <Icon className={cn('w-5 h-5 flex-shrink-0', hasActiveSubItem && 'text-blue-600 dark:text-blue-400')} />
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1 text-sm font-medium">{item.label}</span>
+                      {isExpanded ? (
+                        <MdKeyboardArrowUp className="w-4 h-4" />
+                      ) : (
+                        <MdKeyboardArrowDown className="w-4 h-4" />
+                      )}
+                    </>
+                  )}
+                </button>
+                {!collapsed && isExpanded && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    {item.subItems.map((subItem) => {
+                      const SubIcon = subItem.icon;
+                      const isSubActive = location.pathname === subItem.path;
+                      return (
+                        <NavLink
+                          key={subItem.path}
+                          to={subItem.path}
+                          onMouseEnter={(e) => handleMouseEnter(e, subItem.label)}
+                          onMouseMove={handleMouseMove}
+                          onMouseLeave={handleMouseLeave}
+                          className={cn(
+                            'group relative flex items-center gap-3 py-2 px-3 rounded-lg transition-all duration-200',
+                            isSubActive
+                              ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                          )}
+                        >
+                          <SubIcon className={cn('w-4 h-4 flex-shrink-0', isSubActive && 'text-blue-600 dark:text-blue-400')} />
+                          <span className="text-sm font-medium">{subItem.label}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // Handle regular nav items
+          const isActive = location.pathname === item.path;
           return (
             <NavLink
               key={item.path}
-              to={item.path}
+              to={item.path || '#'}
               onMouseEnter={(e) => handleMouseEnter(e, item.label)}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}

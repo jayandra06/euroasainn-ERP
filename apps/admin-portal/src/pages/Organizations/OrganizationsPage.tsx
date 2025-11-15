@@ -6,10 +6,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
-import { OrganizationForm } from '../CustomerOrganizations/OrganizationForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdAdd, MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -26,14 +24,10 @@ interface Organization {
 export function OrganizationsPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOrgs, setSelectedOrgs] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
-  const [newOrganizationType, setNewOrganizationType] = useState<'customer' | 'vendor'>('customer');
 
   // Fetch all organizations (customer and vendor)
   const { data: orgsData, isLoading } = useQuery({
@@ -141,36 +135,10 @@ export function OrganizationsPage() {
     }
   };
 
-  const handleCreate = () => {
-    setEditingOrg(null);
-    setNewOrganizationType('customer');
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (org: Organization) => {
-    setEditingOrg(org);
-    setNewOrganizationType(org.type === 'vendor' ? 'vendor' : 'customer');
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (org: Organization) => {
     if (window.confirm(`Are you sure you want to delete ${org.name}?`)) {
       deleteMutation.mutate(org._id);
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setEditingOrg(null);
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['organizations'] });
-    showToast(
-      editingOrg ? 'Organization updated successfully!' : 'Organization created successfully!',
-      'success'
-    );
-    handleClose();
   };
 
   const handleExport = () => {
@@ -272,13 +240,6 @@ export function OrganizationsPage() {
             Manage customer and vendor organizations
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-colors font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
-        >
-          <MdAdd className="w-5 h-5" />
-          Add Organization
-        </button>
       </div>
 
       {/* Search and Filters */}
@@ -363,59 +324,12 @@ export function OrganizationsPage() {
           <DataTable
             columns={columns}
             data={filteredOrgs}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             emptyMessage="No organizations found."
           />
         </div>
       )}
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title={editingOrg ? 'Edit Organization' : 'Create Organization'}
-        size="medium"
-      >
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 bg-white dark:bg-gray-900">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Organization Type</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Choose whether this is a customer or vendor organization.</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                <input
-                  type="radio"
-                  name="orgType"
-                  value="customer"
-                  checked={newOrganizationType === 'customer'}
-                  onChange={() => setNewOrganizationType('customer')}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                />
-                Customer
-              </label>
-              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                <input
-                  type="radio"
-                  name="orgType"
-                  value="vendor"
-                  checked={newOrganizationType === 'vendor'}
-                  onChange={() => setNewOrganizationType('vendor')}
-                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                />
-                Vendor
-              </label>
-            </div>
-          </div>
-          <OrganizationForm
-            organization={editingOrg}
-            organizationType={newOrganizationType}
-            onSuccess={handleSuccess}
-            onCancel={handleClose}
-          />
-        </div>
-      </Modal>
     </div>
   );
 }

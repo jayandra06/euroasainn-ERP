@@ -55,3 +55,5 @@ RoleSchema.index({ name: 1, portalType: 1 }, { unique: true });
 export const Role = mongoose.model<IRole>('Role', RoleSchema);
 
 
+
+

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface User {
@@ -91,9 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Production or explicit API URL: use full URL
         url = API_URL ? `${API_URL}/api/v1/auth/login` : 'http://localhost:3000/api/v1/auth/login';
       }
-      console.log('Login URL:', url);
+      console.log('🔐 Login attempt:', { url, email, portalType: 'admin' });
       console.log('API_URL:', API_URL);
       console.log('import.meta.env.DEV:', import.meta.env.DEV);
+      console.log('import.meta.env.VITE_API_URL:', import.meta.env.VITE_API_URL);
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -111,9 +112,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const error = await response.json();
           errorMessage = error.error || error.message || errorMessage;
+          console.error('Login API error:', error);
         } catch (parseError) {
           // If response is not JSON, use status text
           errorMessage = response.statusText || `HTTP ${response.status}: Login failed`;
+          console.error('Login failed - Status:', response.status, 'StatusText:', response.statusText, 'URL:', url);
         }
         throw new Error(errorMessage);
       }

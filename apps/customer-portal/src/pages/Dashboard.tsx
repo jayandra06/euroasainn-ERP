@@ -12,7 +12,7 @@ export function Dashboard() {
       title: 'RFQ Management',
       description: 'Manage Request for Quotations',
       icon: MdDescription,
-      path: '/rfq',
+      path: '/rfqs',
       color: 'from-blue-500 to-indigo-600',
     },
     {

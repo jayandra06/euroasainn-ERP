@@ -22,6 +22,13 @@ import {
   MdSupport,
   MdPayment,
   MdSettings,
+  MdRequestQuote,
+  MdInventory,
+  MdStore,
+  MdCategory,
+  MdModelTraining,
+  MdExpandMore,
+  MdExpandLess,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
@@ -29,25 +36,41 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 interface NavItem {
-  path: string;
+  path?: string;
   label: string;
   icon: IconType;
   badge?: string;
+  children?: NavItem[];
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', label: 'Dashboard', icon: MdDashboard },
-  { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
-  { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
-  { path: '/onboarding-data', label: 'Onboarding Data', icon: MdPeople },
-  { path: '/analytics', label: 'Analytics', icon: MdTrendingUp },
-  { path: '/users', label: 'Users', icon: MdPerson },
-  { path: '/activity-log', label: 'Activity/Audit Log', icon: MdHistory },
-  { path: '/reports', label: 'Reports', icon: MdDescription },
-  { path: '/notifications', label: 'Notifications', icon: MdNotifications },
-  { path: '/support', label: 'Support Management', icon: MdSupport },
-  { path: '/subscription', label: 'Subscription & Billing', icon: MdPayment },
-  { path: '/settings', label: 'Settings', icon: MdSettings },
+  {
+    label: 'Admin Dashboard',
+    icon: MdDashboard,
+    children: [
+      { path: '/dashboard/admin', label: 'Dashboard', icon: MdDashboard },
+      { path: '/dashboard/admin/rfqs', label: 'RFQs', icon: MdRequestQuote },
+      { path: '/dashboard/admin/inventory', label: 'Inventory', icon: MdInventory },
+    ],
+  },
+  {
+    label: 'Vendors',
+    icon: MdStore,
+    children: [
+      { path: '/dashboard/admin/vendors', label: 'All Vendors', icon: MdPeople },
+      { path: '/dashboard/admin/brands', label: 'Brands', icon: MdStore },
+      { path: '/dashboard/admin/categories', label: 'Categories', icon: MdCategory },
+      { path: '/dashboard/admin/models', label: 'Models', icon: MdModelTraining },
+    ],
+  },
+  {
+    label: 'Customers',
+    icon: MdPeople,
+    children: [
+      { path: '/dashboard/admin/customers', label: 'All Customers', icon: MdPeople },
+      { path: '/dashboard/admin/customers/support', label: 'Support', icon: MdSupport },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -62,6 +85,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [tooltip, setTooltip] = useState<{ label: string; x: number; y: number } | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Admin Dashboard', 'Vendors', 'Customers']));
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -172,43 +196,84 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <nav className={cn('flex-1 overflow-y-auto overflow-x-hidden py-4 space-y-1', collapsed ? 'px-2' : 'px-3')}>
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          const isSettings = item.path === '/settings';
+          const hasChildren = item.children && item.children.length > 0;
+          const isExpanded = expandedSections.has(item.label);
+          const isActive = item.path ? location.pathname === item.path : false;
+          const hasActiveChild = item.children?.some(child => child.path && location.pathname === child.path);
 
-          // Settings button doesn't route anywhere
-          if (isSettings) {
+          if (hasChildren) {
             return (
-              <button
-                key={item.path}
-                onMouseEnter={(e) => handleMouseEnter(e, item.label)}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                className={cn(
-                  'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 w-full text-left',
-                  collapsed ? 'justify-center px-2' : 'px-3',
-                  'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white cursor-default'
+              <div key={item.label}>
+                <button
+                  onClick={() => {
+                    if (!collapsed) {
+                      const newExpanded = new Set(expandedSections);
+                      if (isExpanded) {
+                        newExpanded.delete(item.label);
+                      } else {
+                        newExpanded.add(item.label);
+                      }
+                      setExpandedSections(newExpanded);
+                    }
+                  }}
+                  onMouseEnter={(e) => handleMouseEnter(e, item.label)}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  className={cn(
+                    'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 w-full text-left',
+                    collapsed ? 'justify-center px-2' : 'px-3',
+                    hasActiveChild
+                      ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  )}
+                >
+                  <Icon className={cn('w-5 h-5 flex-shrink-0', hasActiveChild && 'text-blue-600 dark:text-blue-400')} />
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1 text-sm font-medium">{item.label}</span>
+                      {isExpanded ? (
+                        <MdExpandLess className="w-4 h-4" />
+                      ) : (
+                        <MdExpandMore className="w-4 h-4" />
+                      )}
+                    </>
+                  )}
+                </button>
+                {!collapsed && isExpanded && item.children && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    {item.children.map((child) => {
+                      const ChildIcon = child.icon;
+                      const isChildActive = child.path ? location.pathname === child.path : false;
+                      return (
+                        <NavLink
+                          key={child.path || child.label}
+                          to={child.path || '#'}
+                          onMouseEnter={(e) => handleMouseEnter(e, child.label)}
+                          onMouseMove={handleMouseMove}
+                          onMouseLeave={handleMouseLeave}
+                          className={cn(
+                            'group relative flex items-center gap-3 py-2 rounded-lg transition-all duration-200',
+                            'px-3',
+                            isChildActive
+                              ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                          )}
+                        >
+                          <ChildIcon className={cn('w-4 h-4 flex-shrink-0', isChildActive && 'text-blue-600 dark:text-blue-400')} />
+                          <span className="flex-1 text-sm">{child.label}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
                 )}
-                disabled
-              >
-                <Icon className={cn('w-5 h-5 flex-shrink-0')} />
-                {!collapsed && (
-                  <>
-                    <span className="flex-1 text-sm font-medium text-left">{item.label}</span>
-                    {item.badge && (
-                      <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
-                        {item.badge}
-                      </span>
-                    )}
-                  </>
-                )}
-              </button>
+              </div>
             );
           }
 
           return (
             <NavLink
               key={item.path}
-              to={item.path}
+              to={item.path || '#'}
               onMouseEnter={(e) => handleMouseEnter(e, item.label)}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}

@@ -56,7 +56,7 @@ export function LicensesPage() {
   });
 
   // Fetch licenses with backend filtering (optimized)
-  const { data: licensesData, isLoading } = useQuery({
+  const { data: licensesData, isLoading: isLoadingLicenses } = useQuery({
     queryKey: ['licenses', filterStatus, filterType],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -198,7 +198,7 @@ export function LicensesPage() {
     },
   ];
 
-  if (isLoading) {
+  if (isLoadingLicenses) {
     return <div className="loading">Loading licenses...</div>;
   }
 

@@ -3,14 +3,11 @@
  * Admin portal page to manage users across all organizations
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
-import { UserForm } from './UserForm';
-import { MdSearch, MdFilterList, MdDownload, MdPersonAdd, MdCheckCircle, MdVpnKey, MdPeople } from 'react-icons/md';
+import { MdSearch, MdFilterList, MdDownload, MdCheckCircle, MdVpnKey, MdPeople } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -38,30 +35,10 @@ interface User {
 export function UsersPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleCreate = () => {
-    setEditingUser(null);
-    setIsModalOpen(false);
-    navigate('/users/new');
-  };
-
-  // Check if we should open the modal from query parameter
-  useEffect(() => {
-    const createParam = searchParams.get('create');
-    if (createParam === 'true') {
-      handleCreate();
-      // Remove the query parameter from URL
-      setSearchParams({}, { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   // Fetch users
   const { data: usersData, isLoading } = useQuery({
@@ -135,29 +112,10 @@ export function UsersPage() {
     },
   });
 
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (user: User) => {
     if (window.confirm(`Are you sure you want to delete ${user.email}?`)) {
       deleteMutation.mutate(user._id);
     }
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setEditingUser(null);
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-    showToast(
-      editingUser ? 'User updated successfully!' : 'User invited successfully!',
-      'success'
-    );
-    handleClose();
   };
 
   const columns = [
@@ -262,13 +220,6 @@ export function UsersPage() {
             Manage admin users and their permissions
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-colors font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40"
-        >
-          <MdPersonAdd className="w-5 h-5" />
-          Add User
-        </button>
       </div>
 
       {/* Summary Cards */}
@@ -404,7 +355,6 @@ export function UsersPage() {
             <DataTable
               columns={columns}
               data={filteredUsers}
-              onEdit={handleEdit}
               onDelete={handleDelete}
               actionsLabel="Quick Actions"
               emptyMessage="No users found."
@@ -413,19 +363,6 @@ export function UsersPage() {
         )}
       </div>
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title={editingUser ? 'Edit User' : 'Invite User'}
-        size="medium"
-      >
-        <UserForm
-          user={editingUser}
-          onSuccess={handleSuccess}
-          onCancel={handleClose}
-        />
-      </Modal>
     </div>
   );
 }

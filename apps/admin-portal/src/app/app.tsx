@@ -22,6 +22,13 @@ import { NotificationsPage } from '../pages/Notifications/NotificationsPage';
 import { SupportPage } from '../pages/Support/SupportPage';
 import { SubscriptionPage } from '../pages/Subscription/SubscriptionPage';
 import { LoginsPage } from '../pages/Logins/LoginsPage';
+import { RFQsPage } from '../pages/RFQs/RFQsPage';
+import { InventoryPage } from '../pages/Inventory/InventoryPage';
+import { VendorsPage } from '../pages/Vendors/VendorsPage';
+import { BrandsPage } from '../pages/Brands/BrandsPage';
+import { CategoriesPage } from '../pages/Categories/CategoriesPage';
+import { ModelsPage } from '../pages/Models/ModelsPage';
+import { CustomersPage } from '../pages/Customers/CustomersPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -57,6 +64,19 @@ export function App() {
                   >
                     <Route index element={<Navigate to="/dashboard" replace />} />
                     <Route path="dashboard" element={<Dashboard />} />
+                    {/* Admin Dashboard Routes */}
+                    <Route path="dashboard/admin" element={<Dashboard />} />
+                    <Route path="dashboard/admin/rfqs" element={<RFQsPage />} />
+                    <Route path="dashboard/admin/inventory" element={<InventoryPage />} />
+                    {/* Vendors Routes */}
+                    <Route path="dashboard/admin/vendors" element={<VendorsPage />} />
+                    <Route path="dashboard/admin/brands" element={<BrandsPage />} />
+                    <Route path="dashboard/admin/categories" element={<CategoriesPage />} />
+                    <Route path="dashboard/admin/models" element={<ModelsPage />} />
+                    {/* Customers Routes */}
+                    <Route path="dashboard/admin/customers" element={<CustomersPage />} />
+                    <Route path="dashboard/admin/customers/support" element={<SupportPage />} />
+                    {/* Legacy Routes */}
                     <Route path="organizations" element={<OrganizationsPage />} />
                     <Route path="organizations/:id" element={<OrganizationProfilePage />} />
                     <Route path="licenses" element={<LicensesPage />} />

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -17,7 +17,7 @@ function applyTheme(theme: Theme) {
   const body = document.body;
   const root = document.getElementById('root');
 
-  const elements = [html, body, root].filter((el): el is Element => Boolean(el));
+  const elements = [html, body, root].filter((el): el is HTMLElement => el !== null);
 
   elements.forEach((el) => {
     el.classList.toggle('dark', theme === 'dark');
@@ -30,10 +30,15 @@ function applyTheme(theme: Theme) {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
+    let initialTheme: Theme;
     if (stored === 'light' || stored === 'dark') {
-      return stored;
+      initialTheme = stored as Theme;
+    } else {
+      initialTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // Apply theme immediately to prevent flash
+    applyTheme(initialTheme);
+    return initialTheme;
   });
 
   useEffect(() => {

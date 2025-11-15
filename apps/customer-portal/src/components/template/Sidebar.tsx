@@ -15,25 +15,72 @@ import {
   MdChevronRight,
   MdRocketLaunch,
   MdLogout,
+  MdDirectionsBoat,
+  MdAccountBalance,
+  MdTrendingUp,
+  MdRoute,
+  MdVerified,
+  MdWarning,
+  MdEco,
+  MdLocationOn,
+  MdManageAccounts,
+  MdBusiness,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+  MdHelp,
+  MdBarChart,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-interface NavItem {
+interface NavSubItem {
   path: string;
+  label: string;
+}
+
+interface NavItem {
+  path?: string;
   label: string;
   icon: IconType;
   badge?: string;
+  submenu?: NavSubItem[];
 }
 
 const navItems: NavItem[] = [
   { path: '/dashboard', label: 'Dashboard', icon: MdDashboard },
-  { path: '/rfq', label: 'RFQ', icon: MdDescription },
-  { path: '/vessels', label: 'Vessels', icon: MdLocalShipping },
-  { path: '/employees', label: 'Employees', icon: MdPeople },
-  { path: '/business-units', label: 'Business Units', icon: MdBusinessCenter },
+  { path: '/analytics', label: 'Analytics', icon: MdBarChart },
+  { path: '/fleet-overview', label: 'Fleet Overview', icon: MdDirectionsBoat },
+  {
+    label: 'Financial & Procurement',
+    icon: MdAccountBalance,
+    submenu: [
+      { path: '/rfqs', label: 'RFQs' },
+      { path: '/vendor-management', label: 'Vendor Management' },
+      { path: '/claim-raised', label: 'Claim Rasied' },
+    ],
+  },
+  { path: '/fleet-performance', label: 'Fleet performance & Maintai...', icon: MdTrendingUp },
+  { path: '/vessel-finder', label: 'Vessel Finder & Route Opimi...', icon: MdRoute },
+  { path: '/compliance', label: 'Complaince & Certifcation', icon: MdVerified },
+  { path: '/crew-management', label: 'Crew Management', icon: MdPeople },
+  { path: '/risk-management', label: 'Risk & Incident Management', icon: MdWarning },
+  { path: '/sustainability', label: 'Sustuabinability & ESG Repor...', icon: MdEco },
+  { path: '/port-management', label: 'Port Management', icon: MdLocationOn },
+  { path: '/vessels', label: 'Vessel Management', icon: MdLocalShipping },
+  { path: '/role-management', label: 'Role Management', icon: MdManageAccounts },
+  { path: '/branch', label: 'Branch', icon: MdBusiness },
+  {
+    label: 'Support',
+    icon: MdHelp,
+    submenu: [
+      { path: '/become-a-seller', label: 'Become a Seller' },
+      { path: '/support', label: 'Support' },
+      { path: '/terms-of-use', label: 'Terms Of Use' },
+      { path: '/privacy-policy', label: 'Privacy Policy' },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -48,6 +95,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [tooltip, setTooltip] = useState<{ label: string; x: number; y: number } | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -119,6 +167,40 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     };
   }, [collapsed]);
 
+  // Auto-expand submenus when their items are active
+  useEffect(() => {
+    navItems.forEach((item) => {
+      if (item.submenu && item.submenu.some((subItem) => location.pathname === subItem.path)) {
+        setExpandedMenus((prev) => {
+          if (!prev.has(item.label)) {
+            const newSet = new Set(prev);
+            newSet.add(item.label);
+            return newSet;
+          }
+          return prev;
+        });
+      }
+    });
+  }, [location.pathname]);
+
+  const toggleSubmenu = (label: string) => {
+    setExpandedMenus((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(label)) {
+        newSet.delete(label);
+      } else {
+        newSet.add(label);
+      }
+      return newSet;
+    });
+  };
+
+  const isSubmenuExpanded = (label: string) => expandedMenus.has(label);
+
+  const isSubmenuItemActive = (submenu: NavSubItem[]) => {
+    return submenu.some((item) => location.pathname === item.path);
+  };
+
   return (
     <aside
       className={cn(
@@ -158,12 +240,68 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <nav className={cn('flex-1 overflow-y-auto overflow-x-hidden py-4 space-y-1', collapsed ? 'px-2' : 'px-3')}>
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const hasSubmenu = item.submenu && item.submenu.length > 0;
+          const isActive = item.path ? location.pathname === item.path : false;
+          const isSubmenuActive = hasSubmenu && isSubmenuItemActive(item.submenu!);
+          const isExpanded = hasSubmenu && isSubmenuExpanded(item.label);
+
+          if (hasSubmenu) {
+            return (
+              <div key={item.label}>
+                <button
+                  onClick={() => !collapsed && toggleSubmenu(item.label)}
+                  onMouseEnter={(e) => handleMouseEnter(e, item.label)}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  className={cn(
+                    'group relative w-full flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200',
+                    collapsed ? 'justify-center px-2' : 'px-3',
+                    isSubmenuActive
+                      ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  )}
+                >
+                  <Icon className={cn('w-5 h-5 flex-shrink-0', isSubmenuActive && 'text-blue-600 dark:text-blue-400')} />
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1 text-sm font-medium text-left">{item.label}</span>
+                      {isExpanded ? (
+                        <MdKeyboardArrowUp className="w-4 h-4 flex-shrink-0" />
+                      ) : (
+                        <MdKeyboardArrowDown className="w-4 h-4 flex-shrink-0" />
+                      )}
+                    </>
+                  )}
+                </button>
+                {!collapsed && isExpanded && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-gray-200 dark:border-gray-700 pl-4">
+                    {item.submenu!.map((subItem) => {
+                      const isSubActive = location.pathname === subItem.path;
+                      return (
+                        <NavLink
+                          key={subItem.path}
+                          to={subItem.path}
+                          className={cn(
+                            'group relative flex items-center gap-2 py-2 rounded-lg transition-all duration-200 text-sm',
+                            isSubActive
+                              ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                          )}
+                        >
+                          <span className="flex-1">{subItem.label}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           return (
             <NavLink
-              key={item.path}
-              to={item.path}
+              key={item.path || item.label}
+              to={item.path || '#'}
               onMouseEnter={(e) => handleMouseEnter(e, item.label)}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
