@@ -5,12 +5,32 @@ import { validateLicense } from '../middleware/license.middleware';
 import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 import { itemService } from '../services/item.service';
 import { quotationService } from '../services/quotation.service';
+import { userController } from '../controllers/user.controller';
 
 const router = Router();
 
 router.use(authMiddleware);
 router.use(requirePortal(PortalType.VENDOR));
 router.use(validateLicense);
+
+router.post('/users/invite', async (req, res) => {
+  try {
+    req.body.portalType = PortalType.VENDOR;
+    if (!(req as any).user?.organizationId && !req.body.organizationId) {
+      return res.status(400).json({
+        success: false,
+        error: 'organizationId is required',
+      });
+    }
+    req.body.organizationId = req.body.organizationId || (req as any).user?.organizationId;
+    await userController.inviteUser(req, res);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to invite user',
+    });
+  }
+});
 
 // Items routes
 router.get('/items', async (req, res) => {

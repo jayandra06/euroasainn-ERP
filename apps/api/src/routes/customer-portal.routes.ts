@@ -7,12 +7,32 @@ import { rfqService } from '../services/rfq.service';
 import { vesselService } from '../services/vessel.service';
 import { employeeService } from '../services/employee.service';
 import { businessUnitService } from '../services/business-unit.service';
+import { userController } from '../controllers/user.controller';
 
 const router = Router();
 
 router.use(authMiddleware);
 router.use(requirePortal(PortalType.CUSTOMER));
 router.use(validateLicense);
+
+router.post('/users/invite', async (req, res) => {
+  try {
+    req.body.portalType = PortalType.CUSTOMER;
+    if (!(req as any).user?.organizationId && !req.body.organizationId) {
+      return res.status(400).json({
+        success: false,
+        error: 'organizationId is required',
+      });
+    }
+    req.body.organizationId = req.body.organizationId || (req as any).user?.organizationId;
+    await userController.inviteUser(req, res);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to invite user',
+    });
+  }
+});
 
 // RFQ routes
 router.get('/rfq', async (req, res) => {

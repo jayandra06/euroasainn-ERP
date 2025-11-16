@@ -21,6 +21,7 @@ interface DataTableProps<T> {
   onDelete?: (item: T) => void;
   onRowClick?: (item: T) => void;
   emptyMessage?: string;
+  actionsLabel?: string;
 }
 
 export function DataTable<T extends { _id?: string }>({
@@ -30,6 +31,7 @@ export function DataTable<T extends { _id?: string }>({
   onDelete,
   onRowClick,
   emptyMessage = 'No data found',
+  actionsLabel = 'Actions',
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
@@ -57,7 +59,7 @@ export function DataTable<T extends { _id?: string }>({
             ))}
             {(onEdit || onDelete) && (
               <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider text-center w-32">
-                Actions
+                {actionsLabel}
               </th>
             )}
           </tr>

@@ -39,32 +39,32 @@ import { cn } from '../lib/utils';
 const statCards = [
   {
     title: 'Total Revenue',
-    value: '$231K',
-    change: '+18.2%',
+    value: '$0',
+    change: '0%',
     icon: MdAttachMoney,
     gradient: 'from-emerald-500 to-teal-600',
     bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
   },
   {
     title: 'Active Users',
-    value: '1,234',
-    change: '+12.5%',
+    value: '0',
+    change: '0%',
     icon: MdPeople,
     gradient: 'from-blue-500 to-indigo-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
   },
   {
     title: 'Performance',
-    value: '98.5%',
-    change: '+2.3%',
+    value: '0%',
+    change: '0%',
     icon: MdSpeed,
     gradient: 'from-purple-500 to-pink-600',
     bgColor: 'bg-purple-50 dark:bg-purple-950/20',
   },
   {
     title: 'Organizations',
-    value: '456',
-    change: '+5.7%',
+    value: '0',
+    change: '0%',
     icon: MdBusinessCenter,
     gradient: 'from-orange-500 to-amber-600',
     bgColor: 'bg-orange-50 dark:bg-orange-950/20',
@@ -78,8 +78,8 @@ const quickAccessCards = [
     icon: HiOutlineDocumentText,
     path: '/business-rules',
     gradient: 'from-blue-500 to-indigo-600',
-    value: '156',
-    trend: '+12%',
+    value: '0',
+    trend: '0%',
   },
   {
     title: 'Users',
@@ -87,8 +87,8 @@ const quickAccessCards = [
     icon: HiOutlineUsers,
     path: '/users',
     gradient: 'from-emerald-500 to-teal-600',
-    value: '1,234',
-    trend: '+8%',
+    value: '0',
+    trend: '0%',
   },
   {
     title: 'Organizations',
@@ -96,8 +96,8 @@ const quickAccessCards = [
     icon: MdBusinessCenter,
     path: '/organizations',
     gradient: 'from-purple-500 to-pink-600',
-    value: '456',
-    trend: '+5%',
+    value: '0',
+    trend: '0%',
   },
   {
     title: 'Licenses',
@@ -105,8 +105,8 @@ const quickAccessCards = [
     icon: MdVpnKey,
     path: '/licenses',
     gradient: 'from-orange-500 to-amber-600',
-    value: '89',
-    trend: '+15%',
+    value: '0',
+    trend: '0%',
   },
   {
     title: 'Admin Users',
@@ -114,8 +114,8 @@ const quickAccessCards = [
     icon: MdAdminPanelSettings,
     path: '/admin-users',
     gradient: 'from-rose-500 to-red-600',
-    value: '23',
-    trend: '+3%',
+    value: '0',
+    trend: '0%',
   },
   {
     title: 'Settings',
@@ -123,42 +123,42 @@ const quickAccessCards = [
     icon: MdSettings,
     path: '/settings',
     gradient: 'from-gray-500 to-slate-600',
-    value: '12',
+    value: '0',
     trend: '0%',
   },
 ];
 
 const userGrowthData = [
-  { name: 'Jan', users: 400 },
-  { name: 'Feb', users: 500 },
-  { name: 'Mar', users: 600 },
-  { name: 'Apr', users: 800 },
-  { name: 'May', users: 900 },
-  { name: 'Jun', users: 1100 },
+  { name: 'Jan', users: 0 },
+  { name: 'Feb', users: 0 },
+  { name: 'Mar', users: 0 },
+  { name: 'Apr', users: 0 },
+  { name: 'May', users: 0 },
+  { name: 'Jun', users: 0 },
 ];
 
 const revenueData = [
-  { name: 'Q1', revenue: 12000 },
-  { name: 'Q2', revenue: 15000 },
-  { name: 'Q3', revenue: 18000 },
-  { name: 'Q4', revenue: 22000 },
+  { name: 'Q1', revenue: 0 },
+  { name: 'Q2', revenue: 0 },
+  { name: 'Q3', revenue: 0 },
+  { name: 'Q4', revenue: 0 },
 ];
 
 const orgDistributionData = [
-  { name: 'Tech', value: 35, color: '#3b82f6' },
-  { name: 'Finance', value: 25, color: '#10b981' },
-  { name: 'Healthcare', value: 20, color: '#8b5cf6' },
-  { name: 'Education', value: 20, color: '#f59e0b' },
+  { name: 'Tech', value: 0, color: '#3b82f6' },
+  { name: 'Finance', value: 0, color: '#10b981' },
+  { name: 'Healthcare', value: 0, color: '#8b5cf6' },
+  { name: 'Education', value: 0, color: '#f59e0b' },
 ];
 
 const activityData = [
-  { name: 'Mon', activity: 240 },
-  { name: 'Tue', activity: 320 },
-  { name: 'Wed', activity: 280 },
-  { name: 'Thu', activity: 380 },
-  { name: 'Fri', activity: 420 },
-  { name: 'Sat', activity: 300 },
-  { name: 'Sun', activity: 250 },
+  { name: 'Mon', activity: 0 },
+  { name: 'Tue', activity: 0 },
+  { name: 'Wed', activity: 0 },
+  { name: 'Thu', activity: 0 },
+  { name: 'Fri', activity: 0 },
+  { name: 'Sat', activity: 0 },
+  { name: 'Sun', activity: 0 },
 ];
 
 export function Dashboard() {
@@ -201,10 +201,9 @@ export function Dashboard() {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{stat.title}</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{stat.value}</p>
-                  <div className="flex items-center gap-1 text-sm text-emerald-600 dark:text-emerald-400">
-                    <MdArrowUpward className="w-4 h-4" />
+                  <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-semibold">{stat.change}</span>
-                    <span className="text-gray-500 dark:text-gray-400 ml-1">vs last month</span>
+                    <span className="text-gray-500 dark:text-gray-400 ml-1">No data available</span>
                   </div>
                 </div>
                 <div className={cn('w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md', stat.gradient)}>
@@ -377,8 +376,7 @@ export function Dashboard() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{card.description}</p>
                 <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</span>
-                  <div className="flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                    <MdArrowUpward className="w-3 h-3" />
+                  <div className="flex items-center gap-1 text-xs font-semibold text-gray-600 dark:text-gray-400">
                     <span>{card.trend}</span>
                   </div>
                 </div>

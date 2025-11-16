@@ -3,10 +3,11 @@
  * Professional Admin Portal Design
  */
 
-import React, { useState, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { MdSave, MdCancel } from 'react-icons/md';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { MdSave, MdCancel, MdAddCircleOutline } from 'react-icons/md';
 import { cn } from '../../lib/utils';
+import { Modal } from '../../components/shared/Modal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -16,6 +17,7 @@ interface User {
   firstName: string;
   lastName: string;
   role: string;
+  roleId?: string | { _id: string; name: string; key: string };
   organizationId?: string;
   isActive: boolean;
 }
@@ -26,66 +28,351 @@ interface UserFormProps {
   onCancel: () => void;
 }
 
+interface RoleDto {
+  _id?: string;
+  name: string;
+  key: string;
+  portalType: string;
+  permissions: string[];
+  description?: string;
+}
+
+interface RoleOption {
+  id: string;
+  mongoId?: string;
+  key: string;
+  name: string;
+  permissions: string[];
+  description?: string;
+}
+
+const DEFAULT_ADMIN_ROLES: RoleOption[] = [
+  {
+    id: 'admin_superuser',
+    key: 'admin_superuser',
+    name: 'Super Admin',
+    permissions: ['*'],
+    description: 'Full platform access across all modules',
+  },
+  {
+    id: 'admin_system_admin',
+    key: 'admin_system_admin',
+    name: 'System Admin',
+    permissions: ['users:manage', 'licenses:manage', 'settings:update', 'logs:view'],
+    description: 'Manage users, licenses, audit logs, and system settings',
+  },
+  {
+    id: 'admin_finance_admin',
+    key: 'admin_finance_admin',
+    name: 'Finance Admin',
+    permissions: ['invoices:*', 'transactions:read', 'reports:generate'],
+    description: 'Handle invoices, transactions, and financial reporting',
+  },
+  {
+    id: 'admin_hr_admin',
+    key: 'admin_hr_admin',
+    name: 'HR Admin',
+    permissions: ['employees:*', 'attendance:read', 'leaves:approve'],
+    description: 'Manage employee records, attendance, and leave approvals',
+  },
+  {
+    id: 'admin_auditor',
+    key: 'admin_auditor',
+    name: 'Auditor',
+    permissions: ['logs:read', 'invoices:read', 'users:read'],
+    description: 'Read-only access to financials and system logs',
+  },
+  {
+    id: 'admin_support_agent',
+    key: 'admin_support_agent',
+    name: 'Support Agent',
+    permissions: ['tickets:*', 'customers:read'],
+    description: 'Respond to support requests and view customer records',
+  },
+];
+
+const formatRoleName = (roleKey: string) =>
+  roleKey
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(' ');
+
+type PermissionActionKey = 'read' | 'write' | 'edit';
+
+const PERMISSION_ACTIONS: { key: PermissionActionKey; label: string }[] = [
+  { key: 'read', label: 'Read' },
+  { key: 'write', label: 'Write' },
+  { key: 'edit', label: 'Edit' },
+];
+
+interface PermissionGroup {
+  key: string;
+  label: string;
+  description?: string;
+  actions?: PermissionActionKey[];
+}
+
+const ADMIN_PERMISSION_GROUPS: PermissionGroup[] = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    description: 'Analytics overview, KPIs, and system status',
+    actions: ['read', 'edit'],
+  },
+  {
+    key: 'users',
+    label: 'Users',
+    description: 'Administration of user accounts across portals',
+  },
+  {
+    key: 'organizations',
+    label: 'Organizations',
+    description: 'Create and manage customer or vendor organizations',
+    actions: ['read', 'write', 'edit'],
+  },
+  {
+    key: 'licenses',
+    label: 'Licenses',
+    description: 'Issue, revoke, and adjust license usage',
+    actions: ['read', 'write'],
+  },
+  {
+    key: 'support',
+    label: 'Support Tickets',
+    description: 'Monitor and resolve customer support cases',
+    actions: ['read', 'write'],
+  },
+  {
+    key: 'reports',
+    label: 'Reports',
+    description: 'Generate and export operational or financial reports',
+    actions: ['read', 'write'],
+  },
+  {
+    key: 'settings',
+    label: 'System Settings',
+    description: 'Configure platform parameters and integrations',
+    actions: ['read', 'edit'],
+  },
+];
+
+type PermissionSelectionState = Record<
+  string,
+  {
+    enabled: boolean;
+    actions: Record<PermissionActionKey, boolean>;
+  }
+>;
+
+const buildInitialPermissionSelection = (groups: PermissionGroup[]): PermissionSelectionState =>
+  groups.reduce((acc, group) => {
+    const actionKeys = group.actions ?? PERMISSION_ACTIONS.map((action) => action.key);
+    const actions = actionKeys.reduce(
+      (map, actionKey) => ({
+        ...map,
+        [actionKey]: false,
+      }),
+      {} as Record<PermissionActionKey, boolean>
+    );
+    return {
+      ...acc,
+      [group.key]: {
+        enabled: false,
+        actions,
+      },
+    };
+  }, {} as PermissionSelectionState);
+
+const selectionToPermissionList = (selection: PermissionSelectionState, groups: PermissionGroup[]): string[] => {
+  const groupMap = groups.reduce<Record<string, PermissionGroup>>((map, group) => {
+    map[group.key] = group;
+    return map;
+  }, {});
+
+  const permissions: string[] = [];
+  Object.entries(selection).forEach(([groupKey, value]) => {
+    if (!value.enabled) return;
+    const group = groupMap[groupKey];
+    if (!group) return;
+    const actionKeys = group.actions ?? PERMISSION_ACTIONS.map((action) => action.key);
+    actionKeys.forEach((actionKey) => {
+      if (value.actions[actionKey]) {
+        permissions.push(`${groupKey}:${actionKey}`);
+      }
+    });
+  });
+  return permissions;
+};
+
 export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
+  const queryClient = useQueryClient();
+  const normalizeFullName = (first?: string, last?: string) => {
+    const safeFirst = first?.trim() || '';
+    const safeLast = last?.trim() || '';
+    if (!safeLast || safeFirst.toLowerCase() === safeLast.toLowerCase()) {
+      return safeFirst;
+    }
+    return `${safeFirst} ${safeLast}`.trim();
+  };
+
   const [formData, setFormData] = useState({
     email: user?.email || '',
-    password: '',
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    role: user?.role || 'admin_user',
-    organizationId: user?.organizationId || '',
+    fullName: user ? normalizeFullName(user.firstName, user.lastName) : '',
+    roleId:
+      typeof user?.roleId === 'string'
+        ? user?.roleId
+        : typeof user?.roleId === 'object'
+        ? user?.roleId?._id
+        : '',
+    roleKey: typeof user?.roleId === 'object' ? user?.roleId?.key : user?.role || '',
     isActive: user?.isActive ?? true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Fetch organizations for dropdown
-  const { data: organizationsData } = useQuery({
-    queryKey: ['organizations'],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/admin/organizations`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!response.ok) return [];
-      const data = await response.json();
-      return data.data || [];
-    },
-  });
+  const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
+  const [newRoleName, setNewRoleName] = useState('');
+  const [createRoleError, setCreateRoleError] = useState('');
+  const [hasInitialisedRole, setHasInitialisedRole] = useState(false);
+  const [permissionSelection, setPermissionSelection] = useState<PermissionSelectionState>(() =>
+    buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS)
+  );
 
   useEffect(() => {
     if (user) {
       setFormData({
         email: user.email || '',
-        password: '',
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        role: user.role || 'admin_user',
-        organizationId: user.organizationId || '',
+        fullName: normalizeFullName(user.firstName, user.lastName),
+        roleId: typeof user.roleId === 'string' ? user.roleId : typeof user.roleId === 'object' ? user.roleId?._id : '',
+        roleKey: typeof user.roleId === 'object' ? user.roleId?.key : user.role || '',
         isActive: user.isActive ?? true,
       });
+      setHasInitialisedRole(false);
+      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
     }
   }, [user]);
+
+  const {
+    data: rolesResponse,
+    isLoading: isRolesLoading,
+  } = useQuery({
+    queryKey: ['roles', 'admin'],
+    queryFn: async (): Promise<RoleDto[]> => {
+      try {
+        const response = await fetch(`${API_URL}/api/v1/roles?portalType=admin`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        if (!response.ok) {
+          return DEFAULT_ADMIN_ROLES.map((role) => ({
+            _id: undefined,
+            name: role.name,
+            key: role.key,
+            permissions: role.permissions,
+            portalType: 'admin',
+          }));
+        }
+        const data = await response.json();
+        return (data.data as RoleDto[]) || [];
+      } catch (error) {
+        console.error('Failed to fetch roles', error);
+        return DEFAULT_ADMIN_ROLES.map((role) => ({
+          _id: undefined,
+          name: role.name,
+          key: role.key,
+          permissions: role.permissions,
+          portalType: 'admin',
+        }));
+      }
+    },
+  });
+
+  const roleOptions: RoleOption[] = useMemo(() => {
+    let options: RoleOption[] =
+      !rolesResponse || rolesResponse.length === 0
+        ? DEFAULT_ADMIN_ROLES
+        : rolesResponse.map((role) => ({
+            id: role._id || role.key,
+            mongoId: role._id,
+            key: role.key,
+            name: role.name,
+            permissions: role.permissions || [],
+            description: role.description,
+          }));
+
+    const currentRoleKey = user?.role;
+    if (currentRoleKey && !options.some((option) => option.key === currentRoleKey)) {
+      options = [
+        ...options,
+        {
+          id: currentRoleKey,
+          key: currentRoleKey,
+          name: formatRoleName(currentRoleKey),
+            permissions: [],
+        },
+      ];
+    }
+
+    return options;
+  }, [rolesResponse, user]);
+
+  const computedPermissionList = useMemo(
+    () => selectionToPermissionList(permissionSelection, ADMIN_PERMISSION_GROUPS),
+    [permissionSelection]
+  );
+
+  const selectedModuleCount = useMemo(
+    () => Object.values(permissionSelection).filter((value) => value.enabled).length,
+    [permissionSelection]
+  );
+
+  useEffect(() => {
+    if (!roleOptions.length) {
+      return;
+    }
+
+    // Initialize role selection only once per user/form load
+    if (!hasInitialisedRole) {
+      if (user) {
+        const existingRole =
+          roleOptions.find((role) =>
+            typeof user.roleId === 'object'
+              ? role.mongoId === user.roleId?._id
+              : typeof user.roleId === 'string'
+              ? role.mongoId === user.roleId
+              : role.key === user.role
+          ) || roleOptions.find((role) => role.key === user.role);
+
+        if (existingRole) {
+          setFormData((prev) => ({
+            ...prev,
+            roleId: existingRole.mongoId || '',
+            roleKey: existingRole.key,
+          }));
+          setHasInitialisedRole(true);
+        }
+      } else if (!formData.roleId && !formData.roleKey) {
+        const defaultRole = roleOptions[0];
+        setFormData((prev) => ({
+          ...prev,
+          roleId: defaultRole.mongoId || '',
+          roleKey: defaultRole.key,
+        }));
+        setHasInitialisedRole(true);
+      }
+    }
+  }, [roleOptions, user, hasInitialisedRole, formData.roleId, formData.roleKey]);
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       try {
-        const response = await fetch(`${API_URL}/api/v1/admin/users`, {
+        const response = await fetch(`${API_URL}/api/v1/admin/users/invite`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
-          body: JSON.stringify({
-            email: data.email,
-            password: data.password,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            portalType: 'admin',
-            role: data.role,
-            organizationId: data.organizationId || undefined,
-            isActive: data.isActive,
-          }),
+          body: JSON.stringify(data),
         });
 
         if (!response.ok) {
@@ -122,13 +409,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
-          body: JSON.stringify({
-            firstName: data.firstName,
-            lastName: data.lastName,
-            role: data.role,
-            organizationId: data.organizationId || undefined,
-            isActive: data.isActive,
-          }),
+          body: JSON.stringify(data),
         });
 
         if (!response.ok) {
@@ -156,6 +437,53 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     },
   });
 
+  const createRoleMutation = useMutation({
+    mutationFn: async (payload: { name: string; permissions: string[] }) => {
+      const response = await fetch(`${API_URL}/api/v1/roles`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({
+          name: payload.name,
+          permissions: payload.permissions,
+          portalType: 'admin',
+        }),
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to create role';
+        try {
+          const error = await response.json();
+          errorMessage = error.error || error.message || errorMessage;
+        } catch {
+          /* ignore */
+        }
+        throw new Error(errorMessage);
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setCreateRoleError('');
+      setIsCreateRoleOpen(false);
+      setNewRoleName('');
+      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
+      queryClient.invalidateQueries({ queryKey: ['roles', 'admin'] });
+
+      const created = data.data as RoleDto;
+      setFormData((prev) => ({
+        ...prev,
+        roleId: created._id || '',
+        roleKey: created.key,
+      }));
+    },
+    onError: (error: Error) => {
+      setCreateRoleError(error.message);
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -171,44 +499,120 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       return;
     }
 
-    if (!user && !formData.password.trim()) {
-      setErrors({ password: 'Password is required' });
+    if (!formData.fullName.trim()) {
+      setErrors({ fullName: 'Full name is required' });
       return;
     }
 
-    if (!user && formData.password.length < 6) {
-      setErrors({ password: 'Password must be at least 6 characters' });
-      return;
-    }
-
-    if (!formData.firstName.trim()) {
-      setErrors({ firstName: 'First name is required' });
-      return;
-    }
-
-    if (!formData.lastName.trim()) {
-      setErrors({ lastName: 'Last name is required' });
-      return;
-    }
-
-    if (!formData.role) {
+    if (!formData.roleId && !formData.roleKey) {
       setErrors({ role: 'Role is required' });
       return;
     }
 
+    const [firstNameRaw, ...rest] = formData.fullName.trim().split(/\s+/);
+    const firstName = firstNameRaw;
+    const lastName = rest.length > 0 ? rest.join(' ') : firstNameRaw;
+
+    const payload = {
+      email: formData.email.trim().toLowerCase(),
+      firstName,
+      lastName,
+      portalType: 'admin',
+      roleId: formData.roleId || undefined,
+      role: formData.roleId ? undefined : formData.roleKey,
+      isActive: formData.isActive,
+    };
+
     if (user) {
-      updateMutation.mutate(formData);
+      updateMutation.mutate(payload);
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(payload);
     }
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isCreatingRole = createRoleMutation.isPending;
 
-  const roles = [
-    { value: 'admin_superuser', label: 'Admin Superuser' },
-    { value: 'admin_user', label: 'Admin User' },
-  ];
+  const handleRoleSelect = (value: string) => {
+    if (value === '__create__') {
+      setCreateRoleError('');
+      setNewRoleName('');
+      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
+      setIsCreateRoleOpen(true);
+      return;
+    }
+
+    const selected = roleOptions.find((role) => role.id === value);
+    if (selected) {
+      setFormData((prev) => ({
+        ...prev,
+        roleId: selected.mongoId || '',
+        roleKey: selected.key,
+      }));
+    }
+  };
+
+  const selectedRoleValue = formData.roleId || formData.roleKey;
+
+  const handleCreateRole = () => {
+    const trimmedName = newRoleName.trim();
+    if (!trimmedName) {
+      setCreateRoleError('Role name is required');
+      return;
+    }
+
+    const permissions = computedPermissionList;
+    if (permissions.length === 0) {
+      setCreateRoleError('Please select at least one permission');
+      return;
+    }
+
+    createRoleMutation.mutate({
+      name: trimmedName,
+      permissions,
+    });
+  };
+
+  const handleToggleGroup = (groupKey: string) => {
+    setPermissionSelection((prev) => {
+      const current = prev[groupKey];
+      if (!current) return prev;
+      const nextEnabled = !current.enabled;
+      const updatedActions = Object.keys(current.actions).reduce(
+        (map, actionKey) => ({
+          ...map,
+          [actionKey]: nextEnabled ? (actionKey === 'read' ? true : current.actions[actionKey as PermissionActionKey]) : false,
+        }),
+        {} as Record<PermissionActionKey, boolean>
+      );
+      return {
+        ...prev,
+        [groupKey]: {
+          enabled: nextEnabled,
+          actions: updatedActions,
+        },
+      };
+    });
+  };
+
+  const handleToggleAction = (groupKey: string, actionKey: PermissionActionKey) => {
+    setPermissionSelection((prev) => {
+      const current = prev[groupKey];
+      if (!current || !current.enabled) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [groupKey]: {
+          ...current,
+          actions: {
+            ...current.actions,
+            [actionKey]: !current.actions[actionKey],
+          },
+        },
+      };
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -239,70 +643,24 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
         {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
       </div>
 
-      {/* Password - Only for new users */}
-      {!user && (
-        <div>
-          <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Password <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className={cn(
-              'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-              errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-            )}
-            placeholder="Enter password (min 6 characters)"
-          />
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Password must be at least 6 characters long
-          </p>
-          {errors.password && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password}</p>}
-        </div>
-      )}
-
-      {/* First Name and Last Name */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            First Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="firstName"
-            type="text"
-            value={formData.firstName}
-            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-            className={cn(
-              'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-              errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-            )}
-            placeholder="John"
-          />
-          {errors.firstName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.firstName}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Last Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="lastName"
-            type="text"
-            value={formData.lastName}
-            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-            className={cn(
-              'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-              errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-            )}
-            placeholder="Doe"
-          />
-          {errors.lastName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lastName}</p>}
-        </div>
+      {/* Full Name */}
+      <div>
+        <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          Full Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          id="fullName"
+          type="text"
+          value={formData.fullName}
+          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+          className={cn(
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
+            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
+            errors.fullName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+          )}
+          placeholder="John Doe"
+        />
+        {errors.fullName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.fullName}</p>}
       </div>
 
       {/* Role */}
@@ -312,59 +670,40 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
         </label>
         <select
           id="role"
-          value={formData.role}
-          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+          value={selectedRoleValue}
+          onChange={(e) => handleRoleSelect(e.target.value)}
+          disabled={isRolesLoading}
           className={cn(
             'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
             'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
             errors.role ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
           )}
         >
-          {roles.map((role) => (
-            <option key={role.value} value={role.value}>
-              {role.label}
+          {roleOptions.map((role) => (
+            <option key={role.id} value={role.id}>
+              {role.name}
             </option>
           ))}
+          <option value="__create__">Create a new role…</option>
         </select>
         {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
       </div>
 
-      {/* Organization - Optional */}
-      <div>
-        <label htmlFor="organizationId" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          Organization (Optional)
-        </label>
-        <select
-          id="organizationId"
-          value={formData.organizationId}
-          onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-          className="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-        >
-          <option value="">-- No Organization --</option>
-          {organizationsData?.map((org: any) => (
-            <option key={org._id} value={org._id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          Assign user to a specific organization (optional)
-        </p>
-      </div>
-
       {/* Active Status */}
-      <div className="flex items-center gap-3">
-        <input
-          id="isActive"
-          type="checkbox"
-          checked={formData.isActive}
-          onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-          className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-        />
-        <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-          Active User
-        </label>
-      </div>
+      {user && (
+        <div className="flex items-center gap-3">
+          <input
+            id="isActive"
+            type="checkbox"
+            checked={formData.isActive}
+            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Active User
+          </label>
+        </div>
+      )}
 
       {errors.submit && (
         <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
@@ -389,10 +728,164 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
         >
           <MdSave className="w-4 h-4" />
-          <span>{isLoading ? 'Saving...' : user ? 'Update' : 'Create'}</span>
+          <span>{isLoading ? 'Saving...' : user ? 'Update' : 'Invite User'}</span>
         </button>
       </div>
+
+      <Modal
+        isOpen={isCreateRoleOpen}
+        onClose={() => {
+          if (!isCreatingRole) {
+            setIsCreateRoleOpen(false);
+          }
+        }}
+        title="Create Role"
+        size="large"
+      >
+        <div className="space-y-6">
+          <div>
+            <label htmlFor="roleName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Role Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="roleName"
+              type="text"
+              value={newRoleName}
+              onChange={(e) => setNewRoleName(e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="e.g. Compliance Manager"
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select permissions</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Enable modules and choose read, write, or edit access.
+                </p>
+              </div>
+              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                {selectedModuleCount} module{selectedModuleCount === 1 ? '' : 's'} selected · {computedPermissionList.length}{' '}
+                permission{computedPermissionList.length === 1 ? '' : 's'}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                <div className="px-5 py-3">Module</div>
+                {PERMISSION_ACTIONS.map((action) => (
+                  <div key={action.key} className="px-5 py-3 text-center">
+                    {action.label}
+                  </div>
+                ))}
+              </div>
+              <div className="divide-y divide-gray-200 dark:divide-gray-800">
+                {ADMIN_PERMISSION_GROUPS.map((group) => {
+                  const selection = permissionSelection[group.key];
+                  const actionKeys = group.actions ?? PERMISSION_ACTIONS.map((action) => action.key);
+                  return (
+                    <div
+                      key={group.key}
+                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-white dark:bg-gray-900"
+                    >
+                      <div className="flex items-start sm:items-center gap-3">
+                        <input
+                          id={`module-${group.key}`}
+                          type="checkbox"
+                          className="mt-1 sm:mt-0 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          checked={selection?.enabled ?? false}
+                          onChange={() => handleToggleGroup(group.key)}
+                        />
+                        <div>
+                          <label
+                            htmlFor={`module-${group.key}`}
+                            className="text-sm font-semibold text-gray-900 dark:text-white"
+                          >
+                            {group.label}
+                          </label>
+                          {group.description && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{group.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      {PERMISSION_ACTIONS.map((action) => {
+                        if (!actionKeys.includes(action.key)) {
+                          return (
+                            <div
+                              key={`${group.key}-${action.key}`}
+                              className="hidden sm:flex items-center justify-center text-xs text-gray-300"
+                            >
+                              —
+                            </div>
+                          );
+                        }
+                        const isEnabled = selection?.enabled ?? false;
+                        const isActive = Boolean(selection?.actions?.[action.key]);
+                        return (
+                          <div
+                            key={`${group.key}-${action.key}`}
+                            className="flex sm:block items-center justify-between sm:justify-center text-xs font-semibold text-gray-500 sm:text-sm"
+                          >
+                            <span className="sm:hidden text-gray-500 dark:text-gray-400">{action.label}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleAction(group.key, action.key)}
+                              disabled={!isEnabled}
+                              className={cn(
+                                'mt-1 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold border transition-all duration-150',
+                                !isEnabled &&
+                                  'cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-200 dark:border-gray-700',
+                                isEnabled &&
+                                  !isActive &&
+                                  'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800',
+                                isEnabled && isActive && 'bg-blue-600 text-white border-blue-600 shadow-sm hover:bg-blue-700'
+                              )}
+                            >
+                              {isActive ? 'On' : 'Off'}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {createRoleError && (
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+              {createRoleError}
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+            <button
+              type="button"
+              onClick={() => {
+                if (!isCreatingRole) {
+                  setIsCreateRoleOpen(false);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
+              disabled={isCreatingRole}
+            >
+              <MdCancel className="w-4 h-4" />
+              <span>Cancel</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleCreateRole}
+              disabled={isCreatingRole}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+            >
+              <MdAddCircleOutline className="w-4 h-4" />
+              <span>{isCreatingRole ? 'Creating...' : 'Create Role'}</span>
+            </button>
+          </div>
+        </div>
+      </Modal>
     </form>
   );
 }
-

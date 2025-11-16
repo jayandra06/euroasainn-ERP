@@ -41,6 +41,18 @@ router.post('/users', async (req, res) => {
   }
 });
 
+router.post('/users/invite', async (req, res) => {
+  try {
+    req.body.portalType = PortalType.ADMIN;
+    await userController.inviteUser(req, res);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to invite user',
+    });
+  }
+});
+
 router.get('/users/:id', userController.getUserById.bind(userController));
 router.put('/users/:id', userController.updateUser.bind(userController));
 router.delete('/users/:id', userController.deleteUser.bind(userController));

@@ -1,11 +1,26 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { ToastProvider } from '../components/shared/Toast';
 import Login from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
+import { UsersPage } from '../pages/Users';
+import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
+import { RFQsPage } from '../pages/RFQs/RFQsPage';
+import { ClaimRequestsPage } from '../pages/ClaimRequests/ClaimRequestsPage';
+import { CategoriesPage } from '../pages/Categories/CategoriesPage';
+import { BrandsPage } from '../pages/Brands/BrandsPage';
+import { OrdersPage } from '../pages/Orders/OrdersPage';
+import { DetailsPage } from '../pages/Details/DetailsPage';
+import { VesselManagementPage } from '../pages/VesselManagement/VesselManagementPage';
+import { VesselDetailsPage } from '../pages/VesselDetails/VesselDetailsPage';
+import { CatalogPage } from '../pages/Catalog/CatalogPage';
+import { CatalogManagementPage } from '../pages/CatalogManagement/CatalogManagementPage';
+import { SupportPage } from '../pages/Support/SupportPage';
+import { TermsOfUsePage } from '../pages/TermsOfUse/TermsOfUsePage';
+import { PrivacyPolicyPage } from '../pages/PrivacyPolicy/PrivacyPolicyPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -23,9 +38,10 @@ export function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AuthProvider>
-              <Routes>
+          <ToastProvider>
+            <BrowserRouter>
+              <AuthProvider>
+                <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route
                   path="/"
@@ -37,14 +53,26 @@ export function App() {
                 >
                   <Route index element={<Navigate to="/dashboard" replace />} />
                   <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="catalogue" element={<div className="p-8">Catalogue Management - Coming Soon</div>} />
-                  <Route path="inventory" element={<div className="p-8">Inventory Management - Coming Soon</div>} />
-                  <Route path="quotations" element={<div className="p-8">Quotation Management - Coming Soon</div>} />
-                  <Route path="items" element={<div className="p-8">Item Management - Coming Soon</div>} />
+                  <Route path="rfqs" element={<RFQsPage />} />
+                  <Route path="claim-requests" element={<ClaimRequestsPage />} />
+                  <Route path="categories" element={<CategoriesPage />} />
+                  <Route path="brands" element={<BrandsPage />} />
+                  <Route path="orders" element={<OrdersPage />} />
+                  <Route path="details" element={<DetailsPage />} />
+                  <Route path="vessel-management" element={<VesselManagementPage />} />
+                  <Route path="vessel-details" element={<VesselDetailsPage />} />
+                  <Route path="catalog" element={<CatalogPage />} />
+                  <Route path="catalog-management" element={<CatalogManagementPage />} />
+                  <Route path="support" element={<SupportPage />} />
+                  <Route path="terms-of-use" element={<TermsOfUsePage />} />
+                  <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+                  <Route path="users" element={<UsersPage />} />
+                  <Route path="analytics" element={<AnalyticsPage />} />
                 </Route>
-              </Routes>
-            </AuthProvider>
-          </BrowserRouter>
+                </Routes>
+              </AuthProvider>
+            </BrowserRouter>
+          </ToastProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </ErrorBoundary>

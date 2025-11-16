@@ -10,6 +10,8 @@ import {
   MdBusinessCenter,
   MdVpnKey,
   MdTrendingUp,
+  MdChevronLeft,
+  MdChevronRight,
   MdRocketLaunch,
   MdLogout,
   MdPeople,
@@ -20,20 +22,21 @@ import {
   MdSupport,
   MdPayment,
   MdSettings,
-  MdPalette,
-  MdTranslate,
-  MdEmail,
-  MdSms,
-  MdKeyboardArrowDown,
+  MdRequestQuote,
+  MdInventory,
+  MdStore,
+  MdCategory,
+  MdModelTraining,
+  MdExpandMore,
+  MdExpandLess,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { SidebarToggleIcon } from '../SidebarToggleIcon';
 
 interface NavItem {
-  path: string;
+  path?: string;
   label: string;
   icon: IconType;
   badge?: string;
@@ -41,26 +44,31 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { path: '/dashboard', label: 'Dashboard', icon: MdDashboard },
-  { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
-  { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
-  { path: '/onboarding-data', label: 'Onboarding Data', icon: MdPeople },
-  { path: '/analytics', label: 'Analytics', icon: MdTrendingUp },
-  { path: '/users', label: 'Users', icon: MdPerson },
-  { path: '/activity-log', label: 'Activity/Audit Log', icon: MdHistory },
-  { path: '/reports', label: 'Reports', icon: MdDescription },
-  { path: '/notifications', label: 'Notifications', icon: MdNotifications },
-  { path: '/support', label: 'Support Management', icon: MdSupport },
-  { path: '/subscription', label: 'Subscription & Billing', icon: MdPayment },
   {
-    path: '/settings',
-    label: 'Settings',
-    icon: MdSettings,
+    label: 'Admin Dashboard',
+    icon: MdDashboard,
     children: [
-      { path: '/settings/branding', label: 'Branding', icon: MdPalette },
-      { path: '/settings/regional', label: 'Regional Settings', icon: MdTranslate },
-      { path: '/settings/email-templates', label: 'Email Templates', icon: MdEmail },
-      { path: '/settings/sms-templates', label: 'SMS Templates', icon: MdSms },
+      { path: '/dashboard/admin', label: 'Dashboard', icon: MdDashboard },
+      { path: '/dashboard/admin/rfqs', label: 'RFQs', icon: MdRequestQuote },
+      { path: '/dashboard/admin/inventory', label: 'Inventory', icon: MdInventory },
+    ],
+  },
+  {
+    label: 'Vendors',
+    icon: MdStore,
+    children: [
+      { path: '/dashboard/admin/vendors', label: 'All Vendors', icon: MdPeople },
+      { path: '/dashboard/admin/brands', label: 'Brands', icon: MdStore },
+      { path: '/dashboard/admin/categories', label: 'Categories', icon: MdCategory },
+      { path: '/dashboard/admin/models', label: 'Models', icon: MdModelTraining },
+    ],
+  },
+  {
+    label: 'Customers',
+    icon: MdPeople,
+    children: [
+      { path: '/dashboard/admin/customers', label: 'All Customers', icon: MdPeople },
+      { path: '/dashboard/admin/customers/support', label: 'Support', icon: MdSupport },
     ],
   },
 ];
@@ -76,28 +84,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const navigate = useNavigate();
   const [tooltip, setTooltip] = useState<{ label: string; x: number; y: number } | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [collapseTooltip, setCollapseTooltip] = useState<{ x: number; y: number } | null>(null);
-  const [showCollapseTooltip, setShowCollapseTooltip] = useState(false);
   const tooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const collapseTooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(
-    new Set(location.pathname.startsWith('/settings') ? ['/settings'] : [])
-  );
-  const [isLogoHovered, setIsLogoHovered] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Admin Dashboard', 'Vendors', 'Customers']));
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     try {
       await logout();
-      // Navigate to login page after logout
-      navigate('/login', { replace: true });
+      // Navigation is already handled in AuthContext logout function
     } catch (error) {
       console.error('Logout error:', error);
       // Even if logout fails, clear local storage and navigate
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      navigate('/login', { replace: true });
+      navigate('/login');
     }
   };
 
@@ -147,165 +148,48 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     setTooltip(null);
   };
 
-  const handleCollapseMouseEnter = (e: React.MouseEvent) => {
-    if (collapseTooltipTimeoutRef.current) {
-      clearTimeout(collapseTooltipTimeoutRef.current);
-      collapseTooltipTimeoutRef.current = null;
-    }
-    setCollapseTooltip({ x: e.clientX, y: e.clientY });
-    setShowCollapseTooltip(false);
-    collapseTooltipTimeoutRef.current = setTimeout(() => {
-      setShowCollapseTooltip(true);
-    }, 150);
-  };
-
-  const handleCollapseMouseMove = (e: React.MouseEvent) => {
-    if (collapseTooltip) {
-      setCollapseTooltip({ ...collapseTooltip, x: e.clientX, y: e.clientY });
-      if (!showCollapseTooltip && collapseTooltipTimeoutRef.current) {
-        setShowCollapseTooltip(true);
-      }
-    }
-  };
-
-  const handleCollapseMouseLeave = () => {
-    if (collapseTooltipTimeoutRef.current) {
-      clearTimeout(collapseTooltipTimeoutRef.current);
-      collapseTooltipTimeoutRef.current = null;
-    }
-    setShowCollapseTooltip(false);
-    setCollapseTooltip(null);
-  };
-
-  const handleLogoMouseEnter = (e: React.MouseEvent) => {
-    if (collapsed) {
-      handleCollapseMouseEnter(e);
-      setIsLogoHovered(true);
-    }
-  };
-
-  const handleLogoMouseMove = (e: React.MouseEvent) => {
-    if (collapsed) {
-      handleCollapseMouseMove(e);
-    }
-  };
-
-  const handleLogoMouseLeave = () => {
-    if (collapsed) {
-      handleCollapseMouseLeave();
-      setIsLogoHovered(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!collapsed) {
-      setIsLogoHovered(false);
-    }
-  }, [collapsed]);
-
   // Cleanup timeout on unmount or when collapsed changes
   useEffect(() => {
     return () => {
       if (tooltipTimeoutRef.current) {
         clearTimeout(tooltipTimeoutRef.current);
       }
-      if (collapseTooltipTimeoutRef.current) {
-        clearTimeout(collapseTooltipTimeoutRef.current);
-      }
     };
   }, [collapsed]);
 
-  // Update expanded items when location changes
-  useEffect(() => {
-    if (location.pathname.startsWith('/settings')) {
-      setExpandedItems((prev) => new Set(prev).add('/settings'));
-    }
-  }, [location.pathname]);
-
-  const toggleExpanded = (path: string) => {
-    setExpandedItems((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(path)) {
-        newSet.delete(path);
-      } else {
-        newSet.add(path);
-      }
-      return newSet;
-    });
-  };
-
-  const isItemActive = (item: NavItem): boolean => {
-    if (location.pathname === item.path) return true;
-    if (item.children) {
-      return item.children.some((child) => location.pathname === child.path);
-    }
-    return false;
-  };
-
-  const checkChildActive = (childPath: string): boolean => {
-    return location.pathname === childPath;
-  };
-
   return (
     <aside
-        className={cn(
-        'fixed left-0 top-0 z-50 h-screen bg-white border-r border-gray-200 transition-all duration-300 flex flex-col overflow-x-hidden overflow-y-auto',
+      className={cn(
+        'fixed left-0 top-0 z-50 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col overflow-x-hidden overflow-y-auto',
         collapsed ? 'w-20' : 'w-72'
       )}
     >
       {/* Logo Section */}
-      <div className={cn('flex items-center justify-between border-b border-gray-200 bg-white overflow-hidden', collapsed ? 'px-2 py-4' : 'px-6 py-5')}>
-        {collapsed ? (
-          // Collapsed state: Only logo, clickable to expand
-          <button
-            onClick={() => onToggle(false)}
-            onMouseEnter={handleLogoMouseEnter}
-            onMouseMove={handleLogoMouseMove}
-            onMouseLeave={handleLogoMouseLeave}
-            className="flex items-center justify-center w-full hover:bg-gray-50 rounded-lg transition-colors p-1"
-            aria-label="Expand sidebar"
-          >
-            <div
-              className={cn(
-                'flex-shrink-0 rounded-lg flex items-center justify-center w-10 h-10 transition-all duration-200',
-                isLogoHovered
-                  ? 'bg-gray-100 border border-gray-200 shadow-sm text-gray-600'
-                  : 'bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg text-white'
-              )}
-            >
-              {isLogoHovered ? (
-                <SidebarToggleIcon className="w-5 h-5 text-gray-500" collapsed={true} />
-              ) : (
-                <MdRocketLaunch className="w-5 h-5" />
-              )}
+      <div className={cn('flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden', collapsed ? 'px-2 py-4' : 'px-6 py-5')}>
+        <div className={cn('flex items-center gap-3 flex-1 min-w-0', collapsed && 'justify-center flex-shrink-0')}>
+          <div className={cn('flex-shrink-0 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg', collapsed ? 'w-10 h-10' : 'w-10 h-10')}>
+            <MdRocketLaunch className={cn('text-white', collapsed ? 'w-5 h-5' : 'w-6 h-6')} />
+          </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+                Euroasiann ERP
+              </h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Admin Portal</p>
             </div>
-          </button>
-        ) : (
-          // Expanded state: Logo with text and toggle button
-          <>
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="flex-shrink-0 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg w-10 h-10">
-                <MdRocketLaunch className="text-white w-6 h-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-lg font-bold text-gray-900 truncate">
-                  Euroasiann ERP
-                </h1>
-                <p className="text-xs text-gray-500">Admin Portal</p>
-              </div>
-            </div>
-            <button
-              onClick={() => onToggle(true)}
-              onMouseEnter={handleCollapseMouseEnter}
-              onMouseMove={handleCollapseMouseMove}
-              onMouseLeave={handleCollapseMouseLeave}
-              className="rounded-lg hover:bg-gray-100 transition-colors text-gray-500 flex-shrink-0 relative p-1.5"
-              aria-label="Collapse sidebar"
-            >
-              <SidebarToggleIcon className="w-5 h-5" collapsed={false} />
-            </button>
-          </>
-        )}
+          )}
+        </div>
+        <button
+          onClick={() => onToggle(!collapsed)}
+          className={cn('rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400 flex-shrink-0', collapsed ? 'p-1' : 'p-1.5')}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? (
+            <MdChevronRight className="w-5 h-5" />
+          ) : (
+            <MdChevronLeft className="w-5 h-5" />
+          )}
+        </button>
       </div>
 
       {/* Navigation */}
@@ -313,67 +197,70 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {navItems.map((item) => {
           const Icon = item.icon;
           const hasChildren = item.children && item.children.length > 0;
-          const isActive = isItemActive(item);
-          const isExpanded = expandedItems.has(item.path);
+          const isExpanded = expandedSections.has(item.label);
+          const isActive = item.path ? location.pathname === item.path : false;
+          const hasActiveChild = item.children?.some(child => child.path && location.pathname === child.path);
 
           if (hasChildren) {
             return (
-              <div key={item.path} className="space-y-1">
-                {/* Parent Item */}
+              <div key={item.label}>
                 <button
-                  onClick={() => !collapsed && toggleExpanded(item.path)}
+                  onClick={() => {
+                    if (!collapsed) {
+                      const newExpanded = new Set(expandedSections);
+                      if (isExpanded) {
+                        newExpanded.delete(item.label);
+                      } else {
+                        newExpanded.add(item.label);
+                      }
+                      setExpandedSections(newExpanded);
+                    }
+                  }}
                   onMouseEnter={(e) => handleMouseEnter(e, item.label)}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
                   className={cn(
                     'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 w-full text-left',
                     collapsed ? 'justify-center px-2' : 'px-3',
-                    isActive
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
-                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                    hasActiveChild
+                      ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                   )}
                 >
-                  <Icon className={cn('w-5 h-5 flex-shrink-0', isActive && 'text-blue-600')} />
+                  <Icon className={cn('w-5 h-5 flex-shrink-0', hasActiveChild && 'text-blue-600 dark:text-blue-400')} />
                   {!collapsed && (
                     <>
-                      <span className="flex-1 text-sm font-medium text-left">{item.label}</span>
-                      {item.badge && (
-                        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-600">
-                          {item.badge}
-                        </span>
+                      <span className="flex-1 text-sm font-medium">{item.label}</span>
+                      {isExpanded ? (
+                        <MdExpandLess className="w-4 h-4" />
+                      ) : (
+                        <MdExpandMore className="w-4 h-4" />
                       )}
-                      <MdKeyboardArrowDown
-                        className={cn(
-                          'w-4 h-4 transition-transform duration-200',
-                          isExpanded && 'transform rotate-180'
-                        )}
-                      />
                     </>
                   )}
                 </button>
-
-                {/* Children Items */}
                 {!collapsed && isExpanded && item.children && (
-                  <div className="ml-8 space-y-1 border-l-2 border-gray-200 pl-2">
+                  <div className="ml-4 mt-1 space-y-1">
                     {item.children.map((child) => {
                       const ChildIcon = child.icon;
-                      const childIsActive = checkChildActive(child.path);
+                      const isChildActive = child.path ? location.pathname === child.path : false;
                       return (
                         <NavLink
-                          key={child.path}
-                          to={child.path}
+                          key={child.path || child.label}
+                          to={child.path || '#'}
                           onMouseEnter={(e) => handleMouseEnter(e, child.label)}
                           onMouseMove={handleMouseMove}
                           onMouseLeave={handleMouseLeave}
                           className={cn(
-                            'group relative flex items-center gap-3 py-2 rounded-lg transition-all duration-200 px-3',
-                            childIsActive
-                              ? 'bg-blue-50 text-blue-700 font-semibold'
-                              : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700'
+                            'group relative flex items-center gap-3 py-2 rounded-lg transition-all duration-200',
+                            'px-3',
+                            isChildActive
+                              ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
                           )}
                         >
-                          <ChildIcon className={cn('w-4 h-4 flex-shrink-0', childIsActive && 'text-blue-600')} />
-                          <span className="flex-1 text-sm font-medium">{child.label}</span>
+                          <ChildIcon className={cn('w-4 h-4 flex-shrink-0', isChildActive && 'text-blue-600 dark:text-blue-400')} />
+                          <span className="flex-1 text-sm">{child.label}</span>
                         </NavLink>
                       );
                     })}
@@ -386,7 +273,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           return (
             <NavLink
               key={item.path}
-              to={item.path}
+              to={item.path || '#'}
               onMouseEnter={(e) => handleMouseEnter(e, item.label)}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
@@ -394,16 +281,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200',
                 collapsed ? 'justify-center px-2' : 'px-3',
                 isActive
-                  ? 'bg-blue-50 text-blue-700 font-semibold'
-                  : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                  ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
               )}
             >
-              <Icon className={cn('w-5 h-5 flex-shrink-0', isActive && 'text-blue-600')} />
+              <Icon className={cn('w-5 h-5 flex-shrink-0', isActive && 'text-blue-600 dark:text-blue-400')} />
               {!collapsed && (
                 <>
                   <span className="flex-1 text-sm font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-600">
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
                       {item.badge}
                     </span>
                   )}
@@ -415,19 +302,19 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       {/* User Section */}
-      <div className={cn('border-t border-gray-200 bg-white overflow-hidden', collapsed ? 'px-2 py-3' : 'p-4')}>
+      <div className={cn('border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden', collapsed ? 'px-2 py-3' : 'p-4')}>
         {!collapsed && (
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 mb-3">
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 mb-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
               {user?.firstName?.[0] || user?.email?.[0] || 'A'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                 {user?.firstName && user?.lastName
                   ? `${user.firstName} ${user.lastName}`
                   : user?.email || 'Admin User'}
               </p>
-              <p className="text-xs text-gray-500 truncate">{user?.role || 'Admin'}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.role || 'Admin'}</p>
             </div>
           </div>
         )}
@@ -445,7 +332,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           onMouseLeave={() => collapsed && handleMouseLeave()}
           type="button"
           className={cn(
-            'group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors',
+            'group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors',
             collapsed && 'justify-center'
           )}
         >
@@ -454,11 +341,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </button>
       </div>
 
-      {/* Tooltip that follows mouse for navigation items */}
+      {/* Tooltip that follows mouse */}
       {collapsed && tooltip && (
         <div
           className={cn(
-            "fixed px-3 py-1.5 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap shadow-lg z-[100] pointer-events-none transition-all duration-150 ease-in-out",
+            "fixed px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg whitespace-nowrap shadow-lg z-[100] pointer-events-none transition-all duration-150 ease-in-out",
             showTooltip ? "opacity-100 scale-100" : "opacity-0 scale-95"
           )}
           style={{
@@ -468,23 +355,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           }}
         >
           {tooltip.label}
-        </div>
-      )}
-
-      {/* Tooltip for collapse/expand button or logo (when collapsed) */}
-      {collapseTooltip && (
-        <div
-          className={cn(
-            "fixed px-3 py-1.5 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap shadow-lg z-[100] pointer-events-none transition-all duration-150 ease-in-out",
-            showCollapseTooltip ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          )}
-          style={{
-            left: `${collapseTooltip.x + 10}px`,
-            top: `${collapseTooltip.y + 10}px`,
-            transform: showCollapseTooltip ? 'translate(0, 0) scale(1)' : 'translate(0, 0) scale(0.95)',
-          }}
-        >
-          {collapsed ? 'Open sidebar' : 'Close sidebar'}
         </div>
       )}
     </aside>

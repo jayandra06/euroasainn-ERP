@@ -1,11 +1,33 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const envPath = path.resolve(__dirname, '../../../.env');
-dotenv.config({ path: envPath });
+
+// Try multiple locations for .env file
+const possiblePaths = [
+  path.resolve(__dirname, '../../../.env'), // Root of workspace
+  path.resolve(__dirname, '../../../../.env'), // Alternative root path
+  path.resolve(__dirname, '../../.env'), // apps/.env
+  path.resolve(process.cwd(), '.env'), // Current working directory
+];
+
+let envPath: string | undefined;
+for (const possiblePath of possiblePaths) {
+  if (existsSync(possiblePath)) {
+    envPath = possiblePath;
+    break;
+  }
+}
+
+if (envPath) {
+  dotenv.config({ path: envPath });
+} else {
+  // Fallback: try default locations without checking existence
+  dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+}
 
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),

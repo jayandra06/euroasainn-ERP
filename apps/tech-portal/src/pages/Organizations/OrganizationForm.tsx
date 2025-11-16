@@ -38,35 +38,6 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiFetch('/api/v1/tech/organizations', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: data.name,
-          type: data.type,
-          portalType: data.portalType,
-          isActive: data.isActive,
-          adminEmail: data.adminEmail,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create organization');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      showToast('Organization created successfully!', 'success');
-      onSuccess();
-    },
-    onError: (error: Error) => {
-      setErrors({ submit: error.message });
-      showToast(`Failed to create organization: ${error.message}`, 'error');
-    },
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (data: any) => {
       // Determine portal type based on organization type
       const portalType = data.type === 'customer' ? 'customer' : 'vendor';
       
@@ -94,12 +65,8 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
         console.log(`✅ Admin email provided: ${submitData.adminEmail} - invitation will be sent to this address`);
       }
 
-      const response = await fetch(`${API_URL}/api/v1/tech/organizations`, {
+      const response = await apiFetch('/api/v1/tech/organizations', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
         body: JSON.stringify(submitData),
       });
 
@@ -122,23 +89,24 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
     onSuccess: (data) => {
       if (data.emailSent === false && data.emailError) {
         // Email failed
-        toast.warning(`Organization created, but email failed to send to ${data.emailTo}: ${data.emailError}`);
+        showToast(`Organization created, but email failed to send to ${data.emailTo}: ${data.emailError}`, 'warning');
         console.error('❌ Email sending failed:', data.emailError);
       } else if (data.emailSent === true) {
         // Email sent successfully
-        toast.success(`Organization created successfully! Invitation email has been sent to ${data.emailTo || formData.adminEmail}.`);
+        showToast(`Organization created successfully! Invitation email has been sent to ${data.emailTo || formData.adminEmail}.`, 'success');
         console.log('✅ Email sent successfully to:', data.emailTo || formData.adminEmail);
       } else if (data.message) {
         // Use server message
-        toast.success(data.message);
+        showToast(data.message, 'success');
       } else {
         // Fallback message
-        toast.success('Organization created successfully! Invitation email has been sent to the admin.');
+        showToast('Organization created successfully! Invitation email has been sent to the admin.', 'success');
       }
       onSuccess();
     },
     onError: (error: Error) => {
-      toast.error(`Failed to create organization: ${error.message}`);
+      setErrors({ submit: error.message });
+      showToast(`Failed to create organization: ${error.message}`, 'error');
       console.error('❌ Organization creation error:', error);
     },
   });
@@ -156,7 +124,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
     createMutation.mutate(formData);
   };
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isLoading = createMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

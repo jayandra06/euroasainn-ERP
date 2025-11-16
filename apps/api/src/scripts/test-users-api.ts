@@ -6,11 +6,34 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 import { User } from '../models/user.model';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+
+// Try multiple locations for .env file
+const possiblePaths = [
+  path.resolve(__dirname, '../../../.env'), // Root of workspace
+  path.resolve(__dirname, '../../../../.env'), // Alternative root path
+  path.resolve(__dirname, '../../.env'), // apps/.env
+  path.resolve(process.cwd(), '.env'), // Current working directory
+];
+
+let envPath: string | undefined;
+for (const possiblePath of possiblePaths) {
+  if (existsSync(possiblePath)) {
+    envPath = possiblePath;
+    break;
+  }
+}
+
+if (envPath) {
+  dotenv.config({ path: envPath });
+} else {
+  // Fallback: try default location
+  dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+}
 
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/euroasiann';
 
