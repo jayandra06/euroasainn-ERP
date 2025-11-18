@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 
+const VENDOR_STATUS_OPTIONS = ['All Statuses', 'Approved', 'Pending', 'Rejected'];
+const VENDOR_TYPE_OPTIONS = ['All Vendor Types', 'Internal Vendor', 'External Vendor'];
+
 export function VendorManagementPage() {
   const [showInviteModal, setShowInviteModal] = useState(false);
 
@@ -23,13 +26,21 @@ export function VendorManagementPage() {
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Status</label>
           <select className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-            <option>All Statuses</option>
+            {VENDOR_STATUS_OPTIONS.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
           </select>
         </div>
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Vendor Type</label>
           <select className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-            <option>All Vendor Types</option>
+            {VENDOR_TYPE_OPTIONS.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
           </select>
         </div>
         <div className="flex items-center gap-2 flex-1">

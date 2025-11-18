@@ -1,6 +1,37 @@
 import React, { useState } from 'react';
 import { MdAdd, MdDelete } from 'react-icons/md';
 
+const SUPPLY_PORT_OPTIONS = ['Bussan', 'Goa', 'Tamil Nadu', 'Kerala', 'Mumbai'];
+
+const CATEGORY_OPTIONS = ['Genuine', 'OEM', 'Copy', 'Parts'];
+
+const UOM_OPTIONS = ['Pieces', 'KiloGrams', 'Litres'];
+
+const INCOTERM_OPTIONS = [
+  'EXW (Ex Works)',
+  'FCA (Free Carrier)',
+  'CPT (Carriage Paid To)',
+  'CIP (Carriage and Insurance Paid To)',
+  'DAP (Delivered at Place)',
+  'DPU (Delivered at Place Unloaded)',
+  'DDP (Delivered Duty Paid)',
+  'FAS (Free Alongside Ship)',
+  'FOB (Free On Board)',
+  'CFR (Cost and Freight)',
+  'CIF (Cost, Insurance and Freight)',
+];
+
+const CONTAINER_TYPE_OPTIONS = [
+  'Nest 50 (50L Crate)',
+  'Nest 60 (60L Crate)',
+  'Euro Crate (Standard Euro Crate)',
+  'Foldable Crate (Collapsible Crate)',
+  'Pallet Box (Heavy-Duty Pallet Box)',
+  'IBC Tank (Intermediate Bulk Container)',
+  'Plastic Drum (220L Sealed Drum)',
+  'Wooden Crate (Custom Size Wooden Crate)',
+];
+
 export function CreateEnquiryPage() {
   const [items, setItems] = useState([{ id: 1 }]);
 
@@ -56,7 +87,12 @@ export function CreateEnquiryPage() {
               Supply Port <span className="text-red-500">*</span>
             </label>
             <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Supply Port</option>
+              <option value="">Select Supply Port</option>
+              {SUPPLY_PORT_OPTIONS.map((port) => (
+                <option key={port} value={port}>
+                  {port}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -72,7 +108,12 @@ export function CreateEnquiryPage() {
               Category <span className="text-red-500">*</span>
             </label>
             <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Category</option>
+              <option value="">Select Category</option>
+              {CATEGORY_OPTIONS.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -146,7 +187,12 @@ export function CreateEnquiryPage() {
               Type of Incoterms <span className="text-red-500">*</span>
             </label>
             <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Incoterm</option>
+              <option value="">Select Incoterm</option>
+              {INCOTERM_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -154,7 +200,12 @@ export function CreateEnquiryPage() {
               Type of Logistic Container <span className="text-red-500">*</span>
             </label>
             <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Container Type</option>
+              <option value="">Select Container Type</option>
+              {CONTAINER_TYPE_OPTIONS.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -273,7 +324,12 @@ export function CreateEnquiryPage() {
                   </td>
                   <td className="px-4 py-3">
                     <select className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm">
-                      <option>Select UON</option>
+                      <option value="">Select UOM</option>
+                      {UOM_OPTIONS.map((uom) => (
+                        <option key={uom} value={uom}>
+                          {uom}
+                        </option>
+                      ))}
                     </select>
                   </td>
                   <td className="px-4 py-3">

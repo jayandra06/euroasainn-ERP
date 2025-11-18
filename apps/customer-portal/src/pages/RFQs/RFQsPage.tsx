@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
-import { MdAdd, MdKeyboardArrowDown, MdFileUpload } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
+import { MdAdd, MdKeyboardArrowDown, MdKeyboardArrowUp, MdFileUpload } from 'react-icons/md';
+
+const RFQ_STATUS_FILTER_OPTIONS = ['All Status', 'Sent', 'Ordered', 'Quoted', 'Delivered'];
+// NOTE: this expects the file to be placed in apps/customer-portal/public with this exact name
+const BULK_EXCEL_URL = '/bulk-template (1).xlsx';
 
 export function RFQsPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'your-rfqs' | 'waiting-approval'>('your-rfqs');
+  const [showFilters, setShowFilters] = useState(true);
 
   return (
     <div className="w-full space-y-6">
@@ -10,14 +17,26 @@ export function RFQsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Your RFQs</h1>
         <div className="flex items-center gap-3">
-          <button className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors">
-            <MdKeyboardArrowDown className="w-5 h-5" />
+          <button
+            onClick={() => setShowFilters((prev) => !prev)}
+            className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors"
+            aria-expanded={showFilters}
+            aria-label={showFilters ? 'Hide filters' : 'Show filters'}
+          >
+            {showFilters ? <MdKeyboardArrowUp className="w-5 h-5" /> : <MdKeyboardArrowDown className="w-5 h-5" />}
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
+          <button
+            onClick={() => navigate('/create-enquiry')}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+          >
             <MdAdd className="w-5 h-5" />
             Create Enquiry
           </button>
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+          <button
+            onClick={() => window.open(BULK_EXCEL_URL, '_blank')}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
+            <MdFileUpload className="w-5 h-5" />
             Bulk Add (Excel)
           </button>
         </div>
@@ -51,22 +70,28 @@ export function RFQsPage() {
       {activeTab === 'your-rfqs' ? (
         <div className="space-y-4">
           {/* Filters */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Status:</label>
-              <select className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-                <option>All Status</option>
-              </select>
+          {showFilters && (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Status:</label>
+                <select className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
+                  {RFQ_STATUS_FILTER_OPTIONS.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Search RFQs:</label>
+                <input
+                  type="text"
+                  placeholder="Vessel Name, Supply Port, Brand, or Category"
+                  className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 flex-1 min-w-[300px]"
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Search RFQs:</label>
-              <input
-                type="text"
-                placeholder="Vessel Name, Supply Port, Brand, or Category"
-                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 flex-1 min-w-[300px]"
-              />
-            </div>
-          </div>
+          )}
 
           {/* Table */}
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">

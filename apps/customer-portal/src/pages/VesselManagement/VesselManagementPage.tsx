@@ -3,6 +3,7 @@ import { MdAdd, MdFileUpload } from 'react-icons/md';
 
 export function VesselManagementPage() {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
 
   return (
     <div className="w-full space-y-6">
@@ -17,7 +18,10 @@ export function VesselManagementPage() {
             <MdAdd className="w-5 h-5" />
             Add Vessel
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
+          <button
+            onClick={() => setShowBulkModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+          >
             <MdFileUpload className="w-5 h-5" />
             Bulk Add (Excel)
           </button>
@@ -128,6 +132,55 @@ export function VesselManagementPage() {
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
               >
                 Add Vessels
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Add Vessels (Excel) Modal */}
+      {showBulkModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg mx-4 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Bulk Add Vessels (Excel)</h2>
+              <button
+                onClick={() => setShowBulkModal(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Upload an Excel file (.xlsx or .csv) containing vessel details. The file should have columns named: IMO
+              Number, Vessel Name, Ex Vessel Name (optional), Vessel Type (optional). The column names are
+              case-insensitive.
+            </p>
+
+            <div className="space-y-3 mb-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">Select Excel File</label>
+              <input
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setShowBulkModal(false)}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowBulkModal(false)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+              >
+                Upload &amp; Add
               </button>
             </div>
           </div>

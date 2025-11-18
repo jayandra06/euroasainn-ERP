@@ -1,26 +1,35 @@
-import React from 'react';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import React, { useState } from 'react';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 export function ClaimRaisedPage() {
+  const [showFilters, setShowFilters] = useState(true);
+
   return (
     <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Claim Raised</h1>
-        <button className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors">
-          <MdKeyboardArrowDown className="w-5 h-5" />
+        <button
+          onClick={() => setShowFilters((prev) => !prev)}
+          className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors"
+          aria-expanded={showFilters}
+          aria-label={showFilters ? 'Hide search' : 'Show search'}
+        >
+          {showFilters ? <MdKeyboardArrowUp className="w-5 h-5" /> : <MdKeyboardArrowDown className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Search */}
-      <div>
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Search RFQs:</label>
-        <input
-          type="text"
-          placeholder="Vessel Name, Supply Port, Brand, or Category"
-          className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
-        />
-      </div>
+      {showFilters && (
+        <div>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Search RFQs:</label>
+          <input
+            type="text"
+            placeholder="Vessel Name, Supply Port, Brand, or Category"
+            className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+          />
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">

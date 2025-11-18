@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 
 export function CrewManagementPage() {
+  const [rows, setRows] = useState<{ id: number }[]>([{ id: 1 }]);
+
+  const handleAddRow = () => {
+    setRows((prev) => [...prev, { id: Date.now() }]);
+  };
+
   return (
     <div className="w-full space-y-6">
       {/* Header */}
@@ -19,35 +25,42 @@ export function CrewManagementPage() {
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400">Status</div>
         </div>
 
-        <div className="grid grid-cols-5 gap-4 mb-6">
-          <input
-            type="text"
-            value="New"
-            readOnly
-            className="px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
-          />
-          <input
-            type="text"
-            placeholder="Enter a username"
-            className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
-          />
-          <input
-            type="email"
-            placeholder="Enter an Email"
-            className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
-          />
-          <input
-            type="tel"
-            placeholder="Enter a phone number"
-            className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
-          />
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm">
-            Save
-          </button>
+        <div className="space-y-4 mb-6">
+          {rows.map((row) => (
+            <div key={row.id} className="grid grid-cols-5 gap-4">
+              <input
+                type="text"
+                value="New"
+                readOnly
+                className="px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+              />
+              <input
+                type="text"
+                placeholder="Enter a username"
+                className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+              />
+              <input
+                type="email"
+                placeholder="Enter an Email"
+                className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+              />
+              <input
+                type="tel"
+                placeholder="Enter a phone number"
+                className="px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+              />
+              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm">
+                Save
+              </button>
+            </div>
+          ))}
         </div>
 
         <div className="flex justify-end">
-          <button className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+          <button
+            onClick={handleAddRow}
+            className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
             <MdAdd className="w-5 h-5" />
             Add Employee
           </button>
