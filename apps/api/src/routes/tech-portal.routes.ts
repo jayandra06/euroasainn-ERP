@@ -22,34 +22,6 @@ router.get('/users/:id', userController.getUserById.bind(userController));
 router.put('/users/:id', userController.updateUser.bind(userController));
 router.delete('/users/:id', userController.deleteUser.bind(userController));
 
-// Admin Users routes
-// router.get('/admin-users', async (req, res) => {
-//   try {
-//     const { userService } = await import('../services/user.service');
-//     const users = await userService.getUsers(PortalType.ADMIN);
-//     res.status(200).json({
-//       success: true,
-//       data: users,
-//     });
-//   } catch (error: any) {
-//     res.status(500).json({
-//       success: false,
-//       error: error.message || 'Failed to get admin users',
-//     });
-//   }
-// });
-
-// router.post('/admin-users', async (req, res) => {
-//   try {
-//     req.body.portalType = PortalType.ADMIN;
-//     await userController.createUser(req, res);
-//   } catch (error: any) {
-//     res.status(500).json({
-//       success: false,
-//       error: error.message || 'Failed to create admin user',
-//     });
-//   }
-// });
 
 
 
