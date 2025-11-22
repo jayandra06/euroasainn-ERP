@@ -28,7 +28,9 @@ const UserSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
+      required: function () {
+        return this.isNew;   // 👈 only required on create
+      },
       select: false,
     },
     firstName: {
@@ -76,6 +78,7 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
+// Indexes
 UserSchema.index({ email: 1, portalType: 1 });
 UserSchema.index({ organizationId: 1, portalType: 1 });
 
