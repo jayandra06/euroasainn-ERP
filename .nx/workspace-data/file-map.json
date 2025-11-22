@@ -1,6 +1,6 @@
 {
   "version": "6.0",
-  "nxVersion": "22.0.4",
+  "nxVersion": "22.0.2",
   "pathMappings": {
     "@euroasiann/shared": [
       "packages/shared/src/index.ts"
@@ -31,224 +31,88 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "tatus",
-        "hash": "17159359456009492547"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "13573919864217021275"
-      },
-      {
-        "file": "EMAIL_SETUP_VERIFICATION.md",
-        "hash": "6797188933888338818"
-      },
-      {
-        "file": "FIXES_APPLIED.md",
-        "hash": "12426521251474116600"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "6071606741697366279"
-      },
-      {
-        "file": "IMPLEMENTATION_STATUS.md",
-        "hash": "9097740983787840346"
-      },
-      {
-        "file": "WORKFLOW_VERIFICATION.md",
-        "hash": "8847276143183143071"
-      },
-      {
-        "file": "AGENTS.md",
-        "hash": "7581461091827600493"
-      },
-      {
-        "file": "packages/api-client/package.json",
-        "hash": "2602692624602937444"
-      },
-      {
-        "file": "GETTING_STARTED.md",
-        "hash": "1049262162653693862"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "17085498363870782104"
-      },
-      {
-        "file": ".prettierrc.json",
-        "hash": "18142496317079797154"
-      },
-      {
-        "file": "packages/casbin-config/src/seed-policies.js",
-        "hash": "2201952658513736008"
-      },
-      {
-        "file": "BLANK_SCREEN_FIX.md",
-        "hash": "8700031734602556007"
-      },
-      {
-        "file": "nx.json",
-        "hash": "5351305836524991426"
-      },
-      {
-        "file": "packages/casbin-config/src/seed-policies.ts",
-        "hash": "2167117622215368475"
-      },
-      {
-        "file": ".vscode/extensions.json",
-        "hash": "14244474672258854795"
-      },
-      {
-        "file": "RUN_TECH_PORTAL.md",
-        "hash": "6666963358365973342"
-      },
-      {
-        "file": "package.json",
-        "hash": "11280615923966935648"
-      },
-      {
-        "file": "TESTING_SETUP.md",
-        "hash": "11504990945598881350"
-      },
-      {
-        "file": "QUICK_START.md",
-        "hash": "9178022391055612964"
-      },
-      {
-        "file": "packages/api-client/src/types.ts",
-        "hash": "647881193130012702"
-      },
-      {
-        "file": "TECH_PORTAL_PAGES_COMPLETE.md",
-        "hash": "1199717825995648475"
-      },
-      {
-        "file": "how HEAD --stat",
-        "hash": "9020723679014996929"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "9563621418486234261"
-      },
-      {
-        "file": "packages/casbin-config/src/seed-policies.js.map",
-        "hash": "4148616629570244429"
-      },
-      {
-        "file": ".env.example",
-        "hash": "2863894286761031765"
-      },
-      {
-        "file": ".lintstagedrc.json",
-        "hash": "3391539817868243392"
-      },
-      {
-        "file": "tash pop",
-        "hash": "4311500883470956494"
-      },
-      {
-        "file": ".vscode/launch.json",
-        "hash": "10469226683475379739"
-      },
-      {
-        "file": "LOGIN_INSTRUCTIONS.md",
-        "hash": "15832151475755514468"
-      },
-      {
-        "file": "NEXT_STEPS.md",
-        "hash": "9871455578272012907"
-      },
-      {
-        "file": "packages/casbin-config/src/model.conf",
-        "hash": "10561729777202607445"
-      },
-      {
-        "file": "BUSINESS_LOGIC_EDITOR_SETUP.md",
-        "hash": "1834810102447830715"
-      },
-      {
-        "file": "START_INSTRUCTIONS.md",
-        "hash": "15490751626099247208"
-      },
-      {
         "file": ".cursor/worktrees.json",
         "hash": "15807341515258800370"
-      },
-      {
-        "file": "packages/api-client/src/auth.ts",
-        "hash": "9716211796236435765"
-      },
-      {
-        "file": "packages/api-client/src/client.ts",
-        "hash": "4023659966195068011"
-      },
-      {
-        "file": "REBUILD_SUMMARY.md",
-        "hash": "17598437253245463574"
-      },
-      {
-        "file": "REBUILD_COMPLETE.md",
-        "hash": "8753281531606416979"
-      },
-      {
-        "file": "FINAL_STATUS.md",
-        "hash": "6400314047570044862"
       },
       {
         "file": ".cursorignore",
         "hash": "3999631149619708861"
       },
       {
-        "file": "RAZORPAY_SETUP.md",
-        "hash": "6346462416981733321"
+        "file": ".editorconfig",
+        "hash": "11532813898455409296"
       },
       {
-        "file": "ENV_FIX.md",
-        "hash": "4566687435032823636"
+        "file": ".env.example",
+        "hash": "2863894286761031765"
       },
       {
-        "file": "TECH_PORTAL_LOGIN.md",
-        "hash": "952552053467917284"
+        "file": ".gitignore",
+        "hash": "9563621418486234261"
       },
       {
         "file": ".husky/pre-commit",
         "hash": "220362945356418324"
       },
       {
-        "file": "packages/casbin-config/src/seed-policies.d.ts.map",
-        "hash": "8497717059861594618"
+        "file": ".lintstagedrc.json",
+        "hash": "3391539817868243392"
       },
       {
-        "file": "packages/casbin-config/package.json",
-        "hash": "12613775368613344722"
+        "file": ".prettierignore",
+        "hash": "17085498363870782104"
       },
       {
         "file": ".prettierrc",
         "hash": "6820402234827505055"
       },
       {
+        "file": ".prettierrc.json",
+        "hash": "18142496317079797154"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "14244474672258854795"
+      },
+      {
+        "file": ".vscode/launch.json",
+        "hash": "10469226683475379739"
+      },
+      {
+        "file": "AGENTS.md",
+        "hash": "7581461091827600493"
+      },
+      {
         "file": "BLANK_SCREEN_DEBUG.md",
         "hash": "13504566770260594193"
       },
       {
-        "file": "RUNNING_SERVICES.md",
-        "hash": "10261520827462837669"
+        "file": "BLANK_SCREEN_FIX.md",
+        "hash": "8700031734602556007"
       },
       {
-        "file": "README.md",
-        "hash": "867859944044065775"
+        "file": "BUSINESS_LOGIC_EDITOR_SETUP.md",
+        "hash": "1834810102447830715"
       },
       {
-        "file": "packages/casbin-config/src/seed-policies.d.ts",
-        "hash": "4332728724135718476"
+        "file": "EMAIL_SETUP_VERIFICATION.md",
+        "hash": "6797188933888338818"
       },
       {
-        "file": "packages/shared/package.json",
-        "hash": "3002669549817913641"
+        "file": "ENV_FIX.md",
+        "hash": "4566687435032823636"
       },
       {
-        "file": "MONGODB_ATLAS_TROUBLESHOOTING.md",
-        "hash": "1337624838056679927"
+        "file": "FINAL_STATUS.md",
+        "hash": "6400314047570044862"
+      },
+      {
+        "file": "FIXES_APPLIED.md",
+        "hash": "12426521251474116600"
+      },
+      {
+        "file": "GETTING_STARTED.md",
+        "hash": "1049262162653693862"
       },
       {
         "file": "GUI_EDITOR_QUICK_START.md",
@@ -259,35 +123,954 @@
         "hash": "6656898697554380572"
       },
       {
-        "file": ".editorconfig",
-        "hash": "11532813898455409296"
+        "file": "IMPLEMENTATION_STATUS.md",
+        "hash": "9097740983787840346"
+      },
+      {
+        "file": "LOGIN_INSTRUCTIONS.md",
+        "hash": "15832151475755514468"
+      },
+      {
+        "file": "MONGODB_ATLAS_TROUBLESHOOTING.md",
+        "hash": "1337624838056679927"
+      },
+      {
+        "file": "NEXT_STEPS.md",
+        "hash": "9871455578272012907"
+      },
+      {
+        "file": "QUICK_START.md",
+        "hash": "9178022391055612964"
+      },
+      {
+        "file": "RAZORPAY_SETUP.md",
+        "hash": "6346462416981733321"
+      },
+      {
+        "file": "README.md",
+        "hash": "867859944044065775"
+      },
+      {
+        "file": "REBUILD_COMPLETE.md",
+        "hash": "8753281531606416979"
+      },
+      {
+        "file": "REBUILD_SUMMARY.md",
+        "hash": "17598437253245463574"
+      },
+      {
+        "file": "RUNNING_SERVICES.md",
+        "hash": "10261520827462837669"
+      },
+      {
+        "file": "RUN_TECH_PORTAL.md",
+        "hash": "6666963358365973342"
       },
       {
         "file": "SERVICES_STATUS.md",
         "hash": "12755930892734886298"
       },
       {
-        "file": "packages/api-client/src/index.ts",
-        "hash": "8490765443432518277"
-      },
-      {
-        "file": "packages/shared/src/types/index.ts",
-        "hash": "5017683573955205120"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "13702813447123101648"
+        "file": "START_INSTRUCTIONS.md",
+        "hash": "15490751626099247208"
       },
       {
         "file": "START_SERVICES.sh",
         "hash": "8634575822795267678"
       },
       {
+        "file": "TECH_PORTAL_LOGIN.md",
+        "hash": "952552053467917284"
+      },
+      {
+        "file": "TECH_PORTAL_PAGES_COMPLETE.md",
+        "hash": "1199717825995648475"
+      },
+      {
+        "file": "TESTING_SETUP.md",
+        "hash": "11504990945598881350"
+      },
+      {
+        "file": "WORKFLOW_VERIFICATION.md",
+        "hash": "8847276143183143071"
+      },
+      {
+        "file": "how HEAD --stat",
+        "hash": "9020723679014996929"
+      },
+      {
+        "file": "nx.json",
+        "hash": "5351305836524991426"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "13573919864217021275"
+      },
+      {
+        "file": "package.json",
+        "hash": "11280615923966935648"
+      },
+      {
+        "file": "packages/api-client/package.json",
+        "hash": "2602692624602937444"
+      },
+      {
+        "file": "packages/api-client/src/auth.ts",
+        "hash": "9716211796236435765"
+      },
+      {
+        "file": "packages/api-client/src/client.ts",
+        "hash": "4023659966195068011"
+      },
+      {
+        "file": "packages/api-client/src/index.ts",
+        "hash": "8490765443432518277"
+      },
+      {
+        "file": "packages/api-client/src/types.ts",
+        "hash": "647881193130012702"
+      },
+      {
+        "file": "packages/casbin-config/package.json",
+        "hash": "12613775368613344722"
+      },
+      {
+        "file": "packages/casbin-config/src/model.conf",
+        "hash": "10561729777202607445"
+      },
+      {
+        "file": "packages/casbin-config/src/seed-policies.d.ts",
+        "hash": "4332728724135718476"
+      },
+      {
+        "file": "packages/casbin-config/src/seed-policies.d.ts.map",
+        "hash": "8497717059861594618"
+      },
+      {
+        "file": "packages/casbin-config/src/seed-policies.js",
+        "hash": "2201952658513736008"
+      },
+      {
+        "file": "packages/casbin-config/src/seed-policies.js.map",
+        "hash": "4148616629570244429"
+      },
+      {
+        "file": "packages/casbin-config/src/seed-policies.ts",
+        "hash": "2167117622215368475"
+      },
+      {
+        "file": "packages/shared/package.json",
+        "hash": "3002669549817913641"
+      },
+      {
         "file": "packages/shared/src/index.ts",
         "hash": "4304625278857484256"
+      },
+      {
+        "file": "packages/shared/src/types/index.ts",
+        "hash": "5017683573955205120"
+      },
+      {
+        "file": "tash pop",
+        "hash": "4311500883470956494"
+      },
+      {
+        "file": "tatus",
+        "hash": "17159359456009492547"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "6071606741697366279"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "13702813447123101648"
       }
     ],
     "projectFileMap": {
+      "@euroasiann/tech-portal": [
+        {
+          "file": "apps/tech-portal/ERROR_CHECK.md",
+          "hash": "9398659936003558309"
+        },
+        {
+          "file": "apps/tech-portal/EXPORT_FIX.md",
+          "hash": "18128088129165509549"
+        },
+        {
+          "file": "apps/tech-portal/HOW_TO_USE_TAILWIND.md",
+          "hash": "3102003401964437091"
+        },
+        {
+          "file": "apps/tech-portal/PAGES_SUMMARY.md",
+          "hash": "697023116482744690"
+        },
+        {
+          "file": "apps/tech-portal/TAILWIND_SETUP.md",
+          "hash": "13932800311225468962"
+        },
+        {
+          "file": "apps/tech-portal/TAILWIND_V4_FIX.md",
+          "hash": "11718717900223751589"
+        },
+        {
+          "file": "apps/tech-portal/TAILWIND_V4_FIX_FINAL.md",
+          "hash": "9000994813896379164"
+        },
+        {
+          "file": "apps/tech-portal/TEMPLATE_INTEGRATION.md",
+          "hash": "8994374225240853950"
+        },
+        {
+          "file": "apps/tech-portal/TESTING_SUMMARY.md",
+          "hash": "5117124685174311618"
+        },
+        {
+          "file": "apps/tech-portal/UI_POLISH_COMPLETE.md",
+          "hash": "11015923615530071339"
+        },
+        {
+          "file": "apps/tech-portal/UI_REVAMP_COMPLETE.md",
+          "hash": "3481127646043798243"
+        },
+        {
+          "file": "apps/tech-portal/index.html",
+          "hash": "321687716258582061"
+        },
+        {
+          "file": "apps/tech-portal/package.json",
+          "hash": "11838533663160528707",
+          "deps": [
+            "npm:@tailwindcss/forms",
+            "npm:@tailwindcss/typography",
+            "npm:@types/node",
+            "npm:@types/react",
+            "npm:@types/react-dom",
+            "npm:@types/uuid",
+            "npm:@vitejs/plugin-react",
+            "npm:autoprefixer",
+            "npm:postcss",
+            "npm:tailwindcss",
+            "npm:typescript",
+            "npm:vite",
+            "npm:@tanstack/react-query",
+            "npm:axios",
+            "npm:clsx",
+            "npm:js-yaml@3.14.2",
+            "npm:react",
+            "npm:react-dom",
+            "npm:react-icons",
+            "npm:react-router-dom",
+            "npm:reactflow",
+            "npm:recharts",
+            "npm:tailwind-merge",
+            "npm:uuid",
+            "npm:yaml",
+            "npm:zustand@4.5.7"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/postcss.config.js",
+          "hash": "1949403712316218146"
+        },
+        {
+          "file": "apps/tech-portal/public/favicon.svg",
+          "hash": "5426836181949846176"
+        },
+        {
+          "file": "apps/tech-portal/src/app/app.tsx",
+          "hash": "3815627567747968874",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/ErrorBoundary.tsx",
+          "hash": "4357612017049691761",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/ProtectedRoute.tsx",
+          "hash": "5811861793827136867",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/shared/DataTable.tsx",
+          "hash": "14112390498297381979",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/shared/Modal.tsx",
+          "hash": "12771206456105877687",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/shared/ThemeToggle.tsx",
+          "hash": "16027050438220116113",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/shared/Toast.tsx",
+          "hash": "7963287227808479575",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/template/Header.tsx",
+          "hash": "8359994916119158440",
+          "deps": [
+            "npm:react",
+            "npm:react-icons",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/template/Layout.tsx",
+          "hash": "18218815249625661416",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/template/Sidebar.tsx",
+          "hash": "13610634191932690757",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/ui/button.tsx",
+          "hash": "7045460273457129668",
+          "deps": [
+            "npm:react",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/components/ui/card.tsx",
+          "hash": "5761987751123800563",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/context/AuthContext.tsx",
+          "hash": "16362418233153493372",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/context/ThemeContext.tsx",
+          "hash": "18395069978737937982",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/lib/utils.ts",
+          "hash": "2765201057128530299",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/main.tsx",
+          "hash": "2872310245296530380",
+          "deps": [
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/AdminUsers/AdminUserForm.tsx",
+          "hash": "8698113152878595065",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/AdminUsers/AdminUsersPage.tsx",
+          "hash": "5366471474820366867",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Analytics/AnalyticsPage.tsx",
+          "hash": "8104583328923514977",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Analytics/BugIssueTracking.tsx",
+          "hash": "16779500607982744775",
+          "deps": [
+            "npm:react",
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Analytics/DeploymentAnalytics.tsx",
+          "hash": "15574363738850844620",
+          "deps": [
+            "npm:react",
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Analytics/SecurityReports.tsx",
+          "hash": "898546918845600651",
+          "deps": [
+            "npm:react",
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Analytics/SystemPerformanceDashboard.tsx",
+          "hash": "16724830338409575842",
+          "deps": [
+            "npm:react",
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Analytics/UsageAdoptionAnalytics.tsx",
+          "hash": "9780725676286387366",
+          "deps": [
+            "npm:react",
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Dashboard.tsx",
+          "hash": "2981686901129913394",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Licenses/LicenseForm.tsx",
+          "hash": "2550129781008928924",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Licenses/LicensesPage.tsx",
+          "hash": "315677711271304843",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Login.tsx",
+          "hash": "17973241182402418300",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Onboarding/OnboardingDataPage.tsx",
+          "hash": "1298024069730844665",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Organizations/OrganizationForm.tsx",
+          "hash": "961844950565083922",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Organizations/OrganizationInvitationsModal.tsx",
+          "hash": "5886962498746780375",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Organizations/OrganizationProfilePage.tsx",
+          "hash": "10205597339015291842",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Organizations/OrganizationsPage.tsx",
+          "hash": "12888320712818216203",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Settings/SettingsPage.tsx",
+          "hash": "9481693220734960153",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Users/UserForm.tsx",
+          "hash": "10673519221454910033",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/pages/Users/UsersPage.tsx",
+          "hash": "4067898849701566964",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/src/styles.css",
+          "hash": "10312554191825551456"
+        },
+        {
+          "file": "apps/tech-portal/src/styles/tailwind.css",
+          "hash": "10252782906556933305"
+        },
+        {
+          "file": "apps/tech-portal/src/utils/api.ts",
+          "hash": "7384160434701149620"
+        },
+        {
+          "file": "apps/tech-portal/src/vite-env.d.ts",
+          "hash": "2496687771327342751"
+        },
+        {
+          "file": "apps/tech-portal/tailwind.config.ts",
+          "hash": "4680871909775873118",
+          "deps": [
+            "npm:tailwindcss",
+            "npm:@tailwindcss/forms",
+            "npm:@tailwindcss/typography"
+          ]
+        },
+        {
+          "file": "apps/tech-portal/tsconfig.json",
+          "hash": "12322306282941657301"
+        },
+        {
+          "file": "apps/tech-portal/tsconfig.node.json",
+          "hash": "14497182797392745637"
+        },
+        {
+          "file": "apps/tech-portal/vite.config.ts",
+          "hash": "12369601416304800854",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react"
+          ]
+        }
+      ],
+      "@euroasiann/customer-portal": [
+        {
+          "file": "apps/customer-portal/index.html",
+          "hash": "730511525137383083"
+        },
+        {
+          "file": "apps/customer-portal/package.json",
+          "hash": "12607051646568754286",
+          "deps": [
+            "npm:@tanstack/react-query",
+            "npm:axios",
+            "npm:react",
+            "npm:react-dom",
+            "npm:react-icons",
+            "npm:react-router-dom",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/postcss.config.js",
+          "hash": "3333125635652875490"
+        },
+        {
+          "file": "apps/customer-portal/public/bulk-template (1).xlsx",
+          "hash": "15837429292736479639"
+        },
+        {
+          "file": "apps/customer-portal/src/app/app.tsx",
+          "hash": "3585837258416333936",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/ErrorBoundary.tsx",
+          "hash": "14266438289124879769",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/ProtectedRoute.tsx",
+          "hash": "9087879618426708845",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@tanstack/react-query"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/shared/DataTable.tsx",
+          "hash": "11655547107163288740",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/shared/Toast.tsx",
+          "hash": "1786962007691112458",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/template/Header.tsx",
+          "hash": "16016457748156464252",
+          "deps": [
+            "npm:react",
+            "npm:react-icons",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/template/Layout.tsx",
+          "hash": "18218815249625661416",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/components/template/Sidebar.tsx",
+          "hash": "15919361496877683632",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/context/AuthContext.tsx",
+          "hash": "13640164545039318502",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/context/ThemeContext.tsx",
+          "hash": "11747012355695911839",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/lib/utils.ts",
+          "hash": "2765201057128530299",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/main.tsx",
+          "hash": "14882232188361209053",
+          "deps": [
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Analytics/AnalyticsPage.tsx",
+          "hash": "1417393000316015244",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Analytics/BillingPaymentsReports.tsx",
+          "hash": "10337156999502316970",
+          "deps": [
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Analytics/CustomerExperienceDashboard.tsx",
+          "hash": "9063499723433041270",
+          "deps": [
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Analytics/OrderDeliveryReports.tsx",
+          "hash": "15836644920686168245",
+          "deps": [
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Analytics/ServiceUsageReports.tsx",
+          "hash": "4270536110156197853",
+          "deps": [
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Analytics/SupportFeedbackReports.tsx",
+          "hash": "18163928410361789773",
+          "deps": [
+            "npm:recharts",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/BecomeAVendor/BecomeAVendorPage.tsx",
+          "hash": "7138140480024902919",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Branch/BranchPage.tsx",
+          "hash": "17012524673092492117",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/ClaimRaised/ClaimRaisedPage.tsx",
+          "hash": "10318264992322203007",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/CreateEnquiry/CreateEnquiryPage.tsx",
+          "hash": "556849780428894811",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/CrewManagement/CrewManagementPage.tsx",
+          "hash": "9101381738557505973",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Dashboard.tsx",
+          "hash": "15954195756260129199",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/FleetOverview/FleetOverviewPage.tsx",
+          "hash": "17961874459259835576",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Licenses/LicensesPage.tsx",
+          "hash": "6979287792270849279",
+          "deps": [
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Login.tsx",
+          "hash": "5331576087686425639",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Onboarding/OnboardingFormPage.tsx",
+          "hash": "8696402107265169197",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/Payment/PaymentPage.tsx",
+          "hash": "11889471214130571595",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-query",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/PortManagement/PortManagementPage.tsx",
+          "hash": "16959009089678288078",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/RFQs/RFQsPage.tsx",
+          "hash": "16543482543456703270",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/RoleManagement/RoleManagementPage.tsx",
+          "hash": "16519519335610125916",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/VendorManagement/VendorManagementPage.tsx",
+          "hash": "6994062856893651372",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/pages/VesselManagement/VesselManagementPage.tsx",
+          "hash": "16260260642486196586",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/src/styles.css",
+          "hash": "2190124752544765801"
+        },
+        {
+          "file": "apps/customer-portal/src/styles/tailwind.css",
+          "hash": "13033201013600243049"
+        },
+        {
+          "file": "apps/customer-portal/src/types/razorpay.d.ts",
+          "hash": "10876764866582400655"
+        },
+        {
+          "file": "apps/customer-portal/src/vite-env.d.ts",
+          "hash": "2496687771327342751"
+        },
+        {
+          "file": "apps/customer-portal/tailwind.config.ts",
+          "hash": "7523042475885222966",
+          "deps": [
+            "npm:tailwindcss",
+            "npm:@tailwindcss/forms",
+            "npm:@tailwindcss/typography"
+          ]
+        },
+        {
+          "file": "apps/customer-portal/tsconfig.json",
+          "hash": "12322306282941657301"
+        },
+        {
+          "file": "apps/customer-portal/tsconfig.node.json",
+          "hash": "14497182797392745637"
+        },
+        {
+          "file": "apps/customer-portal/vite.config.ts",
+          "hash": "4801394630860091155",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react"
+          ]
+        }
+      ],
       "@euroasiann/admin-portal": [
         {
           "file": "apps/admin-portal/index.html",
@@ -879,11 +1662,11 @@
         },
         {
           "file": "apps/api/logs/combined.log",
-          "hash": "16702023256913264623"
+          "hash": "9340852020157524243"
         },
         {
           "file": "apps/api/logs/error.log",
-          "hash": "17145439706056773680"
+          "hash": "103998621170257899"
         },
         {
           "file": "apps/api/package-lock.json",
@@ -1401,352 +2184,6 @@
           ]
         }
       ],
-      "@euroasiann/customer-portal": [
-        {
-          "file": "apps/customer-portal/index.html",
-          "hash": "730511525137383083"
-        },
-        {
-          "file": "apps/customer-portal/package.json",
-          "hash": "12607051646568754286",
-          "deps": [
-            "npm:@tanstack/react-query",
-            "npm:axios",
-            "npm:react",
-            "npm:react-dom",
-            "npm:react-icons",
-            "npm:react-router-dom",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/postcss.config.js",
-          "hash": "3333125635652875490"
-        },
-        {
-          "file": "apps/customer-portal/public/bulk-template (1).xlsx",
-          "hash": "15837429292736479639"
-        },
-        {
-          "file": "apps/customer-portal/src/app/app.tsx",
-          "hash": "3585837258416333936",
-          "deps": [
-            "npm:react-router-dom",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/ErrorBoundary.tsx",
-          "hash": "14266438289124879769",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/ProtectedRoute.tsx",
-          "hash": "9087879618426708845",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/shared/DataTable.tsx",
-          "hash": "11655547107163288740",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/shared/Toast.tsx",
-          "hash": "1786962007691112458",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/template/Header.tsx",
-          "hash": "16016457748156464252",
-          "deps": [
-            "npm:react",
-            "npm:react-icons",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/template/Layout.tsx",
-          "hash": "18218815249625661416",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/components/template/Sidebar.tsx",
-          "hash": "15919361496877683632",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/context/AuthContext.tsx",
-          "hash": "13640164545039318502",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/context/ThemeContext.tsx",
-          "hash": "11747012355695911839",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/lib/utils.ts",
-          "hash": "2765201057128530299",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/main.tsx",
-          "hash": "14882232188361209053",
-          "deps": [
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Analytics/AnalyticsPage.tsx",
-          "hash": "1417393000316015244",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Analytics/BillingPaymentsReports.tsx",
-          "hash": "10337156999502316970",
-          "deps": [
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Analytics/CustomerExperienceDashboard.tsx",
-          "hash": "9063499723433041270",
-          "deps": [
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Analytics/OrderDeliveryReports.tsx",
-          "hash": "15836644920686168245",
-          "deps": [
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Analytics/ServiceUsageReports.tsx",
-          "hash": "4270536110156197853",
-          "deps": [
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Analytics/SupportFeedbackReports.tsx",
-          "hash": "18163928410361789773",
-          "deps": [
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/BecomeAVendor/BecomeAVendorPage.tsx",
-          "hash": "7138140480024902919",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Branch/BranchPage.tsx",
-          "hash": "17012524673092492117",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/ClaimRaised/ClaimRaisedPage.tsx",
-          "hash": "10318264992322203007",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/CreateEnquiry/CreateEnquiryPage.tsx",
-          "hash": "556849780428894811",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/CrewManagement/CrewManagementPage.tsx",
-          "hash": "9101381738557505973",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Dashboard.tsx",
-          "hash": "15954195756260129199",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/FleetOverview/FleetOverviewPage.tsx",
-          "hash": "17961874459259835576",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Licenses/LicensesPage.tsx",
-          "hash": "6979287792270849279",
-          "deps": [
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Login.tsx",
-          "hash": "5331576087686425639",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Onboarding/OnboardingFormPage.tsx",
-          "hash": "8696402107265169197",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/Payment/PaymentPage.tsx",
-          "hash": "11889471214130571595",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/PortManagement/PortManagementPage.tsx",
-          "hash": "16959009089678288078",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/RFQs/RFQsPage.tsx",
-          "hash": "16543482543456703270",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/RoleManagement/RoleManagementPage.tsx",
-          "hash": "16519519335610125916",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/VendorManagement/VendorManagementPage.tsx",
-          "hash": "6994062856893651372",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/pages/VesselManagement/VesselManagementPage.tsx",
-          "hash": "16260260642486196586",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/src/styles.css",
-          "hash": "2190124752544765801"
-        },
-        {
-          "file": "apps/customer-portal/src/styles/tailwind.css",
-          "hash": "13033201013600243049"
-        },
-        {
-          "file": "apps/customer-portal/src/types/razorpay.d.ts",
-          "hash": "10876764866582400655"
-        },
-        {
-          "file": "apps/customer-portal/src/vite-env.d.ts",
-          "hash": "2496687771327342751"
-        },
-        {
-          "file": "apps/customer-portal/tailwind.config.ts",
-          "hash": "7523042475885222966",
-          "deps": [
-            "npm:tailwindcss",
-            "npm:@tailwindcss/forms",
-            "npm:@tailwindcss/typography"
-          ]
-        },
-        {
-          "file": "apps/customer-portal/tsconfig.json",
-          "hash": "12322306282941657301"
-        },
-        {
-          "file": "apps/customer-portal/tsconfig.node.json",
-          "hash": "14497182797392745637"
-        },
-        {
-          "file": "apps/customer-portal/vite.config.ts",
-          "hash": "4801394630860091155",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react"
-          ]
-        }
-      ],
       "@euroasiann/vendor-portal": [
         {
           "file": "apps/vendor-portal/index.html",
@@ -2100,441 +2537,6 @@
         {
           "file": "apps/vendor-portal/vite.config.ts",
           "hash": "1717047946789008165",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react"
-          ]
-        }
-      ],
-      "@euroasiann/tech-portal": [
-        {
-          "file": "apps/tech-portal/ERROR_CHECK.md",
-          "hash": "9398659936003558309"
-        },
-        {
-          "file": "apps/tech-portal/EXPORT_FIX.md",
-          "hash": "18128088129165509549"
-        },
-        {
-          "file": "apps/tech-portal/HOW_TO_USE_TAILWIND.md",
-          "hash": "3102003401964437091"
-        },
-        {
-          "file": "apps/tech-portal/PAGES_SUMMARY.md",
-          "hash": "697023116482744690"
-        },
-        {
-          "file": "apps/tech-portal/TAILWIND_SETUP.md",
-          "hash": "13932800311225468962"
-        },
-        {
-          "file": "apps/tech-portal/TAILWIND_V4_FIX.md",
-          "hash": "11718717900223751589"
-        },
-        {
-          "file": "apps/tech-portal/TAILWIND_V4_FIX_FINAL.md",
-          "hash": "9000994813896379164"
-        },
-        {
-          "file": "apps/tech-portal/TEMPLATE_INTEGRATION.md",
-          "hash": "8994374225240853950"
-        },
-        {
-          "file": "apps/tech-portal/TESTING_SUMMARY.md",
-          "hash": "5117124685174311618"
-        },
-        {
-          "file": "apps/tech-portal/UI_POLISH_COMPLETE.md",
-          "hash": "11015923615530071339"
-        },
-        {
-          "file": "apps/tech-portal/UI_REVAMP_COMPLETE.md",
-          "hash": "3481127646043798243"
-        },
-        {
-          "file": "apps/tech-portal/index.html",
-          "hash": "321687716258582061"
-        },
-        {
-          "file": "apps/tech-portal/package.json",
-          "hash": "11838533663160528707",
-          "deps": [
-            "npm:@tailwindcss/forms",
-            "npm:@tailwindcss/typography",
-            "npm:@types/node",
-            "npm:@types/react",
-            "npm:@types/react-dom",
-            "npm:@types/uuid",
-            "npm:@vitejs/plugin-react",
-            "npm:autoprefixer",
-            "npm:postcss",
-            "npm:tailwindcss",
-            "npm:typescript",
-            "npm:vite",
-            "npm:@tanstack/react-query",
-            "npm:axios",
-            "npm:clsx",
-            "npm:react",
-            "npm:react-dom",
-            "npm:react-icons",
-            "npm:react-router-dom",
-            "npm:reactflow",
-            "npm:recharts",
-            "npm:tailwind-merge",
-            "npm:uuid",
-            "npm:yaml"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/postcss.config.js",
-          "hash": "1949403712316218146"
-        },
-        {
-          "file": "apps/tech-portal/public/favicon.svg",
-          "hash": "5426836181949846176"
-        },
-        {
-          "file": "apps/tech-portal/src/app/app.tsx",
-          "hash": "3815627567747968874",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/ErrorBoundary.tsx",
-          "hash": "4357612017049691761",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/ProtectedRoute.tsx",
-          "hash": "5811861793827136867",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/shared/DataTable.tsx",
-          "hash": "14112390498297381979",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/shared/Modal.tsx",
-          "hash": "12771206456105877687",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/shared/ThemeToggle.tsx",
-          "hash": "16027050438220116113",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/shared/Toast.tsx",
-          "hash": "7963287227808479575",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/template/Header.tsx",
-          "hash": "8359994916119158440",
-          "deps": [
-            "npm:react",
-            "npm:react-icons",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/template/Layout.tsx",
-          "hash": "18218815249625661416",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/template/Sidebar.tsx",
-          "hash": "13610634191932690757",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/ui/button.tsx",
-          "hash": "7045460273457129668",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/components/ui/card.tsx",
-          "hash": "5761987751123800563",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/context/AuthContext.tsx",
-          "hash": "16362418233153493372",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/context/ThemeContext.tsx",
-          "hash": "18395069978737937982",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/lib/utils.ts",
-          "hash": "2765201057128530299",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/main.tsx",
-          "hash": "2872310245296530380",
-          "deps": [
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/AdminUsers/AdminUserForm.tsx",
-          "hash": "8698113152878595065",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/AdminUsers/AdminUsersPage.tsx",
-          "hash": "5366471474820366867",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Analytics/AnalyticsPage.tsx",
-          "hash": "8104583328923514977",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Analytics/BugIssueTracking.tsx",
-          "hash": "16779500607982744775",
-          "deps": [
-            "npm:react",
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Analytics/DeploymentAnalytics.tsx",
-          "hash": "15574363738850844620",
-          "deps": [
-            "npm:react",
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Analytics/SecurityReports.tsx",
-          "hash": "898546918845600651",
-          "deps": [
-            "npm:react",
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Analytics/SystemPerformanceDashboard.tsx",
-          "hash": "16724830338409575842",
-          "deps": [
-            "npm:react",
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Analytics/UsageAdoptionAnalytics.tsx",
-          "hash": "9780725676286387366",
-          "deps": [
-            "npm:react",
-            "npm:recharts",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Dashboard.tsx",
-          "hash": "2981686901129913394",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Licenses/LicenseForm.tsx",
-          "hash": "2550129781008928924",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Licenses/LicensesPage.tsx",
-          "hash": "315677711271304843",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Login.tsx",
-          "hash": "17973241182402418300",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Onboarding/OnboardingDataPage.tsx",
-          "hash": "1298024069730844665",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Organizations/OrganizationForm.tsx",
-          "hash": "961844950565083922",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Organizations/OrganizationInvitationsModal.tsx",
-          "hash": "5886962498746780375",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Organizations/OrganizationProfilePage.tsx",
-          "hash": "10205597339015291842",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Organizations/OrganizationsPage.tsx",
-          "hash": "12888320712818216203",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Settings/SettingsPage.tsx",
-          "hash": "9481693220734960153",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Users/UserForm.tsx",
-          "hash": "10673519221454910033",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/pages/Users/UsersPage.tsx",
-          "hash": "4067898849701566964",
-          "deps": [
-            "npm:react",
-            "npm:@tanstack/react-query",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/src/styles.css",
-          "hash": "10312554191825551456"
-        },
-        {
-          "file": "apps/tech-portal/src/styles/tailwind.css",
-          "hash": "10252782906556933305"
-        },
-        {
-          "file": "apps/tech-portal/src/utils/api.ts",
-          "hash": "7384160434701149620"
-        },
-        {
-          "file": "apps/tech-portal/src/vite-env.d.ts",
-          "hash": "2496687771327342751"
-        },
-        {
-          "file": "apps/tech-portal/tailwind.config.ts",
-          "hash": "4680871909775873118",
-          "deps": [
-            "npm:tailwindcss",
-            "npm:@tailwindcss/forms",
-            "npm:@tailwindcss/typography"
-          ]
-        },
-        {
-          "file": "apps/tech-portal/tsconfig.json",
-          "hash": "12322306282941657301"
-        },
-        {
-          "file": "apps/tech-portal/tsconfig.node.json",
-          "hash": "14497182797392745637"
-        },
-        {
-          "file": "apps/tech-portal/vite.config.ts",
-          "hash": "12369601416304800854",
           "deps": [
             "npm:vite",
             "npm:@vitejs/plugin-react"

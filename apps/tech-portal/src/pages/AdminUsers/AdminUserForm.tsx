@@ -29,6 +29,7 @@ interface AdminUserFormProps {
 }
 
 export function AdminUserForm({ user, organizations, onSuccess, onCancel }: AdminUserFormProps) {
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -38,6 +39,8 @@ export function AdminUserForm({ user, organizations, onSuccess, onCancel }: Admi
     role: 'admin_superuser',
     organizationId: '',
   });
+
+  const [buttonState, setButtonState] = useState<'idle' | 'loading' | 'success'>('idle');
 
   useEffect(() => {
     if (user) {
@@ -53,7 +56,7 @@ export function AdminUserForm({ user, organizations, onSuccess, onCancel }: Admi
     }
   }, [user]);
 
-  // CREATE admin user
+  // Create User
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await fetch(`${API_URL}/api/v1/tech/admin-users`, {
@@ -72,15 +75,19 @@ export function AdminUserForm({ user, organizations, onSuccess, onCancel }: Admi
       return response.json();
     },
     onSuccess: () => {
-      alert('Admin user created successfully!');
-      onSuccess();
+      setButtonState('success');
+      setTimeout(() => {
+        onSuccess();
+        setButtonState('idle');
+      }, 800);
     },
     onError: (error: Error) => {
-      alert(`Failed to create admin user: ${error.message}`);
+      alert(error.message);
+      setButtonState('idle');
     },
   });
 
-  // UPDATE admin user
+  // Update User
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await fetch(`${API_URL}/api/v1/tech/admin-users/${user!._id}`, {
@@ -99,93 +106,115 @@ export function AdminUserForm({ user, organizations, onSuccess, onCancel }: Admi
       return response.json();
     },
     onSuccess: () => {
-      alert('Admin user updated successfully!');
-      onSuccess();
+      setButtonState('success');
+      setTimeout(() => {
+        onSuccess();
+        setButtonState('idle');
+      }, 800);
     },
     onError: (error: Error) => {
-      alert(`Failed to update admin user: ${error.message}`);
+      alert(error.message);
+      setButtonState('idle');
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setButtonState('loading');
 
-    // If editing → use PUT
     if (user) {
       updateMutation.mutate(formData);
       return;
     }
 
-    // If creating → require password
     if (!formData.password) {
-      alert('Password is required for new users');
+      alert('Password is required');
+      setButtonState('idle');
       return;
     }
 
     createMutation.mutate(formData);
   };
 
-  const roles = [
-    { value: 'admin_superuser', label: 'Admin Superuser' },
-    { value: 'admin_user', label: 'Admin User' },
-  ];
-
   return (
-    <form onSubmit={handleSubmit} className="admin-user-form">
+    <form onSubmit={handleSubmit} className="space-y-5 p-4 bg-white dark:bg-gray-900 rounded-lg shadow-md">
 
-      <div className="form-group">
-        <label>Email *</label>
+      {/* Email */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Email *
+        </label>
         <input
           type="email"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
-          disabled={!!user} // cannot change email on edit
+          disabled={!!user}
+          className="w-full border rounded-md px-3 py-2 disabled:bg-gray-200 dark:bg-gray-800"
+          placeholder="example@company.com"
         />
       </div>
 
+      {/* Password */}
       {!user && (
-        <div className="form-group">
-          <label>Password *</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Password *
+          </label>
           <input
             type="password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
+            className="w-full border rounded-md px-3 py-2 dark:bg-gray-800"
+            placeholder="Enter password"
           />
         </div>
       )}
 
-      <div className="form-row">
-        <div className="form-group">
-          <label>First Name *</label>
+      {/* Name Row */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            First Name *
+          </label>
           <input
             type="text"
             value={formData.firstName}
             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
             required
+            className="w-full border rounded-md px-3 py-2 dark:bg-gray-800"
+            placeholder="John"
           />
         </div>
 
-        <div className="form-group">
-          <label>Last Name *</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Last Name *
+          </label>
           <input
             type="text"
             value={formData.lastName}
             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             required
+            className="w-full border rounded-md px-3 py-2 dark:bg-gray-800"
+            placeholder="Doe"
           />
         </div>
       </div>
 
-      <div className="form-row">
-        <div className="form-group">
-          <label>Organization</label>
+      {/* Role & Organization */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Organization
+          </label>
           <select
             value={formData.organizationId}
             onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
+            className="w-full border rounded-md px-3 py-2 dark:bg-gray-800"
           >
-            <option value="">Select Organization</option>
+            <option value="">Select</option>
             {organizations.map((org) => (
               <option key={org._id} value={org._id}>
                 {org.name}
@@ -194,37 +223,57 @@ export function AdminUserForm({ user, organizations, onSuccess, onCancel }: Admi
           </select>
         </div>
 
-        <div className="form-group">
-          <label>Role *</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Role *
+          </label>
           <select
             value={formData.role}
             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             required
+            className="w-full border rounded-md px-3 py-2 dark:bg-gray-800"
           >
-            {roles.map((role) => (
-              <option key={role.value} value={role.value}>
-                {role.label}
-              </option>
-            ))}
+            <option value="admin_superuser">Admin Superuser</option>
+            <option value="admin_user">Admin User</option>
           </select>
         </div>
       </div>
 
-      <div className="form-actions">
-        <button type="button" onClick={onCancel} className="cancel-button">
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3 pt-3">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-400 text-gray-700 dark:bg-gray-700 dark:text-white"
+        >
           Cancel
         </button>
 
+        {/* Submit button with animation */}
         <button
           type="submit"
-          className="submit-button"
-          disabled={createMutation.isPending || updateMutation.isPending}
+          disabled={buttonState !== 'idle'}
+          className={`px-4 py-2 rounded-md text-white flex items-center gap-2 justify-center transition-all ${
+            buttonState === 'loading'
+              ? 'bg-gray-400 cursor-not-allowed'
+              : buttonState === 'success'
+              ? 'bg-green-600'
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          {createMutation.isPending || updateMutation.isPending
-            ? 'Saving...'
+          {buttonState === 'loading' && (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          )}
+
+          {buttonState === 'success'
+            ? '✔ Done'
+            : buttonState === 'loading'
+            ? user
+              ? 'Updating...'
+              : 'Creating...'
             : user
-            ? 'Update Admin User'
-            : 'Create Admin User'}
+            ? 'Update User'
+            : 'Create User'}
         </button>
       </div>
     </form>

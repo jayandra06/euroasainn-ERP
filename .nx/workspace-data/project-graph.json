@@ -14531,6 +14531,11 @@
       },
       {
         "source": "@euroasiann/tech-portal",
+        "target": "npm:js-yaml@3.14.2",
+        "type": "static"
+      },
+      {
+        "source": "@euroasiann/tech-portal",
         "target": "npm:react",
         "type": "static"
       },
@@ -14572,6 +14577,11 @@
       {
         "source": "@euroasiann/tech-portal",
         "target": "npm:yaml",
+        "type": "static"
+      },
+      {
+        "source": "@euroasiann/tech-portal",
+        "target": "npm:zustand@4.5.7",
         "type": "static"
       },
       {
@@ -33205,5 +33215,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1763736206108
+  "computedAt": 1763802319414
 }

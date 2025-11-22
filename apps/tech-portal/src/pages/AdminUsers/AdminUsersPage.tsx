@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { AdminUserForm } from './AdminUserForm';
+import { MdSearch, MdFilterList } from 'react-icons/md';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -24,6 +25,7 @@ export function AdminUsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch admin users
   const { data: usersData, isLoading } = useQuery({
@@ -46,19 +48,15 @@ export function AdminUsersPage() {
     },
   });
 
-  // Fetch organizations
-  const { data: orgsData } = useQuery({
-    queryKey: ['organizations'],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/tech/organizations`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!response.ok) return [];
-      const data = await response.json();
-      return data.data || [];
-    },
+  // Filter + Search Logic
+  const filteredUsers = usersData?.filter((user) => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    return (
+      user.email.toLowerCase().includes(search) ||
+      user.firstName.toLowerCase().includes(search) ||
+      user.lastName.toLowerCase().includes(search)
+    );
   });
 
   // Delete admin user
@@ -80,24 +78,18 @@ export function AdminUsersPage() {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       alert('Admin user deleted successfully!');
     },
-    onError: (error: Error) => {
-      alert(`Failed to delete admin user: ${error.message}`);
-    },
   });
 
-  // Open create form
   const handleCreate = () => {
     setEditingUser(null);
     setIsModalOpen(true);
   };
 
-  // Open edit form
   const handleEdit = (user: AdminUser) => {
     setEditingUser(user);
     setIsModalOpen(true);
   };
 
-  // Delete admin
   const handleDelete = (user: AdminUser) => {
     if (window.confirm(`Delete admin user ${user.email}?`)) {
       deleteMutation.mutate(user._id);
@@ -135,47 +127,110 @@ export function AdminUsersPage() {
     },
   ];
 
-  if (isLoading) return <div className="loading">Loading admin users...</div>;
+  // 🔥 LOADING UI LIKE FIRST IMAGE
+  if (isLoading) {
+    return (
+      <div className="w-full space-y-6">
 
-  return (
-    <div className="admin-users-page">
+        {/* Header */}
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">Admin Users</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Manage admin portal users
+            </p>
+          </div>
 
-      {/* Header */}
-      <div className="admin-users-header">
-        <div>
-          <h1 className="page-title">Admin Users</h1>
-          <p className="page-subtitle">Manage admin portal users</p>
+          <button
+            disabled
+            className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500 cursor-not-allowed"
+          >
+            + Create Admin User
+          </button>
         </div>
 
-        <button onClick={handleCreate} className="btn-primary">
+        {/* Loading Block */}
+        <div className="p-12 flex flex-col items-center justify-center gap-4 
+        rounded-xl border border-gray-200 dark:border-gray-700 
+        bg-white dark:bg-gray-900 shadow-sm">
+
+          <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
+
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            Loading admin users...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full space-y-6">
+
+      {/* Header */}
+      <div className="flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">Admin Users</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Manage admin portal users
+          </p>
+        </div>
+
+        <button
+          onClick={handleCreate}
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+        >
           + Create Admin User
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="filters-section">
-        <label className="filter-label">Filter by Status:</label>
-        <select
-          className="filter-select"
-          value={filterActive}
-          onChange={(e) => setFilterActive(e.target.value)}
-        >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+      {/* Search + Filter */}
+      <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+
+          {/* Search */}
+          <div className="relative flex-1 w-full sm:max-w-md">
+            <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 
+              bg-white dark:bg-gray-800 text-gray-900 dark:text-white 
+              focus:ring-2 focus:ring-blue-500 transition-all"
+            />
+          </div>
+
+          {/* Filter Dropdown */}
+          <div className="flex items-center gap-2">
+            <MdFilterList className="text-gray-400" />
+            <select
+              value={filterActive}
+              onChange={(e) => setFilterActive(e.target.value)}
+              className="px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 
+              bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 
+              focus:ring-blue-500 transition-all"
+            >
+              <option value="all">All Users</option>
+              <option value="active">Active Only</option>
+              <option value="inactive">Inactive Only</option>
+            </select>
+          </div>
+
+        </div>
       </div>
 
       {/* Table */}
       <DataTable
         columns={columns}
-        data={usersData || []}
+        data={filteredUsers || []}
         onEdit={handleEdit}
         onDelete={handleDelete}
         emptyMessage="No admin users found."
       />
 
-      {/* Modal — Form */}
+      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
@@ -184,7 +239,7 @@ export function AdminUsersPage() {
       >
         <AdminUserForm
           user={editingUser}
-          organizations={orgsData || []}
+          organizations={[]}
           onSuccess={() => {
             handleClose();
             queryClient.invalidateQueries({ queryKey: ['admin-users'] });

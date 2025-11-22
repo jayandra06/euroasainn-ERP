@@ -301,3 +301,16 @@ Time for 'build typescript dependencies' 24.60040000011213
 [NX v22.0.4 Daemon Server] - 2025-11-21T14:50:13.719Z - [SYNC]: project graph hash is the same, not collecting task sync generators
 [NX v22.0.4 Daemon Server] - 2025-11-21T14:50:13.719Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
 [NX v22.0.4 Daemon Server] - 2025-11-21T14:50:13.719Z - Time taken for 'total execution time for createProjectGraph()' 208.7776999999769ms
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:14.844Z - Started listening on: \\.\pipe\nx\C:\Users\dell\AppData\Local\Temp\c7cef9b37755a230d3ad\d.sock
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:14.858Z - [WATCHER]: Subscribed to changes within: C:\Users\dell\Desktop\Gutha Nitheesh\euroasainn-ERP (native)
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:14.867Z - Established a connection. Number of open connections: 1
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:14.869Z - Established a connection. Number of open connections: 2
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:14.876Z - Closed a connection. Number of open connections: 1
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:14.884Z - [REQUEST]: Client Request for Project Graph Received
+Time for 'plugin worker 11120 code loading' 16.7753
+Time for 'plugin worker 12728 code loading' 17.152599999999993
+Time for 'plugin worker 6060 code loading' 27.035299999999992
+Time for 'plugin worker 15268 code loading' 21.05040000000001
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:15.969Z - Time taken for 'Load Nx Plugin: C:\Users\dell\Desktop\Gutha Nitheesh\euroasainn-ERP\node_modules\nx\src\plugins\package-json' 1070.9931ms
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:16.102Z - Time taken for 'Load Nx Plugin: C:\Users\dell\Desktop\Gutha Nitheesh\euroasainn-ERP\node_modules\nx\src\plugins\js' 1206.4991ms
+[NX v22.0.2 Daemon Server] - 2025-11-22T09:05:16.124Z - Time taken for 'loadDefaultNxPlugins' 1229.6428ms
