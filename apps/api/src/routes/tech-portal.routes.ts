@@ -49,22 +49,14 @@ router.post('/organizations/:id/invitations/:invitationId/resend', organizationC
 router.post('/organizations/:id/invitations/:invitationId/revoke', organizationController.revokeOrganizationInvitation.bind(organizationController));
 
 /* ===========================
-   LICENSE ROUTES (Plural Like admin-users)
+   LICENSE ROUTES 
 =========================== */
 
-// Get all licenses
+
 router.get('/licenses', licenseController.getLicenses.bind(licenseController));
-
-// Create new license
 router.post('/licenses', licenseController.createLicense.bind(licenseController));
-
-// Get license by ID
 router.get("/licenses/:id", licenseController.getLicenseById.bind(licenseController));
-
-// Update license
 router.put('/licenses/:id', licenseController.updateLicense.bind(licenseController));
-
-// Delete license
 router.delete('/licenses/:id', licenseController.deleteLicense.bind(licenseController));
 
 /* ===========================
