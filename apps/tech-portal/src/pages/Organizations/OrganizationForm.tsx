@@ -153,7 +153,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Name */}
       <div>
-        <label htmlFor="name" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="name" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Organization Name <span className="text-red-500">*</span>
         </label>
         <input
@@ -162,9 +162,9 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.name ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
           placeholder="Enter organization name"
         />
@@ -176,7 +176,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
         <>
           {/* Admin First Name */}
           <div>
-            <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="firstName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Admin First Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -186,9 +186,9 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               required
               className={cn(
-                'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                errors.firstName ? 'border-red-500' : 'border-[hsl(var(--border))]'
               )}
               placeholder="John"
             />
@@ -197,7 +197,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
 
           {/* Admin Last Name */}
           <div>
-            <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="lastName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Admin Last Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -207,9 +207,9 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               required
               className={cn(
-                'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                errors.lastName ? 'border-red-500' : 'border-[hsl(var(--border))]'
               )}
               placeholder="Doe"
             />
@@ -218,7 +218,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
 
           {/* Admin Email */}
           <div>
-            <label htmlFor="adminEmail" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="adminEmail" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Admin Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -228,13 +228,13 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
               onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
               required
               className={cn(
-                'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                errors.adminEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+                'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                errors.adminEmail ? 'border-red-500' : 'border-[hsl(var(--border))]'
               )}
               placeholder="admin@organization.com"
             />
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
               An email will be sent to this address with onboarding form link and temporary login credentials
             </p>
             {errors.adminEmail && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.adminEmail}</p>}
@@ -244,7 +244,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
 
       {/* Portal Type */}
       <div>
-        <label htmlFor="portalType" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="portalType" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Portal Type
         </label>
         <select
@@ -254,7 +254,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
             const newPortalType = e.target.value;
             setFormData({ ...formData, portalType: newPortalType, type: newPortalType });
           }}
-          className="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          className="w-full px-4 py-2.5 border-2 border-[hsl(var(--border))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
         >
           <option value="customer">Customer</option>
           <option value="vendor">Vendor</option>
@@ -268,9 +268,9 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
           type="checkbox"
           checked={formData.isActive}
           onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-          className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          className="w-5 h-5 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))]"
         />
-        <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <label htmlFor="isActive" className="text-sm font-semibold text-[hsl(var(--foreground))]">
           Active Organization
         </label>
       </div>
@@ -282,12 +282,12 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
         <button
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
         >
           <MdCancel className="w-4 h-4" />
           <span>Cancel</span>
@@ -295,7 +295,7 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
         <button
           type="submit"
           disabled={createMutation.isPending}
-          className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+          className="px-6 py-3 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
         >
           {createMutation.isPending ? 'Creating Organization...' : 'Create Organization'}
         </button>

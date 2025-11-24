@@ -679,7 +679,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Email */}
       <div>
-        <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           <MdEmail className="w-4 h-4 text-gray-400" />
           Email Address *
         </label>
@@ -693,19 +693,19 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           }}
           disabled={!!user}
           className={cn(
-            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed',
-            errors.email ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-3 rounded-xl border bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed',
+            errors.email ? 'border-red-300 dark:border-red-700' : 'border-[hsl(var(--border))]'
           )}
           placeholder="user@example.com"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>
+          <p className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">{errors.email}</p>
         )}
       </div>
 
       {/* Full Name */}
       <div>
-        <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           <MdPerson className="w-4 h-4 text-gray-400" />
           Full Name *
         </label>
@@ -718,19 +718,19 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             setErrors({ ...errors, fullName: '' });
           }}
           className={cn(
-            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
-            errors.fullName ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-3 rounded-xl border bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all',
+            errors.fullName ? 'border-red-300 dark:border-red-700' : 'border-[hsl(var(--border))]'
           )}
           placeholder="Jane Doe"
         />
         {errors.fullName && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.fullName}</p>
+          <p className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">{errors.fullName}</p>
         )}
       </div>
 
       {/* Portal Type */}
       <div>
-        <label htmlFor="portalType" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="portalType" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           <MdWork className="w-4 h-4 text-gray-400" />
           Portal Type *
         </label>
@@ -750,7 +750,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             setErrors({ ...errors, organizationId: '' }); // Clear organization error
           }}
           disabled={!!user}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed"
         >
           {PORTAL_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -762,7 +762,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
 
       {/* Role */}
       <div>
-        <label htmlFor="role" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="role" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           <MdSecurity className="w-4 h-4 text-gray-400" />
           Role *
         </label>
@@ -772,8 +772,8 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           onChange={(e) => handleRoleSelect(e.target.value)}
           disabled={isRolesLoading}
           className={cn(
-            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
-            errors.role ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-3 rounded-xl border bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all',
+            errors.role ? 'border-red-300 dark:border-red-700' : 'border-[hsl(var(--border))]'
           )}
         >
           {roleOptions.map((role) => (
@@ -784,14 +784,14 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           <option value="__create__">Create a new role…</option>
         </select>
         {errors.role && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.role}</p>
+          <p className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">{errors.role}</p>
         )}
       </div>
 
       {/* Organization - Only for Customer/Vendor users */}
       {needsOrganization && (
         <div>
-          <label htmlFor="organizationId" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <label htmlFor="organizationId" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
             <MdBusiness className="w-4 h-4 text-gray-400" />
             {formData.portalType === 'customer' ? 'Customer' : 'Vendor'} Organization *
           </label>
@@ -804,8 +804,8 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             }}
             disabled={isOrganizationsLoading || !!user}
             className={cn(
-              'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
-              errors.organizationId ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700',
+              'w-full px-4 py-3 rounded-xl border bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all',
+              errors.organizationId ? 'border-red-300 dark:border-red-700' : 'border-[hsl(var(--border))]',
               (isOrganizationsLoading || !!user) && 'bg-gray-100 dark:bg-gray-900 cursor-not-allowed'
             )}
           >
@@ -817,13 +817,13 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             ))}
           </select>
           {errors.organizationId && (
-            <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.organizationId}</p>
+            <p className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">{errors.organizationId}</p>
           )}
           {isOrganizationsLoading && (
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Loading organizations...</p>
+            <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">Loading organizations...</p>
           )}
           {!isOrganizationsLoading && organizationsData && organizationsData.length === 0 && (
-            <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+            <p className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">
               No {formData.portalType === 'customer' ? 'customer' : 'vendor'} organizations found. Please create one first.
             </p>
           )}
@@ -832,15 +832,15 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
 
       {/* Active Status */}
       {user && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))]">
           <input
             type="checkbox"
             id="isActive"
             checked={formData.isActive}
             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-[hsl(var(--primary))]"
           />
-          <label htmlFor="isActive" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 cursor-pointer">
+          <label htmlFor="isActive" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] cursor-pointer">
             <MdCheckCircle className="w-4 h-4 text-emerald-500" />
             User is active
           </label>
@@ -848,11 +848,11 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       )}
 
       {/* Form Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
         <button
           type="button"
           onClick={onCancel}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] font-semibold hover:bg-[hsl(var(--muted))] transition-colors"
           disabled={isSaving}
         >
           <MdCancel className="w-4 h-4" />
@@ -861,7 +861,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
         <button
           type="submit"
           disabled={isSaving}
-          className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2"
+          className="px-6 py-3 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2"
         >
           <MdSave className="w-4 h-4" />
           {isSaving ? 'Saving...' : user ? 'Update User' : 'Send Invitation'}
@@ -880,7 +880,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       >
         <div className="space-y-6">
           <div>
-            <label htmlFor="roleName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="roleName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Role Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -888,7 +888,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               type="text"
               value={newRoleName}
               onChange={(e) => setNewRoleName(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2.5 border border-[hsl(var(--border))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
               placeholder="e.g. Deployment Manager"
             />
           </div>
@@ -896,19 +896,19 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select permissions</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <h3 className="text-sm font-semibold text-[hsl(var(--foreground))]">Select permissions</h3>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">
                   Enable modules and choose the required access level.
                 </p>
               </div>
-              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <div className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
                 {selectedModuleCount} module{selectedModuleCount === 1 ? '' : 's'} selected · {computedPermissionList.length}{' '}
                 permission{computedPermissionList.length === 1 ? '' : 's'}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            <div className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden">
+              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
                 <div className="px-5 py-3">Module</div>
                 {PERMISSION_ACTIONS.map((action) => (
                   <div key={action.key} className="px-5 py-3 text-center">
@@ -923,25 +923,25 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   return (
                     <div
                       key={group.key}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-white dark:bg-gray-900"
+                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-[hsl(var(--card))]"
                     >
                       <div className="flex items-start sm:items-center gap-3">
                         <input
                           id={`module-${group.key}`}
                           type="checkbox"
-                          className="mt-1 sm:mt-0 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="mt-1 sm:mt-0 w-4 h-4 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))]"
                           checked={selection?.enabled ?? false}
                           onChange={() => handleToggleGroup(group.key)}
                         />
                         <div>
                           <label
                             htmlFor={`module-${group.key}`}
-                            className="text-sm font-semibold text-gray-900 dark:text-white"
+                            className="text-sm font-semibold text-[hsl(var(--foreground))]"
                           >
                             {group.label}
                           </label>
                           {group.description && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{group.description}</p>
+                            <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">{group.description}</p>
                           )}
                         </div>
                       </div>
@@ -963,7 +963,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                             key={`${group.key}-${action.key}`}
                             className="flex sm:block items-center justify-between sm:justify-center text-xs font-semibold text-gray-500 sm:text-sm"
                           >
-                            <span className="sm:hidden text-gray-500 dark:text-gray-400">{action.label}</span>
+                            <span className="sm:hidden text-[hsl(var(--muted-foreground))]">{action.label}</span>
                             <button
                               type="button"
                               onClick={() => handleToggleAction(group.key, action.key)}
@@ -971,11 +971,11 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                               className={cn(
                                 'mt-1 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold border transition-all duration-150',
                                 !isEnabled &&
-                                  'cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-200 dark:border-gray-700',
+                                  'cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 border-[hsl(var(--border))]',
                                 isEnabled &&
                                   !isActive &&
-                                  'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800',
-                                isEnabled && isActive && 'bg-blue-600 text-white border-blue-600 shadow-sm hover:bg-blue-700'
+                                  'bg-[hsl(var(--card))] text-gray-600 dark:text-gray-300 border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]',
+                                isEnabled && isActive && 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-blue-600 shadow-sm hover:bg-blue-700'
                               )}
                             >
                               {isActive ? 'On' : 'Off'}
@@ -996,7 +996,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
             <button
               type="button"
               onClick={() => {
@@ -1004,7 +1004,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   setIsCreateRoleOpen(false);
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
               disabled={isCreatingRole}
             >
               <MdCancel className="w-4 h-4" />
@@ -1014,7 +1014,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               type="button"
               onClick={handleCreateRole}
               disabled={isCreatingRole}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+              className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
             >
               <MdAddCircleOutline className="w-4 h-4" />
               <span>{isCreatingRole ? 'Creating...' : 'Create Role'}</span>

@@ -67,15 +67,15 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 mb-4 shadow-2xl shadow-blue-500/30 ring-4 ring-blue-500/10">
             <MdRocketLaunch className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Euroasiann ERP
           </h1>
-          <p className="text-lg font-semibold text-gray-600 dark:text-gray-400">Vendor Portal</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Sign in to continue</p>
+          <p className="text-lg font-semibold text-[hsl(var(--muted-foreground))]">Vendor Portal</p>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-2">Sign in to continue</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-8 animate-scale-in">
+        <div className="bg-[hsl(var(--card))]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-[hsl(var(--border))]/50 p-8 animate-scale-in">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div
@@ -89,12 +89,12 @@ export default function Login() {
 
             {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+              <label htmlFor="email" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MdEmail className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <MdEmail className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                 </div>
                 <input
                   id="email"
@@ -102,7 +102,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] dark:focus:border-blue-400 focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -110,12 +110,12 @@ export default function Login() {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+              <label htmlFor="password" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MdLock className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <MdLock className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                 </div>
                 <input
                   id="password"
@@ -123,13 +123,13 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                  className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] dark:focus:border-blue-400 focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
                 >
                   {showPassword ? <MdVisibilityOff className="w-5 h-5" /> : <MdVisibility className="w-5 h-5" />}
                 </button>
@@ -157,8 +157,8 @@ export default function Login() {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+          <div className="mt-6 pt-6 border-t border-[hsl(var(--border))]">
+            <p className="text-xs text-center text-[hsl(var(--muted-foreground))]">
               By signing in, you agree to our Terms of Service and Privacy Policy
             </p>
           </div>
@@ -166,9 +166,9 @@ export default function Login() {
 
         {/* Help Text */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">
             Need help?{' '}
-            <a href="#" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+            <a href="#" className="font-semibold text-[hsl(var(--foreground))] font-semibold hover:underline">
               Contact Support
             </a>
           </p>

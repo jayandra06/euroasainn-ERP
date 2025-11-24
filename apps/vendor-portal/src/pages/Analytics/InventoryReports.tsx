@@ -79,7 +79,7 @@ export function InventoryReports() {
       case 'warning':
         return 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300';
       default:
-        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+        return 'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]';
     }
   };
 
@@ -87,39 +87,39 @@ export function InventoryReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Stock</p>
             <MdInventory className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalStock.toLocaleString()}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Across all categories</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalStock.toLocaleString()}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Across all categories</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Critical Alerts</p>
             <MdWarning className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{criticalAlerts}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{criticalAlerts}</p>
           <p className="text-xs text-red-600 mt-1">Requires immediate action</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Slow-moving Items</p>
             <MdTrendingDown className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{slowMovingItems}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">May need promotion</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{slowMovingItems}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">May need promotion</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Turnover</p>
             <MdTrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
             {inventoryTrendData[inventoryTrendData.length - 1]?.turnover.toFixed(1) || 0}
           </p>
           <p className="text-xs text-emerald-600 mt-1">+31% from last quarter</p>
@@ -127,11 +127,11 @@ export function InventoryReports() {
       </div>
 
       {/* Current Stock Levels by Category */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Current Stock Levels by Category</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Inventory levels and reorder points</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Current Stock Levels by Category</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Inventory levels and reorder points</p>
           </div>
           <MdCategory className="w-6 h-6 text-blue-600" />
         </div>
@@ -141,20 +141,20 @@ export function InventoryReports() {
             const isLowStock = category.current <= category.reorder;
             
             return (
-              <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+              <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{category.category}</h4>
+                    <h4 className="font-semibold text-[hsl(var(--foreground))]">{category.category}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Current: {category.current} | Min: {category.min} | Max: {category.max} | Reorder: {category.reorder}
                     </p>
                   </div>
                   {isLowStock ? (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-[hsl(var(--foreground))] font-semibold">
                       Low Stock
                     </span>
                   ) : (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-[hsl(var(--foreground))] font-semibold">
                       In Stock
                     </span>
                   )}
@@ -177,14 +177,14 @@ export function InventoryReports() {
       <div className="p-6 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-red-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Reorder Alerts (Below Threshold)</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Reorder Alerts (Below Threshold)</h3>
         </div>
         <div className="space-y-3">
           {reorderAlerts.map((alert, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-red-200 dark:border-red-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-red-200 dark:border-red-800">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{alert.item}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{alert.item}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Category: {alert.category} | Current: {alert.current} | Reorder Point: {alert.reorderPoint}
                   </p>
@@ -202,11 +202,11 @@ export function InventoryReports() {
       </div>
 
       {/* Stock Aging Report */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Stock Aging Report</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Slow vs fast-moving items</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Stock Aging Report</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Slow vs fast-moving items</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -222,24 +222,24 @@ export function InventoryReports() {
         </ResponsiveContainer>
         <div className="mt-4 space-y-2">
           {stockAgingData.map((item, index) => (
-            <div key={index} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-3 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{item.item}</span>
+                  <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{item.item}</span>
                   <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">({item.category})</span>
                 </div>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-gray-600 dark:text-gray-400">
-                    Age: <span className="font-medium text-gray-900 dark:text-white">{item.age} days</span>
+                    Age: <span className="font-medium text-[hsl(var(--foreground))]">{item.age} days</span>
                   </span>
                   <span className="text-gray-600 dark:text-gray-400">
-                    Qty: <span className="font-medium text-gray-900 dark:text-white">{item.quantity}</span>
+                    Qty: <span className="font-medium text-[hsl(var(--foreground))]">{item.quantity}</span>
                   </span>
                   <span
                     className={`px-2 py-1 text-xs font-semibold rounded-full ${
                       item.status === 'Fast-moving'
                         ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
-                        : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                        : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                     }`}
                   >
                     {item.status}
@@ -252,11 +252,11 @@ export function InventoryReports() {
       </div>
 
       {/* Forecast Demand Chart */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Forecast Demand Chart</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Demand forecasting vs actual sales</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Forecast Demand Chart</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Demand forecasting vs actual sales</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -274,11 +274,11 @@ export function InventoryReports() {
       </div>
 
       {/* Inventory Trend */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Inventory Trend</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Stock levels and turnover rate</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Inventory Trend</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Stock levels and turnover rate</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>

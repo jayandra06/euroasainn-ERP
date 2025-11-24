@@ -244,10 +244,10 @@ export function SupportPage() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      open: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800',
-      'in-progress': 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-800',
-      resolved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800',
-      closed: 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-800',
+      open: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800',
+      'in-progress': 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-1 ring-amber-200 dark:ring-amber-800',
+      resolved: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800',
+      closed: 'bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] ring-1 ring-[hsl(var(--border))]',
     };
     return (
       <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full', styles[status as keyof typeof styles] || styles.open)}>
@@ -258,10 +258,10 @@ export function SupportPage() {
 
   const getPriorityBadge = (priority: string) => {
     const styles = {
-      low: 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300',
-      medium: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-      high: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
-      urgent: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+      low: 'bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]',
+      medium: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50',
+      high: 'bg-orange-100 text-[hsl(var(--foreground))] font-semibold dark:bg-orange-900/50',
+      urgent: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50',
     };
     return (
       <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full', styles[priority as keyof typeof styles] || styles.low)}>
@@ -275,7 +275,7 @@ export function SupportPage() {
       key: 'ticketNumber',
       header: 'Ticket #',
       render: (ticket: SupportTicket) => (
-        <div className="font-semibold text-gray-900 dark:text-white">
+        <div className="font-semibold text-[hsl(var(--foreground))]">
           {ticket.ticketNumber}
         </div>
       ),
@@ -285,8 +285,8 @@ export function SupportPage() {
       header: 'Subject',
       render: (ticket: SupportTicket) => (
         <div>
-          <div className="font-semibold text-gray-900 dark:text-white">{ticket.subject}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">{ticket.description}</div>
+          <div className="font-semibold text-[hsl(var(--foreground))]">{ticket.subject}</div>
+          <div className="text-sm text-[hsl(var(--muted-foreground))] line-clamp-1">{ticket.description}</div>
         </div>
       ),
     },
@@ -294,7 +294,7 @@ export function SupportPage() {
       key: 'organization',
       header: 'Organization',
       render: (ticket: SupportTicket) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {ticket.organizationName || 'N/A'}
         </span>
       ),
@@ -313,7 +313,7 @@ export function SupportPage() {
       key: 'createdAt',
       header: 'Created',
       render: (ticket: SupportTicket) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -337,10 +337,10 @@ export function SupportPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Support Management
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             Manage support tickets and customer inquiries
           </p>
         </div>
@@ -352,7 +352,7 @@ export function SupportPage() {
               setTimeout(() => setIsRefreshing(false), 1000);
             }}
             disabled={isRefreshing}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <MdRefresh className={cn('w-5 h-5', isRefreshing && 'animate-spin')} />
             Refresh
@@ -369,32 +369,32 @@ export function SupportPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Tickets</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Tickets</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))]">{stats.total}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
               <MdSupport className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Open</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.open}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Open</p>
+              <p className="text-3xl font-bold text-[hsl(var(--primary))]">{stats.open}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-md">
               <MdSchedule className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">In Progress</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">In Progress</p>
               <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{stats.inProgress}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
@@ -402,22 +402,22 @@ export function SupportPage() {
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Resolved</p>
-              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.resolved}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Resolved</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))] font-semibold">{stats.resolved}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
               <MdCheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Urgent</p>
-              <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.urgent}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Urgent</p>
+              <p className="text-3xl font-bold text-[hsl(var(--destructive))]">{stats.urgent}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-md">
               <MdWarning className="w-6 h-6 text-white" />
@@ -427,30 +427,30 @@ export function SupportPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search tickets by number, subject, or organization..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
               <MdFilterList className="w-5 h-5" />
               <span>Filters:</span>
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
             >
               <option value="all">All Status</option>
               <option value="open">Open</option>
@@ -461,7 +461,7 @@ export function SupportPage() {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
             >
               <option value="all">All Priorities</option>
               <option value="low">Low</option>
@@ -474,12 +474,12 @@ export function SupportPage() {
       </div>
 
       {/* Support Tickets Table */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Support Tickets</h2>
+            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Support Tickets</h2>
             <button
               onClick={() => showToast('Export functionality will be implemented soon', 'info')}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
             >
               <MdDownload className="w-4 h-4" />
               Export
@@ -488,13 +488,13 @@ export function SupportPage() {
         
         {isLoading ? (
           <div className="p-12 text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading tickets...</p>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+            <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading tickets...</p>
           </div>
         ) : (
           <>
             <div className="mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 Showing {filteredTickets.length} ticket{filteredTickets.length !== 1 ? 's' : ''}
               </p>
             </div>

@@ -69,22 +69,22 @@ export function CatalogManagementPage() {
 
       {/* Your Inventory Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Your Inventory</h2>
+        <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-4">Your Inventory</h2>
         <div className="mb-4">
-          <button className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+          <button className="w-full sm:w-auto px-6 py-3 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors">
             Upload File
           </button>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors flex items-center gap-2">
             <MdDownload className="w-4 h-4" />
             Download Template
           </button>
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors flex items-center gap-2">
             <MdUpload className="w-4 h-4" />
             Upload
           </button>
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+          <button className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors">
             View
           </button>
         </div>
@@ -92,38 +92,38 @@ export function CatalogManagementPage() {
 
       {/* List of your Products Section */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">List of your Products</h2>
+        <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-4">List of your Products</h2>
         
-        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+              <thead className="bg-[hsl(var(--secondary))]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">No</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">IMPA</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Part No</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Position No</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Alternative No</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Brand</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Model</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dimensions (W x B x H)</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Remarks</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Action</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Edit</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">No</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">IMPA</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Part No</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Position No</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Alternative No</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Brand</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Model</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Dimensions (W x B x H)</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Remarks</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Edit</th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+              <tbody className="bg-[hsl(var(--card))] divide-y divide-gray-200 dark:divide-gray-800">
                 {products.map((product) => (
                   <tr key={product.id}>
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{product.id}</td>
+                    <td className="px-4 py-3 text-sm text-[hsl(var(--foreground))]">{product.id}</td>
                     <td className="px-4 py-3">
                       <input
                         type="text"
                         value={product.impa}
                         onChange={(e) => handleInputChange(product.id, 'impa', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -131,7 +131,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.description}
                         onChange={(e) => handleInputChange(product.id, 'description', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -139,7 +139,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.partNo}
                         onChange={(e) => handleInputChange(product.id, 'partNo', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -147,7 +147,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.positionNo}
                         onChange={(e) => handleInputChange(product.id, 'positionNo', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -155,7 +155,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.alternativeNo}
                         onChange={(e) => handleInputChange(product.id, 'alternativeNo', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -163,7 +163,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.brand}
                         onChange={(e) => handleInputChange(product.id, 'brand', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -171,7 +171,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.model}
                         onChange={(e) => handleInputChange(product.id, 'model', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -179,7 +179,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.category}
                         onChange={(e) => handleInputChange(product.id, 'category', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -187,7 +187,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.dimensions}
                         onChange={(e) => handleInputChange(product.id, 'dimensions', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -195,7 +195,7 @@ export function CatalogManagementPage() {
                         type="text"
                         value={product.remarks}
                         onChange={(e) => handleInputChange(product.id, 'remarks', e.target.value)}
-                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+                        className="w-full px-2 py-1 border border-[hsl(var(--border))] rounded bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -207,7 +207,7 @@ export function CatalogManagementPage() {
                       </button>
                     </td>
                     <td className="px-4 py-3">
-                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                      <button className="text-[hsl(var(--foreground))] font-semibold hover:text-blue-700 dark:hover:text-blue-300">
                         <MdEdit className="w-5 h-5" />
                       </button>
                     </td>
@@ -225,7 +225,7 @@ export function CatalogManagementPage() {
         <div className="mt-6 flex items-center justify-between">
           <div className="flex-1"></div>
           <div className="flex gap-3">
-            <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+            <button className="px-6 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors">
               Save
             </button>
             <button

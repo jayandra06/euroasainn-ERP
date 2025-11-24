@@ -618,7 +618,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="email" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Email Address <span className="text-red-500">*</span>
         </label>
         <input
@@ -628,24 +628,24 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           disabled={!!user}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700',
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.email ? 'border-red-500' : 'border-[hsl(var(--border))]',
             user && 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
           )}
           placeholder="user@example.com"
         />
         {user && (
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
             Email cannot be changed after user creation
           </p>
         )}
-        {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
+        {errors.email && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.email}</p>}
       </div>
 
       {/* Full Name */}
       <div>
-        <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="fullName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Full Name <span className="text-red-500">*</span>
         </label>
         <input
@@ -654,18 +654,18 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           value={formData.fullName}
           onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.fullName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.fullName ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
           placeholder="John Doe"
         />
-        {errors.fullName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.fullName}</p>}
+        {errors.fullName && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.fullName}</p>}
       </div>
 
       {/* Role */}
       <div>
-        <label htmlFor="role" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="role" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Role <span className="text-red-500">*</span>
         </label>
         <select
@@ -674,9 +674,9 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           onChange={(e) => handleRoleSelect(e.target.value)}
           disabled={isRolesLoading}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.role ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.role ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
         >
           {roleOptions.map((role) => (
@@ -686,7 +686,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           ))}
           <option value="__create__">Create a new role…</option>
         </select>
-        {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
+        {errors.role && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.role}</p>}
       </div>
 
       {/* Active Status */}
@@ -697,27 +697,27 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             type="checkbox"
             checked={formData.isActive}
             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="w-5 h-5 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))]"
           />
-          <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <label htmlFor="isActive" className="text-sm font-semibold text-[hsl(var(--foreground))]">
             Active User
           </label>
         </div>
       )}
 
       {errors.submit && (
-        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
           {errors.submit}
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
         <button
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
         >
           <MdCancel className="w-4 h-4" />
           <span>Cancel</span>
@@ -725,7 +725,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+          className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
         >
           <MdSave className="w-4 h-4" />
           <span>{isLoading ? 'Saving...' : user ? 'Update' : 'Invite User'}</span>
@@ -744,7 +744,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       >
         <div className="space-y-6">
           <div>
-            <label htmlFor="roleName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="roleName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Role Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -752,7 +752,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               type="text"
               value={newRoleName}
               onChange={(e) => setNewRoleName(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2.5 border border-[hsl(var(--border))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
               placeholder="e.g. Compliance Manager"
             />
           </div>
@@ -760,19 +760,19 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select permissions</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <h3 className="text-sm font-semibold text-[hsl(var(--foreground))]">Select permissions</h3>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">
                   Enable modules and choose read, write, or edit access.
                 </p>
               </div>
-              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <div className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
                 {selectedModuleCount} module{selectedModuleCount === 1 ? '' : 's'} selected · {computedPermissionList.length}{' '}
                 permission{computedPermissionList.length === 1 ? '' : 's'}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            <div className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden">
+              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
                 <div className="px-5 py-3">Module</div>
                 {PERMISSION_ACTIONS.map((action) => (
                   <div key={action.key} className="px-5 py-3 text-center">
@@ -787,25 +787,25 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   return (
                     <div
                       key={group.key}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-white dark:bg-gray-900"
+                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-[hsl(var(--card))]"
                     >
                       <div className="flex items-start sm:items-center gap-3">
                         <input
                           id={`module-${group.key}`}
                           type="checkbox"
-                          className="mt-1 sm:mt-0 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="mt-1 sm:mt-0 w-4 h-4 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))]"
                           checked={selection?.enabled ?? false}
                           onChange={() => handleToggleGroup(group.key)}
                         />
                         <div>
                           <label
                             htmlFor={`module-${group.key}`}
-                            className="text-sm font-semibold text-gray-900 dark:text-white"
+                            className="text-sm font-semibold text-[hsl(var(--foreground))]"
                           >
                             {group.label}
                           </label>
                           {group.description && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{group.description}</p>
+                            <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">{group.description}</p>
                           )}
                         </div>
                       </div>
@@ -827,7 +827,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                             key={`${group.key}-${action.key}`}
                             className="flex sm:block items-center justify-between sm:justify-center text-xs font-semibold text-gray-500 sm:text-sm"
                           >
-                            <span className="sm:hidden text-gray-500 dark:text-gray-400">{action.label}</span>
+                            <span className="sm:hidden text-[hsl(var(--muted-foreground))]">{action.label}</span>
                             <button
                               type="button"
                               onClick={() => handleToggleAction(group.key, action.key)}
@@ -835,11 +835,11 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                               className={cn(
                                 'mt-1 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold border transition-all duration-150',
                                 !isEnabled &&
-                                  'cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-200 dark:border-gray-700',
+                                  'cursor-not-allowed bg-[hsl(var(--secondary))] text-gray-400 border-[hsl(var(--border))]',
                                 isEnabled &&
                                   !isActive &&
-                                  'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800',
-                                isEnabled && isActive && 'bg-blue-600 text-white border-blue-600 shadow-sm hover:bg-blue-700'
+                                  'bg-[hsl(var(--card))] text-gray-600 dark:text-gray-300 border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]',
+                                isEnabled && isActive && 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-blue-600 shadow-sm hover:bg-blue-700'
                               )}
                             >
                               {isActive ? 'On' : 'Off'}
@@ -855,12 +855,12 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           </div>
 
           {createRoleError && (
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
               {createRoleError}
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
             <button
               type="button"
               onClick={() => {
@@ -868,7 +868,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                   setIsCreateRoleOpen(false);
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
               disabled={isCreatingRole}
             >
               <MdCancel className="w-4 h-4" />
@@ -878,7 +878,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               type="button"
               onClick={handleCreateRole}
               disabled={isCreatingRole}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+              className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
             >
               <MdAddCircleOutline className="w-4 h-4" />
               <span>{isCreatingRole ? 'Creating...' : 'Create Role'}</span>

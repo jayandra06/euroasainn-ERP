@@ -28,16 +28,16 @@ export function EmailTemplatesPage() {
   return (
     <div className="space-y-6">
       {/* Email Templates Section */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="bg-[hsl(var(--card))] rounded-xl border border-[hsl(var(--border))] shadow-sm p-6">
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-1">Email Templates</h2>
-          <p className="text-sm text-gray-600">Customize automated emails</p>
+          <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-1">Email Templates</h2>
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">Customize automated emails</p>
         </div>
 
         <div className="space-y-6">
           {/* Welcome Email Template */}
           <div>
-            <label htmlFor="welcomeEmail" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="welcomeEmail" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Welcome Email Template
             </label>
             <textarea
@@ -45,17 +45,17 @@ export function EmailTemplatesPage() {
               value={welcomeEmail}
               onChange={(e) => setWelcomeEmail(e.target.value)}
               rows={8}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white resize-y"
+              className="w-full px-4 py-3 border border-[hsl(var(--border))] rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-[hsl(var(--foreground))] bg-[hsl(var(--card))] resize-y"
               placeholder="Welcome to {platform_name}..."
             />
-            <p className="mt-2 text-xs text-gray-500">
-              Use <code className="px-1.5 py-0.5 bg-gray-100 rounded">{'{platform_name}'}</code> to insert the platform name
+            <p className="mt-2 text-xs text-[hsl(var(--muted-foreground))]">
+              Use <code className="px-1.5 py-0.5 bg-[hsl(var(--secondary))] rounded">{'{platform_name}'}</code> to insert the platform name
             </p>
           </div>
 
           {/* Invoice Email Template */}
           <div>
-            <label htmlFor="invoiceEmail" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="invoiceEmail" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Invoice Email Template
             </label>
             <textarea
@@ -63,21 +63,21 @@ export function EmailTemplatesPage() {
               value={invoiceEmail}
               onChange={(e) => setInvoiceEmail(e.target.value)}
               rows={8}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white resize-y"
+              className="w-full px-4 py-3 border border-[hsl(var(--border))] rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-[hsl(var(--foreground))] bg-[hsl(var(--card))] resize-y"
               placeholder="Your invoice for {month}..."
             />
-            <p className="mt-2 text-xs text-gray-500">
-              Use <code className="px-1.5 py-0.5 bg-gray-100 rounded">{'{month}'}</code> to insert the month
+            <p className="mt-2 text-xs text-[hsl(var(--muted-foreground))]">
+              Use <code className="px-1.5 py-0.5 bg-[hsl(var(--secondary))] rounded">{'{month}'}</code> to insert the month
             </p>
           </div>
         </div>
 
         {/* Save Button */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-8 pt-6 border-t border-[hsl(var(--border))]">
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-6 py-2.5 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold rounded-lg hover:bg-[hsl(var(--primary))]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving ? 'Saving...' : 'Save Templates'}
           </button>

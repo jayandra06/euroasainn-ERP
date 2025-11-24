@@ -278,7 +278,7 @@ export function ProfilePage() {
               id="firstName"
               value={profileData.firstName}
               onChange={(e) => handleInputChange('firstName', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
               placeholder="Enter first name"
             />
           </div>
@@ -293,7 +293,7 @@ export function ProfilePage() {
               id="lastName"
               value={profileData.lastName}
               onChange={(e) => handleInputChange('lastName', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
               placeholder="Enter last name"
             />
           </div>
@@ -312,7 +312,7 @@ export function ProfilePage() {
                 id="userName"
                 value={profileData.userName}
                 onChange={(e) => handleInputChange('userName', e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
                 placeholder="Enter username"
               />
             </div>
@@ -332,7 +332,7 @@ export function ProfilePage() {
                 id="email"
                 value={profileData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
                 placeholder="Enter email"
               />
             </div>
@@ -352,7 +352,7 @@ export function ProfilePage() {
                 id="mobileNumber"
                 value={profileData.mobileNumber}
                 onChange={(e) => handleInputChange('mobileNumber', e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
                 placeholder="Enter mobile number"
               />
             </div>
@@ -372,7 +372,7 @@ export function ProfilePage() {
                 id="companyName"
                 value={profileData.companyName}
                 onChange={(e) => handleInputChange('companyName', e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
                 placeholder="Enter company name"
               />
             </div>
@@ -392,7 +392,7 @@ export function ProfilePage() {
                 id="companyUrl"
                 value={profileData.companyUrl}
                 onChange={(e) => handleInputChange('companyUrl', e.target.value)}
-                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-900 bg-white"
+                className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-colors text-gray-900 bg-white"
                 placeholder="https://example.com"
               />
             </div>
@@ -405,7 +405,7 @@ export function ProfilePage() {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving ? 'Saving...' : 'Save Profile'}
           </button>

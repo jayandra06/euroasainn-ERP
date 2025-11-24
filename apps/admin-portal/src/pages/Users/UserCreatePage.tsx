@@ -24,14 +24,14 @@ export function UserCreatePage() {
           <button
             type="button"
             onClick={() => navigate('/users')}
-            className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-gray-600 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             aria-label="Back to users"
           >
             <MdArrowBack className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Invite Admin User</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">Invite Admin User</h1>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Create an account for a teammate. An invitation email with temporary credentials will be sent automatically.
             </p>
           </div>
@@ -40,7 +40,7 @@ export function UserCreatePage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         <div className="xl:col-span-3">
-          <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
             <UserForm user={null} onSuccess={handleSuccess} onCancel={handleCancel} />
           </div>
         </div>
@@ -58,8 +58,8 @@ export function UserCreatePage() {
               <li>• Keep audit logs up to date with individual accounts.</li>
             </ul>
           </div>
-          <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm text-sm text-gray-600 dark:text-gray-300">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Tips</h3>
+          <div className="p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm text-sm text-gray-600 dark:text-gray-300">
+            <h3 className="text-sm font-semibold text-[hsl(var(--foreground))] mb-3">Tips</h3>
             <ul className="space-y-2">
               <li>• Use work email addresses to ensure the invite reaches their inbox.</li>
               <li>• Assign the Super Admin role only when full system access is required.</li>

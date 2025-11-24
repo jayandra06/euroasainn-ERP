@@ -79,14 +79,14 @@ export function TransactionReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Transaction & Operations Reports</h1>
-          <p className="text-gray-600 dark:text-gray-400">Sales, purchases, order lifecycle, and operational analytics</p>
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">Transaction & Operations Reports</h1>
+          <p className="text-[hsl(var(--muted-foreground))]">Sales, purchases, order lifecycle, and operational analytics</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as 'month' | 'quarter' | 'year')}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+            className="px-4 py-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
           >
             <option value="month">This Month</option>
             <option value="quarter">This Quarter</option>
@@ -104,49 +104,49 @@ export function TransactionReportsPage() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Sales</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Total Sales</p>
             <MdTrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">$895,000</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">$895,000</p>
           <p className="text-xs text-emerald-600 mt-1">+15.2% from last period</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Purchases</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Total Purchases</p>
             <MdShoppingCart className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">$620,000</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">$620,000</p>
           <p className="text-xs text-emerald-600 mt-1">+8.3% from last period</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Revenue</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Net Revenue</p>
             <MdReceipt className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">$275,000</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">$275,000</p>
           <p className="text-xs text-emerald-600 mt-1">+22.5% from last period</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Order Completion Rate</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Order Completion Rate</p>
             <MdTrendingUp className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">72.0%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">72.0%</p>
           <p className="text-xs text-emerald-600 mt-1">+3.2% from last period</p>
         </div>
       </div>
 
       {/* Sales vs Purchase Comparison */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Sales vs Purchase Comparison</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly sales and purchase trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Sales vs Purchase Comparison</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly sales and purchase trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -164,11 +164,11 @@ export function TransactionReportsPage() {
       </div>
 
       {/* Order Lifecycle Analytics */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Order Lifecycle Analytics</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">From creation → invoice → delivery</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Order Lifecycle Analytics</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">From creation → invoice → delivery</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -183,10 +183,10 @@ export function TransactionReportsPage() {
         </ResponsiveContainer>
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {orderLifecycleData.map((stage, index) => (
-            <div key={index} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-center">
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{stage.stage}</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white">{stage.count}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{stage.percentage}%</p>
+            <div key={index} className="p-3 rounded-lg bg-[hsl(var(--secondary))] text-center">
+              <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-1">{stage.stage}</p>
+              <p className="text-lg font-bold text-[hsl(var(--foreground))]">{stage.count}</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">{stage.percentage}%</p>
             </div>
           ))}
         </div>
@@ -195,9 +195,9 @@ export function TransactionReportsPage() {
       {/* Refunds, Cancellations, and Discounts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {refundCancellationData.map((item, index) => (
-          <div key={index} className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div key={index} className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{item.type}</h4>
+              <h4 className="text-lg font-semibold text-[hsl(var(--foreground))]">{item.type}</h4>
               {item.trend > 0 ? (
                 <MdTrendingUp className="w-5 h-5 text-emerald-600" />
               ) : (
@@ -206,15 +206,15 @@ export function TransactionReportsPage() {
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Count:</span>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{item.count}</span>
+                <span className="text-sm text-[hsl(var(--muted-foreground))]">Count:</span>
+                <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{item.count}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Amount:</span>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">${item.amount.toLocaleString()}</span>
+                <span className="text-sm text-[hsl(var(--muted-foreground))]">Amount:</span>
+                <span className="text-sm font-semibold text-[hsl(var(--foreground))]">${item.amount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Trend:</span>
+                <span className="text-sm text-[hsl(var(--muted-foreground))]">Trend:</span>
                 <span className={`text-sm font-semibold ${item.trend > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                   {item.trend > 0 ? '+' : ''}{item.trend}%
                 </span>
@@ -225,24 +225,24 @@ export function TransactionReportsPage() {
       </div>
 
       {/* Department-wise Operational Costs */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Department-wise Operational Costs</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Budget vs actual comparison</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Department-wise Operational Costs</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Budget vs actual comparison</p>
           </div>
         </div>
         <div className="space-y-4">
           {departmentCostsData.map((dept, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{dept.department}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{dept.department}</h4>
                 <div className="flex items-center gap-4 text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Budget: <span className="font-medium text-gray-900 dark:text-white">${dept.budget.toLocaleString()}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">
+                    Budget: <span className="font-medium text-[hsl(var(--foreground))]">${dept.budget.toLocaleString()}</span>
                   </span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Actual: <span className="font-medium text-gray-900 dark:text-white">${dept.cost.toLocaleString()}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">
+                    Actual: <span className="font-medium text-[hsl(var(--foreground))]">${dept.cost.toLocaleString()}</span>
                   </span>
                   <span className={`font-semibold ${dept.variance >= 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                     {dept.variance >= 0 ? '+' : ''}{dept.variance}%

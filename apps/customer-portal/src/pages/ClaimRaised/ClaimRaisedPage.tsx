@@ -8,7 +8,7 @@ export function ClaimRaisedPage() {
     <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Claim Raised</h1>
+        <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">Claim Raised</h1>
         <button
           onClick={() => setShowFilters((prev) => !prev)}
           className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors"
@@ -22,34 +22,34 @@ export function ClaimRaisedPage() {
       {/* Search */}
       {showFilters && (
         <div>
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Search RFQs:</label>
+          <label className="text-sm font-medium text-[hsl(var(--foreground))] mb-2 block">Search RFQs:</label>
           <input
             type="text"
             placeholder="Vessel Name, Supply Port, Brand, or Category"
-            className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="w-full px-4 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
           />
         </div>
       )}
 
       {/* Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-100 dark:bg-gray-700">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">DATE</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">TIME</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">VESSEL NAME</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">CATEGORY</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">BRAND</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">MODEL</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">VENDOR NAME</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">STATUS</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">ACTION</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">DATE</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">TIME</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">VESSEL NAME</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">CATEGORY</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">BRAND</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">MODEL</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">VENDOR NAME</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">STATUS</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">ACTION</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colSpan={9} className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              <td colSpan={9} className="px-4 py-8 text-center text-sm text-[hsl(var(--muted-foreground))]">
                 No claims found
               </td>
             </tr>
@@ -59,7 +59,7 @@ export function ClaimRaisedPage() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+        <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-[hsl(var(--foreground))] rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed">
           Previous
         </button>
         <span className="text-sm text-gray-600 dark:text-gray-400">Page 1 of 0</span>

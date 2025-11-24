@@ -107,9 +107,9 @@ export function SystemAnalyticsPage() {
       case 'degraded':
         return 'text-orange-600 bg-orange-50 dark:bg-orange-950/20';
       case 'down':
-        return 'text-red-600 bg-red-50 dark:bg-red-950/20';
+        return 'text-red-600 bg-[hsl(var(--destructive))]/10';
       default:
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-800';
+        return 'text-gray-600 bg-[hsl(var(--secondary))]';
     }
   };
 
@@ -118,14 +118,14 @@ export function SystemAnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">System & Application Analytics</h1>
-          <p className="text-gray-600 dark:text-gray-400">Server performance, API metrics, and system health</p>
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">System & Application Analytics</h1>
+          <p className="text-[hsl(var(--muted-foreground))]">Server performance, API metrics, and system health</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month')}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+            className="px-4 py-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
           >
             <option value="day">Last 24 Hours</option>
             <option value="week">Last Week</option>
@@ -133,7 +133,7 @@ export function SystemAnalyticsPage() {
           </select>
           <button
             onClick={handleRefresh}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors font-medium text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 text-[hsl(var(--foreground))] rounded-lg transition-colors font-medium text-sm"
           >
             <MdRefresh className="w-4 h-4" />
             Refresh
@@ -150,49 +150,49 @@ export function SystemAnalyticsPage() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Server Uptime</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Server Uptime</p>
             <MdServer className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">99.87%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">99.87%</p>
           <p className="text-xs text-emerald-600 mt-1">Last 30 days</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg API Response Time</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Avg API Response Time</p>
             <MdSpeed className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">68ms</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">68ms</p>
           <p className="text-xs text-emerald-600 mt-1">-12% from last week</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Error Rate</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Error Rate</p>
             <MdError className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">0.15%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0.15%</p>
           <p className="text-xs text-emerald-600 mt-1">-0.05% from last week</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Integrations</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Active Integrations</p>
             <MdCloud className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">5/5</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">5/5</p>
           <p className="text-xs text-emerald-600 mt-1">All operational</p>
         </div>
       </div>
 
       {/* Server Uptime Chart */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Server Uptime %</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Uptime tracking over time with downtime alerts</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Server Uptime %</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Uptime tracking over time with downtime alerts</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -208,22 +208,22 @@ export function SystemAnalyticsPage() {
       </div>
 
       {/* Downtime Alerts */}
-      <div className="p-6 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 shadow-sm">
+      <div className="p-6 rounded-xl border border-red-200 dark:border-red-800 bg-[hsl(var(--destructive))]/10 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-red-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Downtime Alerts & Incidents</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Downtime Alerts & Incidents</h3>
         </div>
         <div className="space-y-3">
           {downtimeAlerts.map((alert, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-red-200 dark:border-red-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-red-200 dark:border-red-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{alert.date}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{alert.date}</p>
+                  <p className="text-sm text-[hsl(var(--muted-foreground))]">
                     Duration: {alert.duration} | Reason: {alert.reason}
                   </p>
                 </div>
-                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-[hsl(var(--foreground))] font-semibold">
                   {alert.status}
                 </span>
               </div>
@@ -233,11 +233,11 @@ export function SystemAnalyticsPage() {
       </div>
 
       {/* API Response Times */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">API Response Times</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Average and P95 response times by endpoint</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">API Response Times</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Average and P95 response times by endpoint</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -254,43 +254,43 @@ export function SystemAnalyticsPage() {
       </div>
 
       {/* Error Codes Distribution */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">HTTP Error Codes Distribution</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Response code breakdown</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">HTTP Error Codes Distribution</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Response code breakdown</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {errorCodesData.map((error, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 text-center">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{error.code}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{error.count.toLocaleString()}</p>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{error.percentage}%</p>
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))] text-center">
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))] mb-1">{error.code}</p>
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-2">{error.count.toLocaleString()}</p>
+              <p className="text-xs font-medium text-[hsl(var(--muted-foreground))]">{error.percentage}%</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Feature Usage Metrics */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Feature Usage Metrics</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Most used features and modules</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Feature Usage Metrics</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Most used features and modules</p>
           </div>
         </div>
         <div className="space-y-4">
           {featureUsageData.map((feature, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{feature.feature}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{feature.feature}</h4>
                 <div className="flex items-center gap-4 text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Usage: <span className="font-medium text-gray-900 dark:text-white">{feature.usage}%</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">
+                    Usage: <span className="font-medium text-[hsl(var(--foreground))]">{feature.usage}%</span>
                   </span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Users: <span className="font-medium text-gray-900 dark:text-white">{feature.users}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">
+                    Users: <span className="font-medium text-[hsl(var(--foreground))]">{feature.users}</span>
                   </span>
                 </div>
               </div>
@@ -306,16 +306,16 @@ export function SystemAnalyticsPage() {
       </div>
 
       {/* Failed Jobs Summary */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Background Jobs Summary</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Failed jobs and background tasks</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Background Jobs Summary</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Failed jobs and background tasks</p>
           </div>
         </div>
         <div className="space-y-3">
           {failedJobsData.map((job, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {job.status === 'success' ? (
@@ -324,8 +324,8 @@ export function SystemAnalyticsPage() {
                     <MdWarning className="w-5 h-5 text-orange-600" />
                   )}
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">{job.job}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="font-semibold text-[hsl(var(--foreground))]">{job.job}</p>
+                    <p className="text-sm text-[hsl(var(--muted-foreground))]">
                       Failures: {job.failures} | Last: {job.lastFailure}
                     </p>
                   </div>
@@ -334,7 +334,7 @@ export function SystemAnalyticsPage() {
                   className={`px-3 py-1 text-xs font-semibold rounded-full ${
                     job.status === 'success'
                       ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                      : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                   }`}
                 >
                   {job.status === 'success' ? 'Healthy' : 'Warning'}
@@ -346,30 +346,30 @@ export function SystemAnalyticsPage() {
       </div>
 
       {/* Integrations Health */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Integrations Health</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Third-party services and integrations status</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Integrations Health</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Third-party services and integrations status</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {integrationsHealth.map((integration, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{integration.service}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{integration.service}</h4>
                 <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(integration.status)}`}>
                   {integration.status}
                 </span>
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Uptime:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{integration.uptime}%</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Uptime:</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{integration.uptime}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Last Check:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{integration.lastCheck}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Last Check:</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{integration.lastCheck}</span>
                 </div>
               </div>
             </div>

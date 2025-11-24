@@ -12,12 +12,12 @@ const buttonVariants = cva(
         destructive:
           'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/40 hover:scale-105',
         outline:
-          'border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 shadow-md hover:shadow-lg hover:scale-105',
+          'border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 shadow-md hover:shadow-lg hover:scale-105',
         secondary:
-          'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 text-gray-900 dark:text-white shadow-md hover:shadow-lg hover:scale-105',
+          'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 text-[hsl(var(--foreground))] shadow-md hover:shadow-lg hover:scale-105',
         ghost:
-          'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:scale-105',
-        link: 'text-blue-600 dark:text-blue-400 underline-offset-4 hover:underline font-semibold',
+          'hover:bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] hover:text-gray-900 dark:hover:text-white hover:scale-105',
+        link: 'text-[hsl(var(--foreground))] font-semibold underline-offset-4 hover:underline font-semibold',
       },
       size: {
         default: 'h-12 px-6 py-3',

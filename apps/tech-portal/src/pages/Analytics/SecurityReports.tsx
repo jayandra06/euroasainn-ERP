@@ -81,42 +81,42 @@ export function SecurityReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Failed Login Attempts</p>
             <MdLock className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalFailedLogins}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 7 days</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalFailedLogins}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 7 days</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Unauthorized Access</p>
             <MdError className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalUnauthorized}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalUnauthorized}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Critical Vulnerabilities</p>
             <MdWarning className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{criticalVulnerabilities}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{criticalVulnerabilities}</p>
           <p className="text-xs text-orange-600 mt-1">Action required</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">2FA Enabled</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
             {twoFactorAuthLogs[0]?.enabled || 0}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Active users</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Active users</p>
         </div>
       </div>
 
@@ -124,16 +124,16 @@ export function SecurityReports() {
       <div className="p-6 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-red-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Failed Login Attempts by IP</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Failed Login Attempts by IP</h3>
         </div>
         <div className="space-y-3">
           {failedLoginData.map((login, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-red-200 dark:border-red-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-red-200 dark:border-red-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <MdLocationOn className="w-5 h-5 text-red-600" />
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">{login.ip}</p>
+                    <p className="font-semibold text-[hsl(var(--foreground))]">{login.ip}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {login.attempts} attempts | Location: {login.location}
                     </p>
@@ -143,7 +143,7 @@ export function SecurityReports() {
                   className={`px-3 py-1 text-xs font-semibold rounded-full ${
                     login.status === 'blocked'
                       ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
-                      : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                      : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                   }`}
                 >
                   {login.status}
@@ -155,11 +155,11 @@ export function SecurityReports() {
       </div>
 
       {/* Unauthorized Access Attempts */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Unauthorized Access Attempts</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Daily unauthorized access trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Unauthorized Access Attempts</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Daily unauthorized access trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -174,11 +174,11 @@ export function SecurityReports() {
       </div>
 
       {/* Token/Session Anomalies */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Token/Session Expiration Anomalies</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Token status breakdown</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Token/Session Expiration Anomalies</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Token status breakdown</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -199,18 +199,18 @@ export function SecurityReports() {
       <div className="p-6 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdSecurity className="w-6 h-6 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Vulnerability Scan Reports (OWASP Metrics)</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Vulnerability Scan Reports (OWASP Metrics)</h3>
         </div>
         <div className="space-y-3">
           {vulnerabilityScans.map((scan, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-orange-200 dark:border-orange-800">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{scan.scan}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{scan.scan}</h4>
                 <span
                   className={`px-3 py-1 text-xs font-semibold rounded-full ${
                     scan.status === 'action_required'
                       ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
-                      : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                      : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                   }`}
                 >
                   {scan.status.replace('_', ' ')}
@@ -241,11 +241,11 @@ export function SecurityReports() {
 
       {/* 2FA and Access Log Summaries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">2FA Log Summary</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Two-factor authentication activity</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">2FA Log Summary</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Two-factor authentication activity</p>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={250}>
@@ -262,19 +262,19 @@ export function SecurityReports() {
           </ResponsiveContainer>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Access Log Summary</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Login activity breakdown</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Access Log Summary</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Login activity breakdown</p>
             </div>
           </div>
           <div className="space-y-3">
             {accessLogSummary.map((log, index) => (
-              <div key={index} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+              <div key={index} className="p-3 rounded-lg bg-[hsl(var(--secondary))]">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white">{log.type}</span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">{log.count.toLocaleString()}</span>
+                  <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{log.type}</span>
+                  <span className="text-sm font-bold text-[hsl(var(--foreground))]">{log.count.toLocaleString()}</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
@@ -282,7 +282,7 @@ export function SecurityReports() {
                     style={{ width: `${log.percentage}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{log.percentage}%</p>
+                <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">{log.percentage}%</p>
               </div>
             ))}
           </div>

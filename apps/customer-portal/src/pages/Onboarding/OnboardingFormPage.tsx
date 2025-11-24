@@ -188,7 +188,7 @@ export function OnboardingFormPage() {
         <div className="w-full max-w-md bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-8">
           <div className="text-center">
             <MdError className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Invalid Invitation Link</h1>
+            <h1 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-2">Invalid Invitation Link</h1>
             <p className="text-gray-600 dark:text-gray-400">
               {errors.token || 'Please check your email for the correct invitation link.'}
             </p>
@@ -204,7 +204,7 @@ export function OnboardingFormPage() {
         <div className="w-full max-w-md bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-8">
           <div className="text-center">
             <MdCheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Form Submitted Successfully!</h1>
+            <h1 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-2">Form Submitted Successfully!</h1>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Your onboarding form has been submitted. Our team will review your information and get back to you soon.
             </p>
@@ -225,7 +225,7 @@ export function OnboardingFormPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 mb-4 shadow-2xl shadow-blue-500/30 ring-4 ring-blue-500/10">
             <MdRocketLaunch className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Customer Onboarding
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">Euroasiann ERP</p>
@@ -243,12 +243,12 @@ export function OnboardingFormPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Company Details */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Company Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Shipping Company Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -256,16 +256,16 @@ export function OnboardingFormPage() {
                     value={formData.companyName}
                     onChange={(e) => handleChange('companyName', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.companyName ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.companyName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.companyName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.companyName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Primary Contact Person <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -273,16 +273,16 @@ export function OnboardingFormPage() {
                     value={formData.contactPerson}
                     onChange={(e) => handleChange('contactPerson', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.contactPerson ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.contactPerson ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.contactPerson && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.contactPerson}</p>}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Official Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -290,23 +290,23 @@ export function OnboardingFormPage() {
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.email ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.email ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Mobile Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
                     <select
                       value={formData.mobileCountryCode}
                       onChange={(e) => handleChange('mobileCountryCode', e.target.value)}
-                      className="px-3 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-3 py-2.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                     >
                       {countryCodeOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -320,9 +320,9 @@ export function OnboardingFormPage() {
                       onChange={(e) => handleChange('mobilePhone', e.target.value)}
                       placeholder="Mobile number"
                       className={cn(
-                        'flex-1 px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                        errors.mobilePhone ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                        'flex-1 px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                        'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                        errors.mobilePhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                       )}
                     />
                   </div>
@@ -330,14 +330,14 @@ export function OnboardingFormPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Desk Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
                     <select
                       value={formData.deskCountryCode}
                       onChange={(e) => handleChange('deskCountryCode', e.target.value)}
-                      className="px-3 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-3 py-2.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                     >
                       {countryCodeOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -351,9 +351,9 @@ export function OnboardingFormPage() {
                       onChange={(e) => handleChange('deskPhone', e.target.value)}
                       placeholder="Desk phone number"
                       className={cn(
-                        'flex-1 px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                        errors.deskPhone ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                        'flex-1 px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                        'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                        errors.deskPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                       )}
                     />
                   </div>
@@ -364,12 +364,12 @@ export function OnboardingFormPage() {
 
             {/* Address */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Address
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -377,26 +377,26 @@ export function OnboardingFormPage() {
                     value={formData.address1}
                     onChange={(e) => handleChange('address1', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.address1 ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.address1 ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.address1 && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.address1}</p>}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Address Line 2</label>
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">Address Line 2</label>
                   <input
                     type="text"
                     value={formData.address2}
                     onChange={(e) => handleChange('address2', e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -404,16 +404,16 @@ export function OnboardingFormPage() {
                     value={formData.city}
                     onChange={(e) => handleChange('city', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.city ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.city ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.city && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.city}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Province / State <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -421,16 +421,16 @@ export function OnboardingFormPage() {
                     value={formData.province}
                     onChange={(e) => handleChange('province', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.province ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.province ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.province && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.province}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Postal Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -438,25 +438,25 @@ export function OnboardingFormPage() {
                     value={formData.postalCode}
                     onChange={(e) => handleChange('postalCode', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.postalCode ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.postalCode ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.postalCode && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.postalCode}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Country <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.country}
                     onChange={(e) => handleChange('country', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.country ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.country ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   >
                     {countryOptions.map((opt) => (
@@ -469,7 +469,7 @@ export function OnboardingFormPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Number of Vessels to Onboard <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -478,9 +478,9 @@ export function OnboardingFormPage() {
                     value={formData.vessels}
                     onChange={(e) => handleChange('vessels', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.vessels ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.vessels ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.vessels && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.vessels}</p>}
@@ -490,11 +490,11 @@ export function OnboardingFormPage() {
 
             {/* Tax Information */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Tax Information
               </h2>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                   Tax ID / VAT / GST / EIN <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -502,9 +502,9 @@ export function OnboardingFormPage() {
                   value={formData.taxId}
                   onChange={(e) => handleChange('taxId', e.target.value)}
                   className={cn(
-                    'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                    'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                    errors.taxId ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                    'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                    'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                    errors.taxId ? 'border-red-500' : 'border-[hsl(var(--border))]'
                   )}
                 />
                 {errors.taxId && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.taxId}</p>}
@@ -513,12 +513,12 @@ export function OnboardingFormPage() {
 
             {/* Banking Details */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Banking Details (For Auto-Debit)
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Account Holder Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -526,16 +526,16 @@ export function OnboardingFormPage() {
                     value={formData.accountName}
                     onChange={(e) => handleChange('accountName', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.accountName ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.accountName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.accountName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.accountName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Bank Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -543,16 +543,16 @@ export function OnboardingFormPage() {
                     value={formData.bankName}
                     onChange={(e) => handleChange('bankName', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.bankName ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.bankName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.bankName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.bankName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     IBAN / Account Number <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -560,21 +560,21 @@ export function OnboardingFormPage() {
                     value={formData.iban}
                     onChange={(e) => handleChange('iban', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.iban ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.iban ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.iban && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.iban}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">SWIFT / BIC Code</label>
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">SWIFT / BIC Code</label>
                   <input
                     type="text"
                     value={formData.swift}
                     onChange={(e) => handleChange('swift', e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
                   />
                 </div>
               </div>
@@ -582,12 +582,12 @@ export function OnboardingFormPage() {
 
             {/* Invoicing Details */}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Invoicing Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Email for Invoicing <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -595,16 +595,16 @@ export function OnboardingFormPage() {
                     value={formData.invoiceEmail}
                     onChange={(e) => handleChange('invoiceEmail', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.invoiceEmail ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.invoiceEmail ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.invoiceEmail && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.invoiceEmail}</p>}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Billing Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -612,26 +612,26 @@ export function OnboardingFormPage() {
                     value={formData.billingAddress1}
                     onChange={(e) => handleChange('billingAddress1', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.billingAddress1 ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.billingAddress1 ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.billingAddress1 && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.billingAddress1}</p>}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Billing Address Line 2</label>
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">Billing Address Line 2</label>
                   <input
                     type="text"
                     value={formData.billingAddress2}
                     onChange={(e) => handleChange('billingAddress2', e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Billing City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -639,16 +639,16 @@ export function OnboardingFormPage() {
                     value={formData.billingCity}
                     onChange={(e) => handleChange('billingCity', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.billingCity ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.billingCity ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.billingCity && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.billingCity}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Billing Province / State <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -656,16 +656,16 @@ export function OnboardingFormPage() {
                     value={formData.billingProvince}
                     onChange={(e) => handleChange('billingProvince', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.billingProvince ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.billingProvince ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.billingProvince && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.billingProvince}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Billing Postal Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -673,25 +673,25 @@ export function OnboardingFormPage() {
                     value={formData.billingPostal}
                     onChange={(e) => handleChange('billingPostal', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.billingPostal ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.billingPostal ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   />
                   {errors.billingPostal && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.billingPostal}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                     Billing Country <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.billingCountry}
                     onChange={(e) => handleChange('billingCountry', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-2.5 rounded-xl border-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-                      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-                      errors.billingCountry ? 'border-red-500' : 'border-gray-200 dark:border-gray-700'
+                      'w-full px-4 py-2.5 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                      'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+                      errors.billingCountry ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   >
                     {countryOptions.map((opt) => (
@@ -706,7 +706,7 @@ export function OnboardingFormPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-6 border-t border-[hsl(var(--border))]">
               <button
                 type="submit"
                 disabled={submitMutation.isPending}

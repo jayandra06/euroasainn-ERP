@@ -268,7 +268,7 @@ export function VendorOnboardingPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400">Invalid invitation link</p>
+          <p className="text-[hsl(var(--destructive))]">Invalid invitation link</p>
         </div>
       </div>
     );
@@ -277,12 +277,12 @@ export function VendorOnboardingPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="bg-[hsl(var(--card))] rounded-lg shadow-lg p-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2">
               Vendor Onboarding – Euroasiann ERP
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[hsl(var(--muted-foreground))]">
               Complete your vendor organization onboarding to get started
             </p>
           </div>
@@ -290,12 +290,12 @@ export function VendorOnboardingPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Vendor Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Vendor Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -304,8 +304,8 @@ export function VendorOnboardingPage() {
                     value={formData.companyName}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.companyName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.companyName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -313,7 +313,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Business Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -322,13 +322,13 @@ export function VendorOnboardingPage() {
                     value={formData.email}
                     onChange={handleChange}
                     disabled
-                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Primary Contact Person <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -337,8 +337,8 @@ export function VendorOnboardingPage() {
                     value={formData.contactPerson}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.contactPerson ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.contactPerson ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -349,12 +349,12 @@ export function VendorOnboardingPage() {
 
             {/* Phone Numbers */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Phone Numbers
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Mobile Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
@@ -362,7 +362,7 @@ export function VendorOnboardingPage() {
                       name="mobileCountryCode"
                       value={formData.mobileCountryCode}
                       onChange={handleChange}
-                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                     >
                       <option value="+31">🇳🇱 +31 (NL)</option>
                       <option value="+91">🇮🇳 +91 (IN)</option>
@@ -376,8 +376,8 @@ export function VendorOnboardingPage() {
                       value={formData.mobilePhone}
                       onChange={handleChange}
                       className={cn(
-                        'flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                        errors.mobilePhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        'flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                        errors.mobilePhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                       )}
                       required
                     />
@@ -386,7 +386,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Desk Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
@@ -394,7 +394,7 @@ export function VendorOnboardingPage() {
                       name="deskCountryCode"
                       value={formData.deskCountryCode}
                       onChange={handleChange}
-                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                     >
                       <option value="+31">🇳🇱 +31 (NL)</option>
                       <option value="+91">🇮🇳 +91 (IN)</option>
@@ -408,8 +408,8 @@ export function VendorOnboardingPage() {
                       value={formData.deskPhone}
                       onChange={handleChange}
                       className={cn(
-                        'flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                        errors.deskPhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        'flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                        errors.deskPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                       )}
                       required
                     />
@@ -421,7 +421,7 @@ export function VendorOnboardingPage() {
 
             {/* Brands, Categories, Models */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Product Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -444,7 +444,7 @@ export function VendorOnboardingPage() {
                       </div>
                     ))}
                   </div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Select Brands
                   </label>
                   <select
@@ -453,8 +453,8 @@ export function VendorOnboardingPage() {
                       e.target.value = '';
                     }}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.brands ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.brands ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   >
                     <option value="">Select Brand</option>
@@ -486,7 +486,7 @@ export function VendorOnboardingPage() {
                       </div>
                     ))}
                   </div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Select Categories
                   </label>
                   <select
@@ -495,8 +495,8 @@ export function VendorOnboardingPage() {
                       e.target.value = '';
                     }}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.categories ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.categories ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   >
                     <option value="">Select Category</option>
@@ -528,7 +528,7 @@ export function VendorOnboardingPage() {
                       </div>
                     ))}
                   </div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Select Models
                   </label>
                   <select
@@ -537,8 +537,8 @@ export function VendorOnboardingPage() {
                       e.target.value = '';
                     }}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.models ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.models ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                   >
                     <option value="">Select Model</option>
@@ -555,12 +555,12 @@ export function VendorOnboardingPage() {
 
             {/* Business Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Business Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Tax ID <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -569,8 +569,8 @@ export function VendorOnboardingPage() {
                     value={formData.taxId}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.taxId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.taxId ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -578,7 +578,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Warehouse Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -587,8 +587,8 @@ export function VendorOnboardingPage() {
                     value={formData.warehouseAddress}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.warehouseAddress ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.warehouseAddress ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -599,12 +599,12 @@ export function VendorOnboardingPage() {
 
             {/* Managing Director Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Managing Director Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Managing Director <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -613,8 +613,8 @@ export function VendorOnboardingPage() {
                     value={formData.managingDirector}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.managingDirector ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.managingDirector ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -622,7 +622,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Managing Director Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -631,8 +631,8 @@ export function VendorOnboardingPage() {
                     value={formData.managingDirectorEmail}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.managingDirectorEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.managingDirectorEmail ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -640,7 +640,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Managing Director Personal Phone <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -649,8 +649,8 @@ export function VendorOnboardingPage() {
                     value={formData.managingDirectorPhone}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.managingDirectorPhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.managingDirectorPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -658,7 +658,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Managing Director Desk Phone <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -667,8 +667,8 @@ export function VendorOnboardingPage() {
                     value={formData.managingDirectorDeskPhone}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.managingDirectorDeskPhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.managingDirectorDeskPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -676,7 +676,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Port <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -685,8 +685,8 @@ export function VendorOnboardingPage() {
                     value={formData.port}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.port ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.port ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -697,12 +697,12 @@ export function VendorOnboardingPage() {
 
             {/* Sales Manager Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Sales Manager Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Sales Manager Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -711,8 +711,8 @@ export function VendorOnboardingPage() {
                     value={formData.salesManager}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.salesManager ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.salesManager ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -720,7 +720,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Sales Manager Email <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -729,8 +729,8 @@ export function VendorOnboardingPage() {
                     value={formData.salesManagerEmail}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.salesManagerEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.salesManagerEmail ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -738,7 +738,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Sales Manager Phone <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -747,8 +747,8 @@ export function VendorOnboardingPage() {
                     value={formData.salesManagerPhone}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.salesManagerPhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.salesManagerPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -756,7 +756,7 @@ export function VendorOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Sales Manager Desk Phone <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -765,8 +765,8 @@ export function VendorOnboardingPage() {
                     value={formData.salesManagerDeskPhone}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.salesManagerDeskPhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.salesManagerDeskPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
@@ -777,11 +777,11 @@ export function VendorOnboardingPage() {
 
             {/* Logistic Service */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Logistic Service Details
               </h2>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                   Enter Logistic Service <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -790,8 +790,8 @@ export function VendorOnboardingPage() {
                   value={formData.logisticService}
                   onChange={handleChange}
                   className={cn(
-                    'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                    errors.logisticService ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                    errors.logisticService ? 'border-red-500' : 'border-[hsl(var(--border))]'
                   )}
                   required
                 />
@@ -801,12 +801,12 @@ export function VendorOnboardingPage() {
 
             {/* Address */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Address
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -815,25 +815,25 @@ export function VendorOnboardingPage() {
                     value={formData.address1}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.address1 ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.address1 ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.address1 && <p className="mt-1 text-sm text-red-600">{errors.address1}</p>}
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address Line 2</label>
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">Address Line 2</label>
                   <input
                     type="text"
                     name="address2"
                     value={formData.address2}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -842,15 +842,15 @@ export function VendorOnboardingPage() {
                     value={formData.city}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.city ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Province / State <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -859,15 +859,15 @@ export function VendorOnboardingPage() {
                     value={formData.province}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.province ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.province ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.province && <p className="mt-1 text-sm text-red-600">{errors.province}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Postal Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -876,15 +876,15 @@ export function VendorOnboardingPage() {
                     value={formData.postalCode}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.postalCode ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.postalCode ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.postalCode && <p className="mt-1 text-sm text-red-600">{errors.postalCode}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Country <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -892,8 +892,8 @@ export function VendorOnboardingPage() {
                     value={formData.country}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.country ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.country ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   >
@@ -913,12 +913,12 @@ export function VendorOnboardingPage() {
 
             {/* Banking Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Banking Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Account Holder Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -927,15 +927,15 @@ export function VendorOnboardingPage() {
                     value={formData.accountName}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.accountName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.accountName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.accountName && <p className="mt-1 text-sm text-red-600">{errors.accountName}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Bank Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -944,15 +944,15 @@ export function VendorOnboardingPage() {
                     value={formData.bankName}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.bankName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.bankName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.bankName && <p className="mt-1 text-sm text-red-600">{errors.bankName}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     IBAN / Account Number <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -961,21 +961,21 @@ export function VendorOnboardingPage() {
                     value={formData.iban}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.iban ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.iban ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.iban && <p className="mt-1 text-sm text-red-600">{errors.iban}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">SWIFT / BIC Code</label>
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">SWIFT / BIC Code</label>
                   <input
                     type="text"
                     name="swift"
                     value={formData.swift}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                   />
                 </div>
               </div>
@@ -983,12 +983,12 @@ export function VendorOnboardingPage() {
 
             {/* Invoicing Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Invoicing Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Email for Invoicing <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -997,15 +997,15 @@ export function VendorOnboardingPage() {
                     value={formData.invoiceEmail}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.invoiceEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.invoiceEmail ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.invoiceEmail && <p className="mt-1 text-sm text-red-600">{errors.invoiceEmail}</p>}
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1014,25 +1014,25 @@ export function VendorOnboardingPage() {
                     value={formData.billingAddress1}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.billingAddress1 ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.billingAddress1 ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.billingAddress1 && <p className="mt-1 text-sm text-red-600">{errors.billingAddress1}</p>}
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Billing Address Line 2</label>
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">Billing Address Line 2</label>
                   <input
                     type="text"
                     name="billingAddress2"
                     value={formData.billingAddress2}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1041,15 +1041,15 @@ export function VendorOnboardingPage() {
                     value={formData.billingCity}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.billingCity ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.billingCity ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.billingCity && <p className="mt-1 text-sm text-red-600">{errors.billingCity}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Province / State <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1058,15 +1058,15 @@ export function VendorOnboardingPage() {
                     value={formData.billingProvince}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.billingProvince ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.billingProvince ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.billingProvince && <p className="mt-1 text-sm text-red-600">{errors.billingProvince}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Postal Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1075,15 +1075,15 @@ export function VendorOnboardingPage() {
                     value={formData.billingPostal}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.billingPostal ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.billingPostal ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   />
                   {errors.billingPostal && <p className="mt-1 text-sm text-red-600">{errors.billingPostal}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Country <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -1091,8 +1091,8 @@ export function VendorOnboardingPage() {
                     value={formData.billingCountry}
                     onChange={handleChange}
                     className={cn(
-                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
-                      errors.billingCountry ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      'w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))]',
+                      errors.billingCountry ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     )}
                     required
                   >
@@ -1114,14 +1114,14 @@ export function VendorOnboardingPage() {
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="px-6 py-2 border border-[hsl(var(--border))] rounded-lg text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Submitting...' : 'Submit Onboarding'}
               </button>

@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../app';
-import { User } from '../models/user.model';
 import { testUtils } from '../tests/setup';
 import { authService } from '../services/auth.service';
 

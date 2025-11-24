@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { User, IUser } from '../models/user.model';
 import { Organization } from '../models/organization.model';
-import { PortalType, TechRole, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
+import { PortalType, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
 import { logger } from '../config/logger';
 
 function generateTemporaryPassword() {

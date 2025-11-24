@@ -60,7 +60,7 @@ class RoleService {
       throw new Error('Role with this name already exists');
     }
 
-    let keyBase = generateRoleKey(name, normalizedPortal);
+    const keyBase = generateRoleKey(name, normalizedPortal);
     let key = keyBase;
     let counter = 1;
 

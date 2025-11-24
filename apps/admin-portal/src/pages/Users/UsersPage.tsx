@@ -128,7 +128,7 @@ export function UsersPage() {
             {user.firstName?.[0] || user.email[0].toUpperCase()}
           </div>
           <div>
-            <div className="font-semibold text-gray-900 dark:text-white">
+            <div className="font-semibold text-[hsl(var(--foreground))]">
               {(() => {
                 const first = user.firstName?.trim() || '';
                 const last = user.lastName?.trim() || '';
@@ -138,7 +138,7 @@ export function UsersPage() {
                 return `${first} ${last}`;
               })()}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
+            <div className="text-sm text-[hsl(var(--muted-foreground))]">{user.email}</div>
           </div>
         </div>
       ),
@@ -147,7 +147,7 @@ export function UsersPage() {
       key: 'organization',
       header: 'Organization',
       render: (user: User) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {user.organizationName || 'N/A'}
         </span>
       ),
@@ -156,7 +156,7 @@ export function UsersPage() {
       key: 'role',
       header: 'Role',
       render: (user: User) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800">
+        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800">
           {typeof user.roleId === 'object'
             ? user.roleId.name
             : user.roleName || user.role}
@@ -171,8 +171,8 @@ export function UsersPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             user.isActive
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
           )}
         >
           {user.isActive ? 'Active' : 'Inactive'}
@@ -183,7 +183,7 @@ export function UsersPage() {
       key: 'lastLogin',
       header: 'Last Login',
       render: (user: User) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
         </span>
       ),
@@ -213,10 +213,10 @@ export function UsersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             User Management
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             Manage admin users and their permissions
           </p>
         </div>
@@ -224,43 +224,43 @@ export function UsersPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Admin Users</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Admin Users</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))]">{stats.total}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
               <MdPeople className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Active Users</p>
-              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.active}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Active Users</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))] font-semibold">{stats.active}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
               <MdCheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Super Admins</p>
-              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.superAdmins}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Super Admins</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))] font-semibold">{stats.superAdmins}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
               <MdVpnKey className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Support Staff</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Support Staff</p>
               <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.supportStaff}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
@@ -271,30 +271,30 @@ export function UsersPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search users by name, email, or organization..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
               <MdFilterList className="w-5 h-5" />
               <span>Filters:</span>
             </div>
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -304,7 +304,7 @@ export function UsersPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
             >
               <option value="all">All Status</option>
               <option value="active">Active Only</option>
@@ -315,19 +315,19 @@ export function UsersPage() {
       </div>
 
       {/* Admin Users Section */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Admin Users</h2>
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
+        <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4">Admin Users</h2>
         
         {/* Search Bar */}
         <div className="mb-4">
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
         </div>
@@ -335,18 +335,18 @@ export function UsersPage() {
         {/* Table */}
         {isLoading ? (
           <div className="p-12 text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading users...</p>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+            <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading users...</p>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">
                 Showing {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''}
               </p>
               <button
                 onClick={() => showToast('Export functionality will be implemented soon', 'info')}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
               >
                 <MdDownload className="w-4 h-4" />
                 Export

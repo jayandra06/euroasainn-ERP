@@ -79,18 +79,18 @@ export function Dashboard() {
   return (
     <div className="w-full min-h-screen p-8 space-y-8">
       <div className="mb-8">
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Admin &gt; Dashboard</p>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="text-sm text-[hsl(var(--muted-foreground))] mb-2">Admin &gt; Dashboard</p>
+        <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">Dashboard</h1>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total RFQs Received</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updated Now</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total RFQs Received</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
               <MdRequestQuote className="w-6 h-6 text-white" />
@@ -98,12 +98,12 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Merchants</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updated Now</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Merchants</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
               <MdPeople className="w-6 h-6 text-white" />
@@ -111,12 +111,12 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Happy Customers</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updated Now</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Happy Customers</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
               <MdEmojiEmotions className="w-6 h-6 text-white" />
@@ -124,12 +124,12 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Brands</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updated Now</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Brands</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
               <MdStore className="w-6 h-6 text-white" />
@@ -137,12 +137,12 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Items Send</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updated Now</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Items Send</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
               <MdInventory className="w-6 h-6 text-white" />
@@ -150,12 +150,12 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Categories</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">0</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Updated Now</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Categories</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-md">
               <MdCategory className="w-6 h-6 text-white" />
@@ -167,20 +167,20 @@ export function Dashboard() {
       {/* Charts Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h2>
+          <h2 className="text-2xl font-bold text-[hsl(var(--foreground))]">Dashboard</h2>
           <button
             onClick={handleOpenModal}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors"
           >
             Invite Admin
           </button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Bar Chart */}
-          <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Bar Chart - Multiple</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">January - June 2024</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Bar Chart - Multiple</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">January - June 2024</p>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={monthlyData}>
@@ -197,17 +197,17 @@ export function Dashboard() {
                 <Bar dataKey="value" fill="#6366f1" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-4 text-sm text-[hsl(var(--muted-foreground))]">
               <p>Trending up by 5.2% this month</p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">Showing total visitors for the last 6 months</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">Showing total visitors for the last 6 months</p>
             </div>
           </div>
 
           {/* Area Chart */}
-          <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+          <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Area Chart - Gradient</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Showing total visitors for the last 6 months</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Area Chart - Gradient</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Showing total visitors for the last 6 months</p>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <AreaChart data={visitorData}>
@@ -236,9 +236,9 @@ export function Dashboard() {
                 />
               </AreaChart>
             </ResponsiveContainer>
-            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-4 text-sm text-[hsl(var(--muted-foreground))]">
               <p>Trending up by 5.2% this month</p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">January - June 2024</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">January - June 2024</p>
             </div>
           </div>
         </div>
@@ -247,65 +247,65 @@ export function Dashboard() {
       {/* Invite Admin Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-800">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Invite Admin</h2>
+          <div className="bg-[hsl(var(--card))] rounded-lg shadow-xl w-full max-w-md mx-4 border border-[hsl(var(--border))]">
+            <div className="flex items-center justify-between p-6 border-b border-[hsl(var(--border))]">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))]">Invite Admin</h2>
               <button
                 onClick={handleCloseModal}
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                className="text-[hsl(var(--muted-foreground))] hover:text-gray-700 dark:hover:text-gray-200"
               >
                 <MdClose className="w-6 h-6" />
               </button>
             </div>
             <div className="p-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6">
                 Enter the details to invite a new admin user.
               </p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Email
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                     placeholder="Enter email address"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     First Name
                   </label>
                   <input
                     type="text"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                     placeholder="Enter first name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Last Name
                   </label>
                   <input
                     type="text"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                     placeholder="Enter last name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Role
                   </label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                   >
                     <option value="admin">Admin</option>
                     <option value="super-admin">Super Admin</option>
@@ -313,16 +313,16 @@ export function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-[hsl(var(--border))]">
               <button
                 onClick={handleCloseModal}
-                className="px-4 py-2 border border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                className="px-4 py-2 border border-blue-600 text-[hsl(var(--primary))] rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors"
               >
                 Send Invitation
               </button>

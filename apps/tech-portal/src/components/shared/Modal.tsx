@@ -42,17 +42,17 @@ export function Modal({ isOpen, onClose, title, children, size = 'medium' }: Mod
     >
       <div
         className={cn(
-          'w-full bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-800 max-h-[90vh] overflow-hidden flex flex-col',
+          'w-full bg-[hsl(var(--card))] rounded-xl shadow-xl border border-[hsl(var(--border))] max-h-[90vh] overflow-hidden flex flex-col',
           sizeClasses[size]
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">{title}</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400"
+            className="p-2 rounded-lg hover:bg-[hsl(var(--muted))] transition-colors text-[hsl(var(--muted-foreground))]"
             aria-label="Close"
           >
             <MdClose className="w-5 h-5" />

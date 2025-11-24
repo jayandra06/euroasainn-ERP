@@ -27,11 +27,11 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-6">
-          <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-8">
+          <div className="max-w-md w-full bg-[hsl(var(--card))] rounded-2xl shadow-lg border border-[hsl(var(--border))] p-8">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 mx-auto mb-4">
               <MdError className="w-8 h-8 text-red-600 dark:text-red-400" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-2">
+            <h1 className="text-2xl font-bold text-[hsl(var(--foreground))] text-center mb-2">
               Something went wrong
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+              className="w-full px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg hover:bg-blue-700 transition-colors font-semibold"
             >
               Reload Page
             </button>

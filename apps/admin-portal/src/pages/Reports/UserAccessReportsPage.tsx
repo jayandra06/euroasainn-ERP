@@ -82,14 +82,14 @@ export function UserAccessReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">User & Access Reports</h1>
-          <p className="text-gray-600 dark:text-gray-400">Login activity, session analysis, and access patterns</p>
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">User & Access Reports</h1>
+          <p className="text-[hsl(var(--muted-foreground))]">Login activity, session analysis, and access patterns</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value as 'week' | 'month' | 'quarter')}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+            className="px-4 py-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
           >
             <option value="week">Last Week</option>
             <option value="month">Last Month</option>
@@ -107,49 +107,49 @@ export function UserAccessReportsPage() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Logins (This Month)</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Total Logins (This Month)</p>
             <MdPeople className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">12,450</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">12,450</p>
           <p className="text-xs text-emerald-600 mt-1">+8.5% from last month</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Session Duration</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Avg Session Duration</p>
             <MdAccessTime className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">52 min</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">52 min</p>
           <p className="text-xs text-emerald-600 mt-1">+5.2% from last month</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Users</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Active Users</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">570</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">570</p>
           <p className="text-xs text-emerald-600 mt-1">+12.3% from last month</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Inactive Users</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Inactive Users</p>
             <MdWarning className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">23</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">23</p>
           <p className="text-xs text-orange-600 mt-1">30+ days inactive</p>
         </div>
       </div>
 
       {/* Login Activity Chart */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Daily Login Activity</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Login counts and active sessions</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Daily Login Activity</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Login counts and active sessions</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -166,11 +166,11 @@ export function UserAccessReportsPage() {
       </div>
 
       {/* Session Duration Analysis */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Average Session Duration by Hour</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Peak usage times analysis</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Average Session Duration by Hour</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Peak usage times analysis</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -185,29 +185,29 @@ export function UserAccessReportsPage() {
       </div>
 
       {/* Portal Usage Comparison */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Portal Usage Heatmap</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Usage across different portals</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Portal Usage Heatmap</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Usage across different portals</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {portalUsageData.map((portal, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-3">{portal.portal}</h4>
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
+              <h4 className="font-semibold text-[hsl(var(--foreground))] mb-3">{portal.portal}</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Users:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{portal.users}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Users:</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{portal.users}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Sessions:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{portal.sessions.toLocaleString()}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Sessions:</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{portal.sessions.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Avg Duration:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{portal.avgDuration} min</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">Avg Duration:</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{portal.avgDuration} min</span>
                 </div>
               </div>
             </div>
@@ -216,24 +216,24 @@ export function UserAccessReportsPage() {
       </div>
 
       {/* Role-Based Access Usage */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Role-Based Access Usage</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Module access by role</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Role-Based Access Usage</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Module access by role</p>
           </div>
         </div>
         <div className="space-y-4">
           {roleUsageData.map((role, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{role.role}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{role.role}</h4>
                 <div className="flex gap-4 text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Logins: <span className="font-medium text-gray-900 dark:text-white">{role.logins}</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">
+                    Logins: <span className="font-medium text-[hsl(var(--foreground))]">{role.logins}</span>
                   </span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Avg Session: <span className="font-medium text-gray-900 dark:text-white">{role.avgSession} min</span>
+                  <span className="text-[hsl(var(--muted-foreground))]">
+                    Avg Session: <span className="font-medium text-[hsl(var(--foreground))]">{role.avgSession} min</span>
                   </span>
                 </div>
               </div>
@@ -241,7 +241,7 @@ export function UserAccessReportsPage() {
                 {role.modules.map((module, modIndex) => (
                   <span
                     key={modIndex}
-                    className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
+                    className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900 text-[hsl(var(--foreground))] font-semibold"
                   >
                     {module}
                   </span>
@@ -256,19 +256,19 @@ export function UserAccessReportsPage() {
       <div className="p-6 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inactive Users Alert</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Inactive Users Alert</h3>
         </div>
         <div className="space-y-3">
           {inactiveUsers.map((user, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-orange-200 dark:border-orange-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{user.name}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{user.name}</p>
+                  <p className="text-sm text-[hsl(var(--muted-foreground))]">{user.email}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user.daysInactive} days inactive</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Last login: {user.lastLogin}</p>
+                  <p className="text-sm font-medium text-[hsl(var(--foreground))]">{user.daysInactive} days inactive</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Last login: {user.lastLogin}</p>
                 </div>
               </div>
             </div>

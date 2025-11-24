@@ -26,11 +26,11 @@ export function BrandsPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Vendor &gt; Dashboard</p>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">All Brands</h1>
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">All Brands</h1>
         </div>
         <button
           onClick={handleOpenModal}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg transition-colors"
         >
           <MdAdd className="w-5 h-5" />
           Add Brand
@@ -38,13 +38,13 @@ export function BrandsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-2 border-b border-gray-200 dark:border-gray-800">
+      <div className="mb-6 flex gap-2 border-b border-[hsl(var(--border))]">
         <button
           onClick={() => setActiveTab('active')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'active'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              ? 'border-blue-600 text-[hsl(var(--foreground))] font-semibold'
+              : 'border-transparent text-[hsl(var(--muted-foreground))] hover:text-gray-700 dark:hover:text-gray-300'
           }`}
         >
           Active
@@ -53,8 +53,8 @@ export function BrandsPage() {
           onClick={() => setActiveTab('pending')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'pending'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              ? 'border-blue-600 text-[hsl(var(--foreground))] font-semibold'
+              : 'border-transparent text-[hsl(var(--muted-foreground))] hover:text-gray-700 dark:hover:text-gray-300'
           }`}
         >
           Pending Approval
@@ -62,20 +62,20 @@ export function BrandsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+            <thead className="bg-[hsl(var(--secondary))]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+            <tbody className="bg-[hsl(var(--card))] divide-y divide-gray-200 dark:divide-gray-800">
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
                   {activeTab === 'active'
                     ? "No brands found in the 'active' tab."
                     : "No brands found in the 'pending' tab."}
@@ -89,12 +89,12 @@ export function BrandsPage() {
       {/* Request New Brand Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-800">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Request New Brand</h2>
+          <div className="bg-[hsl(var(--card))] rounded-lg shadow-xl w-full max-w-md mx-4 border border-[hsl(var(--border))]">
+            <div className="flex items-center justify-between p-6 border-b border-[hsl(var(--border))]">
+              <h2 className="text-xl font-bold text-[hsl(var(--foreground))]">Request New Brand</h2>
               <button
                 onClick={handleCloseModal}
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                className="text-[hsl(var(--muted-foreground))] hover:text-gray-700 dark:hover:text-gray-200"
               >
                 <MdClose className="w-6 h-6" />
               </button>
@@ -105,41 +105,41 @@ export function BrandsPage() {
               </p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Name
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
                     placeholder="Enter brand name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Description
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] resize-none"
                     placeholder="Enter brand description"
                   />
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-[hsl(var(--border))]">
               <button
                 onClick={handleCloseModal}
-                className="px-4 py-2 border border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
+                className="px-4 py-2 border border-blue-600 text-[hsl(var(--foreground))] font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg transition-colors"
               >
                 Request Add Brand
               </button>

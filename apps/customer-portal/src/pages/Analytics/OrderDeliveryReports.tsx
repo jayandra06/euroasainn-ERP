@@ -90,49 +90,49 @@ export function OrderDeliveryReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Orders</p>
             <MdShoppingCart className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalOrders}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 5 weeks</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalOrders}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 5 weeks</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Fulfillment Rate</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{fulfillmentRate}%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{fulfillmentRate}%</p>
           <p className="text-xs text-emerald-600 mt-1">0% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Orders</p>
             <MdSchedule className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingOrders.length}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Requires attention</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{pendingOrders.length}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Requires attention</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Delayed Orders</p>
             <MdWarning className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{delayedOrders.length}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{delayedOrders.length}</p>
           <p className="text-xs text-emerald-600 mt-1">-40% from last month</p>
         </div>
       </div>
 
       {/* Order History */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Order History</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Orders with date filters</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Order History</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Orders with date filters</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -150,11 +150,11 @@ export function OrderDeliveryReports() {
       </div>
 
       {/* Fulfillment Rate */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Order Fulfillment Rate</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">% Completed on time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Order Fulfillment Rate</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">% Completed on time</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -174,19 +174,19 @@ export function OrderDeliveryReports() {
       <div className="p-6 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdSchedule className="w-6 h-6 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pending Orders</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Pending Orders</h3>
         </div>
         <div className="space-y-3">
           {pendingOrders.map((order, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-orange-200 dark:border-orange-800">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{order.orderId}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{order.orderId}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Date: {order.date} | Status: {order.status} | Expected: {order.expectedDelivery}
                   </p>
                 </div>
-                <span className="text-lg font-bold text-gray-900 dark:text-white">${order.amount.toLocaleString()}</span>
+                <span className="text-lg font-bold text-[hsl(var(--foreground))]">${order.amount.toLocaleString()}</span>
               </div>
             </div>
           ))}
@@ -197,22 +197,22 @@ export function OrderDeliveryReports() {
       <div className="p-6 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-red-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Delayed Orders</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Delayed Orders</h3>
         </div>
         <div className="space-y-3">
           {delayedOrders.map((order, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-red-200 dark:border-red-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-red-200 dark:border-red-800">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{order.orderId}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{order.orderId}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Original: {order.originalDelivery} → New: {order.newDelivery}
                   </p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                  <p className="text-sm text-[hsl(var(--foreground))] mt-1">
                     <span className="font-medium">Reason:</span> {order.reason}
                   </p>
                 </div>
-                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-[hsl(var(--foreground))] font-semibold">
                   {order.status}
                 </span>
               </div>
@@ -222,11 +222,11 @@ export function OrderDeliveryReports() {
       </div>
 
       {/* Cancellation Trend */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Order Cancellation Trend</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly cancellation rate</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Order Cancellation Trend</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly cancellation rate</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -243,25 +243,25 @@ export function OrderDeliveryReports() {
       </div>
 
       {/* Delivery Tracking Report */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Delivery Tracking Report with ETA</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Real-time order tracking</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Delivery Tracking Report with ETA</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Real-time order tracking</p>
           </div>
           <MdLocalShipping className="w-6 h-6 text-blue-600" />
         </div>
         <div className="space-y-4">
           {deliveryTrackingData.map((tracking, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{tracking.orderId}</h4>
+                  <h4 className="font-semibold text-[hsl(var(--foreground))]">{tracking.orderId}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Status: {tracking.status} | Location: {tracking.currentLocation} | ETA: {tracking.eta}
                   </p>
                 </div>
-                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-[hsl(var(--foreground))] font-semibold">
                   {tracking.progress}%
                 </span>
               </div>
@@ -277,11 +277,11 @@ export function OrderDeliveryReports() {
       </div>
 
       {/* Order Status Distribution */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Order Status Distribution</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Overall order status breakdown</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Order Status Distribution</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Overall order status breakdown</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>

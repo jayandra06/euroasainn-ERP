@@ -161,12 +161,12 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">
             Welcome back, {user?.firstName || 'User'}! 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400">Here's what's happening with your platform today</p>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-sm text-[hsl(var(--muted-foreground))]">
           {new Date().toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
@@ -184,17 +184,17 @@ export function Dashboard() {
             <div
               key={index}
               className={cn(
-                'relative p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow',
+                'relative p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm hover:shadow-md transition-shadow',
                 stat.bgColor
               )}
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{stat.value}</p>
+                  <p className="text-2xl font-bold text-[hsl(var(--foreground))] mb-2">{stat.value}</p>
                   <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-semibold">{stat.change}</span>
-                    <span className="text-gray-500 dark:text-gray-400 ml-1">No data available</span>
+                    <span className="text-[hsl(var(--muted-foreground))] ml-1">No data available</span>
                   </div>
                 </div>
                 <div className={cn('w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md', stat.gradient)}>
@@ -209,11 +209,11 @@ export function Dashboard() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* User Growth */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">User Growth</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Monthly user registration</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">User Growth</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly user registration</p>
             </div>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
               <MdTrendingUp className="w-5 h-5 text-white" />
@@ -249,11 +249,11 @@ export function Dashboard() {
         </div>
 
         {/* Revenue Overview */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Revenue Overview</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Quarterly revenue analysis</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Revenue Overview</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Quarterly revenue analysis</p>
             </div>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
               <MdAttachMoney className="w-5 h-5 text-white" />
@@ -277,11 +277,11 @@ export function Dashboard() {
         </div>
 
         {/* Organization Distribution */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Organization Distribution</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Industry sector breakdown</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Organization Distribution</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Industry sector breakdown</p>
             </div>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
               <MdBusinessCenter className="w-5 h-5 text-white" />
@@ -315,11 +315,11 @@ export function Dashboard() {
         </div>
 
         {/* Activity Timeline */}
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Activity Timeline</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Weekly activity overview</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Activity Timeline</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">Weekly activity overview</p>
             </div>
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
               <MdSpeed className="w-5 h-5 text-white" />
@@ -345,7 +345,7 @@ export function Dashboard() {
 
       {/* Quick Access */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Access</h2>
+        <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4">Quick Access</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickAccessCards.map((card, index) => {
             const Icon = card.icon;
@@ -353,21 +353,21 @@ export function Dashboard() {
               <div
                 key={index}
                 onClick={() => navigate(card.path)}
-                className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer group"
+                className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className={cn('w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center shadow-md group-hover:scale-110 transition-transform', card.gradient)}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
-                  <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-1 rounded">
+                  <span className="text-xs font-semibold text-[hsl(var(--foreground))] font-semibold bg-blue-50 dark:bg-blue-950/30 px-2 py-1 rounded">
                     {card.value} {card.title}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{card.title}</h3>
+                <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-2">{card.title}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{card.description}</p>
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</span>
-                  <div className="flex items-center gap-1 text-xs font-semibold text-gray-600 dark:text-gray-400">
+                <div className="flex items-center justify-between pt-4 border-t border-[hsl(var(--border))]">
+                  <span className="text-2xl font-bold text-[hsl(var(--foreground))]">{card.value}</span>
+                  <div className="flex items-center gap-1 text-xs text-[hsl(var(--foreground))] font-semibold">
                     <span>{card.trend}</span>
                   </div>
                 </div>

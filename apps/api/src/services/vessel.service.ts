@@ -19,7 +19,7 @@ export class VesselService {
     return vessel;
   }
 
-  async getVessels(organizationId: string, filters?: any) {
+  async getVessels(organizationId: string, _filters?: any) {
     const query: any = { organizationId };
     return await Vessel.find(query);
   }

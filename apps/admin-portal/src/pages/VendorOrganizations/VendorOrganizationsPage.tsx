@@ -110,14 +110,14 @@ export function VendorOrganizationsPage() {
       key: 'name',
       header: 'Organization Name',
       render: (org: Organization) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{org.name}</div>
+        <div className="font-semibold text-[hsl(var(--foreground))]">{org.name}</div>
       ),
     },
     {
       key: 'portalType',
       header: 'Portal Type',
       render: (org: Organization) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800">
+        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800">
           {org.portalType}
         </span>
       ),
@@ -130,8 +130,8 @@ export function VendorOrganizationsPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             org.isActive
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
           )}
         >
           {org.isActive ? 'Active' : 'Inactive'}
@@ -142,7 +142,7 @@ export function VendorOrganizationsPage() {
       key: 'createdAt',
       header: 'Created',
       render: (org: Organization) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {org.createdAt ? new Date(org.createdAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -155,10 +155,10 @@ export function VendorOrganizationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Vendor Organizations
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             Manage vendor organizations and their settings
           </p>
         </div>
@@ -172,16 +172,16 @@ export function VendorOrganizationsPage() {
       </div>
 
       {/* Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+          <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
             <MdFilterList className="w-5 h-5" />
             <span>Filters:</span>
           </div>
           <select
             value={filterActive}
             onChange={(e) => setFilterActive(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
+            className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
           >
             <option value="all">All Status</option>
             <option value="active">Active Only</option>
@@ -192,12 +192,12 @@ export function VendorOrganizationsPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-12 text-center rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-purple-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading organizations...</p>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading organizations...</p>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <DataTable
             columns={columns}
             data={orgsData || []}

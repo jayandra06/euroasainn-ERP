@@ -106,21 +106,21 @@ function Login() {
   // Show Forgot Password Form
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-6">
+      <div className="min-h-screen flex items-center justify-center bg-[hsl(var(--background))] p-6">
         <div className="w-full max-w-md">
           {/* Logo and Welcome */}
           <div className="text-center mb-8 animate-fade-in">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 mb-4 shadow-2xl shadow-blue-500/30 ring-4 ring-blue-500/10">
               <MdLock className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Reset Password
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Enter your email and new password</p>
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mt-2">Enter your email and new password</p>
           </div>
 
           {/* Forgot Password Form */}
-          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-8 animate-scale-in">
+          <div className="bg-[hsl(var(--card))]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-[hsl(var(--border))]/50 p-8 animate-scale-in">
             <button
               onClick={() => {
                 setShowForgotPassword(false);
@@ -129,7 +129,7 @@ function Login() {
                 setNewPassword('');
                 setConfirmPassword('');
               }}
-              className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
+              className="flex items-center gap-2 text-sm text-[hsl(var(--muted-foreground))] hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
             >
               <MdArrowBack className="w-4 h-4" />
               Back to Login
@@ -138,7 +138,7 @@ function Login() {
             <form onSubmit={handleForgotPasswordSubmit} className="space-y-6">
               {error && (
                 <div
-                  className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 animate-fade-in"
+                  className="flex items-center gap-3 p-4 rounded-xl bg-[hsl(var(--destructive))]/10 border border-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))] animate-fade-in"
                   role="alert"
                 >
                   <MdError className="w-5 h-5 flex-shrink-0" />
@@ -148,12 +148,12 @@ function Login() {
 
               {/* Email Field */}
               <div className="space-y-2">
-                <label htmlFor="forgotEmail" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                <label htmlFor="forgotEmail" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                   Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <MdEmail className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                    <MdEmail className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                   </div>
                   <input
                     id="forgotEmail"
@@ -161,7 +161,7 @@ function Login() {
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
                     required
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -169,12 +169,12 @@ function Login() {
 
               {/* New Password Field */}
               <div className="space-y-2">
-                <label htmlFor="newPassword" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                <label htmlFor="newPassword" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                   New Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <MdLock className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                    <MdLock className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                   </div>
                   <input
                     id="newPassword"
@@ -182,13 +182,13 @@ function Login() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                    className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                     placeholder="Enter new password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-[hsl(var(--muted-foreground))] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
                     {showNewPassword ? (
                       <MdVisibilityOff className="w-5 h-5" />
@@ -197,17 +197,17 @@ function Login() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Password must be at least 8 characters long</p>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">Password must be at least 8 characters long</p>
               </div>
 
               {/* Confirm Password Field */}
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                <label htmlFor="confirmPassword" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                   Confirm Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <MdLock className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                    <MdLock className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                   </div>
                   <input
                     id="confirmPassword"
@@ -215,13 +215,13 @@ function Login() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                    className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                     placeholder="Confirm new password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-[hsl(var(--muted-foreground))] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
                     {showConfirmPassword ? (
                       <MdVisibilityOff className="w-5 h-5" />
@@ -258,26 +258,26 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-[hsl(var(--background))] p-6">
       <div className="w-full max-w-md">
         {/* Logo and Welcome */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 mb-4 shadow-2xl shadow-blue-500/30 ring-4 ring-blue-500/10">
             <MdRocketLaunch className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Euroasiann ERP
           </h1>
-          <p className="text-lg font-semibold text-gray-600 dark:text-gray-400">Admin Portal</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Sign in to continue</p>
+          <p className="text-lg font-semibold text-[hsl(var(--muted-foreground))]">Admin Portal</p>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-2">Sign in to continue</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-8 animate-scale-in">
+        <div className="bg-[hsl(var(--card))]/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-[hsl(var(--border))]/50 p-8 animate-scale-in">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div
-                className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 animate-fade-in"
+                className="flex items-center gap-3 p-4 rounded-xl bg-[hsl(var(--destructive))]/10 border border-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))] animate-fade-in"
                 role="alert"
               >
                 <MdError className="w-5 h-5 flex-shrink-0" />
@@ -287,12 +287,12 @@ function Login() {
 
             {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+              <label htmlFor="email" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MdEmail className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <MdEmail className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                 </div>
                 <input
                   id="email"
@@ -300,7 +300,7 @@ function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -309,20 +309,20 @@ function Login() {
             {/* Password Field */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                <label htmlFor="password" className="block text-sm font-bold text-[hsl(var(--foreground))]">
                   Password
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                  className="text-sm font-semibold text-[hsl(var(--primary))] hover:underline"
                 >
                   Forgot Password?
                 </button>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <MdLock className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <MdLock className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
                 </div>
                 <input
                   id="password"
@@ -330,13 +330,13 @@ function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all duration-200 font-medium"
+                  className="w-full pl-12 pr-12 py-3.5 rounded-xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary))]/10 transition-all duration-200 font-medium"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-[hsl(var(--muted-foreground))] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
                   {showPassword ? (
                     <MdVisibilityOff className="w-5 h-5" />
@@ -368,8 +368,8 @@ function Login() {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+          <div className="mt-6 pt-6 border-t border-[hsl(var(--border))]">
+            <p className="text-xs text-center text-[hsl(var(--muted-foreground))]">
               By signing in, you agree to our Terms of Service and Privacy Policy
             </p>
           </div>
@@ -377,9 +377,9 @@ function Login() {
 
         {/* Help Text */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">
             Need help?{' '}
-            <a href="#" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+            <a href="#" className="font-semibold text-[hsl(var(--primary))] hover:underline">
               Contact Support
             </a>
           </p>

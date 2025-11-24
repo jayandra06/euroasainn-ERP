@@ -213,7 +213,7 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Subject */}
       <div>
-        <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="subject" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Subject <span className="text-red-500">*</span>
         </label>
         <input
@@ -222,18 +222,18 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
           value={formData.subject}
           onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.subject ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.subject ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
           placeholder="Enter ticket subject"
         />
-        {errors.subject && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.subject}</p>}
+        {errors.subject && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.subject}</p>}
       </div>
 
       {/* Description */}
       <div>
-        <label htmlFor="description" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="description" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
           Description <span className="text-red-500">*</span>
         </label>
         <textarea
@@ -242,29 +242,29 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={5}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none',
-            errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all resize-none',
+            errors.description ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
           placeholder="Describe the issue or request in detail..."
         />
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
           Minimum 10 characters required
         </p>
-        {errors.description && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>}
+        {errors.description && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.description}</p>}
       </div>
 
       {/* Organization and Priority */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="organizationId" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <label htmlFor="organizationId" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
             Organization (Optional)
           </label>
           <select
             id="organizationId"
             value={formData.organizationId}
             onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-            className="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-2.5 border-2 border-[hsl(var(--border))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
           >
             <option value="">-- No Organization --</option>
             {organizations?.map((org) => (
@@ -276,7 +276,7 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
         </div>
 
         <div>
-          <label htmlFor="priority" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <label htmlFor="priority" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
             Priority <span className="text-red-500">*</span>
           </label>
           <select
@@ -284,9 +284,9 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
             value={formData.priority}
             onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
             className={cn(
-              'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-              errors.priority ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+              'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+              'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+              errors.priority ? 'border-red-500' : 'border-[hsl(var(--border))]'
             )}
           >
             <option value="low">Low</option>
@@ -294,14 +294,14 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
             <option value="high">High</option>
             <option value="urgent">Urgent</option>
           </select>
-          {errors.priority && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.priority}</p>}
+          {errors.priority && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.priority}</p>}
         </div>
       </div>
 
       {/* Status and Assigned To */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="status" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <label htmlFor="status" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
             Status <span className="text-red-500">*</span>
           </label>
           <select
@@ -309,9 +309,9 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
             value={formData.status}
             onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
             className={cn(
-              'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-              errors.status ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+              'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+              'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+              errors.status ? 'border-red-500' : 'border-[hsl(var(--border))]'
             )}
           >
             <option value="open">Open</option>
@@ -319,11 +319,11 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
             <option value="resolved">Resolved</option>
             <option value="closed">Closed</option>
           </select>
-          {errors.status && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.status}</p>}
+          {errors.status && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.status}</p>}
         </div>
 
         <div>
-          <label htmlFor="assignedTo" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <label htmlFor="assignedTo" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
             Assigned To (Optional)
           </label>
           <input
@@ -331,28 +331,28 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
             type="text"
             value={formData.assignedTo}
             onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
-            className="w-full px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-2.5 border-2 border-[hsl(var(--border))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
             placeholder="support@example.com"
           />
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
             Email address of the person assigned to this ticket
           </p>
         </div>
       </div>
 
       {errors.submit && (
-        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
           {errors.submit}
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
         <button
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
         >
           <MdCancel className="w-4 h-4" />
           <span>Cancel</span>
@@ -360,7 +360,7 @@ export function SupportTicketForm({ ticket, onSuccess, onCancel }: SupportTicket
         <button
           type="submit"
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+          className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
         >
           <MdSave className="w-4 h-4" />
           <span>{isLoading ? 'Saving...' : ticket ? 'Update' : 'Create'}</span>

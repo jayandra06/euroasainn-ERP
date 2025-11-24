@@ -81,51 +81,51 @@ export function BugIssueTracking() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Issues</p>
             <MdBugReport className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalIssues}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalIssues}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg MTTR</p>
             <MdSchedule className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgMTTR} days</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgMTTR} days</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">SLA Compliance</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentSLA}%</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentSLA}%</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Open Issues</p>
             <MdWarning className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
             {issueStatusData.find((s) => s.status === 'Open')?.count || 0}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Requires attention</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Requires attention</p>
         </div>
       </div>
 
       {/* Issues by Status */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Total Issues by Status</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Current issue distribution</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Total Issues by Status</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Current issue distribution</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -150,11 +150,11 @@ export function BugIssueTracking() {
       </div>
 
       {/* MTTR Trend */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Mean Time to Resolve (MTTR)</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Average resolution time trend</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Mean Time to Resolve (MTTR)</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Average resolution time trend</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -169,11 +169,11 @@ export function BugIssueTracking() {
       </div>
 
       {/* SLA Compliance */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">SLA Compliance Percentage</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly compliance rate</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">SLA Compliance Percentage</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly compliance rate</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -188,11 +188,11 @@ export function BugIssueTracking() {
       </div>
 
       {/* Module with Most Bugs */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Bugs by Module</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Module-wise bug distribution</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Bugs by Module</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Module-wise bug distribution</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -210,24 +210,24 @@ export function BugIssueTracking() {
       </div>
 
       {/* Developer Performance */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Developer Performance</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Issues closed per developer</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Developer Performance</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Issues closed per developer</p>
           </div>
           <MdPerson className="w-6 h-6 text-blue-600" />
         </div>
         <div className="space-y-3">
           {developerPerformance.map((dev, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-semibold">
                     {dev.developer.split(' ').map((n) => n[0]).join('')}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{dev.developer}</h4>
+                    <h4 className="font-semibold text-[hsl(var(--foreground))]">{dev.developer}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {dev.issuesClosed} issues closed | Avg: {dev.avgResolutionTime} days | Critical: {dev.criticalBugs}
                     </p>

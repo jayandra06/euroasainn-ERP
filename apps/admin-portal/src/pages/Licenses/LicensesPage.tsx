@@ -149,7 +149,7 @@ export function LicensesPage() {
       key: 'name',
       header: 'Organization',
       render: (org: OrganizationWithLicense) => (
-        <div className="font-semibold text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+        <div className="font-semibold text-[hsl(var(--foreground))] cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           {org.name}
         </div>
       ),
@@ -162,8 +162,8 @@ export function LicensesPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             org.type === 'customer'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+              ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800'
+              : 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800'
           )}
         >
           {org.type === 'customer' ? 'Customer' : 'Vendor'}
@@ -177,8 +177,8 @@ export function LicensesPage() {
         <div className="flex items-center gap-2">
           {org.onboardingCompleted ? (
             <>
-              <MdCheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Completed</span>
+              <MdCheckCircle className="w-5 h-5 text-[hsl(var(--foreground))] font-semibold" />
+              <span className="text-sm font-semibold text-[hsl(var(--foreground))] font-semibold">Completed</span>
             </>
           ) : (
             <>
@@ -195,17 +195,17 @@ export function LicensesPage() {
       render: (org: OrganizationWithLicense) => {
         if (!org.license) {
           return (
-            <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-800">
+            <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-[hsl(var(--foreground))] font-semibold dark:bg-gray-900/50 ring-1 ring-[hsl(var(--border))]">
               No License
             </span>
           );
         }
 
         const statusColors = {
-          active: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-800',
-          expired: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-red-200 dark:ring-red-800',
-          suspended: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-amber-200 dark:ring-amber-800',
-          revoked: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-red-200 dark:ring-red-800',
+          active: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-emerald-200 dark:ring-emerald-800',
+          expired: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-red-200 dark:ring-red-800',
+          suspended: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-amber-200 dark:ring-amber-800',
+          revoked: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-red-200 dark:ring-red-800',
         };
 
         return (
@@ -219,7 +219,7 @@ export function LicensesPage() {
       key: 'expiresAt',
       header: 'Expires At',
       render: (org: OrganizationWithLicense) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {org.license?.expiresAt ? new Date(org.license.expiresAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -231,40 +231,40 @@ export function LicensesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
             Licenses
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             View all organizations, their onboarding status, and license information
           </p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-emerald-500 dark:focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search organizations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
               <MdFilterList className="w-5 h-5" />
               <span>Filters:</span>
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
             >
               <option value="all">All Types</option>
               <option value="customer">Customer Only</option>
@@ -273,7 +273,7 @@ export function LicensesPage() {
             <select
               value={filterOnboarding}
               onChange={(e) => setFilterOnboarding(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
             >
               <option value="all">All Onboarding</option>
               <option value="completed">Completed</option>
@@ -282,7 +282,7 @@ export function LicensesPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 font-medium"
             >
               <option value="all">All License Status</option>
               <option value="active">Active</option>
@@ -297,28 +297,28 @@ export function LicensesPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-12 text-center rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-emerald-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading organizations...</p>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading organizations...</p>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Showing {filteredOrgs.length} organization{filteredOrgs.length !== 1 ? 's' : ''}
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <MdRefresh className={cn('w-4 h-4', isRefreshing && 'animate-spin')} />
                 Refresh
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
               >
                 <MdDownload className="w-4 h-4" />
                 Export

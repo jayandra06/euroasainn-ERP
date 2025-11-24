@@ -155,9 +155,9 @@ export function OrganizationsPage() {
           className="flex items-center justify-center w-full"
         >
           {selectedOrgs.size === filteredOrgs.length && filteredOrgs.length > 0 ? (
-            <MdCheckBox className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <MdCheckBox className="w-5 h-5 text-[hsl(var(--primary))]" />
           ) : (
-            <MdCheckBoxOutlineBlank className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <MdCheckBoxOutlineBlank className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
           )}
         </button>
       ),
@@ -170,9 +170,9 @@ export function OrganizationsPage() {
           className="flex items-center justify-center"
         >
           {selectedOrgs.has(org._id) ? (
-            <MdCheckBox className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <MdCheckBox className="w-5 h-5 text-[hsl(var(--primary))]" />
           ) : (
-            <MdCheckBoxOutlineBlank className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <MdCheckBoxOutlineBlank className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
           )}
         </button>
       ),
@@ -182,7 +182,7 @@ export function OrganizationsPage() {
       key: 'name',
       header: 'Name',
       render: (org: Organization) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{org.name}</div>
+        <div className="font-semibold text-[hsl(var(--foreground))]">{org.name}</div>
       ),
     },
     {
@@ -193,8 +193,8 @@ export function OrganizationsPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             org.type === 'customer'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+              ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800'
+              : 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800'
           )}
         >
           {org.type === 'customer' ? 'Customer' : 'Vendor'}
@@ -209,8 +209,8 @@ export function OrganizationsPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             org.isActive
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
           )}
         >
           {org.isActive ? 'Active' : 'Inactive'}
@@ -221,7 +221,7 @@ export function OrganizationsPage() {
       key: 'createdAt',
       header: 'Created',
       render: (org: Organization) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {org.createdAt ? new Date(org.createdAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -233,41 +233,41 @@ export function OrganizationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Organizations
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             Manage customer and vendor organizations
           </p>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search organizations by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters and Actions */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+              <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
                 <MdFilterList className="w-5 h-5" />
                 <span>Filters:</span>
               </div>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
               >
                 <option value="all">All Types</option>
                 <option value="customer">Customer Only</option>
@@ -276,7 +276,7 @@ export function OrganizationsPage() {
               <select
                 value={filterActive}
                 onChange={(e) => setFilterActive(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active Only</option>
@@ -285,12 +285,12 @@ export function OrganizationsPage() {
             </div>
             {selectedOrgs.size > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-[hsl(var(--muted-foreground))]">
                   {selectedOrgs.size} selected
                 </span>
                 <button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors font-semibold text-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white rounded-xl transition-colors font-semibold text-sm"
                 >
                   <MdDelete className="w-4 h-4" />
                   Delete Selected
@@ -303,19 +303,19 @@ export function OrganizationsPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading organizations...</p>
+        <div className="p-12 text-center rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading organizations...</p>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Showing {filteredOrgs.length} organization{filteredOrgs.length !== 1 ? 's' : ''}
             </p>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
             >
               <MdDownload className="w-4 h-4" />
               Export

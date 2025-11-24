@@ -8666,6 +8666,15 @@
       "hash": "sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew=="
     }
   },
+  "npm:framer-motion": {
+    "type": "npm",
+    "name": "npm:framer-motion",
+    "data": {
+      "version": "12.23.24",
+      "packageName": "framer-motion",
+      "hash": "sha512-HMi5HRoRCTou+3fb3h9oTLyJGBxHfW+HnNE25tAXOvVx/IvwMHK0cx7IR4a2ZU6sh3IX1Z+4ts32PcYBOqka8w=="
+    }
+  },
   "npm:front-matter": {
     "type": "npm",
     "name": "npm:front-matter",
@@ -9105,6 +9114,15 @@
       "version": "5.0.1",
       "packageName": "https-proxy-agent",
       "hash": "sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA=="
+    }
+  },
+  "npm:husky": {
+    "type": "npm",
+    "name": "npm:husky",
+    "data": {
+      "version": "9.1.7",
+      "packageName": "husky",
+      "hash": "sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA=="
     }
   },
   "npm:icss-replace-symbols": {
@@ -10572,6 +10590,24 @@
       "version": "8.19.2",
       "packageName": "mongoose",
       "hash": "sha512-ww2T4dBV+suCbOfG5YPwj9pLCfUVyj8FEA1D3Ux1HHqutpLxGyOYEPU06iPRBW4cKr3PJfOSYsIpHWPTkz5zig=="
+    }
+  },
+  "npm:motion-dom": {
+    "type": "npm",
+    "name": "npm:motion-dom",
+    "data": {
+      "version": "12.23.23",
+      "packageName": "motion-dom",
+      "hash": "sha512-n5yolOs0TQQBRUFImrRfs/+6X4p3Q4n1dUEqt/H58Vx7OW6RF+foWEgmTVDhIWJIMXOuNNL0apKH2S16en9eiA=="
+    }
+  },
+  "npm:motion-utils": {
+    "type": "npm",
+    "name": "npm:motion-utils",
+    "data": {
+      "version": "12.23.6",
+      "packageName": "motion-utils",
+      "hash": "sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ=="
     }
   },
   "npm:mpath": {

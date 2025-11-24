@@ -1,8 +1,7 @@
 import { Payment, IPayment, PaymentStatus, PaymentType } from '../models/payment.model';
 import { Organization } from '../models/organization.model';
 import { User } from '../models/user.model';
-import { License } from '../models/license.model';
-import { LicenseStatus, OrganizationType, PortalType } from '../../../../packages/shared/src/types/index';
+import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index';
 import { licenseService } from './license.service';
 import { emailService } from './email.service';
 import { razorpayService } from './razorpay.service';

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const config = {
+  darkMode: ['class', '[data-theme="dark"]'],
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,8 +8,16 @@ const config = {
   theme: {
     extend: {
       colors: {
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
         primary: {
-          DEFAULT: "#3b82f6",
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+          // Keep legacy colors for backward compatibility
+          base: "#3b82f6",
           50: "#eff6ff",
           100: "#dbeafe",
           200: "#bfdbfe",
@@ -22,7 +31,10 @@ const config = {
           950: "#172554",
         },
         secondary: {
-          DEFAULT: "#64748b",
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+          // Keep legacy colors for backward compatibility
+          base: "#64748b",
           50: "#f0f9ff",
           100: "#e0f2fe",
           200: "#bae6fd",
