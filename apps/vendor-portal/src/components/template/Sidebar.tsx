@@ -214,28 +214,28 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-50 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 flex flex-col overflow-x-hidden overflow-y-auto',
+        'fixed left-0 top-0 z-50 h-screen bg-[hsl(var(--background))] border-r border-[hsl(var(--border))] transition-all duration-300 flex flex-col overflow-x-hidden overflow-y-auto',
         collapsed ? 'w-20' : 'w-72'
       )}
     >
       {/* Logo Section */}
-      <div className={cn('flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden', collapsed ? 'px-2 py-4' : 'px-6 py-5')}>
+      <div className={cn('flex items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--background))] overflow-hidden', collapsed ? 'px-2 py-4' : 'px-6 py-5')}>
         <div className={cn('flex items-center gap-3 flex-1 min-w-0', collapsed && 'justify-center flex-shrink-0')}>
           <div className={cn('flex-shrink-0 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg', collapsed ? 'w-10 h-10' : 'w-10 h-10')}>
             <MdRocketLaunch className={cn('text-white', collapsed ? 'w-5 h-5' : 'w-6 h-6')} />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+              <h1 className="text-lg font-bold text-[hsl(var(--foreground))] truncate">
                 Euroasiann ERP
               </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Vendor Portal</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">Vendor Portal</p>
             </div>
           )}
         </div>
         <button
           onClick={() => onToggle(!collapsed)}
-          className={cn('rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400 flex-shrink-0', collapsed ? 'p-1' : 'p-1.5')}
+          className={cn('rounded-lg hover:bg-[hsl(var(--muted))] transition-colors text-[hsl(var(--muted-foreground))] flex-shrink-0', collapsed ? 'p-1' : 'p-1.5')}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? (
@@ -267,11 +267,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 w-full text-left',
                     collapsed ? 'justify-center px-2' : 'px-3',
                     hasActiveSubItem
-                      ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-semibold'
+                      : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]'
                   )}
                 >
-                  <Icon className={cn('w-5 h-5 flex-shrink-0', hasActiveSubItem && 'text-blue-600 dark:text-blue-400')} />
+                  <Icon className={cn('w-5 h-5 flex-shrink-0', hasActiveSubItem && 'text-[hsl(var(--primary))]')} />
                   {!collapsed && (
                     <>
                       <span className="flex-1 text-sm font-medium">{item.label}</span>
@@ -298,11 +298,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                           className={cn(
                             'group relative flex items-center gap-3 py-2 px-3 rounded-lg transition-all duration-200',
                             isSubActive
-                              ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
-                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                              ? 'bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-semibold'
+                              : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]'
                           )}
                         >
-                          <SubIcon className={cn('w-4 h-4 flex-shrink-0', isSubActive && 'text-blue-600 dark:text-blue-400')} />
+                          <SubIcon className={cn('w-4 h-4 flex-shrink-0', isSubActive && 'text-[hsl(var(--primary))]')} />
                           <span className="text-sm font-medium">{subItem.label}</span>
                         </NavLink>
                       );
@@ -326,16 +326,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 'group relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200',
                 collapsed ? 'justify-center px-2' : 'px-3',
                 isActive
-                  ? 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 font-semibold'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-semibold'
+                  : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]'
               )}
             >
-              <Icon className={cn('w-5 h-5 flex-shrink-0', isActive && 'text-blue-600 dark:text-blue-400')} />
+              <Icon className={cn('w-5 h-5 flex-shrink-0', isActive && 'text-[hsl(var(--primary))]')} />
               {!collapsed && (
                 <>
                   <span className="flex-1 text-sm font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-[hsl(var(--primary))]">
                       {item.badge}
                     </span>
                   )}
@@ -347,19 +347,19 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       {/* User Section */}
-      <div className={cn('border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden', collapsed ? 'px-2 py-3' : 'p-4')}>
+      <div className={cn('border-t border-[hsl(var(--border))] bg-[hsl(var(--background))] overflow-hidden', collapsed ? 'px-2 py-3' : 'p-4')}>
         {!collapsed && (
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 mb-3">
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[hsl(var(--secondary))] mb-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
               {user?.firstName?.[0] || user?.email?.[0] || 'V'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              <p className="text-sm font-semibold text-[hsl(var(--foreground))] truncate">
                 {user?.firstName && user?.lastName
                   ? `${user.firstName} ${user.lastName}`
                   : user?.email || 'Vendor User'}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.role || 'Vendor'}</p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] truncate">{user?.role || 'Vendor'}</p>
             </div>
           </div>
         )}
@@ -377,7 +377,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           onMouseLeave={() => collapsed && handleMouseLeave()}
           type="button"
           className={cn(
-            'group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors',
+            'group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold text-[hsl(var(--destructive))] bg-[hsl(var(--destructive))]/10 hover:bg-[hsl(var(--destructive))]/20 transition-colors',
             collapsed && 'justify-center'
           )}
         >
@@ -390,7 +390,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {collapsed && tooltip && (
         <div
           className={cn(
-            "fixed px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg whitespace-nowrap shadow-lg z-[100] pointer-events-none transition-all duration-150 ease-in-out",
+            "fixed px-3 py-1.5 bg-[hsl(var(--card))] border border-[hsl(var(--border))] text-[hsl(var(--foreground))] text-sm rounded-lg whitespace-nowrap shadow-lg z-[100] pointer-events-none transition-all duration-150 ease-in-out",
             showTooltip ? "opacity-100 scale-100" : "opacity-0 scale-95"
           )}
           style={{

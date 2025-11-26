@@ -169,10 +169,9 @@ export class OrganizationController {
           const tempPassword = `Temp${Math.random().toString(36).slice(-8)}${Date.now().toString().slice(-4)}`;
           
           // Check if user already exists, if so, update organization assignment and send email
-          let user;
           try {
             // Try to create the user
-            user = await userService.createUser({
+            await userService.createUser({
               email: adminEmail,
               firstName: finalFirstName,
               lastName: finalLastName,
@@ -205,16 +204,12 @@ export class OrganizationController {
                   // Use existing user's name
                   finalFirstName = existingUser.firstName || finalFirstName;
                   finalLastName = existingUser.lastName || finalLastName;
-                  user = existingUser;
                   logger.info(`✅ Using existing user: ${adminEmail}`);
-                } else {
-                  // User exists but couldn't be found - use extracted name
-                  user = { email: adminEmail, firstName: finalFirstName, lastName: finalLastName } as any;
                 }
-              } catch (lookupError) {
+              } catch {
                 // If we can't find the user, still proceed with email sending
                 logger.warn(`⚠️ Could not lookup existing user, proceeding with email sending`);
-                user = { email: adminEmail, firstName: finalFirstName, lastName: finalLastName } as any;
+                // user variable is set above, no need to reassign
               }
             } else {
               // Different error - rethrow it

@@ -48,31 +48,6 @@ export function PaymentPage() {
     },
   });
 
-  // Get license pricing
-  const { data: licensePricing, isLoading: pricingLoading } = useQuery<{
-    monthlyPrice: number;
-    yearlyPrice: number;
-    currency: string;
-  }>({
-    queryKey: ['license-pricing'],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/customer/license/pricing`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!response.ok) {
-        // If no pricing found, return default values
-        if (response.status === 404) {
-          return { monthlyPrice: 0, yearlyPrice: 0, currency: 'INR' };
-        }
-        throw new Error('Failed to fetch license pricing');
-      }
-      const data = await response.json();
-      return data.data;
-    },
-  });
-
   // Get payment history
   const { data: payments, isLoading: paymentsLoading } = useQuery<Payment[]>({
     queryKey: ['payments'],
@@ -202,20 +177,18 @@ export function PaymentPage() {
   const plans = [
     {
       name: 'Monthly Plan',
-      price: licensePricing?.monthlyPrice || 0,
+      price: 99,
       period: 'month',
       features: ['Up to 10 users', 'Unlimited vessels', 'Basic support', 'Standard features'],
     },
     {
       name: 'Yearly Plan',
-      price: licensePricing?.yearlyPrice || 0,
+      price: 999,
       period: 'year',
       features: ['Up to 10 users', 'Unlimited vessels', 'Priority support', 'All features', '20% savings'],
       popular: true,
     },
   ];
-
-  const currencySymbol = licensePricing?.currency === 'INR' ? '₹' : licensePricing?.currency === 'USD' ? '$' : licensePricing?.currency === 'EUR' ? '€' : '₹';
 
   const handlePayment = (amount: number) => {
     if (!paymentStatus?.hasActivePayment) {
@@ -228,7 +201,7 @@ export function PaymentPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'success':
-        return <MdCheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />;
+        return <MdCheckCircle className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />;
       case 'failed':
         return <MdCancel className="w-6 h-6 text-red-600 dark:text-red-400" />;
       case 'processing':
@@ -241,7 +214,7 @@ export function PaymentPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
-        return 'text-emerald-600 dark:text-emerald-400';
+        return 'text-[hsl(var(--foreground))] font-semibold';
       case 'failed':
         return 'text-red-600 dark:text-red-400';
       case 'processing':
@@ -251,11 +224,11 @@ export function PaymentPage() {
     }
   };
 
-  if (statusLoading || paymentsLoading || pricingLoading) {
+  if (statusLoading || paymentsLoading) {
     return (
       <div className="w-full min-h-screen p-8">
         <div className="flex items-center justify-center h-64">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
         </div>
       </div>
     );
@@ -265,7 +238,7 @@ export function PaymentPage() {
     <div className="w-full min-h-screen p-8 space-y-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           Subscription & Payment
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
@@ -284,7 +257,7 @@ export function PaymentPage() {
           <div className="flex items-center gap-4">
             {paymentStatus.hasActivePayment ? (
               <>
-                <MdCheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                <MdCheckCircle className="w-8 h-8 text-[hsl(var(--foreground))] font-semibold" />
                 <div>
                   <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-300">
                     Active Subscription
@@ -315,8 +288,8 @@ export function PaymentPage() {
       {!paymentStatus?.hasActivePayment && (
         <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-              <MdCreditCard className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-2 flex items-center gap-2">
+              <MdCreditCard className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
               Choose Your Plan
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
@@ -331,28 +304,28 @@ export function PaymentPage() {
                 className={cn(
                   'p-6 rounded-xl border-2 transition-all',
                   plan.popular
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-700'
+                    ? 'border-[hsl(var(--primary))] bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-105'
+                    : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-blue-300 dark:hover:border-blue-700'
                 )}
               >
                 {plan.popular && (
-                  <div className="inline-block px-3 py-1 mb-4 bg-blue-600 text-white text-xs font-bold rounded-full">
+                  <div className="inline-block px-3 py-1 mb-4 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-bold rounded-full">
                     MOST POPULAR
                   </div>
                 )}
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-xl font-bold text-[hsl(var(--foreground))] mb-2">
                   {plan.name}
                 </h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                    {currencySymbol}{plan.price.toFixed(2)}
+                  <span className="text-4xl font-bold text-[hsl(var(--foreground))]">
+                    ₹{plan.price}
                   </span>
                   <span className="text-gray-600 dark:text-gray-400">/{plan.period}</span>
                 </div>
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                      <MdCheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                    <li key={idx} className="flex items-center gap-2 text-[hsl(var(--foreground))]">
+                      <MdCheckCircle className="w-5 h-5 text-[hsl(var(--foreground))] font-semibold flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -363,12 +336,12 @@ export function PaymentPage() {
                   className={cn(
                     'w-full py-3 px-4 rounded-lg font-semibold transition-colors',
                     plan.popular
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                      ? 'bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))]'
                       : 'bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 dark:hover:bg-gray-600 text-white',
                     createPaymentMutation.isPending && 'opacity-50 cursor-not-allowed'
                   )}
                 >
-                  {createPaymentMutation.isPending ? 'Processing...' : plan.price > 0 ? `Subscribe for ${currencySymbol}${plan.price.toFixed(2)}/${plan.period}` : 'Pricing not available'}
+                  {createPaymentMutation.isPending ? 'Processing...' : `Subscribe for ₹${plan.price}/${plan.period}`}
                 </button>
               </div>
             ))}
@@ -379,8 +352,8 @@ export function PaymentPage() {
       {/* Payment History */}
       <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-            <MdHistory className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-2 flex items-center gap-2">
+            <MdHistory className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
             Payment History
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
@@ -392,20 +365,20 @@ export function PaymentPage() {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
+                <tr className="bg-[hsl(var(--secondary))] border-b border-[hsl(var(--border))]">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">
                     Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">
                     Amount
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">
                     Transaction ID
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">
                     Period
                   </th>
                 </tr>
@@ -416,7 +389,7 @@ export function PaymentPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-400">
                       {new Date(payment.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap font-semibold text-[hsl(var(--foreground))]">
                       {payment.currency === 'INR' ? '₹' : payment.currency} {payment.amount.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -447,12 +420,12 @@ export function PaymentPage() {
             </table>
           </div>
         ) : (
-          <div className="p-16 text-center rounded-xl border border-gray-200 dark:border-gray-800">
+          <div className="p-16 text-center rounded-xl border border-[hsl(var(--border))]">
             <MdPayment className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-            <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">
+            <p className="text-lg font-semibold text-[hsl(var(--muted-foreground))]">
               No payment history found
             </p>
-            <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mt-2">
               Your payment transactions will appear here
             </p>
           </div>

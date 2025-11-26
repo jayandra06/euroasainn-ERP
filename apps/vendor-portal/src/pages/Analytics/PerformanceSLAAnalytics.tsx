@@ -88,49 +88,49 @@ export function PerformanceSLAAnalytics() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">On-time Delivery %</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentOnTime}%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentOnTime}%</p>
           <p className="text-xs text-emerald-600 mt-1">+7% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Defect Rate %</p>
             <MdError className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentDefectRate}%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentDefectRate}%</p>
           <p className="text-xs text-emerald-600 mt-1">-60% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Complaint Rate</p>
             <MdWarning className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentComplaintRate}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentComplaintRate}</p>
           <p className="text-xs text-emerald-600 mt-1">-67% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Quality Audit Score</p>
             <MdStar className="w-5 h-5 text-yellow-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentQualityScore}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentQualityScore}</p>
           <p className="text-xs text-emerald-600 mt-1">+12% from last quarter</p>
         </div>
       </div>
 
       {/* On-time Delivery % */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">On-time Delivery %</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly on-time delivery performance</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">On-time Delivery %</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly on-time delivery performance</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -147,11 +147,11 @@ export function PerformanceSLAAnalytics() {
       </div>
 
       {/* Defect Rate % */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Defect Rate %</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly defect rate trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Defect Rate %</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly defect rate trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -168,11 +168,11 @@ export function PerformanceSLAAnalytics() {
       </div>
 
       {/* Complaint Rate and Resolution Time */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Complaint Rate and Resolution Time</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly complaints and average resolution time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Complaint Rate and Resolution Time</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly complaints and average resolution time</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -187,20 +187,20 @@ export function PerformanceSLAAnalytics() {
             <Line yAxisId="right" type="monotone" dataKey="resolutionTime" stroke="#3b82f6" strokeWidth={2} name="Resolution Time (hrs)" />
           </BarChart>
         </ResponsiveContainer>
-        <div className="mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div className="mt-4 p-4 rounded-lg bg-[hsl(var(--secondary))]">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Average Resolution Time</span>
-            <span className="text-lg font-bold text-gray-900 dark:text-white">{avgResolutionTime} hours</span>
+            <span className="text-sm font-medium text-[hsl(var(--foreground))]">Average Resolution Time</span>
+            <span className="text-lg font-bold text-[hsl(var(--foreground))]">{avgResolutionTime} hours</span>
           </div>
         </div>
       </div>
 
       {/* Quality Audit Score Trends */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Quality Audit Score Trends</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly quality audit performance</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Quality Audit Score Trends</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly quality audit performance</p>
           </div>
           <MdStar className="w-6 h-6 text-yellow-600" />
         </div>
@@ -218,11 +218,11 @@ export function PerformanceSLAAnalytics() {
       </div>
 
       {/* Vendor Ranking Comparison */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Vendor Ranking Comparison</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Performance comparison with other vendors</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Vendor Ranking Comparison</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Performance comparison with other vendors</p>
           </div>
           <MdPerson className="w-6 h-6 text-blue-600" />
         </div>
@@ -232,7 +232,7 @@ export function PerformanceSLAAnalytics() {
             return (
               <div
                 key={index}
-                className={`p-4 rounded-lg ${isYou ? 'bg-blue-50 dark:bg-blue-950/20 border-2 border-blue-300 dark:border-blue-700' : 'bg-gray-50 dark:bg-gray-800'}`}
+                className={`p-4 rounded-lg ${isYou ? 'bg-blue-50 dark:bg-blue-950/20 border-2 border-blue-300 dark:border-blue-700' : 'bg-[hsl(var(--secondary))]'}`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -245,15 +245,15 @@ export function PerformanceSLAAnalytics() {
                       {index + 1}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">{vendor.vendor}</h4>
+                      <h4 className="font-semibold text-[hsl(var(--foreground))]">{vendor.vendor}</h4>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         On-time: {vendor.onTime}% | Quality: {vendor.quality} | Complaints: {vendor.complaints}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{vendor.score}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">Score</p>
+                    <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{vendor.score}</p>
+                    <p className="text-xs text-[hsl(var(--foreground))] font-semibold">Score</p>
                   </div>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -269,19 +269,19 @@ export function PerformanceSLAAnalytics() {
       </div>
 
       {/* Recent Complaints */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Recent Complaints</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Latest customer complaints and resolutions</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Recent Complaints</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Latest customer complaints and resolutions</p>
           </div>
         </div>
         <div className="space-y-3">
           {recentComplaints.map((complaint, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{complaint.id}: {complaint.issue}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{complaint.id}: {complaint.issue}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Customer: {complaint.customer} | Date: {complaint.date} | Resolution: {complaint.resolutionTime}
                   </p>
@@ -290,7 +290,7 @@ export function PerformanceSLAAnalytics() {
                   className={`px-3 py-1 text-xs font-semibold rounded-full ${
                     complaint.status === 'Resolved'
                       ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                      : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                   }`}
                 >
                   {complaint.status}

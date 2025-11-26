@@ -100,9 +100,9 @@ export function CustomerExperienceDashboard() {
       case 'medium':
         return 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300';
       case 'low':
-        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+        return 'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]';
       default:
-        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+        return 'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]';
     }
   };
 
@@ -110,39 +110,39 @@ export function CustomerExperienceDashboard() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Engagement Score</p>
             <MdTrendingUp className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentEngagementScore}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentEngagementScore}</p>
           <p className="text-xs text-emerald-600 mt-1">0% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Feature Adoption</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgFeatureAdoption}%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgFeatureAdoption}%</p>
           <p className="text-xs text-emerald-600 mt-1">+8% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Interactions</p>
             <MdPerson className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalInteractions}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 6 months</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalInteractions}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 6 months</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Session Duration</p>
             <MdCalendarToday className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
             {monthlyEngagement[monthlyEngagement.length - 1]?.duration || 0} min
           </p>
           <p className="text-xs text-emerald-600 mt-1">+52% from last quarter</p>
@@ -150,11 +150,11 @@ export function CustomerExperienceDashboard() {
       </div>
 
       {/* Engagement Score */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Engagement Score (Based on Logins & Interactions)</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly engagement trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Engagement Score (Based on Logins & Interactions)</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly engagement trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -172,11 +172,11 @@ export function CustomerExperienceDashboard() {
       </div>
 
       {/* Feature Adoption Score */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Feature Adoption Score</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Adoption rate and engagement by feature</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Feature Adoption Score</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Adoption rate and engagement by feature</p>
           </div>
           <MdStar className="w-6 h-6 text-yellow-600" />
         </div>
@@ -193,16 +193,16 @@ export function CustomerExperienceDashboard() {
         </ResponsiveContainer>
         <div className="mt-4 space-y-3">
           {featureAdoptionData.map((feature, index) => (
-            <div key={index} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-3 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{feature.feature}</span>
+                <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{feature.feature}</span>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-gray-600 dark:text-gray-400">
                     {feature.users} users | {feature.adoption}% adoption
                   </span>
                   <div className="flex items-center gap-1">
                     <MdStar className="w-4 h-4 text-yellow-600" />
-                    <span className="font-medium text-gray-900 dark:text-white">{feature.engagement}</span>
+                    <span className="font-medium text-[hsl(var(--foreground))]">{feature.engagement}</span>
                   </div>
                 </div>
               </div>
@@ -218,11 +218,11 @@ export function CustomerExperienceDashboard() {
       </div>
 
       {/* Last 12-Month Interaction Heatmap */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Last 12-Month Interaction Heatmap</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Weekly interaction patterns</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Last 12-Month Interaction Heatmap</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Weekly interaction patterns</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -241,11 +241,11 @@ export function CustomerExperienceDashboard() {
       </div>
 
       {/* Monthly Engagement Breakdown */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Monthly Engagement Breakdown</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Logins, sessions, and duration trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Monthly Engagement Breakdown</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Logins, sessions, and duration trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -266,11 +266,11 @@ export function CustomerExperienceDashboard() {
       <div className="p-6 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdLightbulb className="w-6 h-6 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Personalized Recommendations (AI Insights)</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Personalized Recommendations (AI Insights)</h3>
         </div>
         <div className="space-y-3">
           {aiRecommendations.map((recommendation, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-blue-200 dark:border-blue-800">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -279,15 +279,15 @@ export function CustomerExperienceDashboard() {
                     </span>
                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                       recommendation.priority === 'high' ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300' :
-                      recommendation.priority === 'medium' ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300' :
-                      'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                      recommendation.priority === 'medium' ? 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold' :
+                      'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]'
                     }`}>
                       {recommendation.priority} priority
                     </span>
                   </div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{recommendation.title}</h4>
+                  <h4 className="font-semibold text-[hsl(var(--foreground))] mb-1">{recommendation.title}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{recommendation.description}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500">
+                  <p className="text-xs text-[hsl(var(--foreground))] font-semibold">
                     <span className="font-medium">Impact:</span> {recommendation.impact}
                   </p>
                 </div>

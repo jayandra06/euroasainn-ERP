@@ -465,14 +465,14 @@ export function OnboardingDataPage() {
       key: 'contactPerson',
       header: 'Contact Person',
       render: (item: CustomerOnboarding) => (
-        <span className="text-gray-600 dark:text-gray-400">{item.contactPerson}</span>
+        <span className="text-[hsl(var(--muted-foreground))]">{item.contactPerson}</span>
       ),
     },
     {
       key: 'email',
       header: 'Email',
       render: (item: CustomerOnboarding) => (
-        <span className="text-gray-600 dark:text-gray-400">{item.email}</span>
+        <span className="text-[hsl(var(--muted-foreground))]">{item.email}</span>
       ),
     },
     {
@@ -480,10 +480,10 @@ export function OnboardingDataPage() {
       header: 'Status',
       render: (item: CustomerOnboarding) => {
         const statusColors = {
-          pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-amber-200 dark:ring-amber-800',
-          completed: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-blue-200 dark:ring-blue-800',
-          approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-800',
-          rejected: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-red-200 dark:ring-red-800',
+          pending: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-amber-200 dark:ring-amber-800',
+          completed: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-blue-200 dark:ring-blue-800',
+          approved: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-emerald-200 dark:ring-emerald-800',
+          rejected: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-red-200 dark:ring-red-800',
         };
         return (
           <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ring-1', statusColors[item.status] || statusColors.pending)}>
@@ -496,7 +496,7 @@ export function OnboardingDataPage() {
       key: 'submittedAt',
       header: 'Submitted At',
       render: (item: CustomerOnboarding) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -525,7 +525,7 @@ export function OnboardingDataPage() {
             <button
               onClick={() => handleRejectCustomer(item._id)}
               disabled={isProcessing}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <MdCancel className="w-4 h-4" />
               Reject
@@ -556,14 +556,14 @@ export function OnboardingDataPage() {
       key: 'contactPerson',
       header: 'Contact Person',
       render: (item: VendorOnboarding) => (
-        <span className="text-gray-600 dark:text-gray-400">{item.contactPerson}</span>
+        <span className="text-[hsl(var(--muted-foreground))]">{item.contactPerson}</span>
       ),
     },
     {
       key: 'email',
       header: 'Email',
       render: (item: VendorOnboarding) => (
-        <span className="text-gray-600 dark:text-gray-400">{item.email}</span>
+        <span className="text-[hsl(var(--muted-foreground))]">{item.email}</span>
       ),
     },
     {
@@ -571,10 +571,10 @@ export function OnboardingDataPage() {
       header: 'Status',
       render: (item: VendorOnboarding) => {
         const statusColors = {
-          pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-amber-200 dark:ring-amber-800',
-          completed: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-blue-200 dark:ring-blue-800',
-          approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-800',
-          rejected: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-red-200 dark:ring-red-800',
+          pending: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-amber-200 dark:ring-amber-800',
+          completed: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-blue-200 dark:ring-blue-800',
+          approved: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-emerald-200 dark:ring-emerald-800',
+          rejected: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-red-200 dark:ring-red-800',
         };
         return (
           <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ring-1', statusColors[item.status] || statusColors.pending)}>
@@ -587,7 +587,7 @@ export function OnboardingDataPage() {
       key: 'submittedAt',
       header: 'Submitted At',
       render: (item: VendorOnboarding) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -616,7 +616,7 @@ export function OnboardingDataPage() {
             <button
               onClick={() => handleRejectVendor(item._id)}
               disabled={isProcessing}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <MdCancel className="w-4 h-4" />
               Reject
@@ -636,8 +636,8 @@ export function OnboardingDataPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             item.type === 'customer'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+              ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800'
+              : 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800'
           )}
         >
           {item.type === 'customer' ? 'Customer' : 'Vendor'}
@@ -667,14 +667,14 @@ export function OnboardingDataPage() {
       key: 'contactPerson',
       header: 'Contact Person',
       render: (item: any) => (
-        <span className="text-gray-600 dark:text-gray-400">{item.contactPerson}</span>
+        <span className="text-[hsl(var(--muted-foreground))]">{item.contactPerson}</span>
       ),
     },
     {
       key: 'email',
       header: 'Email',
       render: (item: any) => (
-        <span className="text-gray-600 dark:text-gray-400">{item.email}</span>
+        <span className="text-[hsl(var(--muted-foreground))]">{item.email}</span>
       ),
     },
     {
@@ -682,10 +682,10 @@ export function OnboardingDataPage() {
       header: 'Status',
       render: (item: any) => {
         const statusColors = {
-          pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-amber-200 dark:ring-amber-800',
-          completed: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-blue-200 dark:ring-blue-800',
-          approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-800',
-          rejected: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-red-200 dark:ring-red-800',
+          pending: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-amber-200 dark:ring-amber-800',
+          completed: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-blue-200 dark:ring-blue-800',
+          approved: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-emerald-200 dark:ring-emerald-800',
+          rejected: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-red-200 dark:ring-red-800',
         };
         return (
           <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ring-1', statusColors[item.status] || statusColors.pending)}>
@@ -698,7 +698,7 @@ export function OnboardingDataPage() {
       key: 'submittedAt',
       header: 'Submitted At',
       render: (item: any) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -743,7 +743,7 @@ export function OnboardingDataPage() {
             <button
               onClick={handleReject}
               disabled={isProcessing}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <MdCancel className="w-4 h-4" />
               Reject
@@ -759,10 +759,10 @@ export function OnboardingDataPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Onboarding Data
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             View customer and vendor onboarding submissions
           </p>
         </div>
@@ -770,14 +770,14 @@ export function OnboardingDataPage() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <MdRefresh className={cn('w-4 h-4', isRefreshing && 'animate-spin')} />
             Refresh
           </button>
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
           >
             <MdDownload className="w-4 h-4" />
             Export
@@ -786,30 +786,30 @@ export function OnboardingDataPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search by company name, contact person, or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
               <MdFilterList className="w-5 h-5" />
               <span>Filters:</span>
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
             >
               <option value="all">All Types</option>
               <option value="customer">Customer Only</option>
@@ -818,7 +818,7 @@ export function OnboardingDataPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -832,16 +832,16 @@ export function OnboardingDataPage() {
 
       {/* Tables */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading onboarding data...</p>
+        <div className="p-12 text-center rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading onboarding data...</p>
         </div>
       ) : (
         <div className="space-y-6">
           {filterType === 'all' && (
-            <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+            <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">
                   Showing {filteredAllOnboardings.length} onboarding{filteredAllOnboardings.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -854,18 +854,18 @@ export function OnboardingDataPage() {
           )}
 
           {(filterType === 'all' || filterType === 'customer') && (
-            <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+            <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <MdBusiness className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
+                  <MdBusiness className="w-6 h-6 text-[hsl(var(--primary))]" />
                   Customer Onboardings
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">
                   {filteredCustomerOnboardings.length} result{filteredCustomerOnboardings.length !== 1 ? 's' : ''}
                 </p>
               </div>
               {customerError && (
-                <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                <div className="mb-4 p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
                   Error loading customer onboardings: {customerError instanceof Error ? customerError.message : 'Unknown error'}
                 </div>
               )}
@@ -878,18 +878,18 @@ export function OnboardingDataPage() {
           )}
 
           {(filterType === 'all' || filterType === 'vendor') && (
-            <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+            <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <MdPerson className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
+                  <MdPerson className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
                   Vendor Onboardings
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">
                   {filteredVendorOnboardings.length} result{filteredVendorOnboardings.length !== 1 ? 's' : ''}
                 </p>
               </div>
               {vendorError && (
-                <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                <div className="mb-4 p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
                   Error loading vendor onboardings: {vendorError instanceof Error ? vendorError.message : 'Unknown error'}
                 </div>
               )}

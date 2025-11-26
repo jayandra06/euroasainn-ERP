@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { User, IUser } from '../models/user.model';
+import { User } from '../models/user.model';
 import { RefreshToken } from '../models/refresh-token.model';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '../config/jwt';
 import { getRedisClient } from '../config/redis';
@@ -89,7 +89,7 @@ export class AuthService {
       const accessToken = generateAccessToken(payload);
 
       return { accessToken };
-    } catch (error) {
+    } catch {
       throw new Error('Invalid refresh token');
     }
   }
@@ -102,7 +102,7 @@ export class AuthService {
         // Only try to verify and blacklist if token is provided and valid
         if (token) {
           try {
-      const decoded = verifyToken(token);
+      verifyToken(token);
       const ttl = 15 * 60; // 15 minutes
       await redis.setex(`blacklist:${token}`, ttl, '1');
             logger.info('Access token blacklisted in Redis');

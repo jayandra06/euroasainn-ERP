@@ -35,22 +35,22 @@ export function DataTable<T extends { _id?: string }>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="p-16 text-center rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-        <p className="text-lg font-semibold text-gray-500 dark:text-gray-400">{emptyMessage}</p>
+      <div className="p-16 text-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+        <p className="text-lg font-semibold text-[hsl(var(--muted-foreground))]">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+    <div className="overflow-x-auto rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <tr className="bg-[hsl(var(--secondary))] border-b border-[hsl(var(--border))]">
             {columns.map((column) => (
               <th
                 key={column.key}
                 className={cn(
-                  'px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider',
+                  'px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase tracking-wider',
                   column.className
                 )}
               >
@@ -58,19 +58,19 @@ export function DataTable<T extends { _id?: string }>({
               </th>
             ))}
             {(onEdit || onDelete) && (
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider text-center w-32">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase tracking-wider text-center w-32">
                 {actionsLabel}
               </th>
             )}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody className="divide-y divide-[hsl(var(--border))]">
           {data.map((item, index) => (
             <tr
               key={item._id || index}
               onClick={() => onRowClick?.(item)}
               className={cn(
-                'hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group',
+                'hover:bg-[hsl(var(--muted))] transition-colors group',
                 onRowClick && 'cursor-pointer'
               )}
             >
@@ -78,7 +78,7 @@ export function DataTable<T extends { _id?: string }>({
                 <td
                   key={column.key}
                   className={cn(
-                    'px-6 py-4 text-sm text-gray-900 dark:text-gray-100',
+                    'px-6 py-4 text-sm text-[hsl(var(--foreground))]',
                     column.className
                   )}
                 >
@@ -91,7 +91,7 @@ export function DataTable<T extends { _id?: string }>({
                     {onEdit && (
                       <button
                         onClick={() => onEdit(item)}
-                        className="p-2 rounded-lg bg-blue-50 dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors"
+                        className="p-2 rounded-lg bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] border border-[hsl(var(--primary))]/20 hover:bg-[hsl(var(--primary))]/20 transition-colors"
                         aria-label="Edit"
                       >
                         <MdEdit className="w-4 h-4" />
@@ -100,7 +100,7 @@ export function DataTable<T extends { _id?: string }>({
                     {onDelete && (
                       <button
                         onClick={() => onDelete(item)}
-                        className="p-2 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+                        className="p-2 rounded-lg bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))] border border-[hsl(var(--destructive))]/20 hover:bg-[hsl(var(--destructive))]/20 transition-colors"
                         aria-label="Delete"
                       >
                         <MdDelete className="w-4 h-4" />

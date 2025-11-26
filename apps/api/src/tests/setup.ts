@@ -1,9 +1,9 @@
 import { beforeAll, afterAll, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
-import { connectDatabase, disconnectDatabase } from '../config/database';
+// import { connectDatabase, disconnectDatabase } from '../config/database';
 
 // Test database connection
-let testDbUri = process.env.MONGODB_TEST_URI || process.env.MONGODB_URI?.replace(/\/[^\/]+$/, '/test_euroasiann');
+let testDbUri = process.env.MONGODB_TEST_URI || process.env.MONGODB_URI?.replace(/\/[^/]+$/, '/test_euroasiann');
 
 if (!testDbUri) {
   testDbUri = 'mongodb://localhost:27017/test_euroasiann';
@@ -70,7 +70,7 @@ export const testUtils = {
    */
   async getAuthTokens(user: any) {
     const { authService } = await import('../services/auth.service');
-    const { jwtConfig } = await import('../config/jwt');
+    // const { jwtConfig } = await import('../config/jwt');
     
     const jwtPayload = {
       userId: user._id.toString(),

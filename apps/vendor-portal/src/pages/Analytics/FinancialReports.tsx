@@ -85,49 +85,49 @@ export function FinancialReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Invoices</p>
             <MdReceipt className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalInvoices}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">${totalAmount.toLocaleString()} total</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalInvoices}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">${totalAmount.toLocaleString()} total</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Paid Amount</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">${paidAmount.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">${paidAmount.toLocaleString()}</p>
           <p className="text-xs text-emerald-600 mt-1">{(paidAmount / totalAmount * 100).toFixed(1)}% of total</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Payment Days</p>
             <MdSchedule className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgPaymentDays} days</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgPaymentDays} days</p>
           <p className="text-xs text-emerald-600 mt-1">-39% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Commission</p>
             <MdAttachMoney className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">${totalCommission.toLocaleString()}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 6 months</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">${totalCommission.toLocaleString()}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 6 months</p>
         </div>
       </div>
 
       {/* Invoice Summary */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Invoices: Paid, Pending, Overdue</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Invoice status breakdown</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Invoices: Paid, Pending, Overdue</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Invoice status breakdown</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -154,11 +154,11 @@ export function FinancialReports() {
       </div>
 
       {/* Payment Trend Analysis */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Payment Trend Analysis</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Average days to receive payment</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Payment Trend Analysis</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Average days to receive payment</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -175,11 +175,11 @@ export function FinancialReports() {
       </div>
 
       {/* Commission Breakdown */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Commission Breakdown</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly commission and sales</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Commission Breakdown</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly commission and sales</p>
           </div>
           <MdAttachMoney className="w-6 h-6 text-orange-600" />
         </div>
@@ -194,10 +194,10 @@ export function FinancialReports() {
             <Bar dataKey="commission" fill="#f59e0b" name="Commission ($)" />
           </BarChart>
         </ResponsiveContainer>
-        <div className="mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div className="mt-4 p-4 rounded-lg bg-[hsl(var(--secondary))]">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Commission Rate</span>
-            <span className="text-lg font-bold text-gray-900 dark:text-white">
+            <span className="text-sm font-medium text-[hsl(var(--foreground))]">Commission Rate</span>
+            <span className="text-lg font-bold text-[hsl(var(--foreground))]">
               {commissionBreakdown[0]?.rate || 0}%
             </span>
           </div>
@@ -205,46 +205,46 @@ export function FinancialReports() {
       </div>
 
       {/* Tax & TDS Summaries */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Tax & TDS Summaries</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Tax breakdown and TDS deductions</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Tax & TDS Summaries</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Tax breakdown and TDS deductions</p>
           </div>
         </div>
         <div className="space-y-3">
           {taxTDSSummary.map((tax, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{tax.type}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{tax.type}</h4>
                 <div className="flex items-center gap-6 text-sm">
                   <div className="text-right">
                     <p className="text-gray-600 dark:text-gray-400">Amount</p>
-                    <p className="font-medium text-gray-900 dark:text-white">${tax.amount.toLocaleString()}</p>
+                    <p className="font-medium text-[hsl(var(--foreground))]">${tax.amount.toLocaleString()}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-gray-600 dark:text-gray-400">TDS</p>
-                    <p className="font-medium text-gray-900 dark:text-white">${tax.tds.toLocaleString()}</p>
+                    <p className="font-medium text-[hsl(var(--foreground))]">${tax.tds.toLocaleString()}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-gray-600 dark:text-gray-400">Net</p>
-                    <p className="font-medium text-gray-900 dark:text-white">${tax.net.toLocaleString()}</p>
+                    <p className="font-medium text-[hsl(var(--foreground))]">${tax.net.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div className="mt-4 p-4 rounded-lg bg-[hsl(var(--secondary))]">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Total Tax Amount</span>
-            <span className="text-lg font-bold text-gray-900 dark:text-white">
+            <span className="text-sm font-medium text-[hsl(var(--foreground))]">Total Tax Amount</span>
+            <span className="text-lg font-bold text-[hsl(var(--foreground))]">
               ${taxTDSSummary.reduce((sum, tax) => sum + tax.amount, 0).toLocaleString()}
             </span>
           </div>
           <div className="flex items-center justify-between mt-2">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Total TDS</span>
-            <span className="text-lg font-bold text-gray-900 dark:text-white">
+            <span className="text-sm font-medium text-[hsl(var(--foreground))]">Total TDS</span>
+            <span className="text-lg font-bold text-[hsl(var(--foreground))]">
               ${taxTDSSummary.reduce((sum, tax) => sum + tax.tds, 0).toLocaleString()}
             </span>
           </div>
@@ -252,22 +252,22 @@ export function FinancialReports() {
       </div>
 
       {/* Credit/Debit Note Summary */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Credit/Debit Note Summary</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Adjustments and corrections</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Credit/Debit Note Summary</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Adjustments and corrections</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {creditDebitNotes.map((note, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{note.type}</h4>
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{note.type}</h4>
                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
                   note.type === 'Credit Note' 
                     ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
-                    : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                    : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                 }`}>
                   {note.count} notes
                 </span>
@@ -275,7 +275,7 @@ export function FinancialReports() {
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                 Amount: ${note.amount.toLocaleString()}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">
                 Reason: {note.reason}
               </p>
             </div>
@@ -284,25 +284,25 @@ export function FinancialReports() {
       </div>
 
       {/* Recent Invoices */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Recent Invoices</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Latest invoice transactions</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Recent Invoices</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Latest invoice transactions</p>
           </div>
         </div>
         <div className="space-y-3">
           {recentInvoices.map((invoice, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{invoice.invoiceId}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{invoice.invoiceId}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {invoice.customer} | Payment: {invoice.paymentDate}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">
+                  <span className="text-lg font-bold text-[hsl(var(--foreground))]">
                     ${invoice.amount.toLocaleString()}
                   </span>
                   <span
@@ -311,7 +311,7 @@ export function FinancialReports() {
                         ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
                         : invoice.status === 'Pending'
                         ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
-                        : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
+                        : 'bg-red-100 dark:bg-red-900 text-[hsl(var(--foreground))] font-semibold'
                     }`}
                   >
                     {invoice.status}

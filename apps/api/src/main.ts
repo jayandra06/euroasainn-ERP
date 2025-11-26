@@ -14,7 +14,7 @@ async function bootstrap() {
     getRedisClient();
 
     // Initialize CASBIN
-    const enforcer = await getCasbinEnforcer();
+    await getCasbinEnforcer();
     
     // Note: Policies should be seeded manually or via a migration script
     // Uncomment to seed default policies:

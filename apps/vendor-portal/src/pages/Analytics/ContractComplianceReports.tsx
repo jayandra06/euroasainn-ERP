@@ -92,7 +92,7 @@ export function ContractComplianceReports() {
       case 'overdue':
         return 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300';
       default:
-        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+        return 'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]';
     }
   };
 
@@ -105,7 +105,7 @@ export function ContractComplianceReports() {
       case 'upcoming':
         return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300';
       default:
-        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+        return 'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]';
     }
   };
 
@@ -113,49 +113,49 @@ export function ContractComplianceReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Contracts</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{activeContracts}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">of {totalContracts} total</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{activeContracts}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">of {totalContracts} total</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Expired Contracts</p>
             <MdError className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{expiredContracts}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Requires attention</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{expiredContracts}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Requires attention</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Renewals</p>
             <MdSchedule className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingRenewals}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{pendingRenewals}</p>
           <p className="text-xs text-orange-600 mt-1">Action required</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Compliance Rate</p>
             <MdCheckCircle className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{complianceRate}%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{complianceRate}%</p>
           <p className="text-xs text-emerald-600 mt-1">+5% from last month</p>
         </div>
       </div>
 
       {/* Active vs Expired Contracts */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Active vs Expired Contracts</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Contract status distribution</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Active vs Expired Contracts</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Contract status distribution</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -183,14 +183,14 @@ export function ContractComplianceReports() {
       <div className="p-6 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Renewal Due Dates with Alerts</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Renewal Due Dates with Alerts</h3>
         </div>
         <div className="space-y-3">
           {renewalAlerts.map((alert, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-orange-200 dark:border-orange-800">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{alert.contractId}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{alert.contractId}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Customer: {alert.customer} | Expiry: {alert.expiryDate} | Value: ${alert.value.toLocaleString()}
                   </p>
@@ -199,7 +199,7 @@ export function ContractComplianceReports() {
                   <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getRenewalStatusColor(alert.status)}`}>
                     {alert.status}
                   </span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">{alert.daysLeft} days</span>
+                  <span className="text-sm font-bold text-[hsl(var(--foreground))]">{alert.daysLeft} days</span>
                 </div>
               </div>
               {alert.daysLeft <= 15 && (
@@ -213,19 +213,19 @@ export function ContractComplianceReports() {
       </div>
 
       {/* Compliance Checklist Completion */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Compliance Checklist Completion</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Compliance items status and due dates</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Compliance Checklist Completion</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Compliance items status and due dates</p>
           </div>
         </div>
         <div className="space-y-3">
           {complianceChecklist.map((item, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{item.item}</h4>
+                  <h4 className="font-semibold text-[hsl(var(--foreground))]">{item.item}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Last Check: {item.lastCheck} | Next Due: {item.nextDue}
                   </p>
@@ -248,11 +248,11 @@ export function ContractComplianceReports() {
       </div>
 
       {/* Penalty Tracking */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Penalty Tracking</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly penalties and amounts</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Penalty Tracking</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly penalties and amounts</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -266,29 +266,29 @@ export function ContractComplianceReports() {
             <Bar dataKey="amount" fill="#f59e0b" name="Amount ($)" />
           </BarChart>
         </ResponsiveContainer>
-        <div className="mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div className="mt-4 p-4 rounded-lg bg-[hsl(var(--secondary))]">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Total Penalties</span>
-            <span className="text-lg font-bold text-gray-900 dark:text-white">${totalPenalties.toLocaleString()}</span>
+            <span className="text-sm font-medium text-[hsl(var(--foreground))]">Total Penalties</span>
+            <span className="text-lg font-bold text-[hsl(var(--foreground))]">${totalPenalties.toLocaleString()}</span>
           </div>
         </div>
       </div>
 
       {/* Digital Signature Status */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Digital Signature Status (for Agreements)</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Contract signature tracking</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Digital Signature Status (for Agreements)</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Contract signature tracking</p>
           </div>
           <MdEdit className="w-6 h-6 text-blue-600" />
         </div>
         <div className="space-y-3">
           {digitalSignatureStatus.map((contract, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{contract.contractId}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{contract.contractId}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Customer: {contract.customer} | Signed: {contract.signedDate} | By: {contract.signedBy}
                   </p>
@@ -297,7 +297,7 @@ export function ContractComplianceReports() {
                   className={`px-3 py-1 text-xs font-semibold rounded-full ${
                     contract.status === 'signed'
                       ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
+                      : 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
                   }`}
                 >
                   {contract.status}
@@ -309,11 +309,11 @@ export function ContractComplianceReports() {
       </div>
 
       {/* Contract Value Trends */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Contract Value Trends</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Active vs expired contract values</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Contract Value Trends</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Active vs expired contract values</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>

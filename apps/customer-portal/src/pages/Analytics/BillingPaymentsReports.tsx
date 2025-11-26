@@ -86,49 +86,49 @@ export function BillingPaymentsReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Invoices</p>
             <MdReceipt className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalInvoices}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">${totalAmount.toLocaleString()} total</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalInvoices}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">${totalAmount.toLocaleString()} total</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Unpaid Amount</p>
             <MdSchedule className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">${unpaidAmount.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">${unpaidAmount.toLocaleString()}</p>
           <p className="text-xs text-orange-600 mt-1">Requires payment</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Overdue Amount</p>
             <MdPayment className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">${overdueAmount.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">${overdueAmount.toLocaleString()}</p>
           <p className="text-xs text-red-600 mt-1">Immediate attention</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Payment Delay</p>
             <MdSchedule className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgDelayDays} days</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgDelayDays} days</p>
           <p className="text-xs text-emerald-600 mt-1">0% from last quarter</p>
         </div>
       </div>
 
       {/* Invoice Summary */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Invoice Summary</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Paid, unpaid, and overdue invoices</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Invoice Summary</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Paid, unpaid, and overdue invoices</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -155,11 +155,11 @@ export function BillingPaymentsReports() {
       </div>
 
       {/* Payment Methods Usage */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Payment Methods Usage</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Card, UPI, and bank transfer usage</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Payment Methods Usage</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Card, UPI, and bank transfer usage</p>
           </div>
           <MdCreditCard className="w-6 h-6 text-blue-600" />
         </div>
@@ -178,11 +178,11 @@ export function BillingPaymentsReports() {
       </div>
 
       {/* Average Payment Delay Days */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Average Payment Delay Days</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Payment delay trends over time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Average Payment Delay Days</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Payment delay trends over time</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -199,23 +199,23 @@ export function BillingPaymentsReports() {
       </div>
 
       {/* Auto-pay / Subscription Details */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Auto-pay / Subscription Details</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Active subscriptions and auto-pay status</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Auto-pay / Subscription Details</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Active subscriptions and auto-pay status</p>
           </div>
           <MdCheckCircle className="w-6 h-6 text-emerald-600" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Active Subscriptions</h4>
+          <div className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
+            <h4 className="font-semibold text-[hsl(var(--foreground))] mb-3">Active Subscriptions</h4>
             <div className="space-y-3">
               {subscriptionDetails.map((sub, index) => (
-                <div key={index} className="p-3 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                <div key={index} className="p-3 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900 dark:text-white">{sub.plan}</span>
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                    <span className="font-medium text-[hsl(var(--foreground))]">{sub.plan}</span>
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-[hsl(var(--foreground))] font-semibold">
                       {sub.status}
                     </span>
                   </div>
@@ -226,8 +226,8 @@ export function BillingPaymentsReports() {
               ))}
             </div>
           </div>
-          <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Auto-pay Trends</h4>
+          <div className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
+            <h4 className="font-semibold text-[hsl(var(--foreground))] mb-3">Auto-pay Trends</h4>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={autoPayData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -244,11 +244,11 @@ export function BillingPaymentsReports() {
       </div>
 
       {/* Credit Utilization Reports */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Credit Utilization Reports</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly credit usage and limits</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Credit Utilization Reports</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly credit usage and limits</p>
           </div>
           <MdAccountBalance className="w-6 h-6 text-purple-600" />
         </div>
@@ -263,9 +263,9 @@ export function BillingPaymentsReports() {
             <Bar dataKey="limit" fill="#e5e7eb" name="Limit ($)" />
           </BarChart>
         </ResponsiveContainer>
-        <div className="mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <div className="mt-4 p-4 rounded-lg bg-[hsl(var(--secondary))]">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">Current Utilization</span>
+            <span className="text-sm font-medium text-[hsl(var(--foreground))]">Current Utilization</span>
             <span className={`text-lg font-bold ${currentUtilization > 80 ? 'text-red-600' : currentUtilization > 60 ? 'text-orange-600' : 'text-emerald-600'}`}>
               {currentUtilization}%
             </span>

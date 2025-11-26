@@ -86,49 +86,49 @@ export function SupplyChainDashboard() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Orders Received</p>
             <MdLocalShipping className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalOrders}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 6 months</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalOrders}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 6 months</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Fulfillment Rate</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{fulfillmentRate}%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{fulfillmentRate}%</p>
           <p className="text-xs text-emerald-600 mt-1">+5% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Delivery Time</p>
             <MdSchedule className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgDeliveryTime} days</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgDeliveryTime} days</p>
           <p className="text-xs text-emerald-600 mt-1">-27% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pending Shipments</p>
             <MdWarning className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingShipments.length}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Requires attention</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{pendingShipments.length}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Requires attention</p>
         </div>
       </div>
 
       {/* Orders Received, Fulfilled, Delayed */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Orders Received, Fulfilled, Delayed</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly order statistics</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Orders Received, Fulfilled, Delayed</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly order statistics</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -146,11 +146,11 @@ export function SupplyChainDashboard() {
       </div>
 
       {/* Average Delivery Time */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Average Delivery Time</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Delivery time trends vs target</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Average Delivery Time</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Delivery time trends vs target</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -170,14 +170,14 @@ export function SupplyChainDashboard() {
       <div className="p-6 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pending Shipment List with Priorities</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Pending Shipment List with Priorities</h3>
         </div>
         <div className="space-y-3">
           {pendingShipments.map((shipment, index) => (
-            <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-orange-200 dark:border-orange-800">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{shipment.orderId}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{shipment.orderId}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Customer: {shipment.customer} | Items: {shipment.items} | Expected: {shipment.expectedDate}
                   </p>
@@ -188,13 +188,13 @@ export function SupplyChainDashboard() {
                       shipment.priority === 'High'
                         ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
                         : shipment.priority === 'Medium'
-                        ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                        ? 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
+                        : 'bg-gray-100 dark:bg-gray-800 text-[hsl(var(--foreground))]'
                     }`}
                   >
                     {shipment.priority}
                   </span>
-                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-[hsl(var(--foreground))] font-semibold">
                     {shipment.status}
                   </span>
                 </div>
@@ -205,26 +205,26 @@ export function SupplyChainDashboard() {
       </div>
 
       {/* Logistics Partner Performance */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Logistics Partner Performance</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Partner efficiency and reliability metrics</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Logistics Partner Performance</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Partner efficiency and reliability metrics</p>
           </div>
         </div>
         <div className="space-y-4">
           {logisticsPartnerPerformance.map((partner, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{partner.partner}</h4>
+                  <h4 className="font-semibold text-[hsl(var(--foreground))]">{partner.partner}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {partner.totalShipments} shipments | Avg: {partner.avgTime} days | Rating: {partner.rating}/5
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-emerald-600">{partner.onTime}%</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">On-time</p>
+                  <p className="text-xs text-[hsl(var(--foreground))] font-semibold">On-time</p>
                 </div>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -242,7 +242,7 @@ export function SupplyChainDashboard() {
       <div className="p-6 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdInventory className="w-6 h-6 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Inventory Restock Prediction</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Inventory Restock Prediction</h3>
         </div>
         <div className="space-y-3">
           {inventoryRestockPrediction.map((item, index) => {
@@ -250,20 +250,20 @@ export function SupplyChainDashboard() {
             const needsReorder = item.currentStock <= item.reorderPoint;
             
             return (
-              <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800">
+              <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-blue-200 dark:border-blue-800">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{item.item}</h4>
+                    <h4 className="font-semibold text-[hsl(var(--foreground))]">{item.item}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Current: {item.currentStock} | Predicted Demand: {item.predictedDemand} | Reorder Point: {item.reorderPoint}
                     </p>
                   </div>
                   {needsReorder ? (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300">
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 dark:bg-red-900 text-[hsl(var(--foreground))] font-semibold">
                       Reorder Now
                     </span>
                   ) : (
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-[hsl(var(--foreground))] font-semibold">
                       {item.daysUntilReorder} days
                     </span>
                   )}
@@ -288,11 +288,11 @@ export function SupplyChainDashboard() {
       </div>
 
       {/* Order Status Distribution */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Order Status Distribution</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Overall order status breakdown</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Order Status Distribution</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Overall order status breakdown</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>

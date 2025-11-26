@@ -37,10 +37,10 @@ function formatDate(date?: string) {
 }
 
 const statusStyles: Record<InvitationStatus, string> = {
-  pending: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  used: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
-  revoked: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
-  expired: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+  pending: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/30',
+  used: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/30',
+  revoked: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/30',
+  expired: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/30',
 };
 
 export function OrganizationInvitationsModal({ organization, isOpen, onClose, apiBasePath }: OrganizationInvitationsModalProps) {
@@ -110,15 +110,15 @@ export function OrganizationInvitationsModal({ organization, isOpen, onClose, ap
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Invitations · ${organization?.name || ''}`} size="large">
       {isLoading ? (
-        <div className="py-12 text-center text-gray-500 dark:text-gray-400">Loading invitations...</div>
+        <div className="py-12 text-center text-[hsl(var(--muted-foreground))]">Loading invitations...</div>
       ) : invitations.length === 0 ? (
-        <div className="py-12 text-center text-gray-500 dark:text-gray-400">No invitations found.</div>
+        <div className="py-12 text-center text-[hsl(var(--muted-foreground))]">No invitations found.</div>
       ) : (
         <div className="space-y-4">
-          <div className="overflow-x-auto border border-gray-200 dark:border-gray-800 rounded-xl">
+          <div className="overflow-x-auto border border-[hsl(var(--border))] rounded-xl">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr className="text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <thead className="bg-[hsl(var(--secondary))]">
+                <tr className="text-left text-xs text-[hsl(var(--foreground))] font-semibold uppercase tracking-wider">
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Role</th>
                   <th className="px-4 py-3">Status</th>
@@ -149,7 +149,7 @@ export function OrganizationInvitationsModal({ organization, isOpen, onClose, ap
                             resendInvitation.mutate(invitation._id);
                           }}
                           disabled={invitation.status !== 'pending' || resendInvitation.isLoading || revokeInvitation.isLoading}
-                          className="flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-950/40 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-950/20 text-[hsl(var(--primary))] hover:bg-blue-100 dark:hover:bg-blue-950/40 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <MdRefresh className="w-4 h-4" />
                           Resend
@@ -160,17 +160,17 @@ export function OrganizationInvitationsModal({ organization, isOpen, onClose, ap
                             revokeInvitation.mutate(invitation._id);
                           }}
                           disabled={invitation.status !== 'pending' || resendInvitation.isLoading || revokeInvitation.isLoading}
-                          className="flex items-center gap-1 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/40 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="flex items-center gap-1 px-3 py-2 rounded-lg bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))] hover:bg-red-100 dark:hover:bg-red-950/40 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <MdCancel className="w-4 h-4" />
                           Revoke
                         </button>
                       </div>
                       {invitation.status === 'revoked' && invitation.revokedAt && (
-                        <div className="mt-1 text-xs text-amber-500 dark:text-amber-300">Revoked {formatDate(invitation.revokedAt)}</div>
+                        <div className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">Revoked {formatDate(invitation.revokedAt)}</div>
                       )}
                       {invitation.status === 'used' && invitation.usedAt && (
-                        <div className="mt-1 text-xs text-emerald-500 dark:text-emerald-300">Used {formatDate(invitation.usedAt)}</div>
+                        <div className="mt-1 text-xs text-[hsl(var(--foreground))] font-semibold">Used {formatDate(invitation.usedAt)}</div>
                       )}
                     </td>
                   </tr>
@@ -178,7 +178,7 @@ export function OrganizationInvitationsModal({ organization, isOpen, onClose, ap
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-[hsl(var(--muted-foreground))]">
             Resending an invitation will generate a new onboarding link and temporary password. The previous invitation will be revoked automatically.
           </p>
         </div>

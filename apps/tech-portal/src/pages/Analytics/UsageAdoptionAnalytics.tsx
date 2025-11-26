@@ -87,51 +87,51 @@ export function UsageAdoptionAnalytics() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total API Requests</p>
             <MdApi className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalRequests.toLocaleString()}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 24 hours</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalRequests.toLocaleString()}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 24 hours</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Error Rate</p>
             <MdError className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{errorRate}%</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{errorRate}%</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Peak Active Users</p>
             <MdPeople className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{peakUsers}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{peakUsers}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Daily Users</p>
             <MdTrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
             {Math.round(dailyActiveUsers.reduce((sum, d) => sum + d.users, 0) / dailyActiveUsers.length)}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
       </div>
 
       {/* API Request Volume by Module */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">API Request Volume by Module</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Request and error counts per module</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">API Request Volume by Module</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Request and error counts per module</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -148,11 +148,11 @@ export function UsageAdoptionAnalytics() {
       </div>
 
       {/* Active Users per Hour */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Active Users per Hour</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">24-hour user activity pattern</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Active Users per Hour</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">24-hour user activity pattern</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -167,11 +167,11 @@ export function UsageAdoptionAnalytics() {
       </div>
 
       {/* Daily Active Users */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Daily Active Users</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Weekly user activity trend</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Daily Active Users</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Weekly user activity trend</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -186,19 +186,19 @@ export function UsageAdoptionAnalytics() {
       </div>
 
       {/* Endpoint Error Heatmap */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Endpoint Error Heatmap</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Error distribution by endpoint and time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Endpoint Error Heatmap</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Error distribution by endpoint and time</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {['/api/users', '/api/payments', '/api/reports'].map((endpoint) => {
             const endpointData = errorHeatmapData.filter((d) => d.endpoint === endpoint);
             return (
-              <div key={endpoint} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-3">{endpoint}</h4>
+              <div key={endpoint} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
+                <h4 className="font-semibold text-[hsl(var(--foreground))] mb-3">{endpoint}</h4>
                 <div className="space-y-2">
                   {endpointData.map((data, index) => (
                     <div key={index} className="flex items-center justify-between">
@@ -211,7 +211,7 @@ export function UsageAdoptionAnalytics() {
                             backgroundColor: data.errors > 15 ? '#ef4444' : data.errors > 8 ? '#f59e0b' : '#10b981',
                           }}
                         />
-                        <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">{data.errors}</span>
+                        <span className="text-sm font-medium text-[hsl(var(--foreground))] w-8 text-right">{data.errors}</span>
                       </div>
                     </div>
                   ))}
@@ -223,20 +223,20 @@ export function UsageAdoptionAnalytics() {
       </div>
 
       {/* Module Adoption Rate */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Module Adoption Rate</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Adoption percentage and growth by module</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Module Adoption Rate</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Adoption percentage and growth by module</p>
           </div>
           <MdCheckCircle className="w-6 h-6 text-emerald-600" />
         </div>
         <div className="space-y-4">
           {moduleAdoption.map((module, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{module.module}</h4>
+                  <h4 className="font-semibold text-[hsl(var(--foreground))]">{module.module}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {module.users} users | Adoption: {module.adoption}%
                   </p>

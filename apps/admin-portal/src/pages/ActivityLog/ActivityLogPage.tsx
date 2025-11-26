@@ -507,10 +507,10 @@ export function ActivityLogPage() {
       header: 'Timestamp',
       render: (log: ActivityLog) => (
         <div>
-          <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <div className="text-sm font-medium text-[hsl(var(--foreground))]">
             {new Date(log.timestamp).toLocaleDateString()}
           </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-[hsl(var(--muted-foreground))]">
             {new Date(log.timestamp).toLocaleTimeString()}
           </div>
         </div>
@@ -525,8 +525,8 @@ export function ActivityLogPage() {
             {log.userName[0]}
           </div>
           <div>
-            <div className="text-sm font-medium text-gray-900 dark:text-white">{log.userName}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">{log.userEmail}</div>
+            <div className="text-sm font-medium text-[hsl(var(--foreground))]">{log.userName}</div>
+            <div className="text-xs text-[hsl(var(--muted-foreground))]">{log.userEmail}</div>
           </div>
         </div>
       ),
@@ -537,7 +537,7 @@ export function ActivityLogPage() {
       render: (log: ActivityLog) => (
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-1 inline-flex text-xs leading-5 font-bold rounded bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+            <span className="px-2 py-1 inline-flex text-xs leading-5 font-bold rounded bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50">
               {log.action}
             </span>
             {log.portalType && (
@@ -545,15 +545,15 @@ export function ActivityLogPage() {
                 className={cn(
                   'px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
                   log.portalType === 'customer'
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-                    : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+                    ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800'
+                    : 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800'
                 )}
               >
                 {log.portalType === 'customer' ? 'Customer' : 'Vendor'}
               </span>
             )}
           </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{log.resource}</div>
+          <div className="text-xs text-[hsl(var(--muted-foreground))] mt-1">{log.resource}</div>
         </div>
       ),
     },
@@ -561,7 +561,7 @@ export function ActivityLogPage() {
       key: 'organization',
       header: 'Organization',
       render: (log: ActivityLog) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">
+        <span className="text-sm text-[hsl(var(--muted-foreground))]">
           {log.organizationName || 'N/A'}
         </span>
       ),
@@ -570,7 +570,7 @@ export function ActivityLogPage() {
       key: 'details',
       header: 'Details',
       render: (log: ActivityLog) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400">
+        <span className="text-sm text-[hsl(var(--muted-foreground))]">
           {log.details || '-'}
         </span>
       ),
@@ -583,10 +583,10 @@ export function ActivityLogPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             log.status === 'success'
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
               : log.status === 'failed'
-              ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
-              : 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-800'
+              ? 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
+              : 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-1 ring-amber-200 dark:ring-amber-800'
           )}
         >
           {log.status.charAt(0).toUpperCase() + log.status.slice(1)}
@@ -600,10 +600,10 @@ export function ActivityLogPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Activity/Audit Log
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             View system activity and audit trail
           </p>
         </div>
@@ -617,30 +617,30 @@ export function ActivityLogPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-purple-500 dark:focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-purple-500 dark:focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-500/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder="Search activity logs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
               <MdFilterList className="w-5 h-5" />
               <span>Filters:</span>
             </div>
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
             >
               <option value="all">All Actions</option>
               <option value="CREATE">Create</option>
@@ -652,7 +652,7 @@ export function ActivityLogPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
             >
               <option value="all">All Status</option>
               <option value="success">Success</option>
@@ -662,7 +662,7 @@ export function ActivityLogPage() {
             <select
               value={filterDateRange}
               onChange={(e) => setFilterDateRange(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
+              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 font-medium"
             >
               <option value="all">All Time</option>
               <option value="today">Today</option>
@@ -675,14 +675,14 @@ export function ActivityLogPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-12 text-center rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-purple-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading activity logs...</p>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading activity logs...</p>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Showing {filteredLogs.length} log{filteredLogs.length !== 1 ? 's' : ''}
             </p>
           </div>

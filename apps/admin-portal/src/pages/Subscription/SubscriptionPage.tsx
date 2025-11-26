@@ -351,11 +351,11 @@ export function SubscriptionPage() {
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      active: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800',
-      cancelled: 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-800',
-      expired: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800',
-      pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-800',
-      suspended: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300 ring-1 ring-orange-200 dark:ring-orange-800',
+      active: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800',
+      cancelled: 'bg-gray-100 text-[hsl(var(--foreground))] font-semibold dark:bg-gray-900/50 ring-1 ring-[hsl(var(--border))]',
+      expired: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800',
+      pending: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-1 ring-amber-200 dark:ring-amber-800',
+      suspended: 'bg-orange-100 text-[hsl(var(--foreground))] font-semibold dark:bg-orange-900/50 ring-1 ring-orange-200 dark:ring-orange-800',
     };
     return (
       <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full', styles[status as keyof typeof styles] || styles.active)}>
@@ -366,10 +366,10 @@ export function SubscriptionPage() {
 
   const getPlanBadge = (planType: string) => {
     const styles = {
-      basic: 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300',
-      professional: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-      enterprise: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
-      custom: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300',
+      basic: 'bg-gray-100 text-[hsl(var(--foreground))] font-semibold dark:bg-gray-900/50',
+      professional: 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50',
+      enterprise: 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50',
+      custom: 'bg-indigo-100 text-[hsl(var(--foreground))] font-semibold dark:bg-indigo-900/50',
     };
     return (
       <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full', styles[planType as keyof typeof styles] || styles.basic)}>
@@ -380,10 +380,10 @@ export function SubscriptionPage() {
 
   const getInvoiceStatusBadge = (status: string) => {
     const styles = {
-      paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800',
-      pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 ring-1 ring-amber-200 dark:ring-amber-800',
-      overdue: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800',
-      cancelled: 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-800',
+      paid: 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800',
+      pending: 'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50 ring-1 ring-amber-200 dark:ring-amber-800',
+      overdue: 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800',
+      cancelled: 'bg-gray-100 text-[hsl(var(--foreground))] font-semibold dark:bg-gray-900/50 ring-1 ring-[hsl(var(--border))]',
     };
     return (
       <span className={cn('px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full', styles[status as keyof typeof styles] || styles.pending)}>
@@ -398,8 +398,8 @@ export function SubscriptionPage() {
       header: 'Organization',
       render: (sub: Subscription) => (
         <div>
-          <div className="font-semibold text-gray-900 dark:text-white">{sub.organizationName}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">{sub.planName}</div>
+          <div className="font-semibold text-[hsl(var(--foreground))]">{sub.organizationName}</div>
+          <div className="text-sm text-[hsl(var(--muted-foreground))]">{sub.planName}</div>
         </div>
       ),
     },
@@ -413,10 +413,10 @@ export function SubscriptionPage() {
       header: 'Amount',
       render: (sub: Subscription) => (
         <div>
-          <div className="font-semibold text-gray-900 dark:text-white">
+          <div className="font-semibold text-[hsl(var(--foreground))]">
             {sub.currency} {sub.amount.toLocaleString()}
           </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-sm text-[hsl(var(--muted-foreground))]">
             /{sub.billingCycle}
           </div>
         </div>
@@ -429,7 +429,7 @@ export function SubscriptionPage() {
         <div className="flex items-center gap-2">
           {getStatusBadge(sub.status)}
           {sub.autoRenew && (
-            <MdAutorenew className="w-4 h-4 text-blue-600 dark:text-blue-400" title="Auto-renew enabled" />
+            <MdAutorenew className="w-4 h-4 text-[hsl(var(--primary))]" title="Auto-renew enabled" />
           )}
         </div>
       ),
@@ -438,7 +438,7 @@ export function SubscriptionPage() {
       key: 'nextBillingDate',
       header: 'Next Billing',
       render: (sub: Subscription) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {sub.nextBillingDate 
             ? new Date(sub.nextBillingDate).toLocaleDateString() 
             : sub.endDate 
@@ -451,7 +451,7 @@ export function SubscriptionPage() {
       key: 'startDate',
       header: 'Start Date',
       render: (sub: Subscription) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {sub.startDate ? new Date(sub.startDate).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -463,7 +463,7 @@ export function SubscriptionPage() {
       key: 'invoiceNumber',
       header: 'Invoice #',
       render: (invoice: Invoice) => (
-        <div className="font-semibold text-gray-900 dark:text-white">
+        <div className="font-semibold text-[hsl(var(--foreground))]">
           {invoice.invoiceNumber}
         </div>
       ),
@@ -472,7 +472,7 @@ export function SubscriptionPage() {
       key: 'organization',
       header: 'Organization',
       render: (invoice: Invoice) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {invoice.organizationName}
         </span>
       ),
@@ -481,7 +481,7 @@ export function SubscriptionPage() {
       key: 'amount',
       header: 'Amount',
       render: (invoice: Invoice) => (
-        <div className="font-semibold text-gray-900 dark:text-white">
+        <div className="font-semibold text-[hsl(var(--foreground))]">
           {invoice.currency} {invoice.amount.toLocaleString()}
         </div>
       ),
@@ -495,7 +495,7 @@ export function SubscriptionPage() {
       key: 'dueDate',
       header: 'Due Date',
       render: (invoice: Invoice) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -504,7 +504,7 @@ export function SubscriptionPage() {
       key: 'paidDate',
       header: 'Paid Date',
       render: (invoice: Invoice) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {invoice.paidDate ? new Date(invoice.paidDate).toLocaleDateString() : '-'}
         </span>
       ),
@@ -543,10 +543,10 @@ export function SubscriptionPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Subscription & Billing
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             Manage subscriptions, billing, and invoices for organizations
           </p>
         </div>
@@ -559,7 +559,7 @@ export function SubscriptionPage() {
               setTimeout(() => setIsRefreshing(false), 1000);
             }}
             disabled={isRefreshing}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] text-[hsl(var(--foreground))] rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <MdRefresh className={cn('w-5 h-5', isRefreshing && 'animate-spin')} />
             Refresh
@@ -578,32 +578,32 @@ export function SubscriptionPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Subscriptions</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Subscriptions</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))]">{stats.total}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
               <MdCardMembership className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Active Subscriptions</p>
-              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.active}</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Active Subscriptions</p>
+              <p className="text-3xl font-bold text-[hsl(var(--foreground))] font-semibold">{stats.active}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
               <MdCheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Monthly Revenue</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Monthly Revenue</p>
               <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                 ${stats.totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>
@@ -613,10 +613,10 @@ export function SubscriptionPage() {
             </div>
           </div>
         </div>
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Pending Invoices</p>
+              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Pending Invoices</p>
               <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{stats.pendingInvoices}</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
@@ -627,14 +627,14 @@ export function SubscriptionPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 dark:border-gray-800">
+      <div className="border-b border-[hsl(var(--border))]">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('subscriptions')}
             className={cn(
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
               activeTab === 'subscriptions'
-                ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+                ? 'border-blue-600 text-[hsl(var(--primary))] dark:border-blue-400'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
             )}
           >
@@ -645,7 +645,7 @@ export function SubscriptionPage() {
             className={cn(
               'py-4 px-1 border-b-2 font-medium text-sm transition-colors',
               activeTab === 'invoices'
-                ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+                ? 'border-blue-600 text-[hsl(var(--primary))] dark:border-blue-400'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
             )}
           >
@@ -655,11 +655,11 @@ export function SubscriptionPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
               placeholder={activeTab === 'subscriptions' 
@@ -667,21 +667,21 @@ export function SubscriptionPage() {
                 : 'Search invoices by number or organization...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters - Only show for subscriptions */}
           {activeTab === 'subscriptions' && (
             <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+              <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
                 <MdFilterList className="w-5 h-5" />
                 <span>Filters:</span>
               </div>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -693,7 +693,7 @@ export function SubscriptionPage() {
               <select
                 value={filterPlan}
                 onChange={(e) => setFilterPlan(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
               >
                 <option value="all">All Plans</option>
                 <option value="basic">Basic</option>
@@ -708,12 +708,12 @@ export function SubscriptionPage() {
 
       {/* Content */}
       {activeTab === 'subscriptions' ? (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Subscriptions</h2>
+            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Subscriptions</h2>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
             >
               <MdDownload className="w-4 h-4" />
               Export
@@ -722,13 +722,13 @@ export function SubscriptionPage() {
           
           {subscriptionsLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading subscriptions...</p>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+              <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading subscriptions...</p>
             </div>
           ) : (
             <>
               <div className="mb-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">
                   Showing {filteredSubscriptions.length} subscription{filteredSubscriptions.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -743,12 +743,12 @@ export function SubscriptionPage() {
           )}
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Invoices</h2>
+            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Invoices</h2>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
             >
               <MdDownload className="w-4 h-4" />
               Export
@@ -757,13 +757,13 @@ export function SubscriptionPage() {
           
           {invoicesLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading invoices...</p>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+              <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading invoices...</p>
             </div>
           ) : (
             <>
               <div className="mb-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">
                   Showing {filteredInvoices.length} invoice{filteredInvoices.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -785,7 +785,7 @@ export function SubscriptionPage() {
         size="medium"
       >
         <div className="p-4">
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-[hsl(var(--muted-foreground))]">
             Subscription form will be implemented here. This is a placeholder for the subscription creation/edit form.
           </p>
         </div>

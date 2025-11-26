@@ -68,19 +68,19 @@ export function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
             Reports
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
             Generate and export reports from your platform data
           </p>
         </div>
       </div>
 
       {/* Export Format Selection */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="flex items-center gap-4">
-          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Export Format:</span>
+          <span className="text-sm font-semibold text-[hsl(var(--foreground))]">Export Format:</span>
           <div className="flex gap-2">
             {(['pdf', 'csv', 'excel'] as const).map((format) => (
               <button
@@ -90,7 +90,7 @@ export function ReportsPage() {
                   'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                   exportFormat === format
                     ? 'bg-orange-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    : 'bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-gray-200 dark:hover:bg-gray-700'
                 )}
               >
                 {format.toUpperCase()}
@@ -107,20 +107,20 @@ export function ReportsPage() {
           return (
             <div
               key={template.id}
-              className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all"
+              className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]">
                   {template.category}
                 </span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-2">
                 {template.name}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">
                 {template.description}
               </p>
               <button
@@ -136,19 +136,19 @@ export function ReportsPage() {
       </div>
 
       {/* Custom Report Builder */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
             <MdBarChart className="w-5 h-5 text-white" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Custom Report Builder</h2>
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Custom Report Builder</h2>
         </div>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-[hsl(var(--muted-foreground))] mb-4">
           Create custom reports by selecting specific data fields, filters, and date ranges.
         </p>
         <button
           onClick={handleOpenReportBuilder}
-          className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors font-medium text-sm"
+          className="px-4 py-2 bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 text-[hsl(var(--foreground))] rounded-lg transition-colors font-medium text-sm"
         >
           Open Report Builder
         </button>

@@ -1,50 +1,31 @@
 /**
- * Ultra-Modern User Form Component for Admin Portal
- * World-Class SaaS ERP Platform Design
+ * User Form Component
+ * Professional Admin Portal Design
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  MdEmail,
-  MdPerson,
-  MdWork,
-  MdSecurity,
-  MdCheckCircle,
-  MdCancel,
-  MdSave,
-  MdAddCircleOutline,
-  MdBusiness,
-} from 'react-icons/md';
-import { useToast } from '../../components/shared/Toast';
-import { Modal } from '../../components/shared/Modal';
+import { MdSave, MdCancel, MdAddCircleOutline } from 'react-icons/md';
 import { cn } from '../../lib/utils';
-import { apiFetch } from '../../utils/api';
+import { Modal } from '../../components/shared/Modal';
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface User {
-  _id: string;
+  _id?: string;
   email: string;
   firstName: string;
   lastName: string;
-  portalType: string;
   role: string;
-  roleId?: string | {
-    _id: string;
-    name: string;
-    key: string;
-    permissions?: string[];
-  };
-  isActive: boolean;
+  roleId?: string | { _id: string; name: string; key: string };
   organizationId?: string;
+  isActive: boolean;
 }
 
 interface UserFormProps {
   user?: User | null;
   onSuccess: () => void;
   onCancel: () => void;
-  defaultInviteMode?: boolean;
 }
 
 interface RoleDto {
@@ -65,29 +46,50 @@ interface RoleOption {
   description?: string;
 }
 
-const DEFAULT_ROLES: Record<string, RoleOption[]> = {
-  admin: [
-    { id: 'admin_superuser', key: 'admin_superuser', name: 'Super Admin', permissions: ['*'], description: 'Full platform access across every admin module' },
-    { id: 'admin_system_admin', key: 'admin_system_admin', name: 'System Admin', permissions: ['users:*', 'roles:*', 'settings:update', 'logs:view'], description: 'Manage users, roles, settings, and activity logs' },
-    { id: 'admin_finance_admin', key: 'admin_finance_admin', name: 'Finance Admin', permissions: ['invoices:*', 'transactions:read', 'reports:generate'], description: 'Handle billing, transactions, and financial reporting' },
-    { id: 'admin_hr_admin', key: 'admin_hr_admin', name: 'HR Admin', permissions: ['employees:*', 'attendance:read', 'leaves:approve'], description: 'Maintain employee records, attendance, and leave approvals' },
-    { id: 'admin_auditor', key: 'admin_auditor', name: 'Auditor', permissions: ['logs:read', 'invoices:read', 'users:read'], description: 'Read-only access for compliance and audits' },
-    { id: 'admin_support_agent', key: 'admin_support_agent', name: 'Support Agent', permissions: ['tickets:*', 'customers:read'], description: 'Respond to support tickets and review customer info' },
-  ],
-  customer: [
-    { id: 'customer_admin', key: 'customer_admin', name: 'Customer Admin', permissions: ['*'], description: 'Invite team members and view all transactions' },
-    { id: 'customer_manager', key: 'customer_manager', name: 'Customer Manager', permissions: ['orders:create', 'orders:update', 'tickets:create'], description: 'Place and update orders, raise support tickets' },
-    { id: 'customer_accountant', key: 'customer_accountant', name: 'Customer Accountant', permissions: ['invoices:read', 'transactions:read'], description: 'Track invoices and payment history' },
-    { id: 'customer_viewer', key: 'customer_viewer', name: 'Customer Viewer', permissions: ['orders:read', 'invoices:read', 'dashboard:read'], description: 'Read-only access to dashboards and order status' },
-  ],
-  vendor: [
-    { id: 'vendor_admin', key: 'vendor_admin', name: 'Vendor Admin', permissions: ['*'], description: 'Full vendor portal access, including invitations' },
-    { id: 'vendor_manager', key: 'vendor_manager', name: 'Vendor Manager', permissions: ['orders:update', 'products:create'], description: 'Manage orders, catalogue items, and listings' },
-    { id: 'vendor_accountant', key: 'vendor_accountant', name: 'Vendor Accountant', permissions: ['invoices:read', 'transactions:update'], description: 'Handle invoices and financial reconciliations' },
-    { id: 'vendor_staff', key: 'vendor_staff', name: 'Vendor Staff', permissions: ['orders:read', 'products:read'], description: 'Access assigned orders and product information' },
-    { id: 'vendor_viewer', key: 'vendor_viewer', name: 'Vendor Viewer', permissions: ['dashboard:read', 'orders:read'], description: 'Read-only dashboard access for leadership or auditors' },
-  ],
-};
+const DEFAULT_ADMIN_ROLES: RoleOption[] = [
+  {
+    id: 'admin_superuser',
+    key: 'admin_superuser',
+    name: 'Super Admin',
+    permissions: ['*'],
+    description: 'Full platform access across all modules',
+  },
+  {
+    id: 'admin_system_admin',
+    key: 'admin_system_admin',
+    name: 'System Admin',
+    permissions: ['users:manage', 'licenses:manage', 'settings:update', 'logs:view'],
+    description: 'Manage users, licenses, audit logs, and system settings',
+  },
+  {
+    id: 'admin_finance_admin',
+    key: 'admin_finance_admin',
+    name: 'Finance Admin',
+    permissions: ['invoices:*', 'transactions:read', 'reports:generate'],
+    description: 'Handle invoices, transactions, and financial reporting',
+  },
+  {
+    id: 'admin_hr_admin',
+    key: 'admin_hr_admin',
+    name: 'HR Admin',
+    permissions: ['employees:*', 'attendance:read', 'leaves:approve'],
+    description: 'Manage employee records, attendance, and leave approvals',
+  },
+  {
+    id: 'admin_auditor',
+    key: 'admin_auditor',
+    name: 'Auditor',
+    permissions: ['logs:read', 'invoices:read', 'users:read'],
+    description: 'Read-only access to financials and system logs',
+  },
+  {
+    id: 'admin_support_agent',
+    key: 'admin_support_agent',
+    name: 'Support Agent',
+    permissions: ['tickets:*', 'customers:read'],
+    description: 'Respond to support requests and view customer records',
+  },
+];
 
 const formatRoleName = (roleKey: string) =>
   roleKey
@@ -95,12 +97,6 @@ const formatRoleName = (roleKey: string) =>
     .filter(Boolean)
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(' ');
-
-const PORTAL_OPTIONS = [
-  { value: 'admin', label: 'Admin Portal' },
-  { value: 'customer', label: 'Customer Portal' },
-  { value: 'vendor', label: 'Vendor Portal' },
-];
 
 type PermissionActionKey = 'read' | 'write' | 'edit';
 
@@ -132,65 +128,34 @@ const ADMIN_PERMISSION_GROUPS: PermissionGroup[] = [
   {
     key: 'organizations',
     label: 'Organizations',
-    description: 'Manage customer and vendor organizations',
-  },
-  {
-    key: 'onboarding',
-    label: 'Onboarding',
-    description: 'Review and approve customer/vendor onboarding submissions',
+    description: 'Create and manage customer or vendor organizations',
+    actions: ['read', 'write', 'edit'],
   },
   {
     key: 'licenses',
     label: 'Licenses',
-    description: 'Create and manage organization licenses with pricing',
+    description: 'Issue, revoke, and adjust license usage',
+    actions: ['read', 'write'],
   },
   {
-    key: 'invoices',
-    label: 'Invoices',
-    description: 'Generate and track invoices for organizations',
-  },
-  {
-    key: 'transactions',
-    label: 'Transactions',
-    description: 'View payment history and financial transactions',
-    actions: ['read'],
+    key: 'support',
+    label: 'Support Tickets',
+    description: 'Monitor and resolve customer support cases',
+    actions: ['read', 'write'],
   },
   {
     key: 'reports',
     label: 'Reports',
-    description: 'Generate analytics and business reports',
+    description: 'Generate and export operational or financial reports',
     actions: ['read', 'write'],
   },
   {
     key: 'settings',
-    label: 'Settings',
+    label: 'System Settings',
     description: 'Configure platform parameters and integrations',
     actions: ['read', 'edit'],
   },
 ];
-
-const VENDOR_PERMISSION_GROUPS: PermissionGroup[] = [
-  { key: 'catalogue', label: 'Catalogue', description: 'Manage product listings, categories, and pricing' },
-  { key: 'orders', label: 'Orders', description: 'Process customer orders and fulfilment tasks' },
-  { key: 'brands', label: 'Brands', description: 'Maintain brand assets and marketing content', actions: ['read', 'write'] },
-  { key: 'b2b', label: 'B2B Accounts', description: 'Handle corporate accounts and negotiated deals', actions: ['read', 'write', 'edit'] },
-  { key: 'inventory', label: 'Inventory', description: 'Track stock levels across warehouses and channels' },
-  { key: 'reports', label: 'Reports', description: 'Generate sales and performance reports', actions: ['read', 'write'] },
-];
-
-const CUSTOMER_PERMISSION_GROUPS: PermissionGroup[] = [
-  { key: 'orders', label: 'Orders', description: 'Create, edit, and track purchase orders' },
-  { key: 'tickets', label: 'Support Tickets', description: 'Raise or update support requests', actions: ['read', 'write'] },
-  { key: 'invoices', label: 'Invoices', description: 'Review invoices and transaction history', actions: ['read'] },
-  { key: 'dashboard', label: 'Dashboard', description: 'Read-only access to analytics and KPIs', actions: ['read'] },
-  { key: 'payments', label: 'Payments', description: 'Manage payment methods and view receipts', actions: ['read', 'write'] },
-];
-
-const PERMISSION_GROUPS: Record<string, PermissionGroup[]> = {
-  admin: ADMIN_PERMISSION_GROUPS,
-  customer: CUSTOMER_PERMISSION_GROUPS,
-  vendor: VENDOR_PERMISSION_GROUPS,
-};
 
 type PermissionSelectionState = Record<
   string,
@@ -241,119 +206,91 @@ const selectionToPermissionList = (selection: PermissionSelectionState, groups: 
 };
 
 export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
-  const toast = useToast();
   const queryClient = useQueryClient();
+  const normalizeFullName = (first?: string, last?: string) => {
+    const safeFirst = first?.trim() || '';
+    const safeLast = last?.trim() || '';
+    if (!safeLast || safeFirst.toLowerCase() === safeLast.toLowerCase()) {
+      return safeFirst;
+    }
+    return `${safeFirst} ${safeLast}`.trim();
+  };
 
   const [formData, setFormData] = useState({
     email: user?.email || '',
-    fullName: user ? `${user.firstName} ${user.lastName}`.trim() : '',
-    portalType: user?.portalType || 'admin',
-    roleId: typeof user?.roleId === 'string' ? user.roleId : typeof user?.roleId === 'object' ? user.roleId?._id : '',
-    roleKey: typeof user?.roleId === 'object' ? user.roleId?.key : user?.role || '',
+    fullName: user ? normalizeFullName(user.firstName, user.lastName) : '',
+    roleId:
+      typeof user?.roleId === 'string'
+        ? user?.roleId
+        : typeof user?.roleId === 'object'
+        ? user?.roleId?._id
+        : '',
+    roleKey: typeof user?.roleId === 'object' ? user?.roleId?.key : user?.role || '',
     isActive: user?.isActive ?? true,
-    organizationId: user?.organizationId || '',
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
   const [newRoleName, setNewRoleName] = useState('');
   const [createRoleError, setCreateRoleError] = useState('');
   const [hasInitialisedRole, setHasInitialisedRole] = useState(false);
-  const permissionGroups = useMemo(
-    () => PERMISSION_GROUPS[formData.portalType] || [],
-    [formData.portalType]
-  );
   const [permissionSelection, setPermissionSelection] = useState<PermissionSelectionState>(() =>
-    buildInitialPermissionSelection(permissionGroups)
+    buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS)
   );
 
   useEffect(() => {
     if (user) {
-      const orgId = typeof user.organizationId === 'object'
-        ? user.organizationId._id || user.organizationId
-        : user.organizationId;
       setFormData({
         email: user.email || '',
-        fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-        portalType: user.portalType || 'admin',
+        fullName: normalizeFullName(user.firstName, user.lastName),
         roleId: typeof user.roleId === 'string' ? user.roleId : typeof user.roleId === 'object' ? user.roleId?._id : '',
         roleKey: typeof user.roleId === 'object' ? user.roleId?.key : user.role || '',
         isActive: user.isActive ?? true,
-        organizationId: orgId ? orgId.toString() : '',
       });
       setHasInitialisedRole(false);
+      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
     }
   }, [user]);
-
-  useEffect(() => {
-    if (isCreateRoleOpen) {
-      setPermissionSelection(buildInitialPermissionSelection(permissionGroups));
-    }
-  }, [isCreateRoleOpen, permissionGroups]);
 
   const {
     data: rolesResponse,
     isLoading: isRolesLoading,
   } = useQuery({
-    queryKey: ['roles', formData.portalType],
+    queryKey: ['roles', 'admin'],
     queryFn: async (): Promise<RoleDto[]> => {
       try {
-        const url = API_URL ? `${API_URL}/api/v1/roles?portalType=${formData.portalType}` : `/api/v1/roles?portalType=${formData.portalType}`;
-        const response = await apiFetch(url);
+        const response = await fetch(`${API_URL}/api/v1/roles?portalType=admin`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
         if (!response.ok) {
-          const fallback = DEFAULT_ROLES[formData.portalType] || [];
-          return fallback.map((role) => ({
+          return DEFAULT_ADMIN_ROLES.map((role) => ({
             _id: undefined,
             name: role.name,
             key: role.key,
             permissions: role.permissions,
-            portalType: formData.portalType,
+            portalType: 'admin',
           }));
         }
         const data = await response.json();
         return (data.data as RoleDto[]) || [];
       } catch (error) {
         console.error('Failed to fetch roles', error);
-        const fallback = DEFAULT_ROLES[formData.portalType] || [];
-        return fallback.map((role) => ({
+        return DEFAULT_ADMIN_ROLES.map((role) => ({
           _id: undefined,
           name: role.name,
           key: role.key,
           permissions: role.permissions,
-          portalType: formData.portalType,
+          portalType: 'admin',
         }));
       }
     },
   });
 
-  // Fetch organizations for customer/vendor portal types
-  const needsOrganization = formData.portalType === 'customer' || formData.portalType === 'vendor';
-  const organizationType = formData.portalType === 'customer' ? 'customer' : formData.portalType === 'vendor' ? 'vendor' : undefined;
-  
-  const { data: organizationsData, isLoading: isOrganizationsLoading } = useQuery({
-    queryKey: ['organizations', organizationType],
-    queryFn: async () => {
-      if (!organizationType) return [];
-      try {
-        const url = API_URL ? `${API_URL}/api/v1/admin/organizations?type=${organizationType}&isActive=true` : `/api/v1/admin/organizations?type=${organizationType}&isActive=true`;
-        const response = await apiFetch(url);
-        if (!response.ok) {
-          return [];
-        }
-        const data = await response.json();
-        return (data.data || []) as Array<{ _id: string; name: string; type: string }>;
-      } catch (error) {
-        console.error('Failed to fetch organizations', error);
-        return [];
-      }
-    },
-    enabled: needsOrganization,
-  });
-
   const roleOptions: RoleOption[] = useMemo(() => {
     let options: RoleOption[] =
       !rolesResponse || rolesResponse.length === 0
-        ? DEFAULT_ROLES[formData.portalType] || []
+        ? DEFAULT_ADMIN_ROLES
         : rolesResponse.map((role) => ({
             id: role._id || role.key,
             mongoId: role._id,
@@ -371,17 +308,17 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           id: currentRoleKey,
           key: currentRoleKey,
           name: formatRoleName(currentRoleKey),
-          permissions: [],
+            permissions: [],
         },
       ];
     }
 
     return options;
-  }, [rolesResponse, formData.portalType, user]);
+  }, [rolesResponse, user]);
 
   const computedPermissionList = useMemo(
-    () => selectionToPermissionList(permissionSelection, permissionGroups),
-    [permissionSelection, permissionGroups]
+    () => selectionToPermissionList(permissionSelection, ADMIN_PERMISSION_GROUPS),
+    [permissionSelection]
   );
 
   const selectedModuleCount = useMemo(
@@ -394,6 +331,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       return;
     }
 
+    // Initialize role selection only once per user/form load
     if (!hasInitialisedRole) {
       if (user) {
         const existingRole =
@@ -411,6 +349,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             roleId: existingRole.mongoId || '',
             roleKey: existingRole.key,
           }));
+          setHasInitialisedRole(true);
         }
       } else if (!formData.roleId && !formData.roleKey) {
         const defaultRole = roleOptions[0];
@@ -419,74 +358,97 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           roleId: defaultRole.mongoId || '',
           roleKey: defaultRole.key,
         }));
+        setHasInitialisedRole(true);
       }
-      setHasInitialisedRole(true);
     }
   }, [roleOptions, user, hasInitialisedRole, formData.roleId, formData.roleKey]);
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      const url = API_URL ? `${API_URL}/api/v1/admin/users/invite` : `/api/v1/admin/users/invite`;
-      const response = await apiFetch(url, {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      try {
+        const response = await fetch(`${API_URL}/api/v1/admin/users/invite`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify(data),
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to invite user');
+        if (!response.ok) {
+          let errorMessage = 'Failed to create user';
+          try {
+            const error = await response.json();
+            errorMessage = error.error || error.message || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      } catch (error: any) {
+        // Handle network errors
+        if (error.name === 'TypeError' || error.message.includes('fetch')) {
+          throw new Error('Network error: Unable to connect to server. Please check your connection.');
+        }
+        throw error;
       }
-      return response.json();
     },
-    onSuccess: (data) => {
-      if (data.data?.temporaryPassword) {
-        toast.showToast(`Invitation sent. Temporary password: ${data.data.temporaryPassword}`, 'success');
-      } else {
-        toast.showToast('Invitation sent successfully!', 'success');
-      }
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      onSuccess();
-    },
+    onSuccess,
     onError: (error: Error) => {
-      toast.showToast(`Failed to invite user: ${error.message}`, 'error');
+      setErrors({ submit: error.message });
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const url = API_URL ? `${API_URL}/api/v1/admin/users/${user!._id}` : `/api/v1/admin/users/${user!._id}`;
-      const response = await apiFetch(url, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
+      try {
+        const response = await fetch(`${API_URL}/api/v1/admin/users/${user?._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+          body: JSON.stringify(data),
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update user');
+        if (!response.ok) {
+          let errorMessage = 'Failed to update user';
+          try {
+            const error = await response.json();
+            errorMessage = error.error || error.message || errorMessage;
+          } catch (e) {
+            errorMessage = `Server error: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+        return response.json();
+      } catch (error: any) {
+        // Handle network errors
+        if (error.name === 'TypeError' || error.message.includes('fetch')) {
+          throw new Error('Network error: Unable to connect to server. Please check your connection.');
+        }
+        throw error;
       }
-      return response.json();
     },
-    onSuccess: () => {
-      toast.showToast('User updated successfully!', 'success');
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      onSuccess();
-    },
+    onSuccess,
     onError: (error: Error) => {
-      toast.showToast(`Failed to update user: ${error.message}`, 'error');
+      setErrors({ submit: error.message });
     },
   });
 
   const createRoleMutation = useMutation({
     mutationFn: async (payload: { name: string; permissions: string[] }) => {
-      const url = API_URL ? `${API_URL}/api/v1/roles` : `/api/v1/roles`;
-      const response = await apiFetch(url, {
+      const response = await fetch(`${API_URL}/api/v1/roles`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
         body: JSON.stringify({
           name: payload.name,
           permissions: payload.permissions,
-          portalType: formData.portalType,
+          portalType: 'admin',
         }),
       });
 
@@ -507,15 +469,15 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       setCreateRoleError('');
       setIsCreateRoleOpen(false);
       setNewRoleName('');
-      setPermissionSelection(buildInitialPermissionSelection(permissionGroups));
-      queryClient.invalidateQueries({ queryKey: ['roles', formData.portalType] });
+      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
+      queryClient.invalidateQueries({ queryKey: ['roles', 'admin'] });
+
       const created = data.data as RoleDto;
       setFormData((prev) => ({
         ...prev,
         roleId: created._id || '',
         roleKey: created.key,
       }));
-      toast.showToast('Role created successfully!', 'success');
     },
     onError: (error: Error) => {
       setCreateRoleError(error.message);
@@ -526,8 +488,14 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     e.preventDefault();
     setErrors({});
 
-    if (!formData.email || !formData.email.includes('@')) {
-      setErrors({ email: 'Valid email is required' });
+    // Validation
+    if (!formData.email.trim()) {
+      setErrors({ email: 'Email is required' });
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setErrors({ email: 'Please enter a valid email address' });
       return;
     }
 
@@ -541,31 +509,19 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       return;
     }
 
-    // Validate organization for customer/vendor users
-    if (needsOrganization && !formData.organizationId) {
-      setErrors({ organizationId: `${formData.portalType === 'customer' ? 'Customer' : 'Vendor'} organization is required` });
-      return;
-    }
-
     const [firstNameRaw, ...rest] = formData.fullName.trim().split(/\s+/);
     const firstName = firstNameRaw;
     const lastName = rest.length > 0 ? rest.join(' ') : firstNameRaw;
 
-    const payload: any = {
+    const payload = {
       email: formData.email.trim().toLowerCase(),
       firstName,
       lastName,
-      portalType: formData.portalType,
+      portalType: 'admin',
       roleId: formData.roleId || undefined,
       role: formData.roleId ? undefined : formData.roleKey,
       isActive: formData.isActive,
     };
-
-    // Include organizationId for customer/vendor users (required)
-    // For tech/admin users, organizationId is optional and not included
-    if (needsOrganization && formData.organizationId) {
-      payload.organizationId = formData.organizationId;
-    }
 
     if (user) {
       updateMutation.mutate(payload);
@@ -574,11 +530,14 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     }
   };
 
+  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isCreatingRole = createRoleMutation.isPending;
+
   const handleRoleSelect = (value: string) => {
     if (value === '__create__') {
       setCreateRoleError('');
       setNewRoleName('');
-      setPermissionSelection(buildInitialPermissionSelection(permissionGroups));
+      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
       setIsCreateRoleOpen(true);
       return;
     }
@@ -592,6 +551,8 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       }));
     }
   };
+
+  const selectedRoleValue = formData.roleId || formData.roleKey;
 
   const handleCreateRole = () => {
     const trimmedName = newRoleName.trim();
@@ -653,98 +614,59 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     });
   };
 
-  const selectedRoleValue = formData.roleId || formData.roleKey;
-  const isSaving = createMutation.isPending || updateMutation.isPending;
-  const isCreatingRole = createRoleMutation.isPending;
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Email */}
       <div>
-        <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdEmail className="w-4 h-4 text-gray-400" />
-          Email Address *
+        <label htmlFor="email" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
+          Email Address <span className="text-red-500">*</span>
         </label>
         <input
           id="email"
           type="email"
           value={formData.email}
-          onChange={(e) => {
-            setFormData({ ...formData, email: e.target.value });
-            setErrors({ ...errors, email: '' });
-          }}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           disabled={!!user}
           className={cn(
-            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed',
-            errors.email ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.email ? 'border-red-500' : 'border-[hsl(var(--border))]',
+            user && 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
           )}
           placeholder="user@example.com"
         />
-        {errors.email && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>
+        {user && (
+          <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+            Email cannot be changed after user creation
+          </p>
         )}
+        {errors.email && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.email}</p>}
       </div>
 
       {/* Full Name */}
       <div>
-        <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdPerson className="w-4 h-4 text-gray-400" />
-          Full Name *
+        <label htmlFor="fullName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
+          Full Name <span className="text-red-500">*</span>
         </label>
         <input
           id="fullName"
           type="text"
           value={formData.fullName}
-          onChange={(e) => {
-            setFormData({ ...formData, fullName: e.target.value });
-            setErrors({ ...errors, fullName: '' });
-          }}
+          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
           className={cn(
-            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
-            errors.fullName ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.fullName ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
-          placeholder="Jane Doe"
+          placeholder="John Doe"
         />
-        {errors.fullName && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.fullName}</p>
-        )}
-      </div>
-
-      {/* Portal Type */}
-      <div>
-        <label htmlFor="portalType" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdWork className="w-4 h-4 text-gray-400" />
-          Portal Type *
-        </label>
-        <select
-          id="portalType"
-          value={formData.portalType}
-          onChange={(e) => {
-            const newPortal = e.target.value;
-            setHasInitialisedRole(false);
-            setFormData((prev) => ({
-              ...prev,
-              portalType: newPortal,
-              roleId: '',
-              roleKey: '',
-            }));
-          }}
-          disabled={!!user}
-          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed"
-        >
-          {PORTAL_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        {errors.fullName && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.fullName}</p>}
       </div>
 
       {/* Role */}
       <div>
-        <label htmlFor="role" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          <MdSecurity className="w-4 h-4 text-gray-400" />
-          Role *
+        <label htmlFor="role" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
+          Role <span className="text-red-500">*</span>
         </label>
         <select
           id="role"
@@ -752,8 +674,9 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           onChange={(e) => handleRoleSelect(e.target.value)}
           disabled={isRolesLoading}
           className={cn(
-            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
-            errors.role ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+            'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+            errors.role ? 'border-red-500' : 'border-[hsl(var(--border))]'
           )}
         >
           {roleOptions.map((role) => (
@@ -763,46 +686,49 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           ))}
           <option value="__create__">Create a new role…</option>
         </select>
-        {errors.role && (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.role}</p>
-        )}
+        {errors.role && <p className="mt-1 text-sm text-[hsl(var(--destructive))]">{errors.role}</p>}
       </div>
 
       {/* Active Status */}
       {user && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3">
           <input
-            type="checkbox"
             id="isActive"
+            type="checkbox"
             checked={formData.isActive}
             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+            className="w-5 h-5 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))]"
           />
-          <label htmlFor="isActive" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 cursor-pointer">
-            <MdCheckCircle className="w-4 h-4 text-emerald-500" />
-            User is active
+          <label htmlFor="isActive" className="text-sm font-semibold text-[hsl(var(--foreground))]">
+            Active User
           </label>
         </div>
       )}
 
-      {/* Form Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+      {errors.submit && (
+        <div className="p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
+          {errors.submit}
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
         <button
           type="button"
           onClick={onCancel}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          disabled={isSaving}
+          disabled={isLoading}
+          className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
         >
           <MdCancel className="w-4 h-4" />
           <span>Cancel</span>
         </button>
         <button
           type="submit"
-          disabled={isSaving}
-          className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2"
+          disabled={isLoading}
+          className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
         >
           <MdSave className="w-4 h-4" />
-          {isSaving ? 'Saving...' : user ? 'Update User' : 'Send Invitation'}
+          <span>{isLoading ? 'Saving...' : user ? 'Update' : 'Invite User'}</span>
         </button>
       </div>
 
@@ -818,7 +744,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       >
         <div className="space-y-6">
           <div>
-            <label htmlFor="roleName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="roleName" className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Role Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -826,27 +752,27 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               type="text"
               value={newRoleName}
               onChange={(e) => setNewRoleName(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="e.g. Finance Manager"
+              className="w-full px-4 py-2.5 border border-[hsl(var(--border))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all"
+              placeholder="e.g. Compliance Manager"
             />
           </div>
 
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select permissions</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Enable modules and choose the required access level.
+                <h3 className="text-sm font-semibold text-[hsl(var(--foreground))]">Select permissions</h3>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                  Enable modules and choose read, write, or edit access.
                 </p>
               </div>
-              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <div className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">
                 {selectedModuleCount} module{selectedModuleCount === 1 ? '' : 's'} selected · {computedPermissionList.length}{' '}
                 permission{computedPermissionList.length === 1 ? '' : 's'}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            <div className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden">
+              <div className="hidden sm:grid grid-cols-[1fr_120px_120px_120px] bg-gray-50 dark:bg-gray-900/40 text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
                 <div className="px-5 py-3">Module</div>
                 {PERMISSION_ACTIONS.map((action) => (
                   <div key={action.key} className="px-5 py-3 text-center">
@@ -855,31 +781,31 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                 ))}
               </div>
               <div className="divide-y divide-gray-200 dark:divide-gray-800">
-                {permissionGroups.map((group) => {
+                {ADMIN_PERMISSION_GROUPS.map((group) => {
                   const selection = permissionSelection[group.key];
                   const actionKeys = group.actions ?? PERMISSION_ACTIONS.map((action) => action.key);
                   return (
                     <div
                       key={group.key}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-white dark:bg-gray-900"
+                      className="grid grid-cols-1 sm:grid-cols-[1fr_120px_120px_120px] items-start sm:items-center gap-4 px-4 sm:px-5 py-4 bg-[hsl(var(--card))]"
                     >
                       <div className="flex items-start sm:items-center gap-3">
                         <input
                           id={`module-${group.key}`}
                           type="checkbox"
-                          className="mt-1 sm:mt-0 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="mt-1 sm:mt-0 w-4 h-4 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))]"
                           checked={selection?.enabled ?? false}
                           onChange={() => handleToggleGroup(group.key)}
                         />
                         <div>
                           <label
                             htmlFor={`module-${group.key}`}
-                            className="text-sm font-semibold text-gray-900 dark:text-white"
+                            className="text-sm font-semibold text-[hsl(var(--foreground))]"
                           >
                             {group.label}
                           </label>
                           {group.description && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{group.description}</p>
+                            <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">{group.description}</p>
                           )}
                         </div>
                       </div>
@@ -901,7 +827,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                             key={`${group.key}-${action.key}`}
                             className="flex sm:block items-center justify-between sm:justify-center text-xs font-semibold text-gray-500 sm:text-sm"
                           >
-                            <span className="sm:hidden text-gray-500 dark:text-gray-400">{action.label}</span>
+                            <span className="sm:hidden text-[hsl(var(--muted-foreground))]">{action.label}</span>
                             <button
                               type="button"
                               onClick={() => handleToggleAction(group.key, action.key)}
@@ -909,11 +835,11 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                               className={cn(
                                 'mt-1 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold border transition-all duration-150',
                                 !isEnabled &&
-                                  'cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-200 dark:border-gray-700',
+                                  'cursor-not-allowed bg-[hsl(var(--secondary))] text-gray-400 border-[hsl(var(--border))]',
                                 isEnabled &&
                                   !isActive &&
-                                  'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800',
-                                isEnabled && isActive && 'bg-blue-600 text-white border-blue-600 shadow-sm hover:bg-blue-700'
+                                  'bg-[hsl(var(--card))] text-gray-600 dark:text-gray-300 border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]',
+                                isEnabled && isActive && 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-blue-600 shadow-sm hover:bg-blue-700'
                               )}
                             >
                               {isActive ? 'On' : 'Off'}
@@ -929,28 +855,33 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           </div>
 
           {createRoleError && (
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
               {createRoleError}
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
             <button
               type="button"
-              onClick={() => setIsCreateRoleOpen(false)}
+              onClick={() => {
+                if (!isCreatingRole) {
+                  setIsCreateRoleOpen(false);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 text-[hsl(var(--foreground))] bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
               disabled={isCreatingRole}
-              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
             >
-              Cancel
+              <MdCancel className="w-4 h-4" />
+              <span>Cancel</span>
             </button>
             <button
               type="button"
               onClick={handleCreateRole}
               disabled={isCreatingRole}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
             >
               <MdAddCircleOutline className="w-4 h-4" />
-              {isCreatingRole ? 'Creating...' : 'Create Role'}
+              <span>{isCreatingRole ? 'Creating...' : 'Create Role'}</span>
             </button>
           </div>
         </div>

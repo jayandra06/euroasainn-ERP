@@ -230,7 +230,7 @@ export function UsersPage() {
               <MdPeople className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Team Members</h1>
+              <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">Team Members</h1>
               <p className="text-gray-600 dark:text-gray-400">
                 Invite your team to collaborate, manage orders, and keep operations running smoothly.
               </p>
@@ -240,15 +240,15 @@ export function UsersPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Invite a team member</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <div className="xl:col-span-2 p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+          <h2 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Invite a team member</h2>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6">
             Send an invitation email with a temporary password so they can join immediately.
           </p>
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                   <MdPerson className="w-4 h-4 text-gray-400" />
                   Full Name
                 </label>
@@ -258,11 +258,11 @@ export function UsersPage() {
                   value={formData.fullName}
                   onChange={(e) => setFormData((prev) => ({ ...prev, fullName: e.target.value }))}
                   placeholder="Alex Vendor"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
                 />
               </div>
               <div>
-                <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                   <MdMail className="w-4 h-4 text-gray-400" />
                   Email Address
                 </label>
@@ -272,13 +272,13 @@ export function UsersPage() {
                   value={formData.email}
                   onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder="team@yourvendor.com"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="role" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="role" className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                 <MdShield className="w-4 h-4 text-gray-400" />
                 Role
               </label>
@@ -287,7 +287,7 @@ export function UsersPage() {
                 disabled={isRolesLoading || roleOptions.length === 0}
                 value={selectedRoleValue}
                 onChange={(e) => handleRoleChange(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-70"
+                className="w-full px-4 py-2.5 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent disabled:opacity-70"
               >
                 {roleOptions.map((role) => (
                   <option key={role.id} value={role.id}>
@@ -301,7 +301,7 @@ export function UsersPage() {
               <button
                 type="submit"
                 disabled={inviteMutation.isPending}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <MdPersonAddAlt className="w-5 h-5" />
                 {inviteMutation.isPending ? 'Sending invite...' : 'Send invite'}
@@ -323,16 +323,16 @@ export function UsersPage() {
             </ul>
           </div>
 
-          <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Available roles</h3>
+          <div className="p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+            <h3 className="text-sm font-semibold text-[hsl(var(--foreground))] mb-4">Available roles</h3>
             <div className="space-y-3">
               {roleOptions.map((role) => (
-                <div key={role.id} className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 px-3 py-3">
+                <div key={role.id} className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-3">
                   <div className="flex items-center justify-between">
-                    <p className="font-semibold text-gray-900 dark:text-white text-sm">{role.name}</p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{role.permissions.length} permissions</span>
+                    <p className="font-semibold text-[hsl(var(--foreground))] text-sm">{role.name}</p>
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{role.permissions.length} permissions</span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
                     {role.description || `Permissions: ${role.permissions.join(', ')}`}
                   </p>
                 </div>

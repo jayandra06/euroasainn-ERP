@@ -190,7 +190,7 @@ export function CustomerOnboardingPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400">Invalid invitation link</p>
+          <p className="text-[hsl(var(--destructive))]">Invalid invitation link</p>
         </div>
       </div>
     );
@@ -199,12 +199,12 @@ export function CustomerOnboardingPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="bg-[hsl(var(--card))] rounded-lg shadow-lg p-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2">
               Customer Onboarding – Euroasiann ERP
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[hsl(var(--muted-foreground))]">
               Complete your organization onboarding to get started
             </p>
           </div>
@@ -212,12 +212,12 @@ export function CustomerOnboardingPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Company Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Company Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Shipping Company Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -225,8 +225,8 @@ export function CustomerOnboardingPage() {
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.companyName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.companyName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -234,7 +234,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Primary Contact Person <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -242,8 +242,8 @@ export function CustomerOnboardingPage() {
                     name="contactPerson"
                     value={formData.contactPerson}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.contactPerson ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.contactPerson ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -251,7 +251,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Official Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -260,13 +260,13 @@ export function CustomerOnboardingPage() {
                     value={formData.email}
                     onChange={handleChange}
                     disabled
-                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Number of Vessels to Onboard <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -275,8 +275,8 @@ export function CustomerOnboardingPage() {
                     value={formData.vessels}
                     onChange={handleChange}
                     min="1"
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.vessels ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.vessels ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -287,12 +287,12 @@ export function CustomerOnboardingPage() {
 
             {/* Phone Numbers */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Phone Numbers
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Mobile Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
@@ -300,7 +300,7 @@ export function CustomerOnboardingPage() {
                       name="mobileCountryCode"
                       value={formData.mobileCountryCode}
                       onChange={handleChange}
-                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                     >
                       <option value="+31">🇳🇱 +31 (NL)</option>
                       <option value="+91">🇮🇳 +91 (IN)</option>
@@ -313,8 +313,8 @@ export function CustomerOnboardingPage() {
                       name="mobilePhone"
                       value={formData.mobilePhone}
                       onChange={handleChange}
-                      className={`flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                        errors.mobilePhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      className={`flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                        errors.mobilePhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                       }`}
                       required
                     />
@@ -323,7 +323,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Desk Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
@@ -331,7 +331,7 @@ export function CustomerOnboardingPage() {
                       name="deskCountryCode"
                       value={formData.deskCountryCode}
                       onChange={handleChange}
-                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                      className="w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                     >
                       <option value="+31">🇳🇱 +31 (NL)</option>
                       <option value="+91">🇮🇳 +91 (IN)</option>
@@ -344,8 +344,8 @@ export function CustomerOnboardingPage() {
                       name="deskPhone"
                       value={formData.deskPhone}
                       onChange={handleChange}
-                      className={`flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                        errors.deskPhone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      className={`flex-1 px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                        errors.deskPhone ? 'border-red-500' : 'border-[hsl(var(--border))]'
                       }`}
                       required
                     />
@@ -357,12 +357,12 @@ export function CustomerOnboardingPage() {
 
             {/* Address */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Address
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -370,8 +370,8 @@ export function CustomerOnboardingPage() {
                     name="address1"
                     value={formData.address1}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.address1 ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.address1 ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -379,7 +379,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Address Line 2
                   </label>
                   <input
@@ -387,12 +387,12 @@ export function CustomerOnboardingPage() {
                     name="address2"
                     value={formData.address2}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -400,8 +400,8 @@ export function CustomerOnboardingPage() {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.city ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -409,7 +409,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Province / State <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -417,8 +417,8 @@ export function CustomerOnboardingPage() {
                     name="province"
                     value={formData.province}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.province ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.province ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -426,7 +426,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Postal Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -434,8 +434,8 @@ export function CustomerOnboardingPage() {
                     name="postalCode"
                     value={formData.postalCode}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.postalCode ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.postalCode ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -443,15 +443,15 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Country <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.country ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.country ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   >
@@ -471,12 +471,12 @@ export function CustomerOnboardingPage() {
 
             {/* Tax Information */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Tax Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Tax ID / VAT / GST / EIN <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -484,8 +484,8 @@ export function CustomerOnboardingPage() {
                     name="taxId"
                     value={formData.taxId}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.taxId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.taxId ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -496,12 +496,12 @@ export function CustomerOnboardingPage() {
 
             {/* Banking Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Banking Details (For Auto-Debit)
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Account Holder Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -509,8 +509,8 @@ export function CustomerOnboardingPage() {
                     name="accountName"
                     value={formData.accountName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.accountName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.accountName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -518,7 +518,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Bank Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -526,8 +526,8 @@ export function CustomerOnboardingPage() {
                     name="bankName"
                     value={formData.bankName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.bankName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.bankName ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -535,7 +535,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     IBAN / Account Number <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -543,8 +543,8 @@ export function CustomerOnboardingPage() {
                     name="iban"
                     value={formData.iban}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.iban ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.iban ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -552,7 +552,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     SWIFT / BIC Code
                   </label>
                   <input
@@ -560,7 +560,7 @@ export function CustomerOnboardingPage() {
                     name="swift"
                     value={formData.swift}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                   />
                 </div>
               </div>
@@ -568,12 +568,12 @@ export function CustomerOnboardingPage() {
 
             {/* Invoicing Details */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Invoicing Details
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Email for Invoicing <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -581,8 +581,8 @@ export function CustomerOnboardingPage() {
                     name="invoiceEmail"
                     value={formData.invoiceEmail}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.invoiceEmail ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.invoiceEmail ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -590,7 +590,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Address Line 1 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -598,8 +598,8 @@ export function CustomerOnboardingPage() {
                     name="billingAddress1"
                     value={formData.billingAddress1}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.billingAddress1 ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.billingAddress1 ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -607,7 +607,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Address Line 2
                   </label>
                   <input
@@ -615,12 +615,12 @@ export function CustomerOnboardingPage() {
                     name="billingAddress2"
                     value={formData.billingAddress2}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
+                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -628,8 +628,8 @@ export function CustomerOnboardingPage() {
                     name="billingCity"
                     value={formData.billingCity}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.billingCity ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.billingCity ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -637,7 +637,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Province / State <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -645,8 +645,8 @@ export function CustomerOnboardingPage() {
                     name="billingProvince"
                     value={formData.billingProvince}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.billingProvince ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.billingProvince ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -654,7 +654,7 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Postal Code <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -662,8 +662,8 @@ export function CustomerOnboardingPage() {
                     name="billingPostal"
                     value={formData.billingPostal}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.billingPostal ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.billingPostal ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   />
@@ -671,15 +671,15 @@ export function CustomerOnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Billing Country <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="billingCountry"
                     value={formData.billingCountry}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.billingCountry ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-[hsl(var(--foreground))] ${
+                      errors.billingCountry ? 'border-red-500' : 'border-[hsl(var(--border))]'
                     }`}
                     required
                   >
@@ -701,14 +701,14 @@ export function CustomerOnboardingPage() {
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="px-6 py-2 border border-[hsl(var(--border))] rounded-lg text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Submitting...' : 'Proceed to Pricing'}
               </button>

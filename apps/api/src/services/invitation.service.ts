@@ -219,7 +219,7 @@ export class InvitationService {
     const { temporaryPassword, user: updatedUser } = await userService.resetUserTemporaryPassword(invitation.email, invitation.portalType);
 
     // Create new invitation token with incremented resend count
-    const { invitationId: newInvitationId, invitationLink, portalLink, expiresAt } = await this.createInvitationToken({
+    const { invitationId: newInvitationId, invitationLink, portalLink } = await this.createInvitationToken({
       email: invitation.email,
       organizationId: invitation.organizationId?.toString(),
       organizationType: invitation.organizationType,

@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { User } from '../models/user.model';
 import { RefreshToken } from '../models/refresh-token.model';
 import { testUtils } from '../tests/setup';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 
 describe('AuthService', () => {
   let authService: AuthService;

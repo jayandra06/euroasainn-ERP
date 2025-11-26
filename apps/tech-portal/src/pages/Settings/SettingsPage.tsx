@@ -3,16 +3,14 @@
  * Professional Enterprise Dashboard - Fixed Layout & Spacing
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useAuth } from '../../context/AuthContext';
 import {
   MdSettings,
   MdSecurity,
   MdNotifications,
   MdKey,
   MdSave,
-  MdCheckCircle,
 } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
@@ -20,7 +18,6 @@ import { Button } from '../../components/ui/button';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export function SettingsPage() {
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'general' | 'security' | 'notifications' | 'api'>('general');
 
   // General settings form
@@ -90,7 +87,7 @@ export function SettingsPage() {
     <div className="w-full min-h-screen p-8 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           Settings
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
@@ -102,7 +99,7 @@ export function SettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <div className="p-4 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg space-y-2">
+          <div className="p-4 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm space-y-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -113,7 +110,7 @@ export function SettingsPage() {
                     'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-left',
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50'
+                      : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/50'
                   )}
                 >
                   <Icon className="w-5 h-5" />
@@ -126,35 +123,35 @@ export function SettingsPage() {
 
         {/* Content */}
         <div className="lg:col-span-3">
-          <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+          <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
             {/* General Settings */}
             {activeTab === 'general' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">General Settings</h2>
+                  <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-1">General Settings</h2>
                   <p className="text-gray-600 dark:text-gray-400">Configure platform-wide settings</p>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                       Platform Name
                     </label>
                     <input
                       type="text"
                       value={generalSettings.platformName}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, platformName: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                         Timezone
                       </label>
                       <select
                         value={generalSettings.timezone}
                         onChange={(e) => setGeneralSettings({ ...generalSettings, timezone: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                       >
                         <option value="UTC">UTC</option>
                         <option value="America/New_York">Eastern Time</option>
@@ -167,13 +164,13 @@ export function SettingsPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                         Date Format
                       </label>
                       <select
                         value={generalSettings.dateFormat}
                         onChange={(e) => setGeneralSettings({ ...generalSettings, dateFormat: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                       >
                         <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                         <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -184,13 +181,13 @@ export function SettingsPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                         Language
                       </label>
                       <select
                         value={generalSettings.language}
                         onChange={(e) => setGeneralSettings({ ...generalSettings, language: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                       >
                         <option value="en">English</option>
                         <option value="es">Spanish</option>
@@ -200,13 +197,13 @@ export function SettingsPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                         Theme
                       </label>
                       <select
                         value={generalSettings.theme}
                         onChange={(e) => setGeneralSettings({ ...generalSettings, theme: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                       >
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
@@ -231,12 +228,12 @@ export function SettingsPage() {
             {activeTab === 'security' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Security Settings</h2>
+                  <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-1">Security Settings</h2>
                   <p className="text-gray-600 dark:text-gray-400">Configure security and authentication settings</p>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                       Minimum Password Length
                     </label>
                     <input
@@ -250,10 +247,10 @@ export function SettingsPage() {
                           passwordMinLength: parseInt(e.target.value) || 8,
                         })
                       }
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                     />
                   </div>
-                  <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-[hsl(var(--secondary))]/50 border border-[hsl(var(--border))]">
                     <input
                       type="checkbox"
                       checked={securitySettings.requireTwoFactor}
@@ -263,15 +260,15 @@ export function SettingsPage() {
                           requireTwoFactor: e.target.checked,
                         })
                       }
-                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-[hsl(var(--primary))]"
                     />
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <label className="text-sm font-semibold text-[hsl(var(--foreground))]">
                       Require Two-Factor Authentication
                     </label>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                         Session Timeout (minutes)
                       </label>
                       <input
@@ -285,11 +282,11 @@ export function SettingsPage() {
                             sessionTimeout: parseInt(e.target.value) || 30,
                           })
                         }
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                         Max Login Attempts
                       </label>
                       <input
@@ -303,12 +300,12 @@ export function SettingsPage() {
                             maxLoginAttempts: parseInt(e.target.value) || 5,
                           })
                         }
-                        className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
                       Account Lockout Duration (minutes)
                     </label>
                     <input
@@ -322,7 +319,7 @@ export function SettingsPage() {
                           lockoutDuration: parseInt(e.target.value) || 15,
                         })
                       }
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="w-full px-4 py-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200"
                     />
                   </div>
                   <div className="pt-4">
@@ -342,7 +339,7 @@ export function SettingsPage() {
             {activeTab === 'notifications' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Notification Settings</h2>
+                  <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-1">Notification Settings</h2>
                   <p className="text-gray-600 dark:text-gray-400">Manage notification preferences</p>
                 </div>
                 <div className="space-y-4">
@@ -354,7 +351,7 @@ export function SettingsPage() {
                   ].map((item) => (
                     <div
                       key={item.key}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
+                      className="flex items-center gap-3 p-4 rounded-xl bg-[hsl(var(--secondary))]/50 border border-[hsl(var(--border))]"
                     >
                       <input
                         type="checkbox"
@@ -365,9 +362,9 @@ export function SettingsPage() {
                             [item.key]: e.target.checked,
                           })
                         }
-                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-[hsl(var(--primary))]"
                       />
-                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      <label className="text-sm font-semibold text-[hsl(var(--foreground))]">
                         {item.label}
                       </label>
                     </div>
@@ -389,23 +386,23 @@ export function SettingsPage() {
             {activeTab === 'api' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">API Keys</h2>
+                  <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-1">API Keys</h2>
                   <p className="text-gray-600 dark:text-gray-400">Manage API keys for programmatic access</p>
                 </div>
                 <div className="p-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200/50 dark:border-blue-800/50 space-y-4">
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <p className="text-sm text-[hsl(var(--foreground))]">
                     API keys allow external systems to interact with the platform programmatically.
                   </p>
-                  <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Base API URL</p>
-                    <code className="text-sm font-mono text-gray-900 dark:text-white">{API_URL}/api/v1</code>
+                  <div className="p-4 rounded-xl bg-[hsl(var(--card))] border border-[hsl(var(--border))]">
+                    <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-2">Base API URL</p>
+                    <code className="text-sm font-mono text-[hsl(var(--foreground))]">{API_URL}/api/v1</code>
                   </div>
                   <div className="pt-2">
                     <a
                       href="/api-docs"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-[hsl(var(--foreground))] font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
                       View API Documentation →
                     </a>

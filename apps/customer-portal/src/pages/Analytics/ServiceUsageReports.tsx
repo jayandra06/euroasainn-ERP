@@ -75,7 +75,7 @@ export function ServiceUsageReports() {
       case 'critical':
         return 'text-red-600 bg-red-50 dark:bg-red-950/20';
       default:
-        return 'text-gray-600 bg-gray-50 dark:bg-gray-800';
+        return 'text-gray-600 bg-[hsl(var(--secondary))]';
     }
   };
 
@@ -83,64 +83,64 @@ export function ServiceUsageReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Current Plan</p>
             <MdSubscriptions className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentPlan}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Active subscription</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentPlan}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Active subscription</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Storage Usage</p>
             <MdStorage className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">68 GB</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">of 100 GB (68%)</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">68 GB</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">of 100 GB (68%)</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">API Calls</p>
             <MdTrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">7,200</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">7,200</p>
           <p className="text-xs text-orange-600 mt-1">of 10,000 (72%)</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Users</p>
             <MdCheckCircle className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">42</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">of 50 (84%)</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">42</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">of 50 (84%)</p>
         </div>
       </div>
 
       {/* Current Plan vs Actual Usage */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Current Plan vs Actual Usage</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Feature usage compared to plan limits</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Current Plan vs Actual Usage</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Feature usage compared to plan limits</p>
           </div>
         </div>
         <div className="space-y-4">
           {planVsUsageData.map((item, index) => {
             const usagePercent = (item.actualUsage / item.planLimit) * 100;
             return (
-              <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+              <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{item.feature}</h4>
+                    <h4 className="font-semibold text-[hsl(var(--foreground))]">{item.feature}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {item.actualUsage} {item.unit} / {item.planLimit} {item.unit}
                     </p>
                   </div>
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">{usagePercent.toFixed(0)}%</span>
+                  <span className="text-lg font-bold text-[hsl(var(--foreground))]">{usagePercent.toFixed(0)}%</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
@@ -157,11 +157,11 @@ export function ServiceUsageReports() {
       </div>
 
       {/* Consumption by Feature/Module */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Consumption by Feature/Module</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Usage and growth by feature</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Consumption by Feature/Module</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Usage and growth by feature</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -177,9 +177,9 @@ export function ServiceUsageReports() {
         </ResponsiveContainer>
         <div className="mt-4 space-y-3">
           {consumptionByFeature.map((feature, index) => (
-            <div key={index} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-3 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{feature.feature}</span>
+                <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{feature.feature}</span>
                 <div className="flex items-center gap-2">
                   {feature.growth > 0 ? (
                     <MdTrendingUp className="w-4 h-4 text-emerald-600" />
@@ -197,16 +197,16 @@ export function ServiceUsageReports() {
       </div>
 
       {/* Plan Upgrade/Downgrade History */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Plan Upgrade/Downgrade History</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Subscription plan changes over time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Plan Upgrade/Downgrade History</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Subscription plan changes over time</p>
           </div>
         </div>
         <div className="space-y-3">
           {planHistoryData.map((history, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
@@ -218,7 +218,7 @@ export function ServiceUsageReports() {
                       <MdCheckCircle className="w-5 h-5 text-blue-600" />
                     )}
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">
+                      <p className="font-semibold text-[hsl(var(--foreground))]">
                         {history.action}: {history.plan}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -233,7 +233,7 @@ export function ServiceUsageReports() {
                       ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
                       : history.action === 'Downgrade'
                       ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
-                      : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                      : 'bg-blue-100 dark:bg-blue-900 text-[hsl(var(--foreground))] font-semibold'
                   }`}
                 >
                   {history.action}
@@ -248,7 +248,7 @@ export function ServiceUsageReports() {
       <div className="p-6 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
           <MdWarning className="w-6 h-6 text-orange-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notifications for Nearing Usage Limits</h3>
+          <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Notifications for Nearing Usage Limits</h3>
         </div>
         <div className="space-y-3">
           {usageLimitsData.map((limit, index) => {
@@ -259,10 +259,10 @@ export function ServiceUsageReports() {
             if (!isNearLimit && limit.status === 'safe') return null;
             
             return (
-              <div key={index} className="p-4 rounded-lg bg-white dark:bg-gray-900 border border-orange-200 dark:border-orange-800">
+              <div key={index} className="p-4 rounded-lg bg-[hsl(var(--card))] border border-orange-200 dark:border-orange-800">
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">{limit.feature}</p>
+                    <p className="font-semibold text-[hsl(var(--foreground))]">{limit.feature}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {limit.current} / {limit.limit} ({usagePercent.toFixed(0)}%)
                     </p>
@@ -291,11 +291,11 @@ export function ServiceUsageReports() {
       </div>
 
       {/* Monthly Usage Trend */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Monthly Usage Trend</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">API calls usage over time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Monthly Usage Trend</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">API calls usage over time</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>

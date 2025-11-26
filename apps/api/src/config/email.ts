@@ -67,7 +67,7 @@ logger.info('Email config:', {
 export const transporter = nodemailer.createTransport(emailConfig);
 
 // Verify connection configuration
-transporter.verify((error, success) => {
+transporter.verify((error, _success) => {
   if (error) {
     logger.error('Email transporter verification failed:', error);
   } else {

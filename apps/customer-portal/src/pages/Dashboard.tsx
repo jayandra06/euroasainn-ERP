@@ -41,7 +41,7 @@ export function Dashboard() {
   return (
     <div className="w-full min-h-screen p-8 space-y-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2">
           Welcome back, {user?.firstName || 'Customer'}! 👋
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -61,7 +61,7 @@ export function Dashboard() {
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-4`}>
                 <Icon className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-2">
                 {card.title}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">

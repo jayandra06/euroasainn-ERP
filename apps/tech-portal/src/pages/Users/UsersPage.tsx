@@ -147,8 +147,8 @@ export function UsersPage() {
             {user.firstName?.[0] || user.email[0].toUpperCase()}
           </div>
           <div>
-            <div className="font-semibold text-gray-900 dark:text-white">{user.email}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="font-semibold text-[hsl(var(--foreground))]">{user.email}</div>
+            <div className="text-xs text-[hsl(var(--muted-foreground))]">
               {user.firstName} {user.lastName}
             </div>
           </div>
@@ -159,7 +159,7 @@ export function UsersPage() {
       key: 'role',
       header: 'Role',
       render: (user: User) => (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/30">
           {typeof user.roleId === 'object'
             ? user.roleId.name
             : (user.roleName || user.role).replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
@@ -170,7 +170,7 @@ export function UsersPage() {
       key: 'portalType',
       header: 'Portal Type',
       render: (user: User) => (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/30">
           {user.portalType.charAt(0).toUpperCase() + user.portalType.slice(1)}
         </span>
       ),
@@ -183,8 +183,8 @@ export function UsersPage() {
           className={cn(
             'px-3 py-1 inline-flex items-center gap-1.5 text-xs font-semibold rounded-full',
             user.isActive
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/30'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/30'
           )}
         >
           {user.isActive ? (
@@ -230,7 +230,7 @@ export function UsersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">
             Users Management
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -240,7 +240,7 @@ export function UsersPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleInvite}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-semibold shadow-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-xl hover:bg-indigo-700 transition-colors font-semibold shadow-sm"
           >
             <MdEmail className="w-5 h-5" />
             Invite User
@@ -255,15 +255,15 @@ export function UsersPage() {
           return (
             <div
               key={index}
-              className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow"
+              className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                  <p className="text-3xl font-bold text-[hsl(var(--foreground))]">{stat.value}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/20 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  <Icon className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
                 </div>
               </div>
             </div>
@@ -272,7 +272,7 @@ export function UsersPage() {
       </div>
 
       {/* Filters and Search */}
-      <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-4 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
             <div className="relative flex-1 sm:max-w-md">
@@ -282,7 +282,7 @@ export function UsersPage() {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all"
               />
             </div>
           </div>
@@ -291,7 +291,7 @@ export function UsersPage() {
             <select
               value={filterActive}
               onChange={(e) => setFilterActive(e.target.value)}
-              className="px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="px-4 py-2.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all"
             >
               <option value="all">All Users</option>
               <option value="active">Active Only</option>
@@ -303,8 +303,8 @@ export function UsersPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+        <div className="p-12 text-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+          <div className="inline-block w-8 h-8 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))] rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">Loading users...</p>
         </div>
       ) : queryError ? (
@@ -313,7 +313,7 @@ export function UsersPage() {
           <p className="text-sm text-red-500 dark:text-red-400">{queryError.message}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            className="mt-4 px-4 py-2 bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] rounded-lg hover:bg-red-700 transition-colors"
           >
             Retry
           </button>

@@ -138,14 +138,14 @@ export function FinancialReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Financial Reports</h1>
-          <p className="text-gray-600 dark:text-gray-400">Comprehensive financial analysis and reporting</p>
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">Financial Reports</h1>
+          <p className="text-[hsl(var(--muted-foreground))]">Comprehensive financial analysis and reporting</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as 'month' | 'quarter' | 'year')}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
+            className="px-4 py-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] text-sm"
           >
             <option value="month">This Month</option>
             <option value="quarter">This Quarter</option>
@@ -156,39 +156,39 @@ export function FinancialReportsPage() {
 
       {/* Key Financial Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Revenue (YTD)</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Total Revenue (YTD)</p>
             <MdTrendingUp className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">$1,050,000</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">$1,050,000</p>
           <p className="text-xs text-emerald-600 mt-1">+12.5% from last year</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Operating Expenses</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Operating Expenses</p>
             <MdTrendingDown className="w-5 h-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">$620,000</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">$620,000</p>
           <p className="text-xs text-red-600 mt-1">+8.3% from last year</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Profit Margin</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Profit Margin</p>
             <MdTrendingUp className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">41.0%</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">41.0%</p>
           <p className="text-xs text-emerald-600 mt-1">+2.1% from last year</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Net Profit (YTD)</p>
+            <p className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Net Profit (YTD)</p>
             <MdTrendingUp className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">$430,000</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">$430,000</p>
           <p className="text-xs text-emerald-600 mt-1">+15.2% from last year</p>
         </div>
       </div>
@@ -200,18 +200,18 @@ export function FinancialReportsPage() {
           return (
             <div
               key={report.id}
-              className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all"
+              className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]">
                   {report.category}
                 </span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{report.name}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{report.description}</p>
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-2">{report.name}</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">{report.description}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleGenerateReport(report.id)}
@@ -222,7 +222,7 @@ export function FinancialReportsPage() {
                 </button>
                 <button
                   onClick={() => handleExport('pdf')}
-                  className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
+                  className="px-4 py-2 bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 text-[hsl(var(--foreground))] rounded-lg transition-colors"
                 >
                   <MdDownload className="w-4 h-4" />
                 </button>
@@ -234,8 +234,8 @@ export function FinancialReportsPage() {
 
       {/* Report Preview Section */}
       {selectedReport === 'profit-loss' && (
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Profit & Loss Statement</h3>
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+          <h3 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4">Profit & Loss Statement</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={profitLossData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -252,8 +252,8 @@ export function FinancialReportsPage() {
       )}
 
       {selectedReport === 'ar-aging' && (
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Accounts Receivable Aging</h3>
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+          <h3 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4">Accounts Receivable Aging</h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -276,10 +276,10 @@ export function FinancialReportsPage() {
             </ResponsiveContainer>
             <div className="space-y-3">
               {arAgingData.map((item, index) => (
-                <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{item.period}</span>
-                    <span className="text-sm font-bold text-gray-900 dark:text-white">${item.amount.toLocaleString()}</span>
+                    <span className="text-sm font-medium text-[hsl(var(--foreground))]">{item.period}</span>
+                    <span className="text-sm font-bold text-[hsl(var(--foreground))]">${item.amount.toLocaleString()}</span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div

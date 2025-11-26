@@ -1,18 +1,16 @@
 /**
- * Polished Modern Organizations Page
- * Professional Enterprise Dashboard - Fixed Layout & Spacing
+ * Unified Organizations Page
+ * Combines Customer and Vendor Organizations
  */
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
-import { OrganizationForm } from './OrganizationForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdAdd, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { cn } from '../../lib/utils';
-import { apiFetch } from '../../utils/api';
-import { OrganizationInvitationsModal } from './OrganizationInvitationsModal';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface Organization {
   _id: string;
@@ -20,57 +18,75 @@ interface Organization {
   type: string;
   portalType: string;
   isActive: boolean;
-  licenseKey?: string;
   createdAt?: string;
 }
 
 export function OrganizationsPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOrgs, setSelectedOrgs] = useState<Set<string>>(new Set());
-  const [isInvitationsModalOpen, setIsInvitationsModalOpen] = useState(false);
-  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
 
-  const handleOpenInvitations = (org: Organization) => {
-    setSelectedOrganization(org);
-    setIsInvitationsModalOpen(true);
-  };
-
-  const handleCloseInvitations = () => {
-    setIsInvitationsModalOpen(false);
-    setSelectedOrganization(null);
-  };
-
-  // Fetch organizations with optimized caching
+  // Fetch all organizations (customer and vendor)
   const { data: orgsData, isLoading } = useQuery({
-    queryKey: ['organizations', filterActive, filterType],
+    queryKey: ['organizations', filterActive, filterType, searchQuery],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (filterActive !== 'all') {
-        params.append('isActive', filterActive === 'active' ? 'true' : 'false');
-      }
-      if (filterType !== 'all') {
-        params.append('type', filterType);
-      }
-      if (searchQuery) {
-        params.append('search', searchQuery);
-      }
+      try {
+        const params = new URLSearchParams();
+        if (filterType !== 'all') {
+          params.append('type', filterType);
+        }
+        if (filterActive !== 'all') {
+          params.append('isActive', filterActive === 'active' ? 'true' : 'false');
+        }
+        if (searchQuery) {
+          params.append('search', searchQuery);
+        }
 
-      const response = await apiFetch(`/api/v1/admin/organizations?${params}`);
+        const response = await fetch(`${API_URL}/api/v1/admin/organizations?${params}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
 
-      if (!response.ok) throw new Error('Failed to fetch organizations');
-      const data = await response.json();
-      return data.data as Organization[];
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({ error: 'Failed to fetch organizations' }));
+          throw new Error(error.error || 'Failed to fetch organizations');
+        }
+        const data = await response.json();
+        return data.data || [];
+      } catch (error: any) {
+        console.error('Error fetching organizations:', error);
+        return [];
+      }
     },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (gcTime replaces cacheTime in v5)
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnMount: false, // Don't refetch if data exists in cache
+    retry: 1,
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (orgId: string) => {
+      const response = await fetch(`${API_URL}/api/v1/admin/organizations/${orgId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete organization');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
+      showToast('Organization deleted successfully!', 'success');
+    },
+    onError: (error: Error) => {
+      showToast(`Failed to delete: ${error.message}`, 'error');
+    },
   });
 
   // Filter organizations by search query
@@ -80,9 +96,7 @@ export function OrganizationsPage() {
     const query = searchQuery.toLowerCase();
     return orgsData.filter(org => 
       org.name.toLowerCase().includes(query) ||
-      org.type.toLowerCase().includes(query) ||
-      org.portalType?.toLowerCase().includes(query) ||
-      org.licenseKey?.toLowerCase().includes(query)
+      org.type.toLowerCase().includes(query)
     );
   }, [orgsData, searchQuery]);
 
@@ -121,58 +135,15 @@ export function OrganizationsPage() {
     }
   };
 
-  const handleExport = () => {
-    showToast('Export functionality will be implemented soon', 'info');
-    // TODO: Implement export functionality
-  };
-
-  // Delete mutation
-  const deleteMutation = useMutation({
-    mutationFn: async (orgId: string) => {
-      const response = await apiFetch(`/api/v1/admin/organizations/${orgId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to delete organization');
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['organizations'] });
-      showToast('Organization deleted successfully!', 'success');
-    },
-    onError: (error: Error) => {
-      showToast(`Failed to delete organization: ${error.message}`, 'error');
-    },
-  });
-
-  const handleCreate = () => {
-    setEditingOrg(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (org: Organization) => {
-    setEditingOrg(org);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (org: Organization) => {
-    if (window.confirm(`Are you sure you want to delete organization ${org.name}?`)) {
+    if (window.confirm(`Are you sure you want to delete ${org.name}?`)) {
       deleteMutation.mutate(org._id);
     }
   };
 
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setEditingOrg(null);
-  };
-
-  const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['organizations'] });
-    // The OrganizationForm will show its own success message with email status
-    // We don't need to show a generic message here
-    handleClose();
+  const handleExport = () => {
+    showToast('Export functionality will be implemented soon', 'info');
+    // TODO: Implement export functionality
   };
 
   const columns = [
@@ -184,9 +155,9 @@ export function OrganizationsPage() {
           className="flex items-center justify-center w-full"
         >
           {selectedOrgs.size === filteredOrgs.length && filteredOrgs.length > 0 ? (
-            <MdCheckBox className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <MdCheckBox className="w-5 h-5 text-[hsl(var(--primary))]" />
           ) : (
-            <MdCheckBoxOutlineBlank className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <MdCheckBoxOutlineBlank className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
           )}
         </button>
       ),
@@ -199,9 +170,9 @@ export function OrganizationsPage() {
           className="flex items-center justify-center"
         >
           {selectedOrgs.has(org._id) ? (
-            <MdCheckBox className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <MdCheckBox className="w-5 h-5 text-[hsl(var(--primary))]" />
           ) : (
-            <MdCheckBoxOutlineBlank className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <MdCheckBoxOutlineBlank className="w-5 h-5 text-[hsl(var(--muted-foreground))]" />
           )}
         </button>
       ),
@@ -209,9 +180,9 @@ export function OrganizationsPage() {
     },
     {
       key: 'name',
-      header: 'Organization Name',
+      header: 'Name',
       render: (org: Organization) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{org.name}</div>
+        <div className="font-semibold text-[hsl(var(--foreground))]">{org.name}</div>
       ),
     },
     {
@@ -222,20 +193,11 @@ export function OrganizationsPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             org.type === 'customer'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+              ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800'
+              : 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800'
           )}
         >
           {org.type === 'customer' ? 'Customer' : 'Vendor'}
-        </span>
-      ),
-    },
-    {
-      key: 'portalType',
-      header: 'Portal Type',
-      render: (org: Organization) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800">
-          {org.portalType}
         </span>
       ),
     },
@@ -247,8 +209,8 @@ export function OrganizationsPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             org.isActive
-              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 ring-1 ring-emerald-200 dark:ring-emerald-800'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 ring-1 ring-red-200 dark:ring-red-800'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
           )}
         >
           {org.isActive ? 'Active' : 'Inactive'}
@@ -256,86 +218,56 @@ export function OrganizationsPage() {
       ),
     },
     {
-      key: 'invitations',
-      header: 'Invitations',
-      render: (org: Organization) => (
-        <button
-          onClick={(event) => {
-            event.stopPropagation();
-            handleOpenInvitations(org);
-          }}
-          className="px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
-        >
-          Manage
-        </button>
-      ),
-    },
-    {
-      key: 'licenseKey',
-      header: 'License Key',
-      render: (org: Organization) => (
-        <div className="text-gray-700 dark:text-gray-300 font-mono text-sm">
-          {org.licenseKey || 'N/A'}
-        </div>
-      ),
-    },
-    {
       key: 'createdAt',
-      header: 'Created At',
+      header: 'Created',
       render: (org: Organization) => (
-        <div className="text-gray-500 dark:text-gray-400 text-sm">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {org.createdAt ? new Date(org.createdAt).toLocaleDateString() : 'N/A'}
-        </div>
+        </span>
       ),
     },
   ];
 
   return (
-    <div className="w-full min-h-screen p-8 space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Organizations
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
-            Manage organizations and their configurations
+          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
+            Manage customer and vendor organizations
           </p>
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all"
-        >
-          <MdAdd className="w-5 h-5" /> Add Organization
-        </button>
       </div>
 
       {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="space-y-4">
           {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
-            <MdSearch className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
+            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
             <input
               type="text"
-              placeholder="Search organizations by name, type, portal type, or license key..."
+              placeholder="Search organizations by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
             />
           </div>
 
           {/* Filters and Actions */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+              <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
                 <MdFilterList className="w-5 h-5" />
                 <span>Filters:</span>
               </div>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
               >
                 <option value="all">All Types</option>
                 <option value="customer">Customer Only</option>
@@ -344,7 +276,7 @@ export function OrganizationsPage() {
               <select
                 value={filterActive}
                 onChange={(e) => setFilterActive(e.target.value)}
-                className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+                className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active Only</option>
@@ -353,12 +285,12 @@ export function OrganizationsPage() {
             </div>
             {selectedOrgs.size > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-[hsl(var(--muted-foreground))]">
                   {selectedOrgs.size} selected
                 </span>
                 <button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors font-semibold text-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white rounded-xl transition-colors font-semibold text-sm"
                 >
                   <MdDelete className="w-4 h-4" />
                   Delete Selected
@@ -371,19 +303,19 @@ export function OrganizationsPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading organizations...</p>
+        <div className="p-12 text-center rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading organizations...</p>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Showing {filteredOrgs.length} organization{filteredOrgs.length !== 1 ? 's' : ''}
             </p>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
             >
               <MdDownload className="w-4 h-4" />
               Export
@@ -392,28 +324,12 @@ export function OrganizationsPage() {
           <DataTable
             columns={columns}
             data={filteredOrgs}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             emptyMessage="No organizations found."
           />
         </div>
       )}
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title={editingOrg ? 'Edit Organization' : 'Create New Organization'}
-      >
-        <OrganizationForm organization={editingOrg} onSuccess={handleSuccess} onCancel={handleClose} />
-      </Modal>
-
-      <OrganizationInvitationsModal
-        organization={selectedOrganization}
-        isOpen={isInvitationsModalOpen}
-        onClose={handleCloseInvitations}
-        apiBasePath="/api/v1/admin"
-      />
     </div>
   );
 }

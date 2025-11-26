@@ -87,51 +87,51 @@ export function DeploymentAnalytics() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Deployment Success Rate</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{successRate}%</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{successRate}%</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Deployments</p>
             <MdRocketLaunch className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalDeployments}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Last 6 months</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalDeployments}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Last 6 months</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Rollbacks/Month</p>
             <MdRefresh className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgRollbacks}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgRollbacks}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Builds This Week</p>
             <MdTrendingUp className="w-5 h-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
             {buildFrequencyData[buildFrequencyData.length - 1]?.builds || 0}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">No data available</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">No data available</p>
         </div>
       </div>
 
       {/* Build & Release Frequency */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Build & Release Frequency</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Weekly build and release counts</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Build & Release Frequency</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Weekly build and release counts</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -148,11 +148,11 @@ export function DeploymentAnalytics() {
       </div>
 
       {/* Deployment Success/Failure Rate */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Deployment Success/Failure Rate</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly deployment outcomes</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Deployment Success/Failure Rate</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly deployment outcomes</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -169,11 +169,11 @@ export function DeploymentAnalytics() {
       </div>
 
       {/* Rollback Count */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Rollback Count</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly rollback trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Rollback Count</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly rollback trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -188,31 +188,31 @@ export function DeploymentAnalytics() {
       </div>
 
       {/* Environment Stability Score */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Environment Stability Score</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Stability metrics by environment</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Environment Stability Score</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Stability metrics by environment</p>
           </div>
           <MdCloud className="w-6 h-6 text-blue-600" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {environmentStability.map((env, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-900 dark:text-white">{env.environment}</h4>
-                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300">
+                <h4 className="font-semibold text-[hsl(var(--foreground))]">{env.environment}</h4>
+                <span className="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-900 text-[hsl(var(--foreground))] font-semibold">
                   {env.stability}%
                 </span>
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Uptime:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{env.uptime}%</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{env.uptime}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Deployments:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{env.deployments}</span>
+                  <span className="font-medium text-[hsl(var(--foreground))]">{env.deployments}</span>
                 </div>
               </div>
             </div>
@@ -221,19 +221,19 @@ export function DeploymentAnalytics() {
       </div>
 
       {/* CI/CD Pipeline Analytics */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">CI/CD Pipeline Analytics</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Pipeline performance metrics</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">CI/CD Pipeline Analytics</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Pipeline performance metrics</p>
           </div>
         </div>
         <div className="space-y-3">
           {cicdPipelineData.map((pipeline, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{pipeline.pipeline}</h4>
+                  <h4 className="font-semibold text-[hsl(var(--foreground))]">{pipeline.pipeline}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Last run: {pipeline.lastRun}</p>
                 </div>
                 <div className="flex items-center gap-4 text-sm">
@@ -243,7 +243,7 @@ export function DeploymentAnalytics() {
                   </div>
                   <div className="text-right">
                     <p className="text-gray-600 dark:text-gray-400">Avg Time</p>
-                    <p className="font-bold text-gray-900 dark:text-white">{pipeline.avgTime} min</p>
+                    <p className="font-bold text-[hsl(var(--foreground))]">{pipeline.avgTime} min</p>
                   </div>
                 </div>
               </div>
@@ -259,11 +259,11 @@ export function DeploymentAnalytics() {
       </div>
 
       {/* Deployment Status Distribution */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Deployment Status Distribution</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Overall deployment outcomes</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Deployment Status Distribution</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Overall deployment outcomes</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>

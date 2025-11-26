@@ -20,8 +20,8 @@ export class EmailService {
     organizationName,
     organizationType,
     invitationLink,
-    portalLink,
-    temporaryPassword,
+    portalLink: _portalLink,
+    temporaryPassword: _temporaryPassword,
   }: SendInvitationEmailParams) {
     try {
       const subject = `Welcome to Euroasiann ERP - ${organizationName} Onboarding`;

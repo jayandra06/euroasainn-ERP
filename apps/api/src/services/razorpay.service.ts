@@ -120,7 +120,7 @@ export function getRazorpayService(): RazorpayService {
   if (!razorpayServiceInstance) {
     try {
       razorpayServiceInstance = new RazorpayService();
-    } catch (error) {
+    } catch {
       logger.warn('⚠️ Razorpay service not initialized. Payment features will be limited.');
       // Return a mock service that throws errors
       return {

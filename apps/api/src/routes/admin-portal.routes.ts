@@ -107,8 +107,8 @@ router.get('/organizations-with-licenses', async (req, res) => {
     const { organizationService } = await import('../services/organization.service');
     const { licenseService } = await import('../services/license.service');
     const { onboardingService } = await import('../services/onboarding.service');
-    const { OrganizationType } = await import('@euroasiann/shared');
-    const { logger } = await import('../config/logger');
+    // const { OrganizationType } = await import('@euroasiann/shared');
+    // const { logger } = await import('../config/logger');
     
     // Get all organizations (customer and vendor)
     const organizations = await organizationService.getOrganizations();

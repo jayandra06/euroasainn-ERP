@@ -25,10 +25,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
+    const html = document.documentElement;
     if (theme === "dark") {
-      document.documentElement.classList.add("dark");
+      html.classList.add("dark");
+      html.setAttribute("data-theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      html.classList.remove("dark");
+      html.setAttribute("data-theme", "light");
     }
     localStorage.setItem("theme", theme);
   }, [theme]);

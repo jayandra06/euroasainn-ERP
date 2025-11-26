@@ -3,12 +3,12 @@
  * Tech portal page to view customer and vendor onboarding submissions
  */
 
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
-import { MdFilterList, MdBusiness, MdPerson, MdCheckCircle, MdCancel, MdVisibility, MdInfo } from 'react-icons/md';
+import { MdFilterList, MdBusiness, MdPerson, MdCheckCircle, MdCancel, MdInfo } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 // Use relative URL in development (with Vite proxy) or env var, otherwise default to localhost:3000
@@ -258,14 +258,14 @@ export function OnboardingDataPage() {
     if (!selectedOnboarding || !selectedType) return;
     const reason = prompt('Please provide a reason for rejection (optional):');
     if (selectedType === 'customer') {
-      rejectCustomerMutation.mutate({ id: selectedOnboarding._id, reason });
+      rejectCustomerMutation.mutate({ id: selectedOnboarding._id, reason: reason || undefined });
     } else {
-      rejectVendorMutation.mutate({ id: selectedOnboarding._id, reason });
+      rejectVendorMutation.mutate({ id: selectedOnboarding._id, reason: reason || undefined });
     }
   };
 
   // Combine data based on filter
-  const allOnboardings = React.useMemo(() => {
+  const allOnboardings = useMemo(() => {
     const data: Array<CustomerOnboarding | VendorOnboarding & { type: string }> = [];
     
     if (filterType === 'all' || filterType === 'customer') {
@@ -290,7 +290,7 @@ export function OnboardingDataPage() {
       render: (item: CustomerOnboarding) => (
         <button
           onClick={() => handleViewDetails(item, 'customer')}
-          className="font-semibold text-blue-600 dark:text-blue-400 hover:underline text-left"
+          className="font-semibold text-[hsl(var(--foreground))] font-semibold hover:underline text-left"
         >
           {item.companyName}
         </button>
@@ -320,7 +320,7 @@ export function OnboardingDataPage() {
         if (isApproved) {
           return (
             <span className="inline-flex items-center" title="Approved">
-              <MdCheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              <MdCheckCircle className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
             </span>
           );
         }
@@ -381,7 +381,7 @@ export function OnboardingDataPage() {
                     rejectCustomerMutation.mutate({ id: item._id, reason });
                   }
                 }}
-                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+                className="px-3 py-1.5 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
                 title="Reject"
               >
                 <MdCancel className="w-6 h-6" />
@@ -390,7 +390,7 @@ export function OnboardingDataPage() {
             </>
           )}
           {item.status === 'approved' && (
-            <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="text-sm font-medium text-[hsl(var(--foreground))] font-semibold">
               Approved
             </span>
           )}
@@ -411,7 +411,7 @@ export function OnboardingDataPage() {
       render: (item: VendorOnboarding) => (
         <button
           onClick={() => handleViewDetails(item, 'vendor')}
-          className="font-semibold text-blue-600 dark:text-blue-400 hover:underline text-left"
+          className="font-semibold text-[hsl(var(--foreground))] font-semibold hover:underline text-left"
         >
           {item.companyName}
         </button>
@@ -441,7 +441,7 @@ export function OnboardingDataPage() {
         if (isApproved) {
           return (
             <span className="inline-flex items-center" title="Approved">
-              <MdCheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              <MdCheckCircle className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
             </span>
           );
         }
@@ -502,7 +502,7 @@ export function OnboardingDataPage() {
                     rejectVendorMutation.mutate({ id: item._id, reason });
                   }
                 }}
-                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+                className="px-3 py-1.5 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
                 title="Reject"
               >
                 <MdCancel className="w-6 h-6" />
@@ -511,13 +511,13 @@ export function OnboardingDataPage() {
             </>
           )}
           {item.status === 'approved' && (
-            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50">
               <MdCheckCircle className="w-4 h-4" />
               Approved
             </span>
           )}
           {item.status === 'rejected' && (
-            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">
+            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50">
               <MdCancel className="w-6 h-6" />
               Rejected
             </span>
@@ -536,8 +536,8 @@ export function OnboardingDataPage() {
           className={cn(
             'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
             item.type === 'customer'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
-              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 ring-1 ring-purple-200 dark:ring-purple-800'
+              ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800'
+              : 'bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/50 ring-1 ring-purple-200 dark:ring-purple-800'
           )}
         >
           {item.type === 'customer' ? 'Customer' : 'Vendor'}
@@ -550,7 +550,7 @@ export function OnboardingDataPage() {
       render: (item: any) => (
         <button
           onClick={() => handleViewDetails(item, item.type)}
-          className="font-semibold text-blue-600 dark:text-blue-400 hover:underline text-left"
+          className="font-semibold text-[hsl(var(--foreground))] font-semibold hover:underline text-left"
         >
           {item.companyName}
         </button>
@@ -580,7 +580,7 @@ export function OnboardingDataPage() {
         if (isApproved) {
           return (
             <span className="inline-flex items-center" title="Approved">
-              <MdCheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              <MdCheckCircle className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
             </span>
           );
         }
@@ -649,7 +649,7 @@ export function OnboardingDataPage() {
                     }
                   }
                 }}
-                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+                className="px-3 py-1.5 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
                 title="Reject"
               >
                 <MdCancel className="w-6 h-6" />
@@ -658,13 +658,13 @@ export function OnboardingDataPage() {
             </>
           )}
           {item.status === 'approved' && (
-            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50">
               <MdCheckCircle className="w-4 h-4" />
               Approved
             </span>
           )}
           {item.status === 'rejected' && (
-            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">
+            <span className="px-3 py-1.5 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50">
               <MdCancel className="w-6 h-6" />
               Rejected
             </span>
@@ -679,7 +679,7 @@ export function OnboardingDataPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Onboarding Data
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
@@ -689,16 +689,16 @@ export function OnboardingDataPage() {
       </div>
 
       {/* Filters */}
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-4 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-semibold">
+          <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
             <MdFilterList className="w-5 h-5" />
             <span>Filters:</span>
           </div>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value as any)}
-            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+            className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
           >
             <option value="all">All Types</option>
             <option value="customer">Customer Only</option>
@@ -707,7 +707,7 @@ export function OnboardingDataPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-medium"
+            className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -720,12 +720,12 @@ export function OnboardingDataPage() {
 
       {/* Tables */}
       {isLoading ? (
-        <div className="p-12 text-center rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">Loading onboarding data...</p>
+        <div className="p-12 text-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+          <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading onboarding data...</p>
         </div>
       ) : (customerError || vendorError) ? (
-        <div className="p-12 text-center rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 shadow-lg">
+        <div className="p-12 text-center rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 shadow-sm">
           <p className="text-red-600 dark:text-red-400 font-medium">
             Error loading onboarding data: {customerError?.message || vendorError?.message || 'Unknown error'}
           </p>
@@ -736,40 +736,46 @@ export function OnboardingDataPage() {
       ) : (
         <div className="space-y-6">
           {filterType === 'all' && (
-            <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-              <DataTable
-                columns={combinedColumns}
-                data={allOnboardings}
-                emptyMessage="No onboarding data found."
-              />
+            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+              <div className="p-6">
+                <DataTable
+                  columns={combinedColumns}
+                  data={allOnboardings}
+                  emptyMessage="No onboarding data found."
+                />
+              </div>
             </div>
           )}
 
           {(filterType === 'all' || filterType === 'customer') && (
-            <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <MdBusiness className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                Customer Onboardings
-              </h2>
-              <DataTable
-                columns={customerColumns}
-                data={customerOnboardings || []}
-                emptyMessage="No customer onboarding data found."
-              />
+            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 flex items-center gap-2">
+                  <MdBusiness className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
+                  Customer Onboardings
+                </h2>
+                <DataTable
+                  columns={customerColumns}
+                  data={customerOnboardings || []}
+                  emptyMessage="No customer onboarding data found."
+                />
+              </div>
             </div>
           )}
 
           {(filterType === 'all' || filterType === 'vendor') && (
-            <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <MdPerson className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                Vendor Onboardings
-              </h2>
-              <DataTable
-                columns={vendorColumns}
-                data={vendorOnboardings || []}
-                emptyMessage="No vendor onboarding data found."
-              />
+            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 flex items-center gap-2">
+                  <MdPerson className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
+                  Vendor Onboardings
+                </h2>
+                <DataTable
+                  columns={vendorColumns}
+                  data={vendorOnboardings || []}
+                  emptyMessage="No vendor onboarding data found."
+                />
+              </div>
             </div>
           )}
         </div>
@@ -790,31 +796,31 @@ export function OnboardingDataPage() {
           <div className="space-y-6">
             {/* Basic Information */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Basic Information
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Company Name</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.companyName || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Company Name</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.companyName || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Contact Person</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.contactPerson || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Contact Person</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.contactPerson || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.email || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Email</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.email || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
-                  <p className="text-gray-900 dark:text-white">
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Status</label>
+                  <p className="text-[hsl(var(--foreground))]">
                     <span className={cn(
                       'px-2 py-1 rounded text-xs font-semibold',
-                      onboardingDetails.status === 'approved' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' :
-                      onboardingDetails.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300' :
-                      onboardingDetails.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' :
-                      'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300'
+                      onboardingDetails.status === 'approved' ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50' :
+                      onboardingDetails.status === 'rejected' ? 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50' :
+                      onboardingDetails.status === 'completed' ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50' :
+                      'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50'
                     )}>
                       {onboardingDetails.status?.toUpperCase() || 'N/A'}
                     </span>
@@ -825,44 +831,44 @@ export function OnboardingDataPage() {
 
             {/* Contact Information */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Contact Information
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Mobile Phone</label>
-                  <p className="text-gray-900 dark:text-white">
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Mobile Phone</label>
+                  <p className="text-[hsl(var(--foreground))]">
                     {onboardingDetails.mobileCountryCode || ''} {onboardingDetails.mobilePhone || 'N/A'}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Desk Phone</label>
-                  <p className="text-gray-900 dark:text-white">
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Desk Phone</label>
+                  <p className="text-[hsl(var(--foreground))]">
                     {onboardingDetails.deskCountryCode || ''} {onboardingDetails.deskPhone || 'N/A'}
                   </p>
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Address</label>
-                  <p className="text-gray-900 dark:text-white">
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Address</label>
+                  <p className="text-[hsl(var(--foreground))]">
                     {onboardingDetails.address1 || 'N/A'}
                     {onboardingDetails.address2 && `, ${onboardingDetails.address2}`}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">City</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.city || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">City</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.city || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Province</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.province || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Province</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.province || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Postal Code</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.postalCode || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Postal Code</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.postalCode || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Country</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.country || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Country</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.country || 'N/A'}</p>
                 </div>
               </div>
             </div>
@@ -872,54 +878,54 @@ export function OnboardingDataPage() {
               <>
                 {onboardingDetails.managingDirector && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                       Managing Director
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
-                        <p className="text-gray-900 dark:text-white">{onboardingDetails.managingDirector || 'N/A'}</p>
+                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Name</label>
+                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.managingDirector || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
-                        <p className="text-gray-900 dark:text-white">{onboardingDetails.managingDirectorEmail || 'N/A'}</p>
+                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Email</label>
+                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.managingDirectorEmail || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Phone</label>
-                        <p className="text-gray-900 dark:text-white">{onboardingDetails.managingDirectorPhone || 'N/A'}</p>
+                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Phone</label>
+                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.managingDirectorPhone || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
                 )}
                 {onboardingDetails.salesManager && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                       Sales Manager
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
-                        <p className="text-gray-900 dark:text-white">{onboardingDetails.salesManager || 'N/A'}</p>
+                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Name</label>
+                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.salesManager || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
-                        <p className="text-gray-900 dark:text-white">{onboardingDetails.salesManagerEmail || 'N/A'}</p>
+                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Email</label>
+                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.salesManagerEmail || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
                 )}
                 {(onboardingDetails.brands?.length > 0 || onboardingDetails.categories?.length > 0 || onboardingDetails.models?.length > 0) && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                       Product Information
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
                       {onboardingDetails.brands?.length > 0 && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Brands</label>
+                          <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Brands</label>
                           <div className="flex flex-wrap gap-2 mt-1">
                             {onboardingDetails.brands.map((brand: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 rounded text-xs">
+                              <span key={i} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-[hsl(var(--foreground))] font-semibold rounded text-xs">
                                 {brand}
                               </span>
                             ))}
@@ -928,10 +934,10 @@ export function OnboardingDataPage() {
                       )}
                       {onboardingDetails.categories?.length > 0 && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Categories</label>
+                          <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Categories</label>
                           <div className="flex flex-wrap gap-2 mt-1">
                             {onboardingDetails.categories.map((cat: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 rounded text-xs">
+                              <span key={i} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/50 text-[hsl(var(--foreground))] font-semibold rounded text-xs">
                                 {cat}
                               </span>
                             ))}
@@ -940,7 +946,7 @@ export function OnboardingDataPage() {
                       )}
                       {onboardingDetails.models?.length > 0 && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Models</label>
+                          <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Models</label>
                           <div className="flex flex-wrap gap-2 mt-1">
                             {onboardingDetails.models.map((model: string, i: number) => (
                               <span key={i} className="px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 rounded text-xs">
@@ -959,48 +965,48 @@ export function OnboardingDataPage() {
             {/* Customer-specific fields */}
             {selectedType === 'customer' && onboardingDetails.vessels && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                   Vessel Information
                 </h3>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Number of Vessels</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.vessels || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Number of Vessels</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.vessels || 'N/A'}</p>
                 </div>
               </div>
             )}
 
             {/* Banking Information */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
                 Banking Information
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Account Name</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.accountName || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Account Name</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.accountName || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Bank Name</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.bankName || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Bank Name</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.bankName || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">IBAN</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.iban || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">IBAN</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.iban || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">SWIFT</label>
-                  <p className="text-gray-900 dark:text-white">{onboardingDetails.swift || 'N/A'}</p>
+                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">SWIFT</label>
+                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.swift || 'N/A'}</p>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
             {onboardingDetails.status === 'completed' && (
-              <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-end gap-4 pt-4 border-t border-[hsl(var(--border))]">
                 <button
                   onClick={handleReject}
                   disabled={rejectCustomerMutation.isPending || rejectVendorMutation.isPending}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 disabled:opacity-50 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
                 >
                   <MdCancel className="w-5 h-5" />
                   Reject
@@ -1018,7 +1024,7 @@ export function OnboardingDataPage() {
           </div>
         ) : (
           <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-blue-600"></div>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
             <p className="mt-4 text-gray-600 dark:text-gray-400">Loading onboarding details...</p>
           </div>
         )}

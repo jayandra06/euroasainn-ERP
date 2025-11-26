@@ -90,49 +90,49 @@ export function SupportFeedbackReports() {
     <div className="w-full space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Tickets</p>
             <MdSupport className="w-5 h-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalTickets}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">All time</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{totalTickets}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">All time</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Open Tickets</p>
             <MdSchedule className="w-5 h-5 text-orange-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{openTickets}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Requires attention</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{openTickets}</p>
+          <p className="text-xs text-[hsl(var(--foreground))] font-semibold mt-1">Requires attention</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Resolution Time</p>
             <MdCheckCircle className="w-5 h-5 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{avgResolutionTime} hrs</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{avgResolutionTime} hrs</p>
           <p className="text-xs text-emerald-600 mt-1">0% from last quarter</p>
         </div>
 
-        <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Satisfaction Rating</p>
             <MdStar className="w-5 h-5 text-yellow-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentSatisfaction.toFixed(1)}</p>
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentSatisfaction.toFixed(1)}</p>
           <p className="text-xs text-emerald-600 mt-1">+12% from last quarter</p>
         </div>
       </div>
 
       {/* Ticket Status Distribution */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Open, Resolved, Pending Tickets</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Ticket status breakdown</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Open, Resolved, Pending Tickets</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Ticket status breakdown</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -157,11 +157,11 @@ export function SupportFeedbackReports() {
       </div>
 
       {/* Average Resolution Time per Issue */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Average Resolution Time per Issue</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Resolution time trends vs target</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Average Resolution Time per Issue</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Resolution time trends vs target</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -178,11 +178,11 @@ export function SupportFeedbackReports() {
       </div>
 
       {/* Ticket Satisfaction Rating */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Ticket Satisfaction Rating</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly satisfaction trends</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Ticket Satisfaction Rating</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Monthly satisfaction trends</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -199,11 +199,11 @@ export function SupportFeedbackReports() {
       </div>
 
       {/* Top Issue Categories */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Top Issue Categories</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Most reported issue types</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Top Issue Categories</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Most reported issue types</p>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -219,9 +219,9 @@ export function SupportFeedbackReports() {
         </ResponsiveContainer>
         <div className="mt-4 space-y-2">
           {issueCategoriesData.map((category, index) => (
-            <div key={index} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-3 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{category.category}</span>
+                <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{category.category}</span>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-gray-600 dark:text-gray-400">
                     {category.count} tickets ({category.percentage}%)
@@ -237,14 +237,14 @@ export function SupportFeedbackReports() {
       </div>
 
       {/* Feedback Trends (Net Promoter Score Chart) */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Feedback Trends (Net Promoter Score)</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">NPS trends over time</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Feedback Trends (Net Promoter Score)</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">NPS trends over time</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">{currentNPS}</p>
+            <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{currentNPS}</p>
             <p className="text-xs text-emerald-600">Current NPS</p>
           </div>
         </div>
@@ -264,19 +264,19 @@ export function SupportFeedbackReports() {
       </div>
 
       {/* Recent Tickets */}
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+      <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Recent Tickets</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Latest support interactions</p>
+            <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">Recent Tickets</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))]">Latest support interactions</p>
           </div>
         </div>
         <div className="space-y-3">
           {recentTickets.map((ticket, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div key={index} className="p-4 rounded-lg bg-[hsl(var(--secondary))]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{ticket.id}: {ticket.subject}</p>
+                  <p className="font-semibold text-[hsl(var(--foreground))]">{ticket.id}: {ticket.subject}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Status: {ticket.status} | Resolution: {ticket.resolutionTime}
                     {ticket.satisfaction && ` | Satisfaction: ${ticket.satisfaction}/5`}
@@ -287,8 +287,8 @@ export function SupportFeedbackReports() {
                     ticket.status === 'Resolved'
                       ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300'
                       : ticket.status === 'Open'
-                      ? 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      ? 'bg-orange-100 dark:bg-orange-900 text-[hsl(var(--foreground))] font-semibold'
+                      : 'bg-gray-100 dark:bg-gray-700 text-[hsl(var(--foreground))]'
                   }`}
                 >
                   {ticket.status}

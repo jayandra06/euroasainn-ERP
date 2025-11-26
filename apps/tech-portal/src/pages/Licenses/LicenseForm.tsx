@@ -1,26 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import React, { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-interface License {
+// =======================
+// Types
+// =======================
+interface Organization {
   _id: string;
-  licenseKey: string;
-  licenseType: 'customer' | 'vendor';
-  status: string;
-  organizationId: string;
+  name: string;
+}
+
+
+export interface License {
+  _id?: string;
+  organizationId: string | { _id: string };    // backend allowance
+  licenseType: "customer" | "vendor";
   expiryDate: string;
   maxUsers: number;
   maxVessels?: number;
   maxItems?: number;
-  features?: string[];
+  features: string[];
 }
 
-interface Organization {
-  _id: string;
-  name: string;
-  type: string;
-  portalType: string;
+
+interface LicenseFormState {
+  organizationId: string;
+  licenseType: "customer" | "vendor";
+  expiryDate: string;
+  maxUsers: number;
+  maxVessels: number;
+  maxItems: number;
+  features: string[];
 }
 
 interface LicenseFormProps {
@@ -30,282 +41,279 @@ interface LicenseFormProps {
   onCancel: () => void;
 }
 
-export function LicenseForm({ license, organizations, organizationId: preFilledOrgId, onSuccess, onCancel }: LicenseFormProps) {
-  const [formData, setFormData] = useState({
-    organizationId: '',
-    licenseType: 'customer' as 'customer' | 'vendor',
-    expiryDate: '',
+export function LicenseForm({
+  license,
+  organizations,
+  onSuccess,
+  onCancel,
+}: LicenseFormProps) {
+  // =====================================
+  // FORM STATE
+  // =====================================
+  const [formData, setFormData] = useState<LicenseFormState>({
+    organizationId: "",
+    licenseType: "customer",
+    expiryDate: "",
     maxUsers: 10,
     maxVessels: 0,
     maxItems: 0,
-    features: [] as string[],
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    currency: 'INR',
+    features: [],
   });
 
+  // =====================================
+  // ON LOAD (EDIT MODE / CREATE MODE)
+  // =====================================
   useEffect(() => {
     if (license) {
-      const orgId = typeof license.organizationId === 'object' 
-        ? license.organizationId._id || license.organizationId
-        : license.organizationId;
-      
+      const orgId =
+        typeof license.organizationId === "object"
+          ? license.organizationId._id
+          : license.organizationId;
+
       setFormData({
-        organizationId: orgId || '',
-        licenseType: license.licenseType || 'customer',
-        expiryDate: license.expiryDate ? new Date(license.expiryDate).toISOString().split('T')[0] : '',
-        maxUsers: license.maxUsers || 10,
-        maxVessels: license.maxVessels || 0,
-        maxItems: license.maxItems || 0,
-        features: license.features || [],
-        monthlyPrice: (license as any).pricing?.monthlyPrice || 0,
-        yearlyPrice: (license as any).pricing?.yearlyPrice || 0,
-        currency: (license as any).pricing?.currency || 'INR',
+        organizationId: orgId,
+        licenseType: license.licenseType,
+        expiryDate: license.expiryDate
+          ? new Date(license.expiryDate).toISOString().split("T")[0]
+          : "",
+        maxUsers: license.maxUsers ?? 10,
+        maxVessels: license.maxVessels ?? 0,
+        maxItems: license.maxItems ?? 0,
+        features: license.features ?? [],
       });
     } else {
-      // Set default expiry to 1 year from now
-      const defaultExpiry = new Date();
-      defaultExpiry.setFullYear(defaultExpiry.getFullYear() + 1);
-      setFormData({
-        ...formData,
-        organizationId: preFilledOrgId || '',
-        expiryDate: defaultExpiry.toISOString().split('T')[0],
-      });
-    }
-  }, [license, preFilledOrgId]);
+      const d = new Date();
+      d.setFullYear(d.getFullYear() + 1);
 
-  const createMutation = useMutation({
-    mutationFn: async (data: any) => {
+      setFormData((prev) => ({
+        ...prev,
+        expiryDate: d.toISOString().split("T")[0],
+      }));
+    }
+  }, [license]);
+
+  // =====================================
+  // MUTATION (CREATE + UPDATE)
+  // =====================================
+  const mutation = useMutation({
+    mutationFn: async (data: LicenseFormState) => {
       const url = license
         ? `${API_URL}/api/v1/tech/licenses/${license._id}`
         : `${API_URL}/api/v1/tech/licenses`;
-      const method = license ? 'PUT' : 'POST';
 
-      const response = await fetch(url, {
+      const method = license ? "PUT" : "POST";
+
+      const res = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || `Failed to ${license ? 'update' : 'create'} license`);
-      }
-      return response.json();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Something went wrong");
+
+      return json;
     },
+
     onSuccess: () => {
-      alert(`License ${license ? 'updated' : 'created'} successfully!`);
+      alert(license ? "License updated!" : "License created!");
       onSuccess();
     },
-    onError: (error: Error) => {
-      alert(`Failed to ${license ? 'update' : 'create'} license: ${error.message}`);
-    },
+
+    onError: (err: Error) => alert(err.message),
   });
 
+  // =====================================
+  // SUBMIT HANDLER
+  // =====================================
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const submitData: any = {
-      organizationId: formData.organizationId,
-      expiresAt: formData.expiryDate,
-      usageLimits: {
-        users: formData.maxUsers,
-      },
-      pricing: {
-        monthlyPrice: formData.monthlyPrice,
-        yearlyPrice: formData.yearlyPrice,
-        currency: formData.currency,
-      },
-    };
-    
-    // Only include vessel/item limits based on license type
-    if (formData.licenseType === 'customer') {
-      submitData.usageLimits.vessels = formData.maxVessels;
-    } else {
-      submitData.usageLimits.items = formData.maxItems;
-    }
-    
-    createMutation.mutate(submitData);
+
+    const payload: LicenseFormState = { ...formData };
+
+    if (payload.licenseType === "customer") payload.maxItems = 0;
+    if (payload.licenseType === "vendor") payload.maxVessels = 0;
+
+    mutation.mutate(payload);
   };
 
-  const availableFeatures = [
-    'rfq_management',
-    'quotation_management',
-    'inventory_management',
-    'vessel_management',
-    'reporting',
-    'api_access',
-    'advanced_analytics',
+  // =====================================
+  // FEATURE LIST
+  // =====================================
+  const featureList: string[] = [
+    "rfq_management",
+    "quotation_management",
+    "inventory_management",
+    "vessel_management",
+    "reporting",
+    "api_access",
+    "advanced_analytics",
   ];
 
-  const handleFeatureToggle = (feature: string) => {
-    setFormData({
-      ...formData,
-      features: formData.features.includes(feature)
-        ? formData.features.filter((f) => f !== feature)
-        : [...formData.features, feature],
-    });
+  const toggleFeature = (f: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      features: prev.features.includes(f)
+        ? prev.features.filter((x) => x !== f)
+        : [...prev.features, f],
+    }));
   };
 
+  // =====================================
+  // UI
+  // =====================================
   return (
-    <form onSubmit={handleSubmit} className="license-form">
-      <div className="form-group">
-        <label htmlFor="organizationId">Organization *</label>
+    <form onSubmit={handleSubmit} className="space-y-6 p-4 bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))]">
+      <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-2">
+        {license ? "Edit License" : "Create License"}
+      </h2>
+
+      {/* Organization */}
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-[hsl(var(--foreground))]">Organization *</label>
         <select
-          id="organizationId"
-          value={formData.organizationId}
-          onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-          required
           disabled={!!license}
+          value={formData.organizationId}
+          onChange={(e) =>
+            setFormData({ ...formData, organizationId: e.target.value })
+          }
+          className="w-full bg-[hsl(var(--card))] text-[hsl(var(--foreground))] p-2 rounded border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
+          required
         >
           <option value="">Select Organization</option>
-          {organizations.map((org) => (
-            <option key={org._id} value={org._id}>
-              {org.name} ({org.type})
+          {organizations.map((o) => (
+            <option key={o._id} value={o._id}>
+              {o.name}
             </option>
           ))}
         </select>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="licenseType">License Type *</label>
+      {/* License Type */}
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-[hsl(var(--foreground))]">License Type *</label>
         <select
-          id="licenseType"
-          value={formData.licenseType}
-          onChange={(e) => setFormData({ ...formData, licenseType: e.target.value as 'customer' | 'vendor' })}
-          required
           disabled={!!license}
+          value={formData.licenseType}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              licenseType: e.target.value as "customer" | "vendor",
+            })
+          }
+          className="w-full bg-[hsl(var(--card))] text-[hsl(var(--foreground))] p-2 rounded border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
         >
           <option value="customer">Customer</option>
           <option value="vendor">Vendor</option>
         </select>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="expiryDate">Expiry Date *</label>
+      {/* Expiry */}
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-[hsl(var(--foreground))]">Expiry Date *</label>
         <input
-          id="expiryDate"
           type="date"
           value={formData.expiryDate}
-          onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-          required
+          onChange={(e) =>
+            setFormData({ ...formData, expiryDate: e.target.value })
+          }
+          className="w-full bg-[hsl(var(--card))] text-[hsl(var(--foreground))] p-2 rounded border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
         />
       </div>
 
-      <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="maxUsers">Max Users *</label>
+      {/* Limits */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Max Users */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-[hsl(var(--foreground))]">Max Users *</label>
           <input
-            id="maxUsers"
             type="number"
             min="1"
             value={formData.maxUsers}
-            onChange={(e) => setFormData({ ...formData, maxUsers: parseInt(e.target.value) || 0 })}
-            required
+            onChange={(e) =>
+              setFormData({ ...formData, maxUsers: Number(e.target.value) })
+            }
+            className="w-full bg-[hsl(var(--card))] text-[hsl(var(--foreground))] p-2 rounded border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
           />
         </div>
 
-        {formData.licenseType === 'customer' && (
-          <div className="form-group">
-            <label htmlFor="maxVessels">Max Vessels</label>
+        {/* Max Vessels (Customer only) */}
+        {formData.licenseType === "customer" && (
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-[hsl(var(--foreground))]">Max Vessels</label>
             <input
-              id="maxVessels"
               type="number"
-              min="0"
               value={formData.maxVessels}
-              onChange={(e) => setFormData({ ...formData, maxVessels: parseInt(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({ ...formData, maxVessels: Number(e.target.value) })
+              }
+              className="w-full bg-[hsl(var(--card))] text-[hsl(var(--foreground))] p-2 rounded border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
             />
           </div>
         )}
 
-        {formData.licenseType === 'vendor' && (
-          <div className="form-group">
-            <label htmlFor="maxItems">Max Items</label>
+        {/* Max Items (Vendor only) */}
+        {formData.licenseType === "vendor" && (
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-[hsl(var(--foreground))]">Max Items</label>
             <input
-              id="maxItems"
               type="number"
-              min="0"
               value={formData.maxItems}
-              onChange={(e) => setFormData({ ...formData, maxItems: parseInt(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({ ...formData, maxItems: Number(e.target.value) })
+              }
+              className="w-full bg-[hsl(var(--card))] text-[hsl(var(--foreground))] p-2 rounded border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent"
             />
           </div>
         )}
       </div>
 
-      <div className="form-group">
-        <label>Features</label>
-        <div className="features-grid">
-          {availableFeatures.map((feature) => (
-            <label key={feature} className="feature-checkbox">
+      {/* Features */}
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-[hsl(var(--foreground))]">Features</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {featureList.map((f) => (
+            <label
+              key={f}
+              className="flex items-center gap-2 p-2 bg-[hsl(var(--secondary))] rounded border border-[hsl(var(--border))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] transition-colors cursor-pointer"
+            >
               <input
                 type="checkbox"
-                checked={formData.features.includes(feature)}
-                onChange={() => handleFeatureToggle(feature)}
+                checked={formData.features.includes(f)}
+                onChange={() => toggleFeature(f)}
+                className="w-4 h-4 text-[hsl(var(--primary))] border-[hsl(var(--border))] rounded focus:ring-[hsl(var(--primary))] focus:ring-2"
               />
-              <span>{feature.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}</span>
+              {f.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
             </label>
           ))}
         </div>
       </div>
 
-      <div className="form-group">
-        <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Pricing Information</h3>
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="monthlyPrice">Monthly Price *</label>
-            <input
-              id="monthlyPrice"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.monthlyPrice}
-              onChange={(e) => setFormData({ ...formData, monthlyPrice: parseFloat(e.target.value) || 0 })}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="yearlyPrice">Yearly Price *</label>
-            <input
-              id="yearlyPrice"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.yearlyPrice}
-              onChange={(e) => setFormData({ ...formData, yearlyPrice: parseFloat(e.target.value) || 0 })}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="currency">Currency *</label>
-            <select
-              id="currency"
-              value={formData.currency}
-              onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              required
-            >
-              <option value="INR">INR (₹)</option>
-              <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div className="form-actions">
-        <button type="button" onClick={onCancel} className="cancel-button">
+      {/* Buttons */}
+      <div className="flex justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--muted))] rounded text-[hsl(var(--foreground))] font-medium transition-colors"
+        >
           Cancel
         </button>
+
         <button
           type="submit"
-          className="submit-button"
-          disabled={createMutation.isPending}
+          disabled={mutation.isPending}
+          className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 rounded text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {createMutation.isPending ? 'Saving...' : license ? 'Update License' : 'Create License'}
+          {mutation.isPending
+            ? "Saving..."
+            : license
+            ? "Update License"
+            : "Create License"}
         </button>
       </div>
     </form>
   );
 }
-

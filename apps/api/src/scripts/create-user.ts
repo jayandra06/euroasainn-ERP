@@ -39,16 +39,16 @@ if (envPath) {
 // MongoDB connection string
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/euroasiann';
 
-interface User {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  portalType: string;
-  role: string;
-  organizationId?: mongoose.Types.ObjectId;
-  isActive: boolean;
-}
+// interface User {
+//   email: string;
+//   password: string;
+//   firstName: string;
+//   lastName: string;
+//   portalType: string;
+//   role: string;
+//   organizationId?: mongoose.Types.ObjectId;
+//   isActive: boolean;
+// }
 
 const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },

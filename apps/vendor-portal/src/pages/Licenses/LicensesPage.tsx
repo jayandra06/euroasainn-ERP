@@ -48,7 +48,7 @@ export function LicensesPage() {
       key: 'licenseKey',
       header: 'License Key',
       render: (item: License) => (
-        <div className="font-mono text-sm text-gray-900 dark:text-white">{item.licenseKey}</div>
+        <div className="font-mono text-sm text-[hsl(var(--foreground))]">{item.licenseKey}</div>
       ),
     },
     {
@@ -69,7 +69,7 @@ export function LicensesPage() {
         if (isActive) {
           return (
             <span className="inline-flex items-center" title="Active">
-              <MdCheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              <MdCheckCircle className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
             </span>
           );
         }
@@ -85,7 +85,7 @@ export function LicensesPage() {
       key: 'issuedAt',
       header: 'Issued Date',
       render: (item: License) => (
-        <span className="text-gray-600 dark:text-gray-400">
+        <span className="text-[hsl(var(--muted-foreground))]">
           {item.issuedAt ? new Date(item.issuedAt).toLocaleDateString() : 'N/A'}
         </span>
       ),
@@ -97,7 +97,7 @@ export function LicensesPage() {
         const expiry = new Date(item.expiresAt);
         const isExpired = expiry < new Date();
         return (
-          <span className={cn('text-gray-600 dark:text-gray-400', isExpired && 'text-red-600 dark:text-red-400')}>
+          <span className={cn('text-[hsl(var(--muted-foreground))]', isExpired && 'text-red-600 dark:text-red-400')}>
             {expiry.toLocaleDateString()}
           </span>
         );
@@ -108,11 +108,11 @@ export function LicensesPage() {
       header: 'Usage',
       render: (item: License) => (
         <div className="text-sm">
-          <div className="text-gray-600 dark:text-gray-400">
+          <div className="text-[hsl(var(--muted-foreground))]">
             Users: {item.currentUsage?.users || 0} / {item.usageLimits?.users || 0}
           </div>
           {item.usageLimits?.items !== undefined && (
-            <div className="text-gray-600 dark:text-gray-400">
+            <div className="text-[hsl(var(--muted-foreground))]">
               Items: {item.currentUsage?.items || 0} / {item.usageLimits.items}
             </div>
           )}
@@ -125,7 +125,7 @@ export function LicensesPage() {
     return (
       <div className="w-full min-h-screen p-8">
         <div className="flex items-center justify-center h-64">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
         </div>
       </div>
     );
@@ -134,18 +134,18 @@ export function LicensesPage() {
   return (
     <div className="w-full min-h-screen p-8 space-y-6">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           Licenses
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+        <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
           View your organization's licenses and subscription details
         </p>
       </div>
 
-      <div className="p-6 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
         <div className="flex items-center gap-2 mb-4">
-          <MdVpnKey className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Your Licenses</h2>
+          <MdVpnKey className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Your Licenses</h2>
         </div>
         <DataTable
           columns={columns}
