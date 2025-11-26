@@ -6,6 +6,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
+import { OnboardingDetailsModal } from '../../components/OnboardingDetailsModal';
 import { useToast } from '../../components/shared/Toast';
 import { MdFilterList, MdBusiness, MdPerson, MdSearch, MdRefresh, MdDownload, MdCheckCircle, MdCancel } from 'react-icons/md';
 import { cn } from '../../lib/utils';
@@ -40,6 +41,12 @@ export function OnboardingDataPage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedOnboarding, setSelectedOnboarding] = useState<{
+    organizationId: string;
+    organizationType: 'customer' | 'vendor';
+    organizationName: string;
+  } | null>(null);
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -420,12 +427,38 @@ export function OnboardingDataPage() {
     );
   }, [allOnboardings, searchQuery]);
 
+  const handleOnboardingClick = (item: CustomerOnboarding | VendorOnboarding, type: 'customer' | 'vendor') => {
+    if (item.organizationId) {
+      setSelectedOnboarding({
+        organizationId: item.organizationId,
+        organizationType: type,
+        organizationName: item.companyName,
+      });
+      setIsOnboardingModalOpen(true);
+    } else {
+      showToast('Organization ID not found for this onboarding', 'error');
+    }
+  };
+
+  const handleCloseOnboardingModal = () => {
+    setIsOnboardingModalOpen(false);
+    setSelectedOnboarding(null);
+  };
+
   const customerColumns = [
     {
       key: 'companyName',
       header: 'Company Name',
       render: (item: CustomerOnboarding) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{item.companyName}</div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOnboardingClick(item, 'customer');
+          }}
+          className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left"
+        >
+          {item.companyName}
+        </button>
       ),
     },
     {
@@ -508,7 +541,15 @@ export function OnboardingDataPage() {
       key: 'companyName',
       header: 'Company Name',
       render: (item: VendorOnboarding) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{item.companyName}</div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOnboardingClick(item, 'vendor');
+          }}
+          className="font-semibold text-gray-900 dark:text-white hover:text-purple-600 dark:hover:text-purple-400 transition-colors text-left"
+        >
+          {item.companyName}
+        </button>
       ),
     },
     {
@@ -607,7 +648,19 @@ export function OnboardingDataPage() {
       key: 'companyName',
       header: 'Company Name',
       render: (item: any) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{item.companyName}</div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOnboardingClick(item, item.type);
+          }}
+          className={`font-semibold text-gray-900 dark:text-white transition-colors text-left ${
+            item.type === 'customer'
+              ? 'hover:text-blue-600 dark:hover:text-blue-400'
+              : 'hover:text-purple-600 dark:hover:text-purple-400'
+          }`}
+        >
+          {item.companyName}
+        </button>
       ),
     },
     {
@@ -848,6 +901,17 @@ export function OnboardingDataPage() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Onboarding Details Modal */}
+      {selectedOnboarding && (
+        <OnboardingDetailsModal
+          isOpen={isOnboardingModalOpen}
+          onClose={handleCloseOnboardingModal}
+          organizationId={selectedOnboarding.organizationId}
+          organizationType={selectedOnboarding.organizationType}
+          organizationName={selectedOnboarding.organizationName}
+        />
       )}
     </div>
   );

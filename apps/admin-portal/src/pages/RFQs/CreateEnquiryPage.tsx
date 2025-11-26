@@ -392,8 +392,11 @@ export function CreateEnquiryPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Supply Port</option>
-              <option value="port1">Port 1</option>
-              <option value="port2">Port 2</option>
+              <option value="Bussan">Bussan</option>
+              <option value="Goa">Goa</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Mumbai">Mumbai</option>
             </select>
           </div>
         </div>
@@ -547,9 +550,10 @@ export function CreateEnquiryPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Quality</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
+              <option value="Genuine">Genuine</option>
+              <option value="OEM">OEM</option>
+              <option value="Copy">Copy</option>
+              <option value="Parts">Parts</option>
             </select>
           </div>
           <div>
@@ -562,9 +566,17 @@ export function CreateEnquiryPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Incoterm</option>
-              <option value="FOB">FOB</option>
-              <option value="CIF">CIF</option>
-              <option value="EXW">EXW</option>
+              <option value="EXW (Ex Works)">EXW (Ex Works)</option>
+              <option value="FCA (Free Carrier)">FCA (Free Carrier)</option>
+              <option value="CPT (Carriage Paid To)">CPT (Carriage Paid To)</option>
+              <option value="CIP (Carriage and Insurance Paid To)">CIP (Carriage and Insurance Paid To)</option>
+              <option value="DAP (Delivered at Place)">DAP (Delivered at Place)</option>
+              <option value="DPU (Delivered at Place Unloaded)">DPU (Delivered at Place Unloaded)</option>
+              <option value="DDP (Delivered Duty Paid)">DDP (Delivered Duty Paid)</option>
+              <option value="FAS (Free Alongside Ship)">FAS (Free Alongside Ship)</option>
+              <option value="FOB (Free On Board)">FOB (Free On Board)</option>
+              <option value="CFR (Cost and Freight)">CFR (Cost and Freight)</option>
+              <option value="CIF (Cost, Insurance and Freight)">CIF (Cost, Insurance and Freight)</option>
             </select>
           </div>
           <div>
@@ -577,8 +589,14 @@ export function CreateEnquiryPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Container Type</option>
-              <option value="20ft">20ft</option>
-              <option value="40ft">40ft</option>
+              <option value="Nest 50 (50L Crate)">Nest 50 (50L Crate)</option>
+              <option value="Nest 60 (60L Crate)">Nest 60 (60L Crate)</option>
+              <option value="Euro Crate (Standard Euro Crate)">Euro Crate (Standard Euro Crate)</option>
+              <option value="Foldable Crate (Collapsible Crate)">Foldable Crate (Collapsible Crate)</option>
+              <option value="Pallet Box (Heavy-Duty Pallet Box)">Pallet Box (Heavy-Duty Pallet Box)</option>
+              <option value="IBC Tank (Intermediate Bulk Container)">IBC Tank (Intermediate Bulk Container)</option>
+              <option value="Plastic Drum (220L Sealed Drum)">Plastic Drum (220L Sealed Drum)</option>
+              <option value="Wooden Crate (Custom Size Wooden Crate)">Wooden Crate (Custom Size Wooden Crate)</option>
             </select>
           </div>
         </div>

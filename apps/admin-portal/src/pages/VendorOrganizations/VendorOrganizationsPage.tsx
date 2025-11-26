@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
+import { OnboardingDetailsModal } from '../../components/OnboardingDetailsModal';
 import { OrganizationForm } from '../CustomerOrganizations/OrganizationForm';
 import { useToast } from '../../components/shared/Toast';
 import { MdAdd, MdBusiness, MdFilterList } from 'react-icons/md';
@@ -29,6 +30,8 @@ export function VendorOrganizationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [filterActive, setFilterActive] = useState<string>('all');
+  const [selectedOrg, setSelectedOrg] = useState<{ id: string; name: string } | null>(null);
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
 
   // Fetch vendor organizations
   const { data: orgsData, isLoading } = useQuery({
@@ -105,12 +108,30 @@ export function VendorOrganizationsPage() {
     handleClose();
   };
 
+  const handleOrganizationClick = (org: Organization) => {
+    setSelectedOrg({ id: org._id, name: org.name });
+    setIsOnboardingModalOpen(true);
+  };
+
+  const handleCloseOnboardingModal = () => {
+    setIsOnboardingModalOpen(false);
+    setSelectedOrg(null);
+  };
+
   const columns = [
     {
       key: 'name',
       header: 'Organization Name',
       render: (org: Organization) => (
-        <div className="font-semibold text-gray-900 dark:text-white">{org.name}</div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOrganizationClick(org);
+          }}
+          className="font-semibold text-gray-900 dark:text-white hover:text-purple-600 dark:hover:text-purple-400 transition-colors text-left"
+        >
+          {org.name}
+        </button>
       ),
     },
     {
@@ -222,6 +243,17 @@ export function VendorOrganizationsPage() {
           onCancel={handleClose}
         />
       </Modal>
+
+      {/* Onboarding Details Modal */}
+      {selectedOrg && (
+        <OnboardingDetailsModal
+          isOpen={isOnboardingModalOpen}
+          onClose={handleCloseOnboardingModal}
+          organizationId={selectedOrg.id}
+          organizationType="vendor"
+          organizationName={selectedOrg.name}
+        />
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { licenseService } from './license.service';
 import { organizationService } from './organization.service';
 import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
+import { VendorOnboarding } from '../models/vendor-onboarding.model';
 
 export class RFQService {
   generateRFQNumber(): string {
@@ -98,8 +99,8 @@ export class RFQService {
 
   /**
    * Get available vendors for RFQ creation
-   * - Admin: returns only admin-invited vendors
-   * - Customer: returns only customer-invited vendors (visible to that customer)
+   * - Admin: returns only admin-invited vendors with approved onboarding
+   * - Customer: returns only customer-invited vendors (visible to that customer) with approved onboarding
    */
   async getAvailableVendorsForRFQ(requesterOrganizationId: string, requesterPortalType: PortalType) {
     const filters: any = {
@@ -117,12 +118,38 @@ export class RFQService {
       filters
     );
 
-    // Filter to only admin-invited vendors for admin/tech, customer-invited for customers
+    // Get all vendor organization IDs
+    const vendorIds = vendors.map((v: any) => new mongoose.Types.ObjectId(v._id || v.id));
+
+    // Check which vendors have approved onboarding
+    const approvedOnboardings = await VendorOnboarding.find({
+      organizationId: { $in: vendorIds },
+      status: 'approved',
+    }).select('organizationId');
+
+    const approvedVendorIds = new Set(
+      approvedOnboardings.map((onboarding) => onboarding.organizationId?.toString())
+    );
+
+    // Filter vendors based on portal type and approval status
+    let filteredVendors: any[] = [];
+
     if (requesterPortalType === PortalType.ADMIN || requesterPortalType === PortalType.TECH) {
-      return vendors.filter((v: any) => v.isAdminInvited === true);
+      // For admin/tech: admin-invited vendors with approved onboarding
+      filteredVendors = vendors.filter((v: any) => {
+        const vendorId = (v._id || v.id)?.toString();
+        return v.isAdminInvited === true && approvedVendorIds.has(vendorId);
+      });
     } else {
-      // For customers, return vendors they have access to (customer-invited or admin-invited with visibility)
-      return vendors.filter((v: any) => {
+      // For customers: vendors they have access to with approved onboarding
+      filteredVendors = vendors.filter((v: any) => {
+        const vendorId = (v._id || v.id)?.toString();
+        
+        // Must have approved onboarding
+        if (!approvedVendorIds.has(vendorId)) {
+          return false;
+        }
+
         // Customer-invited vendors
         if (!v.isAdminInvited && v.invitedByOrganizationId?.toString() === requesterOrganizationId) {
           return true;
@@ -134,6 +161,8 @@ export class RFQService {
         return false;
       });
     }
+
+    return filteredVendors;
   }
 }
 
