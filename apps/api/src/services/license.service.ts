@@ -20,6 +20,11 @@ export class LicenseService {
       employees?: number;
       businessUnits?: number;
     };
+    pricing?: {
+      monthlyPrice?: number;
+      yearlyPrice?: number;
+      currency?: string;
+    };
   }) {
     // Validate and convert organizationId to ObjectId
     if (!mongoose.Types.ObjectId.isValid(data.organizationId)) {
@@ -46,6 +51,11 @@ export class LicenseService {
         items: 0,
         employees: 0,
         businessUnits: 0,
+      },
+      pricing: data.pricing || {
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        currency: 'INR',
       },
     });
 
@@ -93,7 +103,7 @@ export class LicenseService {
 
     // Optimize query: only select necessary fields to reduce data transfer
     const licenses = await License.find(query)
-      .select('licenseKey organizationId organizationType status expiresAt usageLimits currentUsage issuedAt createdAt')
+      .select('licenseKey organizationId organizationType status expiresAt usageLimits currentUsage pricing issuedAt createdAt')
       .lean() // Use lean() for better performance (returns plain objects)
       .exec();
     
@@ -109,8 +119,18 @@ export class LicenseService {
   }
 
   async validateLicense(organizationId: string): Promise<ILicense> {
+    // Convert string organizationId to ObjectId for proper querying
+    let orgId: mongoose.Types.ObjectId | string = organizationId;
+    try {
+      if (mongoose.Types.ObjectId.isValid(organizationId)) {
+        orgId = new mongoose.Types.ObjectId(organizationId);
+      }
+    } catch (error: any) {
+      logger.warn(`⚠️ Error converting organizationId to ObjectId: ${error.message}, using as-is`);
+    }
+
     const license = await License.findOne({
-      organizationId,
+      organizationId: orgId,
       status: LicenseStatus.ACTIVE,
       expiresAt: { $gt: new Date() },
     });

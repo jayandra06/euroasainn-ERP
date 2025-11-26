@@ -88,7 +88,7 @@ router.get('/licenses', async (req, res) => {
 
 router.post('/licenses', async (req, res) => {
   try {
-    const { organizationId, expiresAt, usageLimits } = req.body;
+    const { organizationId, expiresAt, usageLimits, pricing } = req.body;
 
     if (!organizationId || !expiresAt || !usageLimits) {
       return res.status(400).json({
@@ -111,6 +111,11 @@ router.post('/licenses', async (req, res) => {
       organizationType: organization.type as OrganizationType,
       expiresAt: new Date(expiresAt),
       usageLimits,
+      pricing: pricing || {
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        currency: 'INR',
+      },
     });
 
     res.status(201).json({

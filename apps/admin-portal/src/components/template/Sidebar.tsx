@@ -9,19 +9,15 @@ import {
   MdDashboard,
   MdBusinessCenter,
   MdVpnKey,
-  MdTrendingUp,
   MdChevronLeft,
   MdChevronRight,
   MdRocketLaunch,
   MdLogout,
   MdPeople,
-  MdPerson,
-  MdHistory,
-  MdDescription,
-  MdNotifications,
-  MdSupport,
-  MdPayment,
   MdSettings,
+  MdAdminPanelSettings,
+  MdBarChart,
+  MdAssignment,
   MdRequestQuote,
   MdInventory,
   MdStore,
@@ -29,6 +25,7 @@ import {
   MdModelTraining,
   MdExpandMore,
   MdExpandLess,
+  MdSupport,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
@@ -71,6 +68,13 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin/customers/support', label: 'Support', icon: MdSupport },
     ],
   },
+  { path: '/users', label: 'Users', icon: MdPeople },
+  { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
+  { path: '/onboarding-data', label: 'Onboarding', icon: MdAssignment },
+  { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
+  { path: '/admin-users', label: 'Admin Users', icon: MdAdminPanelSettings },
+  { path: '/analytics', label: 'Analytics', icon: MdBarChart },
+  { path: '/settings', label: 'Settings', icon: MdSettings },
 ];
 
 interface SidebarProps {
@@ -295,6 +299,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     </span>
                   )}
                 </>
+              )}
+              {collapsed && (
+                <div className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-lg z-50">
+                  {item.label}
+                </div>
               )}
             </NavLink>
           );

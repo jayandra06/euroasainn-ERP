@@ -139,25 +139,26 @@ export class UserController {
           }
         }
 
-        // Generate invitation/login link
-        const baseUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
-        const portalPath = data.portalType === PortalType.TECH 
-          ? '/login' 
-          : data.portalType === PortalType.ADMIN 
-          ? '/login'
-          : data.portalType === PortalType.CUSTOMER
-          ? '/login'
-          : '/login';
-        const invitationLink = `${baseUrl}${portalPath}`;
+        // Generate portal login link based on portal type
+        let portalUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+        if (data.portalType === PortalType.ADMIN) {
+          portalUrl = process.env.ADMIN_PORTAL_URL || process.env.FRONTEND_URL || 'http://localhost:4300';
+        } else if (data.portalType === PortalType.TECH) {
+          portalUrl = process.env.TECH_PORTAL_URL || process.env.FRONTEND_URL || 'http://localhost:4200';
+        } else if (data.portalType === PortalType.CUSTOMER) {
+          portalUrl = process.env.CUSTOMER_PORTAL_URL || process.env.FRONTEND_URL || 'http://localhost:4400';
+        } else if (data.portalType === PortalType.VENDOR) {
+          portalUrl = process.env.VENDOR_PORTAL_URL || process.env.FRONTEND_URL || 'http://localhost:4500';
+        }
+        const portalLink = `${portalUrl}/login`;
 
-        // Send invitation email with temporary password
-        await emailService.sendInvitationEmail({
+        // Send user invitation email with temporary password
+        await emailService.sendUserInvitationEmail({
           to: result.email,
           firstName: result.firstName,
           lastName: result.lastName,
-          organizationName,
-          organizationType,
-          invitationLink,
+          portalType: data.portalType,
+          portalLink,
           temporaryPassword: result.temporaryPassword,
         });
 

@@ -104,7 +104,8 @@ export function LicensesPage() {
     queryFn: async () => {
       try {
         // Use the new optimized endpoint that returns organizations with licenses and onboarding status
-        const response = await fetch(`${API_URL}/api/v1/admin/organizations-with-licenses`, {
+        const url = API_URL ? `${API_URL}/api/v1/admin/organizations-with-licenses` : `/api/v1/admin/organizations-with-licenses`;
+        const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },

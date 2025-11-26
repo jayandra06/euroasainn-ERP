@@ -119,7 +119,7 @@ export function OnboardingDataPage() {
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['onboarding-details'] });
@@ -127,6 +127,10 @@ export function OnboardingDataPage() {
       setIsModalOpen(false);
       setSelectedOnboarding(null);
       setSelectedType(null);
+      // Redirect to license creation page with organizationId
+      if (data?.data?.organizationId) {
+        window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=customer`;
+      }
     },
     onError: (error: any) => {
       console.error('Approve customer onboarding error:', error);
@@ -172,7 +176,7 @@ export function OnboardingDataPage() {
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['onboarding-details'] });
@@ -180,6 +184,10 @@ export function OnboardingDataPage() {
       setIsModalOpen(false);
       setSelectedOnboarding(null);
       setSelectedType(null);
+      // Redirect to license creation page with organizationId
+      if (data?.data?.organizationId) {
+        window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=vendor`;
+      }
     },
     onError: (error: any) => {
       console.error('Approve vendor onboarding error:', error);

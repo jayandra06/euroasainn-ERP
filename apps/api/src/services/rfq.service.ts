@@ -1,19 +1,39 @@
+import mongoose from 'mongoose';
 import { RFQ, IRFQ } from '../models/rfq.model';
 import { v4 as uuidv4 } from 'uuid';
 import { licenseService } from './license.service';
+import { organizationService } from './organization.service';
+import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
+import { VendorOnboarding } from '../models/vendor-onboarding.model';
 
 export class RFQService {
   generateRFQNumber(): string {
     return `RFQ-${Date.now()}-${uuidv4().substring(0, 8).toUpperCase()}`;
   }
 
-  async createRFQ(organizationId: string, data: Partial<IRFQ>) {
+  async createRFQ(
+    organizationId: string,
+    data: Partial<IRFQ>,
+    senderType: 'admin' | 'customer',
+    recipientVendorIds: string[]
+  ) {
     // Check license limit
     await licenseService.checkUsageLimit(organizationId, 'employees');
+
+    // Validate recipient vendor IDs
+    if (!recipientVendorIds || recipientVendorIds.length === 0) {
+      throw new Error('At least one vendor must be selected');
+    }
+
+    // Convert vendor IDs to ObjectIds
+    const vendorObjectIds = recipientVendorIds.map((id) => new mongoose.Types.ObjectId(id));
 
     const rfq = new RFQ({
       ...data,
       organizationId,
+      senderType,
+      senderId: new mongoose.Types.ObjectId(organizationId),
+      recipientVendorIds: vendorObjectIds,
       rfqNumber: this.generateRFQNumber(),
     });
 
@@ -26,11 +46,11 @@ export class RFQService {
     if (filters?.status) {
       query.status = filters.status;
     }
-    return await RFQ.find(query);
+    return await RFQ.find(query).populate('vesselId', 'name imoNumber type');
   }
 
   async getRFQById(rfqId: string, organizationId: string) {
-    const rfq = await RFQ.findOne({ _id: rfqId, organizationId });
+    const rfq = await RFQ.findOne({ _id: rfqId, organizationId }).populate('vesselId', 'name imoNumber type');
     if (!rfq) {
       throw new Error('RFQ not found');
     }
@@ -54,6 +74,95 @@ export class RFQService {
       throw new Error('RFQ not found');
     }
     return { success: true };
+  }
+
+  /**
+   * Get RFQs for a vendor (vendor's inbox)
+   * Returns RFQs where the vendor is in recipientVendorIds
+   */
+  async getRFQsForVendor(vendorOrganizationId: string, filters?: any) {
+    const query: any = {
+      recipientVendorIds: new mongoose.Types.ObjectId(vendorOrganizationId),
+    };
+    
+    if (filters?.status) {
+      query.status = filters.status;
+    }
+
+    const rfqs = await RFQ.find(query)
+      .populate('vesselId', 'name imoNumber type')
+      .populate('senderId', 'name type') // Populate sender organization
+      .sort({ createdAt: -1 });
+
+    return rfqs;
+  }
+
+  /**
+   * Get available vendors for RFQ creation
+   * - Admin: returns only admin-invited vendors with approved onboarding
+   * - Customer: returns only customer-invited vendors (visible to that customer) with approved onboarding
+   */
+  async getAvailableVendorsForRFQ(requesterOrganizationId: string, requesterPortalType: PortalType) {
+    const filters: any = {
+      requesterPortalType,
+    };
+
+    if (requesterPortalType === PortalType.CUSTOMER) {
+      filters.customerOrganizationId = requesterOrganizationId;
+    }
+    // For admin/tech, no customerOrganizationId filter - they see all admin-invited vendors
+
+    const vendors = await organizationService.getOrganizations(
+      OrganizationType.VENDOR,
+      PortalType.VENDOR,
+      filters
+    );
+
+    // Get all vendor organization IDs
+    const vendorIds = vendors.map((v: any) => new mongoose.Types.ObjectId(v._id || v.id));
+
+    // Check which vendors have approved onboarding
+    const approvedOnboardings = await VendorOnboarding.find({
+      organizationId: { $in: vendorIds },
+      status: 'approved',
+    }).select('organizationId');
+
+    const approvedVendorIds = new Set(
+      approvedOnboardings.map((onboarding) => onboarding.organizationId?.toString())
+    );
+
+    // Filter vendors based on portal type and approval status
+    let filteredVendors: any[] = [];
+
+    if (requesterPortalType === PortalType.ADMIN || requesterPortalType === PortalType.TECH) {
+      // For admin/tech: admin-invited vendors with approved onboarding
+      filteredVendors = vendors.filter((v: any) => {
+        const vendorId = (v._id || v.id)?.toString();
+        return v.isAdminInvited === true && approvedVendorIds.has(vendorId);
+      });
+    } else {
+      // For customers: vendors they have access to with approved onboarding
+      filteredVendors = vendors.filter((v: any) => {
+        const vendorId = (v._id || v.id)?.toString();
+        
+        // Must have approved onboarding
+        if (!approvedVendorIds.has(vendorId)) {
+          return false;
+        }
+
+        // Customer-invited vendors
+        if (!v.isAdminInvited && v.invitedByOrganizationId?.toString() === requesterOrganizationId) {
+          return true;
+        }
+        // Admin-invited vendors visible to this customer
+        if (v.isAdminInvited && v.visibleToCustomerIds?.some((id: any) => id.toString() === requesterOrganizationId)) {
+          return true;
+        }
+        return false;
+      });
+    }
+
+    return filteredVendors;
   }
 }
 

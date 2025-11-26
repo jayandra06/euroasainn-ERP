@@ -183,8 +183,11 @@ export class OnboardingController {
 
       res.status(200).json({
         success: true,
-        data: onboarding,
-        message: 'Customer onboarding approved successfully. License created.',
+        data: {
+          ...onboarding.toObject(),
+          organizationId: onboarding.organizationId,
+        },
+        message: 'Customer onboarding approved successfully. Please create license with pricing.',
       });
     } catch (error: any) {
       logger.error('❌ Approve customer onboarding error:', error);
@@ -224,8 +227,11 @@ export class OnboardingController {
 
       res.status(200).json({
         success: true,
-        data: onboarding,
-        message: 'Vendor onboarding approved successfully. License created.',
+        data: {
+          ...onboarding.toObject(),
+          organizationId: onboarding.organizationId,
+        },
+        message: 'Vendor onboarding approved successfully. Please create license with pricing.',
       });
     } catch (error: any) {
       logger.error('Approve vendor onboarding error:', error);

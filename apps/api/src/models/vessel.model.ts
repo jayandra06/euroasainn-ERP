@@ -5,6 +5,7 @@ export interface IVessel extends Document {
   name: string;
   type: string;
   imoNumber?: string;
+  exVesselName?: string;
   flag?: string;
   metadata?: Record<string, any>;
   createdAt: Date;
@@ -32,6 +33,10 @@ const VesselSchema = new Schema<IVessel>(
       type: String,
       unique: true,
       sparse: true,
+    },
+    exVesselName: {
+      type: String,
+      trim: true,
     },
     flag: {
       type: String,

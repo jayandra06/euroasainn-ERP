@@ -1,7 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { DataTable } from '../../components/shared/DataTable';
+import { useToast } from '../../components/shared/Toast';
 import { MdAdd, MdSearch, MdClose } from 'react-icons/md';
+import { cn } from '../../lib/utils';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+interface Vendor {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName?: string;
+  phone?: string;
+  organizationId?: string;
+  organizationName?: string;
+  role?: string;
+  isActive: boolean;
+  lastLogin?: string;
+  createdAt?: string;
+}
 
 export function VendorsPage() {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,12 +35,58 @@ export function VendorsPage() {
     company: '',
   });
 
+  // Fetch vendor users
+  const { data: vendorsData, isLoading } = useQuery<Vendor[]>({
+    queryKey: ['vendors', activeFilter],
+    queryFn: async () => {
+      const params = new URLSearchParams({ portalType: 'vendor' });
+      if (activeFilter !== 'all') {
+        if (activeFilter === 'approved' || activeFilter === 'waiting' || activeFilter === 'rejected') {
+          // These filters might need to be mapped to onboarding status
+          // For now, we'll use isActive for approved/disabled
+          if (activeFilter === 'approved') {
+            params.append('isActive', 'true');
+          } else if (activeFilter === 'disabled') {
+            params.append('isActive', 'false');
+          }
+        } else if (activeFilter === 'disabled') {
+          params.append('isActive', 'false');
+        }
+      }
+
+      const response = await fetch(`${API_URL}/api/v1/admin/vendors?${params}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch vendors');
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
+
+  // Filter vendors by search query
+  const filteredVendors = useMemo(() => {
+    if (!vendorsData) return [];
+    if (!searchQuery.trim()) return vendorsData;
+
+    const query = searchQuery.toLowerCase();
+    return vendorsData.filter(
+      (vendor) =>
+        vendor.email?.toLowerCase().includes(query) ||
+        vendor.firstName?.toLowerCase().includes(query) ||
+        vendor.lastName?.toLowerCase().includes(query) ||
+        `${vendor.firstName} ${vendor.lastName}`.toLowerCase().includes(query) ||
+        vendor.organizationName?.toLowerCase().includes(query) ||
+        vendor.phone?.toLowerCase().includes(query)
+    );
+  }, [vendorsData, searchQuery]);
+
   const filters = [
     { id: 'all', label: 'All' },
-    { id: 'approved', label: 'Approved' },
-    { id: 'waiting', label: 'Waiting' },
-    { id: 'rejected', label: 'Rejected' },
-    { id: 'disabled', label: 'Disabled' },
+    { id: 'approved', label: 'Active' },
+    { id: 'disabled', label: 'Inactive' },
   ];
 
   const handleOpenModal = () => {
@@ -35,10 +104,60 @@ export function VendorsPage() {
   };
 
   const handleSubmit = () => {
-    // TODO: Implement submit logic
+    // TODO: Implement submit logic - this should navigate to vendor organizations page
     console.log('Add Vendor:', formData);
+    showToast('Please use "Vendor Organizations" page to invite new vendors', 'info');
     handleCloseModal();
   };
+
+  const columns = [
+    {
+      key: 'name',
+      header: 'Name',
+      render: (vendor: Vendor) => (
+        <div className="font-semibold text-[hsl(var(--foreground))]">
+          {vendor.fullName || `${vendor.firstName || ''} ${vendor.lastName || ''}`.trim() || 'N/A'}
+        </div>
+      ),
+    },
+    {
+      key: 'email',
+      header: 'Email',
+      render: (vendor: Vendor) => (
+        <span className="text-[hsl(var(--muted-foreground))]">{vendor.email}</span>
+      ),
+    },
+    {
+      key: 'phone',
+      header: 'Phone',
+      render: (vendor: Vendor) => (
+        <span className="text-[hsl(var(--muted-foreground))]">{vendor.phone || 'N/A'}</span>
+      ),
+    },
+    {
+      key: 'organizationName',
+      header: 'Company',
+      render: (vendor: Vendor) => (
+        <span className="text-[hsl(var(--muted-foreground))]">{vendor.organizationName || 'N/A'}</span>
+      ),
+    },
+    {
+      key: 'isActive',
+      header: 'Status',
+      render: (vendor: Vendor) => (
+        <span
+          className={cn(
+            'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+            vendor.isActive
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
+          )}
+        >
+          {vendor.isActive ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+  ];
 
   return (
     <div className="w-full min-h-screen p-8">
@@ -88,28 +207,20 @@ export function VendorsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-[hsl(var(--secondary))]">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-[hsl(var(--card))] divide-y divide-gray-200 dark:divide-gray-800">
-              <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                  A list of all Merchants.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      {isLoading ? (
+        <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-12 text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-[hsl(var(--primary))]"></div>
+          <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading vendors...</p>
         </div>
-      </div>
+      ) : (
+        <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] overflow-hidden">
+          <DataTable
+            columns={columns}
+            data={filteredVendors}
+            emptyMessage="No vendors found."
+          />
+        </div>
+      )}
 
       {/* Add Vendor Modal */}
       {isModalOpen && (

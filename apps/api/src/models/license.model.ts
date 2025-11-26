@@ -22,6 +22,11 @@ export interface ILicense extends Document {
     employees?: number;
     businessUnits?: number;
   };
+  pricing?: {
+    monthlyPrice: number;
+    yearlyPrice: number;
+    currency: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,6 +79,11 @@ const LicenseSchema = new Schema<ILicense>(
       items: { type: Number, default: 0 },
       employees: { type: Number, default: 0 },
       businessUnits: { type: Number, default: 0 },
+    },
+    pricing: {
+      monthlyPrice: { type: Number, default: 0 },
+      yearlyPrice: { type: Number, default: 0 },
+      currency: { type: String, default: 'INR' },
     },
   },
   {

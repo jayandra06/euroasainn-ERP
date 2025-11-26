@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
-import { MdSearch, MdClose } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
+import { MdSearch } from 'react-icons/md';
 
 export function RFQsPage() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    vesselName: '',
-    brand: '',
-    supplyPort: '',
-    quantity: '',
-    notes: '',
-  });
 
   const filters = [
     { id: 'all', label: 'All' },
@@ -22,25 +16,8 @@ export function RFQsPage() {
     { id: 'order-completed', label: 'Order Completed' },
   ];
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setFormData({
-      vesselName: '',
-      brand: '',
-      supplyPort: '',
-      quantity: '',
-      notes: '',
-    });
-  };
-
-  const handleSubmit = () => {
-    // TODO: Implement submit logic
-    console.log('Create Enquiry:', formData);
-    handleCloseModal();
+  const handleCreateEnquiry = () => {
+    navigate('/dashboard/admin/create-enquiry');
   };
 
   return (
@@ -51,7 +28,7 @@ export function RFQsPage() {
           <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">Request for Quotes</h1>
         </div>
         <button
-          onClick={handleOpenModal}
+          onClick={handleCreateEnquiry}
           className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors"
         >
           Create Enquiry
@@ -128,103 +105,6 @@ export function RFQsPage() {
         </div>
       </div>
 
-      {/* Create Enquiry Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-[hsl(var(--card))] rounded-lg shadow-xl w-full max-w-md mx-4 border border-[hsl(var(--border))]">
-            <div className="flex items-center justify-between p-6 border-b border-[hsl(var(--border))]">
-              <h2 className="text-xl font-bold text-[hsl(var(--foreground))]">Create Enquiry</h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-500 dark:text-[hsl(var(--muted-foreground))] hover:text-gray-700 dark:hover:text-gray-200"
-              >
-                <MdClose className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="p-6">
-              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-6">
-                Enter the details for the new enquiry.
-              </p>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
-                    Vessel Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.vesselName}
-                    onChange={(e) => setFormData({ ...formData, vesselName: e.target.value })}
-                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
-                    placeholder="Enter vessel name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
-                    Brand
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.brand}
-                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
-                    placeholder="Enter brand"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
-                    Supply Port
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.supplyPort}
-                    onChange={(e) => setFormData({ ...formData, supplyPort: e.target.value })}
-                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
-                    placeholder="Enter supply port"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
-                    placeholder="Enter quantity"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
-                    Notes
-                  </label>
-                  <textarea
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    rows={4}
-                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] resize-none"
-                    placeholder="Enter additional notes"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-[hsl(var(--border))]">
-              <button
-                onClick={handleCloseModal}
-                className="px-4 py-2 border border-blue-600 text-[hsl(var(--primary))] rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors"
-              >
-                Create Enquiry
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
+import { OnboardingDetailsModal } from '../../components/OnboardingDetailsModal';
 import { useToast } from '../../components/shared/Toast';
 import { MdBusiness, MdFilterList } from 'react-icons/md';
 import { cn } from '../../lib/utils';
@@ -25,6 +26,8 @@ export function CustomerOrganizationsPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const [filterActive, setFilterActive] = useState<string>('all');
+  const [selectedOrg, setSelectedOrg] = useState<{ id: string; name: string } | null>(null);
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
 
   // Fetch customer organizations
   const { data: orgsData, isLoading } = useQuery({
@@ -77,12 +80,30 @@ export function CustomerOrganizationsPage() {
     }
   };
 
+  const handleOrganizationClick = (org: Organization) => {
+    setSelectedOrg({ id: org._id, name: org.name });
+    setIsOnboardingModalOpen(true);
+  };
+
+  const handleCloseOnboardingModal = () => {
+    setIsOnboardingModalOpen(false);
+    setSelectedOrg(null);
+  };
+
   const columns = [
     {
       key: 'name',
       header: 'Organization Name',
       render: (org: Organization) => (
-        <div className="font-semibold text-[hsl(var(--foreground))]">{org.name}</div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOrganizationClick(org);
+          }}
+          className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left"
+        >
+          {org.name}
+        </button>
       ),
     },
     {
@@ -166,11 +187,21 @@ export function CustomerOrganizationsPage() {
             columns={columns}
             data={orgsData || []}
             onDelete={handleDelete}
-            emptyMessage="No customer organizations found."
-          />
-        </div>
+          emptyMessage="No customer organizations found."
+        />
+      </div>
       )}
 
+      {/* Onboarding Details Modal */}
+      {selectedOrg && (
+        <OnboardingDetailsModal
+          isOpen={isOnboardingModalOpen}
+          onClose={handleCloseOnboardingModal}
+          organizationId={selectedOrg.id}
+          organizationType="customer"
+          organizationName={selectedOrg.name}
+        />
+      )}
     </div>
   );
 }
