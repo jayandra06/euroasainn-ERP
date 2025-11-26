@@ -30,7 +30,7 @@ interface LicenseFormProps {
   onCancel: () => void;
 }
 
-export function LicenseForm({ license, organizations, onSuccess, onCancel }: LicenseFormProps) {
+export function LicenseForm({ license, organizations, organizationId: preFilledOrgId, onSuccess, onCancel }: LicenseFormProps) {
   const [formData, setFormData] = useState({
     organizationId: '',
     licenseType: 'customer' as 'customer' | 'vendor',
@@ -39,6 +39,9 @@ export function LicenseForm({ license, organizations, onSuccess, onCancel }: Lic
     maxVessels: 0,
     maxItems: 0,
     features: [] as string[],
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    currency: 'INR',
   });
 
   useEffect(() => {
@@ -55,6 +58,9 @@ export function LicenseForm({ license, organizations, onSuccess, onCancel }: Lic
         maxVessels: license.maxVessels || 0,
         maxItems: license.maxItems || 0,
         features: license.features || [],
+        monthlyPrice: (license as any).pricing?.monthlyPrice || 0,
+        yearlyPrice: (license as any).pricing?.yearlyPrice || 0,
+        currency: (license as any).pricing?.currency || 'INR',
       });
     } else {
       // Set default expiry to 1 year from now
@@ -62,10 +68,11 @@ export function LicenseForm({ license, organizations, onSuccess, onCancel }: Lic
       defaultExpiry.setFullYear(defaultExpiry.getFullYear() + 1);
       setFormData({
         ...formData,
+        organizationId: preFilledOrgId || '',
         expiryDate: defaultExpiry.toISOString().split('T')[0],
       });
     }
-  }, [license]);
+  }, [license, preFilledOrgId]);
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -100,13 +107,26 @@ export function LicenseForm({ license, organizations, onSuccess, onCancel }: Lic
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const submitData = { ...formData };
+    const submitData: any = {
+      organizationId: formData.organizationId,
+      expiresAt: formData.expiryDate,
+      usageLimits: {
+        users: formData.maxUsers,
+      },
+      pricing: {
+        monthlyPrice: formData.monthlyPrice,
+        yearlyPrice: formData.yearlyPrice,
+        currency: formData.currency,
+      },
+    };
+    
     // Only include vessel/item limits based on license type
-    if (submitData.licenseType === 'customer') {
-      delete submitData.maxItems;
+    if (formData.licenseType === 'customer') {
+      submitData.usageLimits.vessels = formData.maxVessels;
     } else {
-      delete submitData.maxVessels;
+      submitData.usageLimits.items = formData.maxItems;
     }
+    
     createMutation.mutate(submitData);
   };
 
@@ -227,6 +247,49 @@ export function LicenseForm({ license, organizations, onSuccess, onCancel }: Lic
               <span>{feature.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}</span>
             </label>
           ))}
+        </div>
+      </div>
+
+      <div className="form-group">
+        <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Pricing Information</h3>
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="monthlyPrice">Monthly Price *</label>
+            <input
+              id="monthlyPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.monthlyPrice}
+              onChange={(e) => setFormData({ ...formData, monthlyPrice: parseFloat(e.target.value) || 0 })}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="yearlyPrice">Yearly Price *</label>
+            <input
+              id="yearlyPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.yearlyPrice}
+              onChange={(e) => setFormData({ ...formData, yearlyPrice: parseFloat(e.target.value) || 0 })}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="currency">Currency *</label>
+            <select
+              id="currency"
+              value={formData.currency}
+              onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+              required
+            >
+              <option value="INR">INR (₹)</option>
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+            </select>
+          </div>
         </div>
       </div>
 

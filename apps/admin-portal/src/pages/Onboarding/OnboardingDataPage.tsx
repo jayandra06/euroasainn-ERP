@@ -10,6 +10,7 @@ import { useToast } from '../../components/shared/Toast';
 import { MdFilterList, MdBusiness, MdPerson, MdSearch, MdRefresh, MdDownload, MdCheckCircle, MdCancel } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
+// Use relative URL in development (with Vite proxy) or env var, otherwise default to localhost:3000
 const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
 
 interface CustomerOnboarding {
@@ -58,7 +59,8 @@ export function OnboardingDataPage() {
   // Approve customer onboarding mutation
   const approveCustomerMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`${API_URL}/api/v1/admin/customer-onboardings/${id}/approve`, {
+      const url = API_URL ? `${API_URL}/api/v1/admin/customer-onboardings/${id}/approve` : `/api/v1/admin/customer-onboardings/${id}/approve`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,11 +96,15 @@ export function OnboardingDataPage() {
         return {};
       }
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['organizations-with-licenses'] });
-      showToast('Onboarding approved successfully. License created.', 'success');
+      showToast('Onboarding approved successfully. Please create license with pricing.', 'success');
+      // Redirect to license creation page with organizationId
+      if (data?.data?.organizationId) {
+        window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=customer`;
+      }
     },
     onError: (error: Error) => {
       console.error('Approve customer onboarding error:', error);
@@ -110,7 +116,8 @@ export function OnboardingDataPage() {
   // Reject customer onboarding mutation
   const rejectCustomerMutation = useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      const response = await fetch(`${API_URL}/api/v1/admin/customer-onboardings/${id}/reject`, {
+      const url = API_URL ? `${API_URL}/api/v1/admin/customer-onboardings/${id}/reject` : `/api/v1/admin/customer-onboardings/${id}/reject`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +168,8 @@ export function OnboardingDataPage() {
   // Approve vendor onboarding mutation
   const approveVendorMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`${API_URL}/api/v1/admin/vendor-onboardings/${id}/approve`, {
+      const url = API_URL ? `${API_URL}/api/v1/admin/vendor-onboardings/${id}/approve` : `/api/v1/admin/vendor-onboardings/${id}/approve`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -197,11 +205,15 @@ export function OnboardingDataPage() {
         return {};
       }
     },
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['organizations-with-licenses'] });
-      showToast('Onboarding approved successfully. License created.', 'success');
+      showToast('Onboarding approved successfully. Please create license with pricing.', 'success');
+      // Redirect to license creation page with organizationId
+      if (data?.data?.organizationId) {
+        window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=vendor`;
+      }
     },
     onError: (error: Error) => {
       console.error('Approve customer onboarding error:', error);
@@ -213,7 +225,8 @@ export function OnboardingDataPage() {
   // Reject vendor onboarding mutation
   const rejectVendorMutation = useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      const response = await fetch(`${API_URL}/api/v1/admin/vendor-onboardings/${id}/reject`, {
+      const url = API_URL ? `${API_URL}/api/v1/admin/vendor-onboardings/${id}/reject` : `/api/v1/admin/vendor-onboardings/${id}/reject`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -297,7 +310,8 @@ export function OnboardingDataPage() {
           params.append('status', filterStatus);
         }
 
-        const response = await fetch(`${API_URL}/api/v1/admin/customer-onboardings?${params}`, {
+        const url = API_URL ? `${API_URL}/api/v1/admin/customer-onboardings?${params}` : `/api/v1/admin/customer-onboardings?${params}`;
+        const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
@@ -305,9 +319,11 @@ export function OnboardingDataPage() {
 
         if (!response.ok) {
           const error = await response.json().catch(() => ({ error: 'Failed to fetch customer onboardings' }));
+          console.error('Failed to fetch customer onboardings:', error);
           throw new Error(error.error || 'Failed to fetch customer onboardings');
         }
         const data = await response.json();
+        console.log('Customer onboardings data:', data);
         return data.data || [];
       } catch (error: any) {
         console.error('Error fetching customer onboardings:', error);
@@ -328,7 +344,8 @@ export function OnboardingDataPage() {
           params.append('status', filterStatus);
         }
 
-        const response = await fetch(`${API_URL}/api/v1/admin/vendor-onboardings?${params}`, {
+        const url = API_URL ? `${API_URL}/api/v1/admin/vendor-onboardings?${params}` : `/api/v1/admin/vendor-onboardings?${params}`;
+        const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
@@ -336,9 +353,11 @@ export function OnboardingDataPage() {
 
         if (!response.ok) {
           const error = await response.json().catch(() => ({ error: 'Failed to fetch vendor onboardings' }));
+          console.error('Failed to fetch vendor onboardings:', error);
           throw new Error(error.error || 'Failed to fetch vendor onboardings');
         }
         const data = await response.json();
+        console.log('Vendor onboardings data:', data);
         return data.data || [];
       } catch (error: any) {
         console.error('Error fetching vendor onboardings:', error);

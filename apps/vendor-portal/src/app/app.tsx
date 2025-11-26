@@ -12,6 +12,7 @@ import { RFQsPage } from '../pages/RFQs/RFQsPage';
 import { ClaimRequestsPage } from '../pages/ClaimRequests/ClaimRequestsPage';
 import { CategoriesPage } from '../pages/Categories/CategoriesPage';
 import { BrandsPage } from '../pages/Brands/BrandsPage';
+import { ModelsPage } from '../pages/Models/ModelsPage';
 import { OrdersPage } from '../pages/Orders/OrdersPage';
 import { DetailsPage } from '../pages/Details/DetailsPage';
 import { VesselManagementPage } from '../pages/VesselManagement/VesselManagementPage';
@@ -62,6 +63,7 @@ export function App() {
                   <Route path="claim-requests" element={<ClaimRequestsPage />} />
                   <Route path="categories" element={<CategoriesPage />} />
                   <Route path="brands" element={<BrandsPage />} />
+                  <Route path="models" element={<ModelsPage />} />
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="details" element={<DetailsPage />} />
                   <Route path="vessel-management" element={<VesselManagementPage />} />

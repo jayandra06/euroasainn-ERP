@@ -8,6 +8,7 @@ import { itemService } from '../services/item.service';
 import { quotationService } from '../services/quotation.service';
 import { userController } from '../controllers/user.controller';
 import { licenseService } from '../services/license.service';
+import { rfqService } from '../services/rfq.service';
 
 const router = Router();
 
@@ -119,6 +120,52 @@ router.get('/inventory', async (req, res) => {
 });
 
 // License routes - Get licenses for user's organization
+// Get license pricing for organization
+router.get('/license/pricing', async (req: any, res) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'User not authenticated',
+      });
+    }
+
+    const { User } = await import('../models/user.model');
+    const user = await User.findById(userId);
+    if (!user || !user.organizationId) {
+      return res.status(404).json({
+        success: false,
+        error: 'Organization not found',
+      });
+    }
+
+    const licenses = await licenseService.getLicenses(user.organizationId.toString());
+    const activeLicense = licenses.find((l: any) => l.status === 'active' && new Date(l.expiresAt) > new Date());
+
+    if (!activeLicense || !activeLicense.pricing) {
+      return res.status(404).json({
+        success: false,
+        error: 'No active license with pricing found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        monthlyPrice: activeLicense.pricing.monthlyPrice,
+        yearlyPrice: activeLicense.pricing.yearlyPrice,
+        currency: activeLicense.pricing.currency,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get license pricing',
+    });
+  }
+});
+
 router.get('/licenses', async (req, res) => {
   try {
     const orgId = (req as any).user?.organizationId;
@@ -130,6 +177,192 @@ router.get('/licenses', async (req, res) => {
     }
     const licenses = await licenseService.getLicenses(orgId);
     res.json({ success: true, data: licenses });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Brands routes (vendor can create brands that need approval)
+router.get('/brands', async (req, res) => {
+  try {
+    const { brandService } = await import('../services/brand.service');
+    const orgId = (req as any).user?.organizationId;
+    const brands = await brandService.getBrands({
+      organizationId: orgId,
+      includeGlobal: true, // Include global brands + vendor's own brands
+    });
+    res.status(200).json({
+      success: true,
+      data: brands,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get brands',
+    });
+  }
+});
+
+router.post('/brands', async (req, res) => {
+  try {
+    const { brandService } = await import('../services/brand.service');
+    const userId = (req as any).user?.userId;
+    const orgId = (req as any).user?.organizationId;
+    const brand = await brandService.createBrand({
+      name: req.body.name,
+      description: req.body.description,
+      createdBy: userId,
+      organizationId: orgId,
+      isGlobal: false, // Vendor-created brands are organization-specific
+      status: 'pending', // Need admin approval
+    });
+    res.status(201).json({
+      success: true,
+      data: brand,
+      message: 'Brand created successfully. It will appear after admin approval.',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to create brand',
+    });
+  }
+});
+
+// Categories routes (vendor can create categories that need approval)
+router.get('/categories', async (req, res) => {
+  try {
+    const { categoryService } = await import('../services/category.service');
+    const orgId = (req as any).user?.organizationId;
+    const categories = await categoryService.getCategories({
+      organizationId: orgId,
+      includeGlobal: true, // Include global categories + vendor's own categories
+    });
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get categories',
+    });
+  }
+});
+
+router.post('/categories', async (req, res) => {
+  try {
+    const { categoryService } = await import('../services/category.service');
+    const userId = (req as any).user?.userId;
+    const orgId = (req as any).user?.organizationId;
+    const category = await categoryService.createCategory({
+      name: req.body.name,
+      description: req.body.description,
+      createdBy: userId,
+      organizationId: orgId,
+      isGlobal: false, // Vendor-created categories are organization-specific
+      status: 'pending', // Need admin approval
+    });
+    res.status(201).json({
+      success: true,
+      data: category,
+      message: 'Category created successfully. It will appear after admin approval.',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to create category',
+    });
+  }
+});
+
+// Models routes (vendor can create models that need approval)
+router.get('/models', async (req, res) => {
+  try {
+    const { modelService } = await import('../services/model.service');
+    const orgId = (req as any).user?.organizationId;
+    const filters: any = {
+      organizationId: orgId,
+      includeGlobal: true, // Include global models + vendor's own models
+    };
+    if (req.query.brandId) {
+      filters.brandId = req.query.brandId;
+    }
+    const models = await modelService.getModels(filters);
+    res.status(200).json({
+      success: true,
+      data: models,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get models',
+    });
+  }
+});
+
+router.post('/models', async (req, res) => {
+  try {
+    const { modelService } = await import('../services/model.service');
+    const userId = (req as any).user?.userId;
+    const orgId = (req as any).user?.organizationId;
+    const model = await modelService.createModel({
+      name: req.body.name,
+      description: req.body.description,
+      brandId: req.body.brandId,
+      createdBy: userId,
+      organizationId: orgId,
+      isGlobal: false, // Vendor-created models are organization-specific
+      status: 'pending', // Need admin approval
+    });
+    res.status(201).json({
+      success: true,
+      data: model,
+      message: 'Model created successfully. It will appear after admin approval.',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to create model',
+    });
+  }
+});
+
+// RFQ routes (vendor's RFQ inbox)
+router.get('/rfq', async (req, res) => {
+  try {
+    const vendorOrgId = (req as any).user?.organizationId;
+    if (!vendorOrgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+    const rfqs = await rfqService.getRFQsForVendor(vendorOrgId, req.query);
+    res.json({ success: true, data: rfqs });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/rfq/:id', async (req, res) => {
+  try {
+    const vendorOrgId = (req as any).user?.organizationId;
+    if (!vendorOrgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+    const rfqs = await rfqService.getRFQsForVendor(vendorOrgId);
+    const rfq = rfqs.find((r: any) => r._id.toString() === req.params.id);
+    if (!rfq) {
+      return res.status(404).json({
+        success: false,
+        error: 'RFQ not found',
+      });
+    }
+    res.json({ success: true, data: rfq });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }

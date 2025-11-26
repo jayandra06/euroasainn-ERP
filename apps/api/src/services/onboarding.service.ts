@@ -252,46 +252,9 @@ export class OnboardingService {
     await organization.save();
     logger.info(`✅ Organization ${organization.name} marked as active`);
 
-    // Create license if it doesn't exist
-    try {
-      const existingLicenses = await licenseService.getLicenses(orgIdString);
-      
-      if (existingLicenses.length === 0) {
-        // Create a default license (1 year from now)
-        const expiresAt = new Date();
-        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-
-        // Determine usage limits based on number of vessels if provided
-        const vesselsCount = onboarding.vessels ? parseInt(onboarding.vessels.toString(), 10) : 0;
-        const defaultUserLimit = Math.max(10, vesselsCount * 2); // At least 10 users, or 2 per vessel
-
-        logger.info(`Creating license for organization ${orgIdString} with expiry: ${expiresAt.toISOString()}`);
-        logger.info(`License limits: users=${defaultUserLimit}, vessels=${vesselsCount || 10}, items=1000`);
-
-        const license = await licenseService.createLicense({
-          organizationId: orgIdString,
-          organizationType: OrganizationType.CUSTOMER,
-          expiresAt,
-          usageLimits: {
-            users: defaultUserLimit,
-            vessels: vesselsCount || 10,
-            items: 1000,
-            employees: 50,
-            businessUnits: 5,
-          },
-        });
-
-        logger.info(`✅ License created successfully for organization ${organization.name}`);
-        logger.info(`   License Key: ${license.licenseKey}`);
-        logger.info(`   License ID: ${license._id}`);
-      } else {
-        logger.info(`License already exists for organization ${organization.name}, skipping creation`);
-      }
-    } catch (licenseError: any) {
-      logger.error(`❌ Failed to create license for organization ${organization.name}:`);
-      logger.error(`   Error: ${licenseError.message}`);
-      throw new Error(`Failed to create license: ${licenseError.message}`);
-    }
+    // Don't create license automatically - redirect to license creation page
+    // License will be created manually with pricing information
+    logger.info(`✅ Onboarding approved. License should be created manually with pricing information.`);
 
     // Send success email with credentials after approval
     try {
@@ -427,42 +390,9 @@ export class OnboardingService {
     await organization.save();
     logger.info(`✅ Vendor organization ${organization.name} marked as active`);
 
-    // Create license if it doesn't exist
-    try {
-      const existingLicenses = await licenseService.getLicenses(orgIdString);
-      
-      if (existingLicenses.length === 0) {
-        // Create a default license (1 year from now)
-        const expiresAt = new Date();
-        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-
-        // Default usage limits for vendors
-        logger.info(`Creating license for vendor organization ${orgIdString} with expiry: ${expiresAt.toISOString()}`);
-
-        const license = await licenseService.createLicense({
-          organizationId: orgIdString,
-          organizationType: OrganizationType.VENDOR,
-          expiresAt,
-          usageLimits: {
-            users: 10,
-            vessels: 10,
-            items: 1000,
-            employees: 50,
-            businessUnits: 5,
-          },
-        });
-
-        logger.info(`✅ License created successfully for vendor organization ${organization.name}`);
-        logger.info(`   License Key: ${license.licenseKey}`);
-        logger.info(`   License ID: ${license._id}`);
-      } else {
-        logger.info(`License already exists for vendor organization ${organization.name}, skipping creation`);
-      }
-    } catch (licenseError: any) {
-      logger.error(`❌ Failed to create license for vendor organization ${organization.name}:`);
-      logger.error(`   Error: ${licenseError.message}`);
-      throw new Error(`Failed to create license: ${licenseError.message}`);
-    }
+    // Don't create license automatically - redirect to license creation page
+    // License will be created manually with pricing information
+    logger.info(`✅ Vendor onboarding approved. License should be created manually with pricing information.`);
 
     // Send success email with credentials after approval
     try {

@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 import { User, IUser } from '../models/user.model';
 import { Organization } from '../models/organization.model';
 import { PortalType, TechRole, OrganizationType } from '../../../../packages/shared/src/types/index.ts';
@@ -118,7 +119,8 @@ export class UserService {
     firstName: string;
     lastName: string;
     portalType: PortalType;
-    role: string;
+    role?: string;
+    roleId?: string;
     organizationId?: string;
   }) {
     // Normalize email to lowercase and trim whitespace to match schema behavior
@@ -143,16 +145,42 @@ export class UserService {
       }
     }
 
+    // Handle role - if roleId is provided, fetch the role to get the role key/name
+    let roleValue = data.role;
+    let roleIdValue = data.roleId;
+    
+    // Normalize roleId - convert empty strings to undefined
+    if (roleIdValue === '' || roleIdValue === null) {
+      roleIdValue = undefined;
+    }
+    
+    if (roleIdValue && !roleValue) {
+      // If roleId is provided but role is not, fetch the role to get the key
+      const { Role } = await import('../models/role.model');
+      const role = await Role.findById(roleIdValue);
+      if (role) {
+        roleValue = role.key;
+      } else {
+        throw new Error(`Role not found with ID: ${roleIdValue}`);
+      }
+    } else if (!roleValue) {
+      throw new Error('Role is required. Please select a role or provide a role key.');
+    }
+
     // Generate temporary password
     const temporaryPassword = generateTemporaryPassword();
     const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
 
     // Create user with temporary password and normalized email
     const user = new User({
-      ...data,
       email: normalizedEmail,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      portalType: data.portalType,
+      role: roleValue,
+      roleId: roleIdValue ? new mongoose.Types.ObjectId(roleIdValue) : undefined,
       password: hashedPassword,
-      organizationId: organizationId ? organizationId : undefined,
+      organizationId: organizationId ? new mongoose.Types.ObjectId(organizationId) : undefined,
     });
 
     await user.save();

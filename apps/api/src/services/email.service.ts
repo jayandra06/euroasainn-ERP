@@ -266,6 +266,121 @@ export class EmailService {
     }
   }
 
+  async sendUserInvitationEmail({
+    to,
+    firstName,
+    lastName,
+    portalType,
+    portalLink,
+    temporaryPassword,
+  }: {
+    to: string;
+    firstName: string;
+    lastName: string;
+    portalType: string;
+    portalLink: string;
+    temporaryPassword: string;
+  }) {
+    try {
+      const portalName = portalType === 'admin' ? 'Admin Portal' : portalType === 'tech' ? 'Tech Portal' : 'Portal';
+      const subject = `Welcome to Euroasiann ERP - ${portalName} Access`;
+      
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #0066cc; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; padding: 12px 30px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+            .credentials { background: #fff; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #0066cc; }
+            .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Welcome to Euroasiann ERP</h1>
+            </div>
+            <div class="content">
+              <p>Dear ${firstName} ${lastName},</p>
+              
+              <p>You have been invited to access the <strong>${portalName}</strong> of the Euroasiann ERP Platform.</p>
+              
+              <div class="credentials">
+                <p><strong>Your login credentials:</strong></p>
+                <p><strong>Email:</strong> ${to}</p>
+                <p><strong>Temporary Password:</strong> ${temporaryPassword}</p>
+                <p style="color: #d32f2f; font-size: 12px;"><em>Please change your password after first login for security.</em></p>
+              </div>
+              
+              <p>Click the button below to log in:</p>
+              
+              <div style="text-align: center;">
+                <a href="${portalLink}" class="button">Login to ${portalName}</a>
+              </div>
+              
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; color: #0066cc;"><a href="${portalLink}" style="color: #0066cc; text-decoration: none;">${portalLink}</a></p>
+              
+              <p>If you have any questions, please contact our support team.</p>
+              
+              <p>Best regards,<br>Euroasiann ERP Team</p>
+            </div>
+            <div class="footer">
+              <p>This is an automated email. Please do not reply to this message.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const text = `
+        Welcome to Euroasiann ERP
+        
+        Dear ${firstName} ${lastName},
+        
+        You have been invited to access the ${portalName} of the Euroasiann ERP Platform.
+        
+        Your login credentials:
+        Email: ${to}
+        Temporary Password: ${temporaryPassword}
+        
+        Please change your password after first login for security.
+        
+        Login to ${portalName}: ${portalLink}
+        
+        If you have any questions, please contact our support team.
+        
+        Best regards,
+        Euroasiann ERP Team
+      `;
+
+      // For Zoho SMTP, the "from" address must exactly match the authenticated EMAIL_USER
+      const fromEmail = process.env.EMAIL_USER || 'technical@euroasianngroup.com';
+      
+      const mailOptions = {
+        from: fromEmail,
+        to,
+        subject,
+        text,
+        html,
+        replyTo: `"Euroasiann ERP" <${fromEmail}>`,
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+      logger.info(`✅ User invitation email sent to ${to} for ${portalName}: ${info.messageId}`);
+      logger.info(`   Portal link: ${portalLink}`);
+      return info;
+    } catch (error: any) {
+      logger.error(`Failed to send user invitation email to ${to}:`, error);
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
+  }
+
   async sendPaymentSuccessEmail({
     to,
     firstName,

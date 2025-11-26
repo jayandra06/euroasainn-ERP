@@ -48,6 +48,31 @@ export function PaymentPage() {
     },
   });
 
+  // Get license pricing
+  const { data: licensePricing, isLoading: pricingLoading } = useQuery<{
+    monthlyPrice: number;
+    yearlyPrice: number;
+    currency: string;
+  }>({
+    queryKey: ['license-pricing'],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/api/v1/customer/license/pricing`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) {
+        // If no pricing found, return default values
+        if (response.status === 404) {
+          return { monthlyPrice: 0, yearlyPrice: 0, currency: 'INR' };
+        }
+        throw new Error('Failed to fetch license pricing');
+      }
+      const data = await response.json();
+      return data.data;
+    },
+  });
+
   // Get payment history
   const { data: payments, isLoading: paymentsLoading } = useQuery<Payment[]>({
     queryKey: ['payments'],
@@ -177,18 +202,20 @@ export function PaymentPage() {
   const plans = [
     {
       name: 'Monthly Plan',
-      price: 99,
+      price: licensePricing?.monthlyPrice || 0,
       period: 'month',
       features: ['Up to 10 users', 'Unlimited vessels', 'Basic support', 'Standard features'],
     },
     {
       name: 'Yearly Plan',
-      price: 999,
+      price: licensePricing?.yearlyPrice || 0,
       period: 'year',
       features: ['Up to 10 users', 'Unlimited vessels', 'Priority support', 'All features', '20% savings'],
       popular: true,
     },
   ];
+
+  const currencySymbol = licensePricing?.currency === 'INR' ? '₹' : licensePricing?.currency === 'USD' ? '$' : licensePricing?.currency === 'EUR' ? '€' : '₹';
 
   const handlePayment = (amount: number) => {
     if (!paymentStatus?.hasActivePayment) {
@@ -224,7 +251,7 @@ export function PaymentPage() {
     }
   };
 
-  if (statusLoading || paymentsLoading) {
+  if (statusLoading || paymentsLoading || pricingLoading) {
     return (
       <div className="w-full min-h-screen p-8">
         <div className="flex items-center justify-center h-64">
@@ -318,7 +345,7 @@ export function PaymentPage() {
                 </h3>
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                    ₹{plan.price}
+                    {currencySymbol}{plan.price.toFixed(2)}
                   </span>
                   <span className="text-gray-600 dark:text-gray-400">/{plan.period}</span>
                 </div>
@@ -341,7 +368,7 @@ export function PaymentPage() {
                     createPaymentMutation.isPending && 'opacity-50 cursor-not-allowed'
                   )}
                 >
-                  {createPaymentMutation.isPending ? 'Processing...' : `Subscribe for ₹${plan.price}/${plan.period}`}
+                  {createPaymentMutation.isPending ? 'Processing...' : plan.price > 0 ? `Subscribe for ${currencySymbol}${plan.price.toFixed(2)}/${plan.period}` : 'Pricing not available'}
                 </button>
               </div>
             ))}

@@ -11,6 +11,7 @@ import { UsersPage } from '../pages/Users/UsersPage';
 import { OrganizationsPage } from '../pages/Organizations/OrganizationsPage';
 import { OrganizationProfilePage } from '../pages/Organizations/OrganizationProfilePage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
+import { CreateLicensePage } from '../pages/Licenses/CreateLicensePage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
 import { AdminUsersPage } from '../pages/AdminUsers/AdminUsersPage';
 import { SettingsPage } from '../pages/Settings/SettingsPage';
@@ -51,6 +52,7 @@ export function App() {
                   <Route path="organizations" element={<OrganizationsPage />} />
                   <Route path="organizations/:id" element={<OrganizationProfilePage />} />
                   <Route path="licenses" element={<LicensesPage />} />
+                  <Route path="licenses/create" element={<CreateLicensePage />} />
                   <Route path="onboarding-data" element={<OnboardingDataPage />} />
                   <Route path="admin-users" element={<AdminUsersPage />} />
                   <Route path="analytics" element={<AnalyticsPage />} />

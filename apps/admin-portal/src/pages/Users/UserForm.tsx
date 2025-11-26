@@ -1,31 +1,50 @@
 /**
- * User Form Component
- * Professional Admin Portal Design
+ * Ultra-Modern User Form Component for Admin Portal
+ * World-Class SaaS ERP Platform Design
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { MdSave, MdCancel, MdAddCircleOutline } from 'react-icons/md';
-import { cn } from '../../lib/utils';
+import {
+  MdEmail,
+  MdPerson,
+  MdWork,
+  MdSecurity,
+  MdCheckCircle,
+  MdCancel,
+  MdSave,
+  MdAddCircleOutline,
+  MdBusiness,
+} from 'react-icons/md';
+import { useToast } from '../../components/shared/Toast';
 import { Modal } from '../../components/shared/Modal';
+import { cn } from '../../lib/utils';
+import { apiFetch } from '../../utils/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
 
 interface User {
-  _id?: string;
+  _id: string;
   email: string;
   firstName: string;
   lastName: string;
+  portalType: string;
   role: string;
-  roleId?: string | { _id: string; name: string; key: string };
-  organizationId?: string;
+  roleId?: string | {
+    _id: string;
+    name: string;
+    key: string;
+    permissions?: string[];
+  };
   isActive: boolean;
+  organizationId?: string;
 }
 
 interface UserFormProps {
   user?: User | null;
   onSuccess: () => void;
   onCancel: () => void;
+  defaultInviteMode?: boolean;
 }
 
 interface RoleDto {
@@ -46,50 +65,29 @@ interface RoleOption {
   description?: string;
 }
 
-const DEFAULT_ADMIN_ROLES: RoleOption[] = [
-  {
-    id: 'admin_superuser',
-    key: 'admin_superuser',
-    name: 'Super Admin',
-    permissions: ['*'],
-    description: 'Full platform access across all modules',
-  },
-  {
-    id: 'admin_system_admin',
-    key: 'admin_system_admin',
-    name: 'System Admin',
-    permissions: ['users:manage', 'licenses:manage', 'settings:update', 'logs:view'],
-    description: 'Manage users, licenses, audit logs, and system settings',
-  },
-  {
-    id: 'admin_finance_admin',
-    key: 'admin_finance_admin',
-    name: 'Finance Admin',
-    permissions: ['invoices:*', 'transactions:read', 'reports:generate'],
-    description: 'Handle invoices, transactions, and financial reporting',
-  },
-  {
-    id: 'admin_hr_admin',
-    key: 'admin_hr_admin',
-    name: 'HR Admin',
-    permissions: ['employees:*', 'attendance:read', 'leaves:approve'],
-    description: 'Manage employee records, attendance, and leave approvals',
-  },
-  {
-    id: 'admin_auditor',
-    key: 'admin_auditor',
-    name: 'Auditor',
-    permissions: ['logs:read', 'invoices:read', 'users:read'],
-    description: 'Read-only access to financials and system logs',
-  },
-  {
-    id: 'admin_support_agent',
-    key: 'admin_support_agent',
-    name: 'Support Agent',
-    permissions: ['tickets:*', 'customers:read'],
-    description: 'Respond to support requests and view customer records',
-  },
-];
+const DEFAULT_ROLES: Record<string, RoleOption[]> = {
+  admin: [
+    { id: 'admin_superuser', key: 'admin_superuser', name: 'Super Admin', permissions: ['*'], description: 'Full platform access across every admin module' },
+    { id: 'admin_system_admin', key: 'admin_system_admin', name: 'System Admin', permissions: ['users:*', 'roles:*', 'settings:update', 'logs:view'], description: 'Manage users, roles, settings, and activity logs' },
+    { id: 'admin_finance_admin', key: 'admin_finance_admin', name: 'Finance Admin', permissions: ['invoices:*', 'transactions:read', 'reports:generate'], description: 'Handle billing, transactions, and financial reporting' },
+    { id: 'admin_hr_admin', key: 'admin_hr_admin', name: 'HR Admin', permissions: ['employees:*', 'attendance:read', 'leaves:approve'], description: 'Maintain employee records, attendance, and leave approvals' },
+    { id: 'admin_auditor', key: 'admin_auditor', name: 'Auditor', permissions: ['logs:read', 'invoices:read', 'users:read'], description: 'Read-only access for compliance and audits' },
+    { id: 'admin_support_agent', key: 'admin_support_agent', name: 'Support Agent', permissions: ['tickets:*', 'customers:read'], description: 'Respond to support tickets and review customer info' },
+  ],
+  customer: [
+    { id: 'customer_admin', key: 'customer_admin', name: 'Customer Admin', permissions: ['*'], description: 'Invite team members and view all transactions' },
+    { id: 'customer_manager', key: 'customer_manager', name: 'Customer Manager', permissions: ['orders:create', 'orders:update', 'tickets:create'], description: 'Place and update orders, raise support tickets' },
+    { id: 'customer_accountant', key: 'customer_accountant', name: 'Customer Accountant', permissions: ['invoices:read', 'transactions:read'], description: 'Track invoices and payment history' },
+    { id: 'customer_viewer', key: 'customer_viewer', name: 'Customer Viewer', permissions: ['orders:read', 'invoices:read', 'dashboard:read'], description: 'Read-only access to dashboards and order status' },
+  ],
+  vendor: [
+    { id: 'vendor_admin', key: 'vendor_admin', name: 'Vendor Admin', permissions: ['*'], description: 'Full vendor portal access, including invitations' },
+    { id: 'vendor_manager', key: 'vendor_manager', name: 'Vendor Manager', permissions: ['orders:update', 'products:create'], description: 'Manage orders, catalogue items, and listings' },
+    { id: 'vendor_accountant', key: 'vendor_accountant', name: 'Vendor Accountant', permissions: ['invoices:read', 'transactions:update'], description: 'Handle invoices and financial reconciliations' },
+    { id: 'vendor_staff', key: 'vendor_staff', name: 'Vendor Staff', permissions: ['orders:read', 'products:read'], description: 'Access assigned orders and product information' },
+    { id: 'vendor_viewer', key: 'vendor_viewer', name: 'Vendor Viewer', permissions: ['dashboard:read', 'orders:read'], description: 'Read-only dashboard access for leadership or auditors' },
+  ],
+};
 
 const formatRoleName = (roleKey: string) =>
   roleKey
@@ -97,6 +95,12 @@ const formatRoleName = (roleKey: string) =>
     .filter(Boolean)
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(' ');
+
+const PORTAL_OPTIONS = [
+  { value: 'admin', label: 'Admin Portal' },
+  { value: 'customer', label: 'Customer Portal' },
+  { value: 'vendor', label: 'Vendor Portal' },
+];
 
 type PermissionActionKey = 'read' | 'write' | 'edit';
 
@@ -128,34 +132,65 @@ const ADMIN_PERMISSION_GROUPS: PermissionGroup[] = [
   {
     key: 'organizations',
     label: 'Organizations',
-    description: 'Create and manage customer or vendor organizations',
-    actions: ['read', 'write', 'edit'],
+    description: 'Manage customer and vendor organizations',
+  },
+  {
+    key: 'onboarding',
+    label: 'Onboarding',
+    description: 'Review and approve customer/vendor onboarding submissions',
   },
   {
     key: 'licenses',
     label: 'Licenses',
-    description: 'Issue, revoke, and adjust license usage',
-    actions: ['read', 'write'],
+    description: 'Create and manage organization licenses with pricing',
   },
   {
-    key: 'support',
-    label: 'Support Tickets',
-    description: 'Monitor and resolve customer support cases',
-    actions: ['read', 'write'],
+    key: 'invoices',
+    label: 'Invoices',
+    description: 'Generate and track invoices for organizations',
+  },
+  {
+    key: 'transactions',
+    label: 'Transactions',
+    description: 'View payment history and financial transactions',
+    actions: ['read'],
   },
   {
     key: 'reports',
     label: 'Reports',
-    description: 'Generate and export operational or financial reports',
+    description: 'Generate analytics and business reports',
     actions: ['read', 'write'],
   },
   {
     key: 'settings',
-    label: 'System Settings',
+    label: 'Settings',
     description: 'Configure platform parameters and integrations',
     actions: ['read', 'edit'],
   },
 ];
+
+const VENDOR_PERMISSION_GROUPS: PermissionGroup[] = [
+  { key: 'catalogue', label: 'Catalogue', description: 'Manage product listings, categories, and pricing' },
+  { key: 'orders', label: 'Orders', description: 'Process customer orders and fulfilment tasks' },
+  { key: 'brands', label: 'Brands', description: 'Maintain brand assets and marketing content', actions: ['read', 'write'] },
+  { key: 'b2b', label: 'B2B Accounts', description: 'Handle corporate accounts and negotiated deals', actions: ['read', 'write', 'edit'] },
+  { key: 'inventory', label: 'Inventory', description: 'Track stock levels across warehouses and channels' },
+  { key: 'reports', label: 'Reports', description: 'Generate sales and performance reports', actions: ['read', 'write'] },
+];
+
+const CUSTOMER_PERMISSION_GROUPS: PermissionGroup[] = [
+  { key: 'orders', label: 'Orders', description: 'Create, edit, and track purchase orders' },
+  { key: 'tickets', label: 'Support Tickets', description: 'Raise or update support requests', actions: ['read', 'write'] },
+  { key: 'invoices', label: 'Invoices', description: 'Review invoices and transaction history', actions: ['read'] },
+  { key: 'dashboard', label: 'Dashboard', description: 'Read-only access to analytics and KPIs', actions: ['read'] },
+  { key: 'payments', label: 'Payments', description: 'Manage payment methods and view receipts', actions: ['read', 'write'] },
+];
+
+const PERMISSION_GROUPS: Record<string, PermissionGroup[]> = {
+  admin: ADMIN_PERMISSION_GROUPS,
+  customer: CUSTOMER_PERMISSION_GROUPS,
+  vendor: VENDOR_PERMISSION_GROUPS,
+};
 
 type PermissionSelectionState = Record<
   string,
@@ -206,91 +241,119 @@ const selectionToPermissionList = (selection: PermissionSelectionState, groups: 
 };
 
 export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
+  const toast = useToast();
   const queryClient = useQueryClient();
-  const normalizeFullName = (first?: string, last?: string) => {
-    const safeFirst = first?.trim() || '';
-    const safeLast = last?.trim() || '';
-    if (!safeLast || safeFirst.toLowerCase() === safeLast.toLowerCase()) {
-      return safeFirst;
-    }
-    return `${safeFirst} ${safeLast}`.trim();
-  };
 
   const [formData, setFormData] = useState({
     email: user?.email || '',
-    fullName: user ? normalizeFullName(user.firstName, user.lastName) : '',
-    roleId:
-      typeof user?.roleId === 'string'
-        ? user?.roleId
-        : typeof user?.roleId === 'object'
-        ? user?.roleId?._id
-        : '',
-    roleKey: typeof user?.roleId === 'object' ? user?.roleId?.key : user?.role || '',
+    fullName: user ? `${user.firstName} ${user.lastName}`.trim() : '',
+    portalType: user?.portalType || 'admin',
+    roleId: typeof user?.roleId === 'string' ? user.roleId : typeof user?.roleId === 'object' ? user.roleId?._id : '',
+    roleKey: typeof user?.roleId === 'object' ? user.roleId?.key : user?.role || '',
     isActive: user?.isActive ?? true,
+    organizationId: user?.organizationId || '',
   });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
   const [newRoleName, setNewRoleName] = useState('');
   const [createRoleError, setCreateRoleError] = useState('');
   const [hasInitialisedRole, setHasInitialisedRole] = useState(false);
+  const permissionGroups = useMemo(
+    () => PERMISSION_GROUPS[formData.portalType] || [],
+    [formData.portalType]
+  );
   const [permissionSelection, setPermissionSelection] = useState<PermissionSelectionState>(() =>
-    buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS)
+    buildInitialPermissionSelection(permissionGroups)
   );
 
   useEffect(() => {
     if (user) {
+      const orgId = typeof user.organizationId === 'object'
+        ? user.organizationId._id || user.organizationId
+        : user.organizationId;
       setFormData({
         email: user.email || '',
-        fullName: normalizeFullName(user.firstName, user.lastName),
+        fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+        portalType: user.portalType || 'admin',
         roleId: typeof user.roleId === 'string' ? user.roleId : typeof user.roleId === 'object' ? user.roleId?._id : '',
         roleKey: typeof user.roleId === 'object' ? user.roleId?.key : user.role || '',
         isActive: user.isActive ?? true,
+        organizationId: orgId ? orgId.toString() : '',
       });
       setHasInitialisedRole(false);
-      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (isCreateRoleOpen) {
+      setPermissionSelection(buildInitialPermissionSelection(permissionGroups));
+    }
+  }, [isCreateRoleOpen, permissionGroups]);
 
   const {
     data: rolesResponse,
     isLoading: isRolesLoading,
   } = useQuery({
-    queryKey: ['roles', 'admin'],
+    queryKey: ['roles', formData.portalType],
     queryFn: async (): Promise<RoleDto[]> => {
       try {
-        const response = await fetch(`${API_URL}/api/v1/roles?portalType=admin`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
+        const url = API_URL ? `${API_URL}/api/v1/roles?portalType=${formData.portalType}` : `/api/v1/roles?portalType=${formData.portalType}`;
+        const response = await apiFetch(url);
         if (!response.ok) {
-          return DEFAULT_ADMIN_ROLES.map((role) => ({
+          const fallback = DEFAULT_ROLES[formData.portalType] || [];
+          return fallback.map((role) => ({
             _id: undefined,
             name: role.name,
             key: role.key,
             permissions: role.permissions,
-            portalType: 'admin',
+            portalType: formData.portalType,
           }));
         }
         const data = await response.json();
         return (data.data as RoleDto[]) || [];
       } catch (error) {
         console.error('Failed to fetch roles', error);
-        return DEFAULT_ADMIN_ROLES.map((role) => ({
+        const fallback = DEFAULT_ROLES[formData.portalType] || [];
+        return fallback.map((role) => ({
           _id: undefined,
           name: role.name,
           key: role.key,
           permissions: role.permissions,
-          portalType: 'admin',
+          portalType: formData.portalType,
         }));
       }
     },
   });
 
+  // Fetch organizations for customer/vendor portal types
+  const needsOrganization = formData.portalType === 'customer' || formData.portalType === 'vendor';
+  const organizationType = formData.portalType === 'customer' ? 'customer' : formData.portalType === 'vendor' ? 'vendor' : undefined;
+  
+  const { data: organizationsData, isLoading: isOrganizationsLoading } = useQuery({
+    queryKey: ['organizations', organizationType],
+    queryFn: async () => {
+      if (!organizationType) return [];
+      try {
+        const url = API_URL ? `${API_URL}/api/v1/admin/organizations?type=${organizationType}&isActive=true` : `/api/v1/admin/organizations?type=${organizationType}&isActive=true`;
+        const response = await apiFetch(url);
+        if (!response.ok) {
+          return [];
+        }
+        const data = await response.json();
+        return (data.data || []) as Array<{ _id: string; name: string; type: string }>;
+      } catch (error) {
+        console.error('Failed to fetch organizations', error);
+        return [];
+      }
+    },
+    enabled: needsOrganization,
+  });
+
   const roleOptions: RoleOption[] = useMemo(() => {
     let options: RoleOption[] =
       !rolesResponse || rolesResponse.length === 0
-        ? DEFAULT_ADMIN_ROLES
+        ? DEFAULT_ROLES[formData.portalType] || []
         : rolesResponse.map((role) => ({
             id: role._id || role.key,
             mongoId: role._id,
@@ -308,17 +371,17 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           id: currentRoleKey,
           key: currentRoleKey,
           name: formatRoleName(currentRoleKey),
-            permissions: [],
+          permissions: [],
         },
       ];
     }
 
     return options;
-  }, [rolesResponse, user]);
+  }, [rolesResponse, formData.portalType, user]);
 
   const computedPermissionList = useMemo(
-    () => selectionToPermissionList(permissionSelection, ADMIN_PERMISSION_GROUPS),
-    [permissionSelection]
+    () => selectionToPermissionList(permissionSelection, permissionGroups),
+    [permissionSelection, permissionGroups]
   );
 
   const selectedModuleCount = useMemo(
@@ -331,7 +394,6 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       return;
     }
 
-    // Initialize role selection only once per user/form load
     if (!hasInitialisedRole) {
       if (user) {
         const existingRole =
@@ -349,7 +411,6 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
             roleId: existingRole.mongoId || '',
             roleKey: existingRole.key,
           }));
-          setHasInitialisedRole(true);
         }
       } else if (!formData.roleId && !formData.roleKey) {
         const defaultRole = roleOptions[0];
@@ -358,97 +419,74 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           roleId: defaultRole.mongoId || '',
           roleKey: defaultRole.key,
         }));
-        setHasInitialisedRole(true);
       }
+      setHasInitialisedRole(true);
     }
   }, [roleOptions, user, hasInitialisedRole, formData.roleId, formData.roleKey]);
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      try {
-        const response = await fetch(`${API_URL}/api/v1/admin/users/invite`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-          body: JSON.stringify(data),
-        });
+      const url = API_URL ? `${API_URL}/api/v1/admin/users/invite` : `/api/v1/admin/users/invite`;
+      const response = await apiFetch(url, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
 
-        if (!response.ok) {
-          let errorMessage = 'Failed to create user';
-          try {
-            const error = await response.json();
-            errorMessage = error.error || error.message || errorMessage;
-          } catch (e) {
-            errorMessage = `Server error: ${response.status} ${response.statusText}`;
-          }
-          throw new Error(errorMessage);
-        }
-        return response.json();
-      } catch (error: any) {
-        // Handle network errors
-        if (error.name === 'TypeError' || error.message.includes('fetch')) {
-          throw new Error('Network error: Unable to connect to server. Please check your connection.');
-        }
-        throw error;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to invite user');
       }
+      return response.json();
     },
-    onSuccess,
+    onSuccess: (data) => {
+      if (data.data?.temporaryPassword) {
+        toast.showToast(`Invitation sent. Temporary password: ${data.data.temporaryPassword}`, 'success');
+      } else {
+        toast.showToast('Invitation sent successfully!', 'success');
+      }
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      onSuccess();
+    },
     onError: (error: Error) => {
-      setErrors({ submit: error.message });
+      toast.showToast(`Failed to invite user: ${error.message}`, 'error');
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      try {
-        const response = await fetch(`${API_URL}/api/v1/admin/users/${user?._id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-          body: JSON.stringify(data),
-        });
+      const url = API_URL ? `${API_URL}/api/v1/admin/users/${user!._id}` : `/api/v1/admin/users/${user!._id}`;
+      const response = await apiFetch(url, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
 
-        if (!response.ok) {
-          let errorMessage = 'Failed to update user';
-          try {
-            const error = await response.json();
-            errorMessage = error.error || error.message || errorMessage;
-          } catch (e) {
-            errorMessage = `Server error: ${response.status} ${response.statusText}`;
-          }
-          throw new Error(errorMessage);
-        }
-        return response.json();
-      } catch (error: any) {
-        // Handle network errors
-        if (error.name === 'TypeError' || error.message.includes('fetch')) {
-          throw new Error('Network error: Unable to connect to server. Please check your connection.');
-        }
-        throw error;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update user');
       }
+      return response.json();
     },
-    onSuccess,
+    onSuccess: () => {
+      toast.showToast('User updated successfully!', 'success');
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      onSuccess();
+    },
     onError: (error: Error) => {
-      setErrors({ submit: error.message });
+      toast.showToast(`Failed to update user: ${error.message}`, 'error');
     },
   });
 
   const createRoleMutation = useMutation({
     mutationFn: async (payload: { name: string; permissions: string[] }) => {
-      const response = await fetch(`${API_URL}/api/v1/roles`, {
+      const url = API_URL ? `${API_URL}/api/v1/roles` : `/api/v1/roles`;
+      const response = await apiFetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
         body: JSON.stringify({
           name: payload.name,
           permissions: payload.permissions,
-          portalType: 'admin',
+          portalType: formData.portalType,
         }),
       });
 
@@ -469,15 +507,15 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       setCreateRoleError('');
       setIsCreateRoleOpen(false);
       setNewRoleName('');
-      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
-      queryClient.invalidateQueries({ queryKey: ['roles', 'admin'] });
-
+      setPermissionSelection(buildInitialPermissionSelection(permissionGroups));
+      queryClient.invalidateQueries({ queryKey: ['roles', formData.portalType] });
       const created = data.data as RoleDto;
       setFormData((prev) => ({
         ...prev,
         roleId: created._id || '',
         roleKey: created.key,
       }));
+      toast.showToast('Role created successfully!', 'success');
     },
     onError: (error: Error) => {
       setCreateRoleError(error.message);
@@ -488,14 +526,8 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     e.preventDefault();
     setErrors({});
 
-    // Validation
-    if (!formData.email.trim()) {
-      setErrors({ email: 'Email is required' });
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setErrors({ email: 'Please enter a valid email address' });
+    if (!formData.email || !formData.email.includes('@')) {
+      setErrors({ email: 'Valid email is required' });
       return;
     }
 
@@ -509,19 +541,31 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       return;
     }
 
+    // Validate organization for customer/vendor users
+    if (needsOrganization && !formData.organizationId) {
+      setErrors({ organizationId: `${formData.portalType === 'customer' ? 'Customer' : 'Vendor'} organization is required` });
+      return;
+    }
+
     const [firstNameRaw, ...rest] = formData.fullName.trim().split(/\s+/);
     const firstName = firstNameRaw;
     const lastName = rest.length > 0 ? rest.join(' ') : firstNameRaw;
 
-    const payload = {
+    const payload: any = {
       email: formData.email.trim().toLowerCase(),
       firstName,
       lastName,
-      portalType: 'admin',
+      portalType: formData.portalType,
       roleId: formData.roleId || undefined,
       role: formData.roleId ? undefined : formData.roleKey,
       isActive: formData.isActive,
     };
+
+    // Include organizationId for customer/vendor users (required)
+    // For tech/admin users, organizationId is optional and not included
+    if (needsOrganization && formData.organizationId) {
+      payload.organizationId = formData.organizationId;
+    }
 
     if (user) {
       updateMutation.mutate(payload);
@@ -530,14 +574,11 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     }
   };
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
-  const isCreatingRole = createRoleMutation.isPending;
-
   const handleRoleSelect = (value: string) => {
     if (value === '__create__') {
       setCreateRoleError('');
       setNewRoleName('');
-      setPermissionSelection(buildInitialPermissionSelection(ADMIN_PERMISSION_GROUPS));
+      setPermissionSelection(buildInitialPermissionSelection(permissionGroups));
       setIsCreateRoleOpen(true);
       return;
     }
@@ -551,8 +592,6 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
       }));
     }
   };
-
-  const selectedRoleValue = formData.roleId || formData.roleKey;
 
   const handleCreateRole = () => {
     const trimmedName = newRoleName.trim();
@@ -614,59 +653,98 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
     });
   };
 
+  const selectedRoleValue = formData.roleId || formData.roleKey;
+  const isSaving = createMutation.isPending || updateMutation.isPending;
+  const isCreatingRole = createRoleMutation.isPending;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          Email Address <span className="text-red-500">*</span>
+        <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <MdEmail className="w-4 h-4 text-gray-400" />
+          Email Address *
         </label>
         <input
           id="email"
           type="email"
           value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, email: e.target.value });
+            setErrors({ ...errors, email: '' });
+          }}
           disabled={!!user}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700',
-            user && 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
+            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed',
+            errors.email ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
           )}
           placeholder="user@example.com"
         />
-        {user && (
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Email cannot be changed after user creation
-          </p>
+        {errors.email && (
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>
         )}
-        {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
       </div>
 
       {/* Full Name */}
       <div>
-        <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          Full Name <span className="text-red-500">*</span>
+        <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <MdPerson className="w-4 h-4 text-gray-400" />
+          Full Name *
         </label>
         <input
           id="fullName"
           type="text"
           value={formData.fullName}
-          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, fullName: e.target.value });
+            setErrors({ ...errors, fullName: '' });
+          }}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.fullName ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
+            errors.fullName ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
           )}
-          placeholder="John Doe"
+          placeholder="Jane Doe"
         />
-        {errors.fullName && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.fullName}</p>}
+        {errors.fullName && (
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.fullName}</p>
+        )}
+      </div>
+
+      {/* Portal Type */}
+      <div>
+        <label htmlFor="portalType" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <MdWork className="w-4 h-4 text-gray-400" />
+          Portal Type *
+        </label>
+        <select
+          id="portalType"
+          value={formData.portalType}
+          onChange={(e) => {
+            const newPortal = e.target.value;
+            setHasInitialisedRole(false);
+            setFormData((prev) => ({
+              ...prev,
+              portalType: newPortal,
+              roleId: '',
+              roleKey: '',
+            }));
+          }}
+          disabled={!!user}
+          className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:cursor-not-allowed"
+        >
+          {PORTAL_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Role */}
       <div>
-        <label htmlFor="role" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          Role <span className="text-red-500">*</span>
+        <label htmlFor="role" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <MdSecurity className="w-4 h-4 text-gray-400" />
+          Role *
         </label>
         <select
           id="role"
@@ -674,9 +752,8 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           onChange={(e) => handleRoleSelect(e.target.value)}
           disabled={isRolesLoading}
           className={cn(
-            'w-full px-4 py-2.5 border-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all',
-            errors.role ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
+            'w-full px-4 py-3 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all',
+            errors.role ? 'border-red-300 dark:border-red-700' : 'border-gray-300 dark:border-gray-700'
           )}
         >
           {roleOptions.map((role) => (
@@ -686,49 +763,46 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           ))}
           <option value="__create__">Create a new role…</option>
         </select>
-        {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
+        {errors.role && (
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.role}</p>
+        )}
       </div>
 
       {/* Active Status */}
       {user && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <input
-            id="isActive"
             type="checkbox"
+            id="isActive"
             checked={formData.isActive}
             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
           />
-          <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Active User
+          <label htmlFor="isActive" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 cursor-pointer">
+            <MdCheckCircle className="w-4 h-4 text-emerald-500" />
+            User is active
           </label>
         </div>
       )}
 
-      {errors.submit && (
-        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
-          {errors.submit}
-        </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+      {/* Form Actions */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button
           type="button"
           onClick={onCancel}
-          disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          disabled={isSaving}
         >
           <MdCancel className="w-4 h-4" />
           <span>Cancel</span>
         </button>
         <button
           type="submit"
-          disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+          disabled={isSaving}
+          className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center gap-2"
         >
           <MdSave className="w-4 h-4" />
-          <span>{isLoading ? 'Saving...' : user ? 'Update' : 'Invite User'}</span>
+          {isSaving ? 'Saving...' : user ? 'Update User' : 'Send Invitation'}
         </button>
       </div>
 
@@ -753,7 +827,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               value={newRoleName}
               onChange={(e) => setNewRoleName(e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="e.g. Compliance Manager"
+              placeholder="e.g. Finance Manager"
             />
           </div>
 
@@ -762,7 +836,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Select permissions</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Enable modules and choose read, write, or edit access.
+                  Enable modules and choose the required access level.
                 </p>
               </div>
               <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
@@ -781,7 +855,7 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
                 ))}
               </div>
               <div className="divide-y divide-gray-200 dark:divide-gray-800">
-                {ADMIN_PERMISSION_GROUPS.map((group) => {
+                {permissionGroups.map((group) => {
                   const selection = permissionSelection[group.key];
                   const actionKeys = group.actions ?? PERMISSION_ACTIONS.map((action) => action.key);
                   return (
@@ -863,25 +937,20 @@ export function UserForm({ user, onSuccess, onCancel }: UserFormProps) {
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-800">
             <button
               type="button"
-              onClick={() => {
-                if (!isCreatingRole) {
-                  setIsCreateRoleOpen(false);
-                }
-              }}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg font-semibold transition-colors"
+              onClick={() => setIsCreateRoleOpen(false)}
               disabled={isCreatingRole}
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
             >
-              <MdCancel className="w-4 h-4" />
-              <span>Cancel</span>
+              Cancel
             </button>
             <button
               type="button"
               onClick={handleCreateRole}
               disabled={isCreatingRole}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               <MdAddCircleOutline className="w-4 h-4" />
-              <span>{isCreatingRole ? 'Creating...' : 'Create Role'}</span>
+              {isCreatingRole ? 'Creating...' : 'Create Role'}
             </button>
           </div>
         </div>

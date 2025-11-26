@@ -6,11 +6,15 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
+import { Modal } from '../../components/shared/Modal';
+import { UserForm } from './UserForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdSearch, MdFilterList, MdDownload, MdCheckCircle, MdVpnKey, MdPeople } from 'react-icons/md';
+import { MdSearch, MdFilterList, MdDownload, MdCheckCircle, MdVpnKey, MdPeople, MdAdd, MdEdit, MdDelete } from 'react-icons/md';
 import { cn } from '../../lib/utils';
+import { apiFetch } from '../../utils/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Use relative URL in development (with Vite proxy) or env var, otherwise default to localhost:3000
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
 
 interface User {
   _id: string;
@@ -35,6 +39,8 @@ interface User {
 export function UsersPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -42,7 +48,7 @@ export function UsersPage() {
 
   // Fetch users
   const { data: usersData, isLoading } = useQuery({
-    queryKey: ['users', filterRole, filterStatus, searchQuery],
+    queryKey: ['admin-users', filterRole, filterStatus, searchQuery],
     queryFn: async () => {
       try {
         const params = new URLSearchParams();
@@ -56,11 +62,8 @@ export function UsersPage() {
           params.append('search', searchQuery);
         }
 
-        const response = await fetch(`${API_URL}/api/v1/admin/users?${params}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
+        const url = API_URL ? `${API_URL}/api/v1/admin/users?${params}` : `/api/v1/admin/users?${params}`;
+        const response = await apiFetch(url);
 
         if (!response.ok) {
           const error = await response.json().catch(() => ({}));
@@ -91,11 +94,9 @@ export function UsersPage() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const response = await fetch(`${API_URL}/api/v1/admin/users/${userId}`, {
+      const url = API_URL ? `${API_URL}/api/v1/admin/users/${userId}` : `/api/v1/admin/users/${userId}`;
+      const response = await apiFetch(url, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
       });
 
       if (!response.ok) {
@@ -104,6 +105,7 @@ export function UsersPage() {
       }
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
       showToast('User deleted successfully!', 'success');
     },
@@ -112,10 +114,31 @@ export function UsersPage() {
     },
   });
 
+  const handleInvite = () => {
+    setEditingUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (user: User) => {
+    setEditingUser(user);
+    setIsModalOpen(true);
+  };
+
   const handleDelete = (user: User) => {
     if (window.confirm(`Are you sure you want to delete ${user.email}?`)) {
       deleteMutation.mutate(user._id);
     }
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setEditingUser(null);
+  };
+
+  const handleSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    queryClient.invalidateQueries({ queryKey: ['users'] });
+    handleClose();
   };
 
   const columns = [
@@ -220,6 +243,13 @@ export function UsersPage() {
             Manage admin users and their permissions
           </p>
         </div>
+        <button
+          onClick={handleInvite}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold shadow-sm"
+        >
+          <MdAdd className="w-5 h-5" />
+          Invite User
+        </button>
       </div>
 
       {/* Summary Cards */}
@@ -355,6 +385,7 @@ export function UsersPage() {
             <DataTable
               columns={columns}
               data={filteredUsers}
+              onEdit={handleEdit}
               onDelete={handleDelete}
               actionsLabel="Quick Actions"
               emptyMessage="No users found."
@@ -363,6 +394,19 @@ export function UsersPage() {
         )}
       </div>
 
+      {/* User Form Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        title={editingUser ? 'Edit User' : 'Invite User'}
+        size="large"
+      >
+        <UserForm
+          user={editingUser || undefined}
+          onSuccess={handleSuccess}
+          onCancel={handleClose}
+        />
+      </Modal>
     </div>
   );
 }

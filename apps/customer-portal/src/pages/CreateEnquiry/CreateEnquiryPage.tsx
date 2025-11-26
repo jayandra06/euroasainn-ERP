@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../components/shared/Toast';
 import { MdAdd, MdDelete } from 'react-icons/md';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const SUPPLY_PORT_OPTIONS = ['Bussan', 'Goa', 'Tamil Nadu', 'Kerala', 'Mumbai'];
 
 const CATEGORY_OPTIONS = ['Genuine', 'OEM', 'Copy', 'Parts'];
@@ -32,8 +36,131 @@ const CONTAINER_TYPE_OPTIONS = [
   'Wooden Crate (Custom Size Wooden Crate)',
 ];
 
+interface Vessel {
+  _id: string;
+  name: string;
+  imoNumber?: string;
+  type?: string;
+  exVesselName?: string;
+}
+
+interface Vendor {
+  _id: string;
+  name: string;
+  isAdminInvited?: boolean;
+}
+
 export function CreateEnquiryPage() {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+  const queryClient = useQueryClient();
   const [items, setItems] = useState([{ id: 1 }]);
+  const [formData, setFormData] = useState({
+    vesselId: '',
+    supplyPort: '',
+    category: '',
+    brand: '',
+    model: '',
+    title: '',
+    description: '',
+    vendor1: '',
+    vendor2: '',
+    vendor3: '',
+  });
+
+  // Fetch vessels
+  const { data: vessels, isLoading: vesselsLoading } = useQuery<Vessel[]>({
+    queryKey: ['vessels'],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/api/v1/customer/vessels`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) throw new Error('Failed to fetch vessels');
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
+
+  // Fetch available vendors (customer-invited only)
+  const { data: vendors, isLoading: vendorsLoading } = useQuery<Vendor[]>({
+    queryKey: ['rfq-vendors'],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/api/v1/customer/rfq/vendors`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) throw new Error('Failed to fetch vendors');
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
+
+  // Create RFQ mutation
+  const createRFQMutation = useMutation({
+    mutationFn: async (rfqData: any) => {
+      const response = await fetch(`${API_URL}/api/v1/customer/rfq`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(rfqData),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create RFQ');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rfqs'] });
+      showToast('RFQ created successfully!', 'success');
+      navigate('/rfqs');
+    },
+    onError: (error: any) => {
+      showToast(error.message || 'Failed to create RFQ', 'error');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.vesselId) {
+      showToast('Please select a vessel', 'error');
+      return;
+    }
+    if (!formData.supplyPort || !formData.category || !formData.brand) {
+      showToast('Please fill in all required fields', 'error');
+      return;
+    }
+
+    // Collect selected vendors (at least one required)
+    const selectedVendors = [
+      formData.vendor1,
+      formData.vendor2,
+      formData.vendor3,
+    ].filter((v) => v && v.trim() !== '');
+
+    if (selectedVendors.length === 0) {
+      showToast('Please select at least one vendor', 'error');
+      return;
+    }
+
+    const selectedVessel = vessels?.find((v) => v._id === formData.vesselId);
+    createRFQMutation.mutate({
+      vesselId: formData.vesselId,
+      title: formData.title || `RFQ for ${selectedVessel?.name || 'Vessel'}`,
+      description: formData.description,
+      supplyPort: formData.supplyPort,
+      category: formData.category,
+      brand: formData.brand,
+      model: formData.model,
+      status: 'draft',
+      recipientVendorIds: selectedVendors, // Send to selected vendors
+    });
+  };
 
   const addItem = () => {
     setItems([...items, { id: Date.now() }]);
@@ -60,9 +187,30 @@ export function CreateEnquiryPage() {
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
               Vessel Name <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Vessel</option>
+            <select
+              value={formData.vesselId}
+              onChange={(e) => setFormData({ ...formData, vesselId: e.target.value })}
+              required
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            >
+              <option value="">Select Vessel</option>
+              {vesselsLoading ? (
+                <option>Loading vessels...</option>
+              ) : vessels && vessels.length > 0 ? (
+                vessels.map((vessel) => (
+                  <option key={vessel._id} value={vessel._id}>
+                    {vessel.name} {vessel.imoNumber ? `(IMO: ${vessel.imoNumber})` : ''}
+                  </option>
+                ))
+              ) : (
+                <option disabled>No vessels available. Please add a vessel first.</option>
+              )}
             </select>
+            {vessels && vessels.length === 0 && (
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                No vessels found. Please add a vessel in Vessel Management first.
+              </p>
+            )}
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Vessel Ex Name</label>
@@ -86,7 +234,12 @@ export function CreateEnquiryPage() {
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
               Supply Port <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
+            <select
+              value={formData.supplyPort}
+              onChange={(e) => setFormData({ ...formData, supplyPort: e.target.value })}
+              required
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            >
               <option value="">Select Supply Port</option>
               {SUPPLY_PORT_OPTIONS.map((port) => (
                 <option key={port} value={port}>
@@ -107,7 +260,12 @@ export function CreateEnquiryPage() {
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
               Category <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              required
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            >
               <option value="">Select Category</option>
               {CATEGORY_OPTIONS.map((cat) => (
                 <option key={cat} value={cat}>
@@ -128,17 +286,27 @@ export function CreateEnquiryPage() {
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
               Brand <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Brand</option>
-            </select>
+            <input
+              type="text"
+              value={formData.brand}
+              onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+              required
+              placeholder="Enter Brand"
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            />
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
               Model <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Model</option>
-            </select>
+            <input
+              type="text"
+              value={formData.model}
+              onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+              required
+              placeholder="Enter Model"
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            />
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
@@ -234,32 +402,73 @@ export function CreateEnquiryPage() {
       {/* Choose Vendors Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Choose vendors</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Select vendors you have invited. At least one vendor is required.
+        </p>
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
               Vendor 1 <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Vendor</option>
+            <select
+              value={formData.vendor1}
+              onChange={(e) => setFormData({ ...formData, vendor1: e.target.value })}
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            >
+              <option value="">Select Vendor</option>
+              {vendorsLoading ? (
+                <option>Loading vendors...</option>
+              ) : vendors && vendors.length > 0 ? (
+                vendors.map((vendor) => (
+                  <option key={vendor._id} value={vendor._id}>
+                    {vendor.name}
+                  </option>
+                ))
+              ) : (
+                <option disabled>No vendors available. Please invite a vendor first.</option>
+              )}
             </select>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Vendor 2 <span className="text-red-500">*</span>
+              Vendor 2
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Vendor</option>
+            <select
+              value={formData.vendor2}
+              onChange={(e) => setFormData({ ...formData, vendor2: e.target.value })}
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            >
+              <option value="">Select Vendor</option>
+              {vendors && vendors.length > 0 && vendors.map((vendor) => (
+                <option key={vendor._id} value={vendor._id}>
+                  {vendor.name}
+                </option>
+              ))}
             </select>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              Vendor 3 <span className="text-red-500">*</span>
+              Vendor 3
             </label>
-            <select className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white">
-              <option>Select Vendor</option>
+            <select
+              value={formData.vendor3}
+              onChange={(e) => setFormData({ ...formData, vendor3: e.target.value })}
+              className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
+            >
+              <option value="">Select Vendor</option>
+              {vendors && vendors.length > 0 && vendors.map((vendor) => (
+                <option key={vendor._id} value={vendor._id}>
+                  {vendor.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
+        {vendors && vendors.length === 0 && (
+          <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+            No vendors found. Please invite a vendor in Vendor Management first.
+          </p>
+        )}
       </div>
 
       {/* Items Section */}
@@ -386,8 +595,12 @@ export function CreateEnquiryPage() {
 
       {/* Submit Button */}
       <div className="flex justify-center">
-        <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-          Get Quote
+        <button
+          onClick={handleSubmit}
+          disabled={createRFQMutation.isPending || !formData.vesselId}
+          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {createRFQMutation.isPending ? 'Creating RFQ...' : 'Get Quote'}
         </button>
       </div>
     </div>

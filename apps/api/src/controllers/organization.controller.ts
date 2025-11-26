@@ -1,8 +1,10 @@
+import mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import { organizationService } from '../services/organization.service';
 import { userService } from '../services/user.service';
 import { invitationService } from '../services/invitation.service';
 import { User } from '../models/user.model';
+import { Organization } from '../models/organization.model';
 import { PortalType, OrganizationType } from '@euroasiann/shared';
 import { logger } from '../config/logger';
 
@@ -50,8 +52,87 @@ export class OrganizationController {
         });
       }
 
+      // Determine who is inviting (admin/tech/customer)
+      const requester = (req as any).user;
+      let invitedBy: 'admin' | 'tech' | 'customer' | undefined;
+      
+      if (requester?.portalType === PortalType.ADMIN) {
+        invitedBy = 'admin';
+      } else if (requester?.portalType === PortalType.TECH) {
+        invitedBy = 'tech';
+      } else if (requester?.portalType === PortalType.CUSTOMER && orgData.type === OrganizationType.VENDOR) {
+        invitedBy = 'customer';
+      }
+
+      // If customer is inviting a vendor, check if vendor already exists (admin-invited or customer-invited)
+      let existingVendor = null;
+      if (invitedBy === 'customer' && orgData.type === OrganizationType.VENDOR && requester?.organizationId) {
+        // Check if vendor with same name already exists (case-insensitive)
+        existingVendor = await Organization.findOne({
+          type: OrganizationType.VENDOR,
+          name: { $regex: new RegExp(`^${orgData.name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }, // Case-insensitive, escape special chars
+        });
+      }
+
+      // Prepare organization data with invitation tracking
+      const orgDataWithInvitation: any = {
+        ...orgData,
+        invitedBy,
+        invitedByOrganizationId: invitedBy === 'customer' ? requester?.organizationId : undefined,
+      };
+
+      // If vendor already exists and was admin-invited, add customer to visibility list
+      if (existingVendor && existingVendor.isAdminInvited) {
+        await organizationService.addCustomerToVendorVisibility(
+          existingVendor._id.toString(),
+          requester.organizationId
+        );
+        
+        // Update the existing vendor to also track this customer invitation
+        if (!existingVendor.invitedByOrganizationId) {
+          existingVendor.invitedByOrganizationId = new mongoose.Types.ObjectId(requester.organizationId);
+          await existingVendor.save();
+        }
+        
+        return res.status(200).json({
+          success: true,
+          message: 'Vendor already exists. You have been granted access to this vendor.',
+          data: existingVendor,
+          existing: true,
+        });
+      }
+
+      // If vendor already exists but was customer-invited, check if this customer already has access
+      if (existingVendor && !existingVendor.isAdminInvited && requester?.organizationId) {
+        const customerOrgId = new mongoose.Types.ObjectId(requester.organizationId);
+        const hasAccess = existingVendor.visibleToCustomerIds?.some(
+          (id: any) => id.toString() === customerOrgId.toString()
+        );
+        
+        if (hasAccess) {
+          return res.status(200).json({
+            success: true,
+            message: 'You already have access to this vendor.',
+            data: existingVendor,
+            existing: true,
+          });
+        } else {
+          // Add this customer to the visibility list
+          await organizationService.addCustomerToVendorVisibility(
+            existingVendor._id.toString(),
+            requester.organizationId
+          );
+          return res.status(200).json({
+            success: true,
+            message: 'Vendor already exists. You have been granted access to this vendor.',
+            data: existingVendor,
+            existing: true,
+          });
+        }
+      }
+
       // Create the organization first
-      const organization = await organizationService.createOrganization(orgData);
+      const organization = await organizationService.createOrganization(orgDataWithInvitation);
       const organizationId = (organization as any)._id?.toString() || organization.id?.toString();
 
       logger.info(`✅ Organization created with ID: ${organizationId}`);
@@ -247,10 +328,19 @@ export class OrganizationController {
     try {
       const type = req.query.type as string;
       const portalType = req.query.portalType as string;
+      const requester = (req as any).user;
       const filters: any = {};
 
       if (req.query.isActive !== undefined) {
         filters.isActive = req.query.isActive === 'true';
+      }
+
+      // Add requester information for visibility filtering
+      if (requester) {
+        filters.requesterPortalType = requester.portalType;
+        if (requester.portalType === PortalType.CUSTOMER && requester.organizationId) {
+          filters.customerOrganizationId = requester.organizationId;
+        }
       }
 
       const organizations = await organizationService.getOrganizations(
