@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Model, IModel } from '../models/model.model';
 import { logger } from '../config/logger';
 
@@ -26,38 +27,96 @@ export class ModelService {
     return model;
   }
 
-  async getModels(filters?: { status?: string; organizationId?: string; brandId?: string; includeGlobal?: boolean }) {
+  async getModels(filters?: { status?: string; organizationId?: string; brandId?: string; includeGlobal?: boolean; skipPopulate?: boolean }) {
     const query: any = {};
 
-    if (filters?.status) {
-      query.status = filters.status;
-    }
-
     if (filters?.brandId) {
-      query.brandId = filters.brandId;
+      // Convert brandId to ObjectId if it's a string
+      let brandIdObj: any = filters.brandId;
+      try {
+        if (typeof brandIdObj === 'string' && mongoose.Types.ObjectId.isValid(brandIdObj)) {
+          brandIdObj = new mongoose.Types.ObjectId(brandIdObj);
+        }
+      } catch (error) {
+        // If conversion fails, use as-is
+      }
+      query.brandId = brandIdObj;
     }
 
     // If organizationId is provided, show global models + organization-specific models
     if (filters?.organizationId) {
-      query.$or = [
-        { isGlobal: true },
-        { organizationId: filters.organizationId },
-      ];
+      // Convert organizationId to ObjectId if it's a string
+      let orgId: any = filters.organizationId;
+      try {
+        if (typeof orgId === 'string' && mongoose.Types.ObjectId.isValid(orgId)) {
+          orgId = new mongoose.Types.ObjectId(orgId);
+        }
+      } catch (error) {
+        // If conversion fails, use as-is
+      }
+
+      // Combine status filter with $or condition
+      if (filters?.status) {
+        query.$and = [
+          { status: filters.status },
+          {
+            $or: [
+              { isGlobal: true },
+              { organizationId: orgId },
+            ],
+          },
+        ];
+      } else {
+        query.$or = [
+          { isGlobal: true },
+          { organizationId: orgId },
+        ];
+      }
     } else if (filters?.includeGlobal === false) {
       // Only show organization-specific models
       query.isGlobal = false;
       if (filters.organizationId) {
-        query.organizationId = filters.organizationId;
+        let orgId: any = filters.organizationId;
+        try {
+          if (typeof orgId === 'string' && mongoose.Types.ObjectId.isValid(orgId)) {
+            orgId = new mongoose.Types.ObjectId(orgId);
+          }
+        } catch (error) {
+          // If conversion fails, use as-is
+        }
+        query.organizationId = orgId;
+      }
+      if (filters?.status) {
+        query.status = filters.status;
       }
     } else {
       // Default: show all models (for admin portal)
+      if (filters?.status) {
+        query.status = filters.status;
+      }
     }
 
-    return await Model.find(query)
-      .populate('createdBy', 'email firstName lastName')
-      .populate('organizationId', 'name')
-      .populate('brandId', 'name')
-      .sort({ createdAt: -1 });
+    let queryBuilder = Model.find(query);
+    
+    // Only populate if needed (for admin portal display)
+    if (!filters?.skipPopulate) {
+      queryBuilder = queryBuilder
+        .populate('createdBy', 'email firstName lastName')
+        .populate('organizationId', 'name')
+        .populate('brandId', 'name');
+    } else {
+      // For customer portal, we still need brandId name for filtering
+      queryBuilder = queryBuilder.populate('brandId', 'name');
+    }
+    
+    // Sort alphabetically for dropdowns, or by creation date for admin
+    if (filters?.skipPopulate) {
+      queryBuilder = queryBuilder.sort({ name: 1 }); // Alphabetical for dropdowns
+    } else {
+      queryBuilder = queryBuilder.sort({ createdAt: -1 }); // Newest first for admin
+    }
+    
+    return await queryBuilder;
   }
 
   async getModelById(modelId: string) {

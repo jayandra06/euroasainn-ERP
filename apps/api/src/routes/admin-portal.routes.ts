@@ -752,12 +752,8 @@ router.post('/models/:id/reject', async (req, res) => {
 // RFQ routes
 router.get('/rfq', async (req, res) => {
   try {
-    // For admin, we need to get the admin organization ID
-    // Admin portal users belong to the admin organization (Euroasiann)
-    const requester = (req as any).user;
-    // Admin portal users might not have organizationId, so we'll use a special admin org ID
-    // Or we can get all RFQs sent by admin
-    const rfqs = await rfqService.getRFQs(requester?.organizationId || 'admin', req.query);
+    // Admin portal should see ALL RFQs (from both admin and customers)
+    const rfqs = await rfqService.getAllRFQs(req.query);
     res.json({ success: true, data: rfqs });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
@@ -848,6 +844,340 @@ router.get('/vendors', async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to get vendors',
+    });
+  }
+});
+
+// Get all customer organizations with onboarding information
+router.get('/customers', async (req, res) => {
+  try {
+    const { CustomerOnboarding } = await import('../models/customer-onboarding.model');
+    const { vesselService } = await import('../services/vessel.service');
+    
+    // Get all customer organizations
+    const customerOrgs = await Organization.find({ type: OrganizationType.CUSTOMER }).sort({ createdAt: -1 });
+    
+    // Get all customer onboardings
+    const onboardings = await CustomerOnboarding.find({}).sort({ createdAt: -1 });
+    
+    // Create a map of organizationId -> onboarding
+    const onboardingMap = new Map();
+    onboardings.forEach((onboarding: any) => {
+      if (onboarding.organizationId) {
+        const orgId = onboarding.organizationId.toString();
+        onboardingMap.set(orgId, onboarding);
+      }
+    });
+    
+    // Combine organizations with onboarding data and vessel count
+    const customersWithDetails = await Promise.all(
+      customerOrgs.map(async (org: any) => {
+        const orgId = org._id.toString();
+        const onboarding = onboardingMap.get(orgId);
+        
+        // Get vessel count for this organization
+        let vesselCount = 0;
+        try {
+          const vessels = await vesselService.getVessels(orgId);
+          vesselCount = vessels.length;
+        } catch (error) {
+          // If vessel service fails, use onboarding data
+          vesselCount = onboarding?.vessels || 0;
+        }
+        
+        // Build phone number from onboarding data
+        const phoneNumber = onboarding 
+          ? `${onboarding.mobileCountryCode || ''} ${onboarding.mobilePhone || ''}`.trim()
+          : '';
+        
+        return {
+          _id: org._id,
+          companyName: org.name,
+          email: onboarding?.email || '',
+          phoneNumber: phoneNumber,
+          primaryContact: onboarding?.contactPerson || '',
+          numberOfVessels: vesselCount,
+          isActive: org.isActive,
+          status: onboarding?.status || (org.isActive ? 'approved' : 'pending'),
+          createdAt: org.createdAt,
+        };
+      })
+    );
+    
+    // Filter by status if provided
+    let filteredCustomers = customersWithDetails;
+    if (req.query.status === 'accepted' || req.query.status === 'approved') {
+      filteredCustomers = customersWithDetails.filter(c => (c.status === 'approved' || c.status === 'completed') && c.isActive);
+    } else if (req.query.status === 'pending') {
+      filteredCustomers = customersWithDetails.filter(c => c.status === 'pending' || (!c.isActive && c.status !== 'approved'));
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: filteredCustomers,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get customers',
+    });
+  }
+});
+
+// Get vessels for a customer organization
+router.get('/organizations/:id/vessels', async (req, res) => {
+  try {
+    const { vesselService } = await import('../services/vessel.service');
+    const organizationId = req.params.id;
+    
+    // Verify organization exists and is a customer organization
+    const org = await Organization.findById(organizationId);
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        error: 'Organization not found',
+      });
+    }
+    
+    if (org.type !== OrganizationType.CUSTOMER) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization is not a customer organization',
+      });
+    }
+    
+    const vessels = await vesselService.getVessels(organizationId);
+    res.status(200).json({
+      success: true,
+      data: vessels,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get vessels',
+    });
+  }
+});
+
+// Get business units for a customer organization
+router.get('/organizations/:id/business-units', async (req, res) => {
+  try {
+    const { businessUnitService } = await import('../services/business-unit.service');
+    const organizationId = req.params.id;
+    
+    // Verify organization exists and is a customer organization
+    const org = await Organization.findById(organizationId);
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        error: 'Organization not found',
+      });
+    }
+    
+    if (org.type !== OrganizationType.CUSTOMER) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization is not a customer organization',
+      });
+    }
+    
+    const businessUnits = await businessUnitService.getBusinessUnits(organizationId);
+    res.status(200).json({
+      success: true,
+      data: businessUnits,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get business units',
+    });
+  }
+});
+
+// Settings routes
+router.get('/settings/:type', async (req, res) => {
+  try {
+    const { Settings } = await import('../models/settings.model');
+    const settings = await Settings.findOne({ type: req.params.type });
+    
+    if (!settings) {
+      // Return default values if settings don't exist
+      const defaults: Record<string, any> = {
+        'branding': {
+          platformName: 'Enterprise ERP',
+          logoUrl: '',
+          primaryColor: '#5C6268',
+        },
+        'regional': {
+          defaultTimezone: 'UTC',
+          defaultCurrency: 'USD',
+        },
+        'email-templates': {
+          welcomeEmail: 'Welcome to {platform_name}...',
+          invoiceEmail: 'Your invoice for {month}...',
+        },
+        'sms-templates': {
+          verificationSMS: 'Your verification code is {code}',
+          alertSMS: 'Important alert: {message}',
+        },
+      };
+      
+      return res.status(200).json({
+        success: true,
+        data: {
+          type: req.params.type,
+          data: defaults[req.params.type] || {},
+        },
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: settings,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get settings',
+    });
+  }
+});
+
+router.put('/settings/:type', async (req, res) => {
+  try {
+    const { Settings } = await import('../models/settings.model');
+    const userId = (req as any).user?.userId;
+    
+    const settings = await Settings.findOneAndUpdate(
+      { type: req.params.type },
+      {
+        data: req.body.data || req.body,
+        updatedBy: userId,
+      },
+      {
+        upsert: true,
+        new: true,
+      }
+    );
+    
+    res.status(200).json({
+      success: true,
+      data: settings,
+      message: 'Settings saved successfully',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to save settings',
+    });
+  }
+});
+
+// Export routes
+router.get('/export/licenses', async (req, res) => {
+  try {
+    const { licenseService } = await import('../services/license.service');
+    const { organizationService } = await import('../services/organization.service');
+    
+    const licenses = await licenseService.getLicenses();
+    const organizations = await organizationService.getOrganizations();
+    
+    // Create CSV
+    const headers = ['Organization Name', 'Type', 'License Status', 'Expires At', 'Issued At', 'Users Limit', 'Users Used', 'Vessels Limit', 'Vessels Used', 'Items Limit', 'Items Used'];
+    const rows = licenses.map((license: any) => {
+      const org = organizations.find((o: any) => o._id.toString() === license.organizationId?.toString());
+      return [
+        org?.name || 'N/A',
+        org?.type || 'N/A',
+        license.status || 'N/A',
+        license.expiresAt ? new Date(license.expiresAt).toISOString().split('T')[0] : 'N/A',
+        license.issuedAt ? new Date(license.issuedAt).toISOString().split('T')[0] : 'N/A',
+        license.usageLimits?.users || 0,
+        license.currentUsage?.users || 0,
+        license.usageLimits?.vessels || 0,
+        license.currentUsage?.vessels || 0,
+        license.usageLimits?.items || 0,
+        license.currentUsage?.items || 0,
+      ];
+    });
+    
+    const csv = [headers.join(','), ...rows.map((row: any[]) => row.map(cell => `"${cell}"`).join(','))].join('\n');
+    
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="licenses-${new Date().toISOString().split('T')[0]}.csv"`);
+    res.send(csv);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to export licenses',
+    });
+  }
+});
+
+router.get('/export/organizations', async (req, res) => {
+  try {
+    const { organizationService } = await import('../services/organization.service');
+    const organizations = await organizationService.getOrganizations();
+    
+    // Create CSV
+    const headers = ['Name', 'Type', 'Portal Type', 'Is Active', 'Created At'];
+    const rows = organizations.map((org: any) => [
+      org.name || 'N/A',
+      org.type || 'N/A',
+      org.portalType || 'N/A',
+      org.isActive ? 'Yes' : 'No',
+      org.createdAt ? new Date(org.createdAt).toISOString().split('T')[0] : 'N/A',
+    ]);
+    
+    const csv = [headers.join(','), ...rows.map((row: any[]) => row.map(cell => `"${cell}"`).join(','))].join('\n');
+    
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="organizations-${new Date().toISOString().split('T')[0]}.csv"`);
+    res.send(csv);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to export organizations',
+    });
+  }
+});
+
+router.get('/export/onboarding', async (req, res) => {
+  try {
+    const { onboardingService } = await import('../services/onboarding.service');
+    const customerOnboardings = await onboardingService.getCustomerOnboardings();
+    const vendorOnboardings = await onboardingService.getVendorOnboardings();
+    
+    // Create CSV
+    const headers = ['Type', 'Organization Name', 'Status', 'Submitted At', 'Approved At', 'Rejected At'];
+    const rows = [
+      ...customerOnboardings.map((onboarding: any) => [
+        'Customer',
+        onboarding.organizationName || 'N/A',
+        onboarding.status || 'N/A',
+        onboarding.submittedAt ? new Date(onboarding.submittedAt).toISOString().split('T')[0] : 'N/A',
+        onboarding.approvedAt ? new Date(onboarding.approvedAt).toISOString().split('T')[0] : 'N/A',
+        onboarding.rejectedAt ? new Date(onboarding.rejectedAt).toISOString().split('T')[0] : 'N/A',
+      ]),
+      ...vendorOnboardings.map((onboarding: any) => [
+        'Vendor',
+        onboarding.organizationName || 'N/A',
+        onboarding.status || 'N/A',
+        onboarding.submittedAt ? new Date(onboarding.submittedAt).toISOString().split('T')[0] : 'N/A',
+        onboarding.approvedAt ? new Date(onboarding.approvedAt).toISOString().split('T')[0] : 'N/A',
+        onboarding.rejectedAt ? new Date(onboarding.rejectedAt).toISOString().split('T')[0] : 'N/A',
+      ]),
+    ];
+    
+    const csv = [headers.join(','), ...rows.map((row: any[]) => row.map(cell => `"${cell}"`).join(','))].join('\n');
+    
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="onboarding-${new Date().toISOString().split('T')[0]}.csv"`);
+    res.send(csv);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to export onboarding data',
     });
   }
 });

@@ -6,8 +6,9 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
+import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
-import { MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { MdAdd, MdBusiness, MdFilterList, MdSearch, MdDownload, MdDelete, MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -28,6 +29,11 @@ export function OrganizationsPage() {
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedOrgs, setSelectedOrgs] = useState<Set<string>>(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newOrgName, setNewOrgName] = useState('');
+  const [newOrgEmail, setNewOrgEmail] = useState('');
+  const [newOrgType, setNewOrgType] = useState<'customer' | 'vendor'>('customer');
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Fetch all organizations (customer and vendor)
   const { data: orgsData, isLoading } = useQuery({
@@ -141,9 +147,110 @@ export function OrganizationsPage() {
     }
   };
 
-  const handleExport = () => {
-    showToast('Export functionality will be implemented soon', 'info');
-    // TODO: Implement export functionality
+  const createMutation = useMutation({
+    mutationFn: async () => {
+      const trimmedName = newOrgName.trim();
+      const trimmedEmail = newOrgEmail.trim();
+
+      if (!trimmedName || !trimmedEmail) {
+        throw new Error('Name and admin email are required');
+      }
+
+      // Basic email validation
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+        throw new Error('Please enter a valid email address');
+      }
+
+      const requestData = {
+        name: trimmedName,
+        type: newOrgType,
+        portalType: newOrgType,
+        isActive: true,
+        adminEmail: trimmedEmail,
+      };
+
+      const response = await fetch(`${API_URL}/api/v1/admin/organizations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to create organization';
+        try {
+          const error = await response.json();
+          errorMessage = error.error || error.message || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      setIsModalOpen(false);
+      setNewOrgName('');
+      setNewOrgEmail('');
+      setNewOrgType('customer');
+      setFormError(null);
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
+
+      if (data?.emailSent === false && data.emailError) {
+        showToast(`Organization created, but email failed: ${data.emailError}`, 'warning');
+      } else if (data?.emailSent === true) {
+        showToast(`Organization created! Invitation email sent to ${data.emailTo || newOrgEmail}`, 'success');
+      } else if (data?.message) {
+        showToast(data.message, 'success');
+      } else {
+        showToast('Organization created successfully!', 'success');
+      }
+    },
+    onError: (error: any) => {
+      const message = error?.message || 'Failed to create organization';
+      setFormError(message);
+      showToast(message, 'error');
+    },
+  });
+
+  const handleOpenCreateModal = () => {
+    setFormError(null);
+    setNewOrgName('');
+    setNewOrgEmail('');
+    setNewOrgType('customer');
+    setIsModalOpen(true);
+  };
+
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const url = API_URL ? `${API_URL}/api/v1/admin/export/organizations` : `/api/v1/admin/export/organizations`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export organizations');
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `organizations-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+      showToast('Organizations exported successfully', 'success');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to export organizations', 'error');
+    }
   };
 
   const columns = [
@@ -240,6 +347,15 @@ export function OrganizationsPage() {
             Manage customer and vendor organizations
           </p>
         </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleOpenCreateModal}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[hsl(var(--primary))] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:bg-[hsl(var(--primary))]/90 transition-colors"
+          >
+            <MdAdd className="w-4 h-4" />
+            <span>Add Organization</span>
+          </button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -329,6 +445,97 @@ export function OrganizationsPage() {
           />
         </div>
       )}
+
+      {/* Create Organization Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add Organization"
+        icon={<MdBusiness className="w-6 h-6 text-[hsl(var(--primary))]" />}
+      >
+        <div className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
+              Organization Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={newOrgName}
+              onChange={(e) => setNewOrgName(e.target.value)}
+              className={cn(
+                'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+              )}
+              placeholder="Enter organization name"
+            />
+          </div>
+
+          {/* Admin Email */}
+          <div>
+            <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
+              Admin Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              value={newOrgEmail}
+              onChange={(e) => setNewOrgEmail(e.target.value)}
+              className={cn(
+                'w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))]',
+                'focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all',
+              )}
+              placeholder="Enter admin email"
+            />
+            <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+              An invitation email with login credentials will be sent to this email address.
+            </p>
+          </div>
+
+          {/* Type Dropdown */}
+          <div>
+            <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
+              Organization Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={newOrgType}
+              onChange={(e) => setNewOrgType(e.target.value as 'customer' | 'vendor')}
+              className="w-full px-4 py-2.5 rounded-lg border-2 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
+            >
+              <option value="customer">Customer</option>
+              <option value="vendor">Vendor</option>
+            </select>
+          </div>
+
+          {formError && (
+            <div className="p-3 rounded-lg bg-[hsl(var(--destructive))]/10 border border-red-200 dark:border-red-800 text-[hsl(var(--destructive))] text-sm">
+              {formError}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              disabled={createMutation.isPending}
+              className="px-4 py-2 rounded-lg bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setFormError(null);
+                createMutation.mutate();
+              }}
+              disabled={createMutation.isPending}
+              className="px-4 py-2 rounded-lg bg-[hsl(var(--primary))] text-white font-semibold hover:bg-[hsl(var(--primary))]/90 transition-colors disabled:opacity-50 shadow-lg hover:shadow-xl"
+            >
+              {createMutation.isPending ? 'Creating...' : 'Create'}
+            </button>
+          </div>
+        </div>
+      </Modal>
 
     </div>
   );

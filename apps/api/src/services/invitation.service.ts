@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
 import { InvitationToken } from '../models/invitation-token.model';
 import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
 import { emailService } from './email.service';
@@ -45,11 +46,23 @@ export class InvitationService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
 
+    // Convert organizationId to ObjectId if provided
+    let organizationIdObjectId: mongoose.Types.ObjectId | undefined;
+    if (data.organizationId) {
+      try {
+        organizationIdObjectId = new mongoose.Types.ObjectId(data.organizationId);
+        logger.info(`Converting organizationId ${data.organizationId} to ObjectId: ${organizationIdObjectId}`);
+      } catch (error) {
+        logger.error(`Failed to convert organizationId ${data.organizationId} to ObjectId:`, error);
+        throw new Error(`Invalid organizationId: ${data.organizationId}`);
+      }
+    }
+
     // Create invitation token record
     const invitationToken = new InvitationToken({
       token,
       email: data.email,
-      organizationId: data.organizationId,
+      organizationId: organizationIdObjectId,
       organizationType: data.organizationType,
       portalType: data.portalType,
       role: data.role,
@@ -117,6 +130,8 @@ export class InvitationService {
   }
 
   async getInvitationByToken(token: string) {
+    logger.info(`Looking up invitation token: ${token}`);
+    
     // Don't populate organizationId - we'll fetch the organization separately if needed
     const invitation = await InvitationToken.findOne({
       token,
@@ -125,8 +140,24 @@ export class InvitationService {
     });
 
     if (!invitation) {
+      // Check if token exists but is used or expired
+      const anyInvitation = await InvitationToken.findOne({ token });
+      if (anyInvitation) {
+        logger.warn(`Token found but invalid: used=${anyInvitation.used}, expiresAt=${anyInvitation.expiresAt}, status=${anyInvitation.status}`);
+        if (anyInvitation.used) {
+          throw new Error('This invitation token has already been used');
+        }
+        if (anyInvitation.expiresAt <= new Date()) {
+          throw new Error('This invitation token has expired');
+        }
+      } else {
+        logger.error(`Token not found in database: ${token}`);
+        throw new Error('Invalid or expired invitation token');
+      }
       throw new Error('Invalid or expired invitation token');
     }
+
+    logger.info(`Found valid invitation token for email: ${invitation.email}, organizationId: ${invitation.organizationId}`);
 
     if (!invitation.status) {
       invitation.status = INVITATION_STATUS_PENDING;

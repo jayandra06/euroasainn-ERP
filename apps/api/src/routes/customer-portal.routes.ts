@@ -10,6 +10,9 @@ import { employeeService } from '../services/employee.service';
 import { businessUnitService } from '../services/business-unit.service';
 import { userController } from '../controllers/user.controller';
 import { licenseService } from '../services/license.service';
+import { brandService } from '../services/brand.service';
+import { categoryService } from '../services/category.service';
+import { modelService } from '../services/model.service';
 
 const router = Router();
 
@@ -26,6 +29,31 @@ router.use((req, res, next) => {
   }
   // Apply payment middleware to all other routes
   return paymentStatusMiddleware(req as any, res, next);
+});
+
+// Users routes
+router.get('/users', async (req, res) => {
+  try {
+    const requester = (req as any).user;
+    const organizationId = requester?.organizationId;
+    
+    if (!organizationId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID is required',
+      });
+    }
+
+    // Set portalType to CUSTOMER for customer portal users
+    req.query.portalType = PortalType.CUSTOMER;
+    req.query.organizationId = organizationId;
+    await userController.getUsers(req, res);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get users',
+    });
+  }
 });
 
 router.post('/users/invite', async (req, res) => {
@@ -183,6 +211,218 @@ router.post('/business-units', async (req, res) => {
     res.status(201).json({ success: true, data: unit });
   } catch (error: any) {
     res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Get single business unit
+router.get('/business-units/:id', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const unit = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    res.json({ success: true, data: unit });
+  } catch (error: any) {
+    res.status(404).json({ success: false, error: error.message });
+  }
+});
+
+// Get vessels assigned to a business unit
+router.get('/business-units/:id/vessels', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const { Vessel } = await import('../models/vessel.model');
+    
+    // Verify BU belongs to organization
+    const bu = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    if (!bu) {
+      return res.status(404).json({ success: false, error: 'Business unit not found' });
+    }
+
+    const vessels = await Vessel.find({
+      organizationId: orgId,
+      businessUnitId: req.params.id,
+    });
+    res.json({ success: true, data: vessels });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Assign vessel to business unit
+router.post('/business-units/:id/vessels/:vesselId', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const { Vessel } = await import('../models/vessel.model');
+    
+    // Verify BU belongs to organization
+    const bu = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    if (!bu) {
+      return res.status(404).json({ success: false, error: 'Business unit not found' });
+    }
+
+    // Verify vessel belongs to organization
+    const vessel = await Vessel.findOne({
+      _id: req.params.vesselId,
+      organizationId: orgId,
+    });
+    if (!vessel) {
+      return res.status(404).json({ success: false, error: 'Vessel not found' });
+    }
+
+    // Check if vessel is already assigned to another BU
+    if (vessel.businessUnitId && vessel.businessUnitId.toString() !== req.params.id) {
+      return res.status(400).json({
+        success: false,
+        error: 'Vessel is already assigned to another business unit',
+      });
+    }
+
+    vessel.businessUnitId = req.params.id as any;
+    await vessel.save();
+    res.json({ success: true, data: vessel });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Unassign vessel from business unit
+router.delete('/business-units/:id/vessels/:vesselId', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const { Vessel } = await import('../models/vessel.model');
+    
+    // Verify BU belongs to organization
+    const bu = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    if (!bu) {
+      return res.status(404).json({ success: false, error: 'Business unit not found' });
+    }
+
+    // Verify vessel belongs to organization and is assigned to this BU
+    const vessel = await Vessel.findOne({
+      _id: req.params.vesselId,
+      organizationId: orgId,
+      businessUnitId: req.params.id,
+    });
+    if (!vessel) {
+      return res.status(404).json({ success: false, error: 'Vessel not found or not assigned to this BU' });
+    }
+
+    vessel.businessUnitId = undefined;
+    await vessel.save();
+    res.json({ success: true, message: 'Vessel unassigned successfully' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get staff assigned to a business unit
+router.get('/business-units/:id/staff', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    
+    // Verify BU belongs to organization
+    const bu = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    if (!bu) {
+      return res.status(404).json({ success: false, error: 'Business unit not found' });
+    }
+
+    const employees = await employeeService.getEmployees(orgId, { businessUnitId: req.params.id });
+    res.json({ success: true, data: employees });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Assign staff to business unit (create employee from user)
+router.post('/business-units/:id/staff', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'userId is required' });
+    }
+
+    // Verify BU belongs to organization
+    const bu = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    if (!bu) {
+      return res.status(404).json({ success: false, error: 'Business unit not found' });
+    }
+
+    // Get user details
+    const { userService } = await import('../services/user.service');
+    const { PortalType } = await import('../../../../packages/shared/src/types/index.ts');
+    const users = await userService.getUsers(PortalType.CUSTOMER, orgId);
+    const user = users.find((u: any) => u._id.toString() === userId);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    // Check if employee already exists for this user and BU
+    const { Employee } = await import('../models/employee.model');
+    const existingEmployeeInThisBU = await Employee.findOne({
+      organizationId: orgId,
+      businessUnitId: req.params.id,
+      email: user.email,
+    });
+
+    if (existingEmployeeInThisBU) {
+      return res.status(400).json({
+        success: false,
+        error: 'Staff member is already assigned to this business unit',
+      });
+    }
+
+    // Check if employee exists in another BU - if so, update it instead of creating duplicate
+    const existingEmployeeInOtherBU = await Employee.findOne({
+      organizationId: orgId,
+      email: user.email,
+      businessUnitId: { $ne: req.params.id },
+    });
+
+    if (existingEmployeeInOtherBU) {
+      // Update existing employee to assign to this BU
+      existingEmployeeInOtherBU.businessUnitId = req.params.id as any;
+      await existingEmployeeInOtherBU.save();
+      return res.status(200).json({ success: true, data: existingEmployeeInOtherBU });
+    }
+
+    // Create employee record
+    const employee = await employeeService.createEmployee(orgId, {
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email,
+      businessUnitId: req.params.id as any,
+    });
+
+    res.status(201).json({ success: true, data: employee });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Unassign staff from business unit
+router.delete('/business-units/:id/staff/:employeeId', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    
+    // Verify BU belongs to organization
+    const bu = await businessUnitService.getBusinessUnitById(req.params.id, orgId);
+    if (!bu) {
+      return res.status(404).json({ success: false, error: 'Business unit not found' });
+    }
+
+    // Verify employee belongs to organization and is assigned to this BU
+    const employee = await employeeService.getEmployeeById(req.params.employeeId, orgId);
+    if (!employee || employee.businessUnitId?.toString() !== req.params.id) {
+      return res.status(404).json({ success: false, error: 'Employee not found or not assigned to this BU' });
+    }
+
+    // Remove business unit assignment
+    await employeeService.updateEmployee(req.params.employeeId, orgId, { businessUnitId: undefined });
+    res.json({ success: true, message: 'Staff unassigned successfully' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -350,13 +590,25 @@ router.get('/vendors/users', async (req, res) => {
       user.organizationId && vendorOrgIds.includes(user.organizationId.toString())
     );
 
-    // Get organization names for each vendor user
+    // Get organization names and onboarding status for each vendor user
+    const { VendorOnboarding } = await import('../models/vendor-onboarding.model');
     const vendorsWithOrgInfo = await Promise.all(
       vendorUsers.map(async (user: any) => {
         let organizationName = null;
+        let onboardingStatus = 'pending'; // Default to pending if no onboarding found
+        
         if (user.organizationId) {
           const org = await Organization.findById(user.organizationId);
           organizationName = org?.name || null;
+          
+          // Check onboarding status for this vendor organization
+          const onboarding = await VendorOnboarding.findOne({ 
+            organizationId: user.organizationId 
+          }).sort({ createdAt: -1 }); // Get the most recent onboarding
+          
+          if (onboarding) {
+            onboardingStatus = onboarding.status; // 'pending', 'completed', 'approved', 'rejected'
+          }
         }
 
         return {
@@ -370,6 +622,7 @@ router.get('/vendors/users', async (req, res) => {
           organizationName,
           role: user.role,
           isActive: user.isActive,
+          onboardingStatus, // Add onboarding status
           lastLogin: user.lastLogin,
           createdAt: user.createdAt,
         };
@@ -384,6 +637,162 @@ router.get('/vendors/users', async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to get vendor users',
+    });
+  }
+});
+
+// Brands routes - Get active brands and create new ones (pending approval)
+router.get('/brands', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID is required',
+      });
+    }
+    // Get active brands (global + organization-specific)
+    // Skip populate for faster loading (customer portal only needs name/ID)
+    const brands = await brandService.getBrands({
+      status: 'active',
+      organizationId: orgId,
+      includeGlobal: true,
+      skipPopulate: true,
+    });
+    res.status(200).json({
+      success: true,
+      data: brands,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get brands',
+    });
+  }
+});
+
+router.post('/brands', async (req, res) => {
+  try {
+    const userId = (req as any).user?.userId;
+    const orgId = (req as any).user?.organizationId;
+    const brand = await brandService.createBrand({
+      name: req.body.name,
+      description: req.body.description,
+      createdBy: userId,
+      organizationId: orgId,
+      isGlobal: false, // Customer-created brands are organization-specific
+      status: 'pending', // Need admin approval
+    });
+    res.status(201).json({
+      success: true,
+      data: brand,
+      message: 'Brand created successfully. It will appear after admin approval.',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to create brand',
+    });
+  }
+});
+
+// Categories routes - Get active categories and create new ones (pending approval)
+router.get('/categories', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    // Get active categories (global + organization-specific)
+    // Skip populate for faster loading (customer portal only needs name/ID)
+    const categories = await categoryService.getCategories({
+      status: 'active',
+      organizationId: orgId,
+      includeGlobal: true,
+      skipPopulate: true,
+    });
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get categories',
+    });
+  }
+});
+
+router.post('/categories', async (req, res) => {
+  try {
+    const userId = (req as any).user?.userId;
+    const orgId = (req as any).user?.organizationId;
+    const category = await categoryService.createCategory({
+      name: req.body.name,
+      description: req.body.description,
+      createdBy: userId,
+      organizationId: orgId,
+      isGlobal: false, // Customer-created categories are organization-specific
+      status: 'pending', // Need admin approval
+    });
+    res.status(201).json({
+      success: true,
+      data: category,
+      message: 'Category created successfully. It will appear after admin approval.',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to create category',
+    });
+  }
+});
+
+// Models routes - Get active models and create new ones (pending approval)
+router.get('/models', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const brandId = req.query.brandId as string;
+    // Get active models (global + organization-specific)
+    // Skip populate for faster loading (customer portal only needs name/ID)
+    const models = await modelService.getModels({
+      status: 'active',
+      organizationId: orgId,
+      brandId: brandId,
+      includeGlobal: true,
+      skipPopulate: true,
+    });
+    res.status(200).json({
+      success: true,
+      data: models,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to get models',
+    });
+  }
+});
+
+router.post('/models', async (req, res) => {
+  try {
+    const userId = (req as any).user?.userId;
+    const orgId = (req as any).user?.organizationId;
+    const model = await modelService.createModel({
+      name: req.body.name,
+      description: req.body.description,
+      brandId: req.body.brandId,
+      createdBy: userId,
+      organizationId: orgId,
+      isGlobal: false, // Customer-created models are organization-specific
+      status: 'pending', // Need admin approval
+    });
+    res.status(201).json({
+      success: true,
+      data: model,
+      message: 'Model created successfully. It will appear after admin approval.',
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to create model',
     });
   }
 });

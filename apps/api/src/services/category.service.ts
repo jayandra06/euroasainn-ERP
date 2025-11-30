@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Category, ICategory } from '../models/category.model';
 import { logger } from '../config/logger';
 
@@ -24,33 +25,79 @@ export class CategoryService {
     return category;
   }
 
-  async getCategories(filters?: { status?: string; organizationId?: string; includeGlobal?: boolean }) {
+  async getCategories(filters?: { status?: string; organizationId?: string; includeGlobal?: boolean; skipPopulate?: boolean }) {
     const query: any = {};
-
-    if (filters?.status) {
-      query.status = filters.status;
-    }
 
     // If organizationId is provided, show global categories + organization-specific categories
     if (filters?.organizationId) {
-      query.$or = [
-        { isGlobal: true },
-        { organizationId: filters.organizationId },
-      ];
+      // Convert organizationId to ObjectId if it's a string
+      let orgId: any = filters.organizationId;
+      try {
+        if (typeof orgId === 'string' && mongoose.Types.ObjectId.isValid(orgId)) {
+          orgId = new mongoose.Types.ObjectId(orgId);
+        }
+      } catch (error) {
+        // If conversion fails, use as-is
+      }
+
+      // Combine status filter with $or condition
+      if (filters?.status) {
+        query.$and = [
+          { status: filters.status },
+          {
+            $or: [
+              { isGlobal: true },
+              { organizationId: orgId },
+            ],
+          },
+        ];
+      } else {
+        query.$or = [
+          { isGlobal: true },
+          { organizationId: orgId },
+        ];
+      }
     } else if (filters?.includeGlobal === false) {
       // Only show organization-specific categories
       query.isGlobal = false;
       if (filters.organizationId) {
-        query.organizationId = filters.organizationId;
+        let orgId: any = filters.organizationId;
+        try {
+          if (typeof orgId === 'string' && mongoose.Types.ObjectId.isValid(orgId)) {
+            orgId = new mongoose.Types.ObjectId(orgId);
+          }
+        } catch (error) {
+          // If conversion fails, use as-is
+        }
+        query.organizationId = orgId;
+      }
+      if (filters?.status) {
+        query.status = filters.status;
       }
     } else {
       // Default: show all categories (for admin portal)
+      if (filters?.status) {
+        query.status = filters.status;
+      }
     }
 
-    return await Category.find(query)
-      .populate('createdBy', 'email firstName lastName')
-      .populate('organizationId', 'name')
-      .sort({ createdAt: -1 });
+    let queryBuilder = Category.find(query);
+    
+    // Only populate if needed (for admin portal display)
+    if (!filters?.skipPopulate) {
+      queryBuilder = queryBuilder
+        .populate('createdBy', 'email firstName lastName')
+        .populate('organizationId', 'name');
+    }
+    
+    // Sort alphabetically for dropdowns, or by creation date for admin
+    if (filters?.skipPopulate) {
+      queryBuilder = queryBuilder.sort({ name: 1 }); // Alphabetical for dropdowns
+    } else {
+      queryBuilder = queryBuilder.sort({ createdAt: -1 }); // Newest first for admin
+    }
+    
+    return await queryBuilder;
   }
 
   async getCategoryById(categoryId: string) {

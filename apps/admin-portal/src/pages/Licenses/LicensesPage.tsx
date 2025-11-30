@@ -64,9 +64,33 @@ export function LicensesPage() {
     }, 1000);
   };
 
-  const handleExport = () => {
-    showToast('Export functionality will be implemented soon', 'info');
-    // TODO: Implement export functionality
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const url = API_URL ? `${API_URL}/api/v1/admin/export/licenses` : `/api/v1/admin/export/licenses`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export licenses');
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `licenses-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+      showToast('Licenses exported successfully', 'success');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to export licenses', 'error');
+    }
   };
 
   // Helper function to apply filters

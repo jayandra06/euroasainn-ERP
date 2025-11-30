@@ -79,6 +79,7 @@ export class OrganizationController {
         ...orgData,
         invitedBy,
         invitedByOrganizationId: invitedBy === 'customer' ? requester?.organizationId : undefined,
+        isAdminInvited: invitedBy === 'admin' || invitedBy === 'tech', // Internal vendors are invited by admin/tech
       };
 
       // If vendor already exists and was admin-invited, add customer to visibility list

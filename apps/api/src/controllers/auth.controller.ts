@@ -104,6 +104,91 @@ export class AuthController {
       });
     }
   }
+
+  async changePassword(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user?.userId;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          error: 'Unauthorized',
+        });
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          error: 'Current password and new password are required',
+        });
+      }
+
+      const result = await authService.changePassword(userId, currentPassword, newPassword);
+
+      res.status(200).json(result);
+    } catch (error: any) {
+      logger.error('Change password error:', error);
+      res.status(400).json({
+        success: false,
+        error: error.message || 'Failed to change password',
+      });
+    }
+  }
+
+  async updatePreferences(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user?.userId;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          error: 'Unauthorized',
+        });
+      }
+
+      const preferences = req.body;
+      const result = await authService.updatePreferences(userId, preferences);
+
+      res.status(200).json(result);
+    } catch (error: any) {
+      logger.error('Update preferences error:', error);
+      res.status(400).json({
+        success: false,
+        error: error.message || 'Failed to update preferences',
+      });
+    }
+  }
+
+  async updateSecurityQuestion(req: Request, res: Response) {
+    try {
+      const userId = (req as any).user?.userId;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          error: 'Unauthorized',
+        });
+      }
+
+      const { question, answer } = req.body;
+
+      if (!question || !answer) {
+        return res.status(400).json({
+          success: false,
+          error: 'Security question and answer are required',
+        });
+      }
+
+      const result = await authService.updateSecurityQuestion(userId, question, answer);
+
+      res.status(200).json(result);
+    } catch (error: any) {
+      logger.error('Update security question error:', error);
+      res.status(400).json({
+        success: false,
+        error: error.message || 'Failed to update security question',
+      });
+    }
+  }
 }
 
 export const authController = new AuthController();

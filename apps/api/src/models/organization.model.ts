@@ -61,7 +61,6 @@ const OrganizationSchema = new Schema<IOrganization>(
     invitedByOrganizationId: {
       type: Schema.Types.ObjectId,
       ref: 'Organization',
-      index: true,
     },
     isAdminInvited: {
       type: Boolean,

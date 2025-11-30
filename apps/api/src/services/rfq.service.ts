@@ -98,6 +98,29 @@ export class RFQService {
   }
 
   /**
+   * Get all RFQs for admin portal (both from admin and customers)
+   */
+  async getAllRFQs(filters?: any) {
+    const query: any = {};
+    
+    if (filters?.status) {
+      query.status = filters.status;
+    }
+    
+    if (filters?.senderType) {
+      query.senderType = filters.senderType;
+    }
+
+    const rfqs = await RFQ.find(query)
+      .populate('vesselId', 'name imoNumber type')
+      .populate('senderId', 'name type') // Populate sender organization
+      .populate('organizationId', 'name type') // Populate organization
+      .sort({ createdAt: -1 });
+
+    return rfqs;
+  }
+
+  /**
    * Get available vendors for RFQ creation
    * - Admin: returns only admin-invited vendors with approved onboarding
    * - Customer: returns only customer-invited vendors (visible to that customer) with approved onboarding

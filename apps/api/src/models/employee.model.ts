@@ -8,6 +8,7 @@ export interface IEmployee extends Document {
   phone?: string;
   position?: string;
   department?: string;
+  role?: string; // Employee role (e.g., Captain, Engineer, Deck Officer, etc.)
   businessUnitId?: mongoose.Types.ObjectId;
   metadata?: Record<string, any>;
   createdAt: Date;
@@ -48,6 +49,10 @@ const EmployeeSchema = new Schema<IEmployee>(
     },
     department: {
       type: String,
+    },
+    role: {
+      type: String,
+      trim: true,
     },
     businessUnitId: {
       type: Schema.Types.ObjectId,

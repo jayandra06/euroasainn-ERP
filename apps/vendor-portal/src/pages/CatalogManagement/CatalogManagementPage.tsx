@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { MdUpload, MdDownload, MdDelete, MdEdit } from 'react-icons/md';
+import { authenticatedFetch } from '../../lib/api';
+import { useToast } from '../../components/shared/Toast';
 
 interface Product {
   id: number;
@@ -16,6 +18,9 @@ interface Product {
 }
 
 export function CatalogManagementPage() {
+  const { showToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [products, setProducts] = useState<Product[]>([
     {
       id: 1,
@@ -61,6 +66,130 @@ export function CatalogManagementPage() {
     setProducts((prev) => prev.filter((product) => product.id !== id));
   };
 
+  const handleUploadFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      showToast(`File selected: ${file.name}`, 'success');
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      // Create a template Excel file structure
+      const headers = [
+        'IMPA',
+        'Description',
+        'Part No',
+        'Position No',
+        'Alternative No',
+        'Brand',
+        'Model',
+        'Category',
+        'Dimensions (W x B x H)',
+        'Remarks',
+      ];
+
+      // Create CSV content
+      const csvContent = headers.join(',') + '\n';
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'catalog_template.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Template downloaded successfully', 'success');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to download template', 'error');
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      showToast('Please select a file first', 'error');
+      return;
+    }
+
+    try {
+      showToast('Uploading file...', 'info');
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      const response = await authenticatedFetch('/api/v1/vendor/catalog/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload file');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        showToast(
+          data.message || `Successfully uploaded ${data.data?.created || 0} items`,
+          'success'
+        );
+        
+        // Clear selected file
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+
+        // If there were errors, log them
+        if (data.data?.errors && data.data.errors.length > 0) {
+          console.warn('Upload errors:', data.data.errors);
+        }
+
+        // Optionally refresh the view to show new items
+        // handleView();
+      } else {
+        throw new Error(data.error || 'Upload failed');
+      }
+    } catch (error: any) {
+      showToast(error.message || 'Failed to upload file', 'error');
+    }
+  };
+
+  const handleView = async () => {
+    try {
+      const response = await authenticatedFetch('/api/v1/vendor/catalogue');
+      if (!response.ok) {
+        throw new Error('Failed to fetch catalog items');
+      }
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Convert API items to Product format
+        const convertedProducts: Product[] = data.data.map((item: any, index: number) => ({
+          id: index + 1,
+          impa: item.impaNo || item.impa || '',
+          description: item.itemDescription || item.description || item.name || '',
+          partNo: item.partNo || '',
+          positionNo: item.positionNo || '',
+          alternativeNo: item.altPartNo || item.alternativeNo || '',
+          brand: item.brand || '',
+          model: item.model || '',
+          category: item.category || '',
+          dimensions: item.dimensions || '',
+          remarks: item.generalRemark || item.remarks || '',
+        }));
+        setProducts(convertedProducts);
+        showToast(`Loaded ${convertedProducts.length} items from catalog`, 'success');
+      }
+    } catch (error: any) {
+      showToast(error.message || 'Failed to load catalog items', 'error');
+    }
+  };
+
   return (
     <div className="w-full min-h-screen p-8">
       <div className="mb-6">
@@ -70,21 +199,41 @@ export function CatalogManagementPage() {
       {/* Your Inventory Section */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] mb-4">Your Inventory</h2>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.xlsx,.xls"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
         <div className="mb-4">
-          <button className="w-full sm:w-auto px-6 py-3 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors">
-            Upload File
+          <button
+            onClick={handleUploadFileClick}
+            className="w-full sm:w-auto px-6 py-3 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors"
+          >
+            Upload File {selectedFile && `(${selectedFile.name})`}
           </button>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button
+            onClick={handleDownloadTemplate}
+            className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors flex items-center gap-2"
+          >
             <MdDownload className="w-4 h-4" />
             Download Template
           </button>
-          <button className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors flex items-center gap-2">
+          <button
+            onClick={handleUpload}
+            disabled={!selectedFile}
+            className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <MdUpload className="w-4 h-4" />
             Upload
           </button>
-          <button className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors">
+          <button
+            onClick={handleView}
+            className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors"
+          >
             View
           </button>
         </div>
