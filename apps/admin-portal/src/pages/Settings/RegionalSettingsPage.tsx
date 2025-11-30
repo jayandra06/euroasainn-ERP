@@ -3,9 +3,10 @@
  * Configure timezone and currency
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '../../components/shared/Toast';
 import { MdKeyboardArrowDown } from 'react-icons/md';
+import { authenticatedFetch } from '../../lib/api';
 
 const timezones = [
   'UTC',
@@ -39,15 +40,53 @@ export function RegionalSettingsPage() {
   const [defaultTimezone, setDefaultTimezone] = useState('UTC');
   const [defaultCurrency, setDefaultCurrency] = useState('USD');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/settings/regional');
+      if (!response.ok) {
+        throw new Error('Failed to fetch regional settings');
+      }
+      const data = await response.json();
+      if (data.success && data.data?.data) {
+        setDefaultTimezone(data.data.data.defaultTimezone || 'UTC');
+        setDefaultCurrency(data.data.data.defaultCurrency || 'USD');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch regional settings:', error);
+      // Use defaults if fetch fails
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save regional settings
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await authenticatedFetch('/api/v1/admin/settings/regional', {
+        method: 'PUT',
+        body: JSON.stringify({
+          data: {
+            defaultTimezone,
+            defaultCurrency,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save regional settings');
+      }
+
       showToast('Regional settings saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save regional settings', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save regional settings', 'error');
     } finally {
       setIsSaving(false);
     }

@@ -3,23 +3,62 @@
  * Configure SMS notifications
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '../../components/shared/Toast';
+import { authenticatedFetch } from '../../lib/api';
 
 export function SMSTemplatesPage() {
   const { showToast } = useToast();
   const [verificationSMS, setVerificationSMS] = useState('Your verification code is {code}');
   const [alertSMS, setAlertSMS] = useState('Important alert: {message}');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/settings/sms-templates');
+      if (!response.ok) {
+        throw new Error('Failed to fetch SMS templates');
+      }
+      const data = await response.json();
+      if (data.success && data.data?.data) {
+        setVerificationSMS(data.data.data.verificationSMS || 'Your verification code is {code}');
+        setAlertSMS(data.data.data.alertSMS || 'Important alert: {message}');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch SMS templates:', error);
+      // Use defaults if fetch fails
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save SMS templates
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await authenticatedFetch('/api/v1/admin/settings/sms-templates', {
+        method: 'PUT',
+        body: JSON.stringify({
+          data: {
+            verificationSMS,
+            alertSMS,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save SMS templates');
+      }
+
       showToast('SMS templates saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save SMS templates', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save SMS templates', 'error');
     } finally {
       setIsSaving(false);
     }

@@ -7,6 +7,7 @@ import React, { useState, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../../components/shared/Toast';
 import { cn } from '../../lib/utils';
+import { authenticatedFetch } from '../../lib/api';
 import {
   BarChart,
   Bar,
@@ -23,8 +24,6 @@ import {
   Legend,
 } from 'recharts';
 import { MdTrendingUp, MdBusinessCenter, MdPeople, MdVpnKey, MdDownload, MdRefresh } from 'react-icons/md';
-
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
 
 interface Organization {
   _id: string;
@@ -57,14 +56,7 @@ export function AnalyticsPage() {
   const { data: customerOrgs = [], isLoading: isLoadingCustomers } = useQuery({
     queryKey: ['analytics-customer-orgs'],
     queryFn: async () => {
-      const url = import.meta.env.DEV && !import.meta.env.VITE_API_URL
-        ? '/api/v1/admin/customer-orgs'
-        : `${API_URL}/api/v1/admin/customer-orgs`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const response = await authenticatedFetch('/api/v1/admin/organizations?type=customer');
       if (!response.ok) throw new Error('Failed to fetch customer organizations');
       const data = await response.json();
       return data.data as Organization[];
@@ -75,14 +67,7 @@ export function AnalyticsPage() {
   const { data: vendorOrgs = [], isLoading: isLoadingVendors } = useQuery({
     queryKey: ['analytics-vendor-orgs'],
     queryFn: async () => {
-      const url = import.meta.env.DEV && !import.meta.env.VITE_API_URL
-        ? '/api/v1/admin/vendor-orgs'
-        : `${API_URL}/api/v1/admin/vendor-orgs`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const response = await authenticatedFetch('/api/v1/admin/organizations?type=vendor');
       if (!response.ok) throw new Error('Failed to fetch vendor organizations');
       const data = await response.json();
       return data.data as Organization[];
@@ -93,35 +78,53 @@ export function AnalyticsPage() {
   const { data: licenses = [], isLoading: isLoadingLicenses } = useQuery({
     queryKey: ['analytics-licenses'],
     queryFn: async () => {
-      const url = import.meta.env.DEV && !import.meta.env.VITE_API_URL
-        ? '/api/v1/admin/licenses'
-        : `${API_URL}/api/v1/admin/licenses`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const response = await authenticatedFetch('/api/v1/admin/licenses');
       if (!response.ok) throw new Error('Failed to fetch licenses');
       const data = await response.json();
       return data.data as License[];
     },
   });
 
-  // Fetch users
+  // Fetch all users (admin, customer, vendor)
   const { data: users = [], isLoading: isLoadingUsers } = useQuery({
     queryKey: ['analytics-users'],
     queryFn: async () => {
-      const url = import.meta.env.DEV && !import.meta.env.VITE_API_URL
-        ? '/api/v1/admin/users'
-        : `${API_URL}/api/v1/admin/users`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!response.ok) throw new Error('Failed to fetch users');
-      const data = await response.json();
-      return data.data as User[];
+      // Fetch users from all portals
+      const [adminUsersRes, loginsRes] = await Promise.all([
+        authenticatedFetch('/api/v1/admin/users'),
+        authenticatedFetch('/api/v1/admin/logins').catch(() => null), // This endpoint returns customer and vendor users with lastLogin
+      ]);
+
+      const allUsers: User[] = [];
+
+      // Add admin users
+      if (adminUsersRes.ok) {
+        const adminData = await adminUsersRes.json();
+        if (adminData.data) {
+          allUsers.push(...(adminData.data as User[]));
+        }
+      }
+
+      // Add customer and vendor users from logins endpoint
+      if (loginsRes && loginsRes.ok) {
+        const loginsData = await loginsRes.json();
+        if (loginsData.data) {
+          // Convert login data to user format, using unique users by _id
+          const userMap = new Map<string, User>();
+          (loginsData.data as any[]).forEach((login) => {
+            if (!userMap.has(login._id)) {
+              userMap.set(login._id, {
+                _id: login._id,
+                email: login.email,
+                createdAt: login.createdAt || login.lastLogin,
+              });
+            }
+          });
+          allUsers.push(...Array.from(userMap.values()));
+        }
+      }
+
+      return allUsers;
     },
   });
 
@@ -129,9 +132,10 @@ export function AnalyticsPage() {
   const analytics = useMemo(() => {
     const totalOrgs = customerOrgs.length + vendorOrgs.length;
     const totalLicenses = licenses.length;
-    const activeLicenses = licenses.filter(l => l.status === 'active' || l.status === 'Active').length;
-    const expiredLicenses = licenses.filter(l => l.status === 'expired' || l.status === 'Expired').length;
-    const pendingLicenses = licenses.filter(l => l.status === 'pending' || l.status === 'Pending').length;
+    const activeLicenses = licenses.filter(l => l.status === 'active').length;
+    const expiredLicenses = licenses.filter(l => l.status === 'expired').length;
+    const suspendedLicenses = licenses.filter(l => l.status === 'suspended').length;
+    const revokedLicenses = licenses.filter(l => l.status === 'revoked').length;
     const totalUsers = users.length;
 
     // Organization type distribution
@@ -144,16 +148,20 @@ export function AnalyticsPage() {
     const licenseStatusData = [
       { name: 'Active', value: activeLicenses, color: '#10b981' },
       { name: 'Expired', value: expiredLicenses, color: '#ef4444' },
-      { name: 'Pending', value: pendingLicenses, color: '#f59e0b' },
-    ];
+      { name: 'Suspended', value: suspendedLicenses, color: '#f59e0b' },
+      { name: 'Revoked', value: revokedLicenses, color: '#6b7280' },
+    ].filter(item => item.value > 0); // Only show statuses that have licenses
 
     // Monthly growth calculation (last 6 months)
     const monthlyGrowthData = (() => {
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
       const now = new Date();
-      const data = months.map((month, index) => {
-        const monthDate = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
-        const monthEnd = new Date(now.getFullYear(), now.getMonth() - (5 - index) + 1, 0);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const data = [];
+      
+      for (let i = 5; i >= 0; i--) {
+        const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+        const monthName = monthNames[monthDate.getMonth()];
         
         const customers = customerOrgs.filter(org => {
           if (!org.createdAt) return false;
@@ -167,21 +175,27 @@ export function AnalyticsPage() {
           return created >= monthDate && created <= monthEnd;
         }).length;
         
-        return { name: month, customers, vendors };
-      });
+        data.push({ name: `${monthName} ${monthDate.getFullYear().toString().slice(-2)}`, customers, vendors });
+      }
+      
       return data;
     })();
 
     // Weekly activity (last 7 days)
     const activityData = (() => {
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       const now = new Date();
-      return days.map((day, index) => {
+      const data = [];
+      
+      for (let i = 6; i >= 0; i--) {
         const dayDate = new Date(now);
-        dayDate.setDate(dayDate.getDate() - (6 - index));
+        dayDate.setDate(dayDate.getDate() - i);
         dayDate.setHours(0, 0, 0, 0);
         const dayEnd = new Date(dayDate);
         dayEnd.setHours(23, 59, 59, 999);
+        
+        const dayName = dayNames[dayDate.getDay()];
+        const dayNumber = dayDate.getDate();
         
         const activities = [...customerOrgs, ...vendorOrgs, ...licenses, ...users].filter(item => {
           if (!item.createdAt) return false;
@@ -189,12 +203,32 @@ export function AnalyticsPage() {
           return created >= dayDate && created <= dayEnd;
         }).length;
         
-        return { name: day, activities };
-      });
+        data.push({ name: `${dayName} ${dayNumber}`, activities });
+      }
+      
+      return data;
     })();
 
-    // Calculate growth rate (simple calculation based on total orgs)
-    const growthRate = totalOrgs > 0 ? ((totalOrgs / (totalOrgs + 10)) * 100).toFixed(1) : '0.0';
+    // Calculate growth rate based on last 30 days vs previous 30 days
+    const now = new Date();
+    const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const last60Days = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+    
+    const recentOrgs = [...customerOrgs, ...vendorOrgs].filter(org => {
+      if (!org.createdAt) return false;
+      const created = new Date(org.createdAt);
+      return created >= last30Days;
+    }).length;
+    
+    const previousOrgs = [...customerOrgs, ...vendorOrgs].filter(org => {
+      if (!org.createdAt) return false;
+      const created = new Date(org.createdAt);
+      return created >= last60Days && created < last30Days;
+    }).length;
+    
+    const growthRate = previousOrgs > 0 
+      ? (((recentOrgs - previousOrgs) / previousOrgs) * 100).toFixed(1)
+      : recentOrgs > 0 ? '100.0' : '0.0';
 
     return {
       totalOrgs,

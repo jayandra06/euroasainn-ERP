@@ -3,24 +3,65 @@
  * Customize platform appearance
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '../../components/shared/Toast';
+import { authenticatedFetch } from '../../lib/api';
 
 export function BrandingSettingsPage() {
   const { showToast } = useToast();
   const [platformName, setPlatformName] = useState('Enterprise ERP');
-  const [logoUrl, setLogoUrl] = useState('https://example.com/logo.png');
+  const [logoUrl, setLogoUrl] = useState('');
   const [primaryColor, setPrimaryColor] = useState('#5C6268');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/settings/branding');
+      if (!response.ok) {
+        throw new Error('Failed to fetch branding settings');
+      }
+      const data = await response.json();
+      if (data.success && data.data?.data) {
+        setPlatformName(data.data.data.platformName || 'Enterprise ERP');
+        setLogoUrl(data.data.data.logoUrl || '');
+        setPrimaryColor(data.data.data.primaryColor || '#5C6268');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch branding settings:', error);
+      // Use defaults if fetch fails
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save branding settings
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await authenticatedFetch('/api/v1/admin/settings/branding', {
+        method: 'PUT',
+        body: JSON.stringify({
+          data: {
+            platformName,
+            logoUrl,
+            primaryColor,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save branding settings');
+      }
+
       showToast('Branding settings saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save branding settings', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save branding settings', 'error');
     } finally {
       setIsSaving(false);
     }

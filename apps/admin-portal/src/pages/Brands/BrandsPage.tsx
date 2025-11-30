@@ -1,10 +1,45 @@
-import React, { useState } from 'react';
-import { MdAdd, MdClose } from 'react-icons/md';
+import React, { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { MdAdd, MdClose, MdEdit, MdDelete, MdCheck, MdClose as MdCloseIcon } from 'react-icons/md';
+import { authenticatedFetch } from '../../lib/api';
+import { useToast } from '../../components/shared/Toast';
+
+interface Brand {
+  _id: string;
+  name: string;
+  description?: string;
+  status: string;
+}
 
 export function BrandsPage() {
+  const { showToast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('active');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [formData, setFormData] = useState({ name: '', description: '' });
+
+  useEffect(() => {
+    fetchBrands();
+  }, [activeTab]);
+
+  const fetchBrands = async () => {
+    setIsLoading(true);
+    try {
+      const status = activeTab === 'active' ? 'active' : 'pending';
+      const response = await authenticatedFetch(`/api/v1/admin/brands?status=${status}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch brands');
+      }
+      const data = await response.json();
+      setBrands(data.data || []);
+    } catch (error: any) {
+      showToast(error.message || 'Failed to fetch brands', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -15,10 +50,98 @@ export function BrandsPage() {
     setFormData({ name: '', description: '' });
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement submit logic
-    console.log('Add Brand:', formData);
-    handleCloseModal();
+  const handleSubmit = async () => {
+    if (!formData.name.trim()) {
+      showToast('Brand name is required', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/brands', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create brand');
+      }
+
+      showToast('Brand created successfully', 'success');
+      handleCloseModal();
+      fetchBrands();
+      // Invalidate queries so CreateEnquiryPage refetches (both admin and customer portals)
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-brands'] }); // For ModelsPage dropdown
+      queryClient.invalidateQueries({ queryKey: ['customer-brands'] });
+    } catch (error: any) {
+      showToast(error.message || 'Failed to create brand', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApprove = async (id: string) => {
+    try {
+      const response = await authenticatedFetch(`/api/v1/admin/brands/${id}/approve`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to approve brand');
+      }
+
+      showToast('Brand approved successfully', 'success');
+      fetchBrands();
+      // Invalidate queries so CreateEnquiryPage refetches (both admin and customer portals)
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-brands'] }); // For ModelsPage dropdown
+      queryClient.invalidateQueries({ queryKey: ['customer-brands'] });
+    } catch (error: any) {
+      showToast(error.message || 'Failed to approve brand', 'error');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      const response = await authenticatedFetch(`/api/v1/admin/brands/${id}/reject`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to reject brand');
+      }
+
+      showToast('Brand rejected successfully', 'success');
+      fetchBrands();
+    } catch (error: any) {
+      showToast(error.message || 'Failed to reject brand', 'error');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this brand?')) {
+      return;
+    }
+
+    try {
+      const response = await authenticatedFetch(`/api/v1/admin/brands/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete brand');
+      }
+
+      showToast('Brand deleted successfully', 'success');
+      fetchBrands();
+    } catch (error: any) {
+      showToast(error.message || 'Failed to delete brand', 'error');
+    }
   };
 
   return (
@@ -74,13 +197,70 @@ export function BrandsPage() {
               </tr>
             </thead>
             <tbody className="bg-[hsl(var(--card))] divide-y divide-gray-200 dark:divide-gray-800">
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                  {activeTab === 'active'
-                    ? "No brands found in the 'active' tab."
-                    : "No brands found in the 'pending' tab."}
-                </td>
-              </tr>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    Loading...
+                  </td>
+                </tr>
+              ) : brands.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    {activeTab === 'active'
+                      ? "No brands found in the 'active' tab."
+                      : "No brands found in the 'pending' tab."}
+                  </td>
+                </tr>
+              ) : (
+                brands.map((brand) => (
+                  <tr key={brand._id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {brand.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[hsl(var(--muted-foreground))]">
+                      {brand.description || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        brand.status === 'active'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      }`}>
+                        {brand.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        {activeTab === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(brand._id)}
+                              className="text-green-600 hover:text-green-900 dark:hover:text-green-400"
+                              title="Approve"
+                            >
+                              <MdCheck className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleReject(brand._id)}
+                              className="text-red-600 hover:text-red-900 dark:hover:text-red-400"
+                              title="Reject"
+                            >
+                              <MdCloseIcon className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => handleDelete(brand._id)}
+                          className="text-red-600 hover:text-red-900 dark:hover:text-red-400"
+                          title="Delete"
+                        >
+                          <MdDelete className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -139,9 +319,10 @@ export function BrandsPage() {
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors"
+                disabled={isLoading}
+                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add Brand
+                {isLoading ? 'Adding...' : 'Add Brand'}
               </button>
             </div>
           </div>

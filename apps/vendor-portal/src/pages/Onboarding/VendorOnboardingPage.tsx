@@ -105,15 +105,11 @@ export function VendorOnboardingPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   // invitationData is set but not used - keeping for potential future use
   const [, setInvitationData] = useState<any>(null);
-  // TODO: Fetch available brands, categories, and models from API
-  // const [availableBrands, setAvailableBrands] = useState<string[]>([]);
-  // const [availableCategories, setAvailableCategories] = useState<string[]>([]);
-  // const [availableModels, setAvailableModels] = useState<string[]>([]);
   
-  // Hardcoded options for now (will be fetched from API later)
-  const availableBrands = ['Brand A', 'Brand B', 'Brand C'];
-  const availableCategories = ['Category 1', 'Category 2', 'Category 3'];
-  const availableModels = ['Model X', 'Model Y', 'Model Z'];
+  // State for brands, categories, and models
+  const [availableBrands, setAvailableBrands] = useState<Array<{ _id: string; name: string }>>([]);
+  const [availableCategories, setAvailableCategories] = useState<Array<{ _id: string; name: string }>>([]);
+  const [availableModels, setAvailableModels] = useState<Array<{ _id: string; name: string }>>([]);
 
   useEffect(() => {
     if (!token) {
@@ -146,8 +142,42 @@ export function VendorOnboardingPage() {
         toast.error(error.message || 'Failed to load invitation. Please check your connection and try again.');
       });
 
-    // TODO: Fetch available brands, categories, models from API
-    // For now, using empty arrays
+    // Fetch available brands, categories, and models from API (only active/approved)
+    const fetchOptions = async () => {
+      try {
+        // Fetch brands
+        const brandsResponse = await fetch(`${API_URL}/api/v1/onboarding/brands`);
+        if (brandsResponse.ok) {
+          const brandsData = await brandsResponse.json();
+          if (brandsData.success) {
+            setAvailableBrands(brandsData.data || []);
+          }
+        }
+
+        // Fetch categories
+        const categoriesResponse = await fetch(`${API_URL}/api/v1/onboarding/categories`);
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json();
+          if (categoriesData.success) {
+            setAvailableCategories(categoriesData.data || []);
+          }
+        }
+
+        // Fetch models
+        const modelsResponse = await fetch(`${API_URL}/api/v1/onboarding/models`);
+        if (modelsResponse.ok) {
+          const modelsData = await modelsResponse.json();
+          if (modelsData.success) {
+            setAvailableModels(modelsData.data || []);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch brands/categories/models:', error);
+        // Don't show error toast - form can still be submitted without these
+      }
+    };
+
+    fetchOptions();
   }, [token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -498,9 +528,9 @@ export function VendorOnboardingPage() {
                     )}
                   >
                     <option value="">Select Brand</option>
-                    {availableBrands.map((brand, i) => (
-                      <option key={i} value={brand}>
-                        {brand}
+                    {availableBrands.map((brand) => (
+                      <option key={brand._id} value={brand.name}>
+                        {brand.name}
                       </option>
                     ))}
                   </select>
@@ -540,9 +570,9 @@ export function VendorOnboardingPage() {
                     )}
                   >
                     <option value="">Select Category</option>
-                    {availableCategories.map((category, i) => (
-                      <option key={i} value={category}>
-                        {category}
+                    {availableCategories.map((category) => (
+                      <option key={category._id} value={category.name}>
+                        {category.name}
                       </option>
                     ))}
                   </select>
@@ -582,9 +612,9 @@ export function VendorOnboardingPage() {
                     )}
                   >
                     <option value="">Select Model</option>
-                    {availableModels.map((model, i) => (
-                      <option key={i} value={model}>
-                        {model}
+                    {availableModels.map((model) => (
+                      <option key={model._id} value={model.name}>
+                        {model.name}
                       </option>
                     ))}
                   </select>

@@ -809,360 +809,6 @@
       "@nx/vite/plugin"
     ]
   },
-  "apps/vendor-portal": {
-    "root": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "projectType": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.cache": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.dependsOn": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.inputs": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.outputs": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.options.cwd": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.options.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata.technologies": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata.technologies.0": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata.description": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata.help": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata.help.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build.metadata.help.example": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.continuous": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.options.cwd": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.options.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.technologies": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.technologies.0": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.description": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.help": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.help.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.help.example": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve.metadata.deprecated": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.continuous": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.options.cwd": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.options.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata.technologies": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata.technologies.0": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata.description": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata.help": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata.help.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.dev.metadata.help.example": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.continuous": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.dependsOn": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.options.cwd": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.options.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata.technologies": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata.technologies.0": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata.description": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata.help": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata.help.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.preview.metadata.help.example": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve-static": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve-static.continuous": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve-static.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve-static.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve-static.options.buildTarget": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.serve-static.options.spa": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.cache": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.inputs": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.options.cwd": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.options.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata.description": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata.technologies": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata.technologies.0": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata.help": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata.help.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.typecheck.metadata.help.example": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build-deps": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.build-deps.dependsOn": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.watch-deps": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.watch-deps.continuous": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.watch-deps.dependsOn": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.watch-deps.executor": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.watch-deps.options": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ],
-    "targets.watch-deps.options.command": [
-      "apps/vendor-portal/vite.config.ts",
-      "@nx/vite/plugin"
-    ]
-  },
   "apps/tech-portal": {
     "root": [
       "apps/tech-portal/vite.config.ts",
@@ -1514,6 +1160,360 @@
     ],
     "targets.watch-deps.options.command": [
       "apps/tech-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ]
+  },
+  "apps/vendor-portal": {
+    "root": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "projectType": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.cache": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.dependsOn": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.inputs": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.outputs": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.options.cwd": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.options.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata.technologies": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata.technologies.0": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata.description": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata.help": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata.help.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build.metadata.help.example": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.continuous": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.options.cwd": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.options.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.technologies": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.technologies.0": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.description": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.help": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.help.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.help.example": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve.metadata.deprecated": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.continuous": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.options.cwd": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.options.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata.technologies": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata.technologies.0": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata.description": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata.help": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata.help.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.dev.metadata.help.example": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.continuous": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.dependsOn": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.options.cwd": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.options.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata.technologies": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata.technologies.0": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata.description": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata.help": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata.help.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.preview.metadata.help.example": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve-static": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve-static.continuous": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve-static.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve-static.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.serve-static.options.spa": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.cache": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.inputs": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.options.cwd": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.options.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata.description": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata.technologies": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata.technologies.0": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata.help": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata.help.command": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.typecheck.metadata.help.example": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build-deps": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.build-deps.dependsOn": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.watch-deps": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.watch-deps.continuous": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.watch-deps.dependsOn": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.watch-deps.executor": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.watch-deps.options": [
+      "apps/vendor-portal/vite.config.ts",
+      "@nx/vite/plugin"
+    ],
+    "targets.watch-deps.options.command": [
+      "apps/vendor-portal/vite.config.ts",
       "@nx/vite/plugin"
     ]
   }

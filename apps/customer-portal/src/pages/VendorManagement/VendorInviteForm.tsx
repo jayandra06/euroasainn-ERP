@@ -8,8 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { MdSave, MdCancel } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 import { useToast } from '../../components/shared/Toast';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { authenticatedFetch } from '../../lib/api';
 
 interface VendorInviteFormProps {
   onSuccess: () => void;
@@ -43,12 +42,8 @@ export function VendorInviteForm({ onSuccess, onCancel }: VendorInviteFormProps)
         console.log('   Vendor Name:', requestData.name);
         console.log('   Admin Email:', requestData.adminEmail);
 
-        const response = await fetch(`${API_URL}/api/v1/customer/vendors/invite`, {
+        const response = await authenticatedFetch('/api/v1/customer/vendors/invite', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
           body: JSON.stringify(requestData),
         });
 

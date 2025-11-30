@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { validateLicense } from '../middleware/license.middleware';
@@ -9,6 +10,8 @@ import { quotationService } from '../services/quotation.service';
 import { userController } from '../controllers/user.controller';
 import { licenseService } from '../services/license.service';
 import { rfqService } from '../services/rfq.service';
+import { parseCatalogCSV } from '../utils/csv-parser';
+import { logger } from '../config/logger';
 
 const router = Router();
 
@@ -96,6 +99,87 @@ router.get('/catalogue', async (req, res) => {
     res.json({ success: true, data: items });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Upload catalog file (CSV)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept CSV files
+    if (file.mimetype === 'text/csv' || file.mimetype === 'application/vnd.ms-excel' || file.originalname.endsWith('.csv')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only CSV files are allowed'));
+    }
+  },
+});
+
+router.post('/catalog/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: 'No file uploaded',
+      });
+    }
+
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    // Parse CSV file
+    const parsedItems = parseCatalogCSV(req.file.buffer);
+
+    if (parsedItems.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'No valid items found in CSV file',
+      });
+    }
+
+    // Create items in bulk
+    const createdItems = [];
+    const errors = [];
+
+    for (const itemData of parsedItems) {
+      try {
+        const item = await itemService.createItem(orgId, itemData);
+        createdItems.push(item);
+      } catch (error: any) {
+        logger.error(`Failed to create item ${itemData.name}:`, error);
+        errors.push({
+          item: itemData.name,
+          error: error.message || 'Failed to create item',
+        });
+      }
+    }
+
+    logger.info(`Catalog upload completed: ${createdItems.length} items created, ${errors.length} errors`);
+
+    res.status(201).json({
+      success: true,
+      data: {
+        created: createdItems.length,
+        failed: errors.length,
+        items: createdItems,
+        errors: errors.length > 0 ? errors : undefined,
+      },
+      message: `Successfully uploaded ${createdItems.length} items${errors.length > 0 ? ` (${errors.length} failed)` : ''}`,
+    });
+  } catch (error: any) {
+    logger.error('Catalog upload error:', error);
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to upload catalog file',
+    });
   }
 });
 

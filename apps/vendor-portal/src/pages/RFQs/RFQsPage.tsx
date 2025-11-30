@@ -1,9 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { MdSearch } from 'react-icons/md';
+import { authenticatedFetch } from '../../lib/api';
+
+interface RFQ {
+  _id: string;
+  rfqNumber: string;
+  title: string;
+  vesselId?: {
+    _id: string;
+    name: string;
+    imoNumber?: string;
+  };
+  supplyPort?: string;
+  brand?: string;
+  status: string;
+  createdAt: string;
+  senderId?: {
+    _id: string;
+    name: string;
+  };
+}
 
 export function RFQsPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch RFQs
+  const { data: rfqs = [], isLoading } = useQuery<RFQ[]>({
+    queryKey: ['vendor-rfqs', activeFilter],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (activeFilter !== 'all') {
+        params.append('status', activeFilter);
+      }
+      const response = await authenticatedFetch(`/api/v1/vendor/rfq?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch RFQs');
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
 
   const filters = [
     { id: 'all', label: 'All' },
@@ -67,11 +103,58 @@ export function RFQsPage() {
               </tr>
             </thead>
             <tbody className="bg-[hsl(var(--card))] divide-y divide-[hsl(var(--border))]">
-              <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                  No RFQs available for the selected filter.
-                </td>
-              </tr>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    Loading RFQs...
+                  </td>
+                </tr>
+              ) : rfqs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    No RFQs available for the selected filter.
+                  </td>
+                </tr>
+              ) : (
+                rfqs
+                  .filter((rfq) => {
+                    if (searchQuery) {
+                      const query = searchQuery.toLowerCase();
+                      return (
+                        rfq.vesselId?.name?.toLowerCase().includes(query) ||
+                        rfq.supplyPort?.toLowerCase().includes(query) ||
+                        rfq.brand?.toLowerCase().includes(query) ||
+                        rfq.title?.toLowerCase().includes(query)
+                      );
+                    }
+                    return true;
+                  })
+                  .map((rfq) => {
+                    const date = new Date(rfq.createdAt);
+                    const dateStr = date.toLocaleDateString();
+                    const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    return (
+                      <tr key={rfq._id} className="hover:bg-[hsl(var(--muted))]">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{dateStr}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{timeStr}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{rfq.supplyPort || '-'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{rfq.vesselId?.name || '-'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{rfq.brand || '-'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            rfq.status === 'draft' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
+                            rfq.status === 'sent' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                            rfq.status === 'quoted' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                            rfq.status === 'ordered' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                            'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                          }`}>
+                            {rfq.status || 'draft'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+              )}
             </tbody>
           </table>
         </div>

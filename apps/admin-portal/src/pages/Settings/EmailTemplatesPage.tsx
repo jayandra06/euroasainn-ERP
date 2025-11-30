@@ -3,23 +3,62 @@
  * Customize automated emails
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '../../components/shared/Toast';
+import { authenticatedFetch } from '../../lib/api';
 
 export function EmailTemplatesPage() {
   const { showToast } = useToast();
   const [welcomeEmail, setWelcomeEmail] = useState('Welcome to {platform_name}...');
   const [invoiceEmail, setInvoiceEmail] = useState('Your invoice for {month}...');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/settings/email-templates');
+      if (!response.ok) {
+        throw new Error('Failed to fetch email templates');
+      }
+      const data = await response.json();
+      if (data.success && data.data?.data) {
+        setWelcomeEmail(data.data.data.welcomeEmail || 'Welcome to {platform_name}...');
+        setInvoiceEmail(data.data.data.invoiceEmail || 'Your invoice for {month}...');
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch email templates:', error);
+      // Use defaults if fetch fails
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save email templates
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await authenticatedFetch('/api/v1/admin/settings/email-templates', {
+        method: 'PUT',
+        body: JSON.stringify({
+          data: {
+            welcomeEmail,
+            invoiceEmail,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save email templates');
+      }
+
       showToast('Email templates saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save email templates', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save email templates', 'error');
     } finally {
       setIsSaving(false);
     }

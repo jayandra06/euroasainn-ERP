@@ -59,7 +59,7 @@ export class OnboardingService {
 
     logger.info(`Creating customer onboarding record for organizationId: ${orgId}`);
 
-    // Create onboarding record with 'completed' status (form submitted, awaiting approval)
+    // Create onboarding record with 'completed' status (form submitted, awaiting admin approval)
     const onboarding = new CustomerOnboarding({
       ...data,
       invitationToken: token,
@@ -124,7 +124,7 @@ export class OnboardingService {
 
     logger.info(`Creating vendor onboarding record for organizationId: ${orgId}`);
 
-    // Create onboarding record with 'completed' status (form submitted, awaiting approval)
+    // Create onboarding record with 'completed' status (form submitted, awaiting admin approval)
     const onboarding = new VendorOnboarding({
       ...data,
       invitationToken: token,
@@ -412,6 +412,12 @@ export class OnboardingService {
           const firstName = onboarding.contactPerson?.split(' ')[0] || user.firstName || 'User';
           const lastName = onboarding.contactPerson?.split(' ').slice(1).join(' ') || user.lastName || '';
           
+          // Check if this is an external vendor (invited by customer)
+          const isExternalVendor = organization.invitedBy === 'customer' || 
+                                   (organization.invitedByOrganizationId && organization.isAdminInvited === false);
+          
+          logger.info(`📧 Sending welcome email to vendor - isExternalVendor: ${isExternalVendor}, invitedBy: ${organization.invitedBy}`);
+          
           await emailService.sendWelcomeEmail({
             to: userEmail,
             firstName,
@@ -419,6 +425,7 @@ export class OnboardingService {
             portalLink: `${portalLink}/login`,
             temporaryPassword,
             organizationType: 'vendor',
+            isExternalVendor,
           });
           
           logger.info(`✅ Success email with credentials sent to ${userEmail} after approval`);

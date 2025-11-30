@@ -154,7 +154,88 @@ export class AuthService {
       organizationId: user.organizationId,
       isActive: user.isActive,
       lastLogin: user.lastLogin,
+      preferences: user.preferences,
+      securityQuestion: user.securityQuestion,
     };
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Verify current password
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      throw new Error('Current password is incorrect');
+    }
+
+    // Validate new password
+    if (newPassword.length < 8) {
+      throw new Error('New password must be at least 8 characters long');
+    }
+
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    logger.info(`Password changed for user ${user.email}`);
+    return { success: true, message: 'Password changed successfully' };
+  }
+
+  async updatePreferences(userId: string, preferences: {
+    language?: string;
+    timezone?: string;
+    dateFormat?: string;
+    timeFormat?: '12h' | '24h';
+  }) {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (!user.preferences) {
+      user.preferences = {};
+    }
+
+    if (preferences.language !== undefined) {
+      user.preferences.language = preferences.language;
+    }
+    if (preferences.timezone !== undefined) {
+      user.preferences.timezone = preferences.timezone;
+    }
+    if (preferences.dateFormat !== undefined) {
+      user.preferences.dateFormat = preferences.dateFormat;
+    }
+    if (preferences.timeFormat !== undefined) {
+      user.preferences.timeFormat = preferences.timeFormat;
+    }
+
+    await user.save();
+    logger.info(`Preferences updated for user ${user.email}`);
+    return { success: true, preferences: user.preferences };
+  }
+
+  async updateSecurityQuestion(userId: string, question: string, answer: string) {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (!question || !answer.trim()) {
+      throw new Error('Security question and answer are required');
+    }
+
+    // Hash the security answer
+    const hashedAnswer = await bcrypt.hash(answer.trim().toLowerCase(), 10);
+    user.securityQuestion = question;
+    user.securityAnswer = hashedAnswer;
+
+    await user.save();
+    logger.info(`Security question updated for user ${user.email}`);
+    return { success: true, message: 'Security question saved successfully' };
   }
 }
 

@@ -1,7 +1,24 @@
-import React, { useState } from 'react';
-import { MdAdd, MdSearch, MdClose } from 'react-icons/md';
+import React, { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { MdAdd, MdSearch, MdClose, MdEdit, MdDelete } from 'react-icons/md';
+import { useToast } from '../../components/shared/Toast';
+import { authenticatedFetch } from '../../lib/api';
+
+interface Customer {
+  _id: string;
+  companyName: string;
+  email: string;
+  phoneNumber: string;
+  primaryContact: string;
+  numberOfVessels: number;
+  isActive: boolean;
+  status: string;
+  createdAt?: string;
+}
 
 export function CustomersPage() {
+  const { showToast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('accepted');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,6 +29,31 @@ export function CustomersPage() {
     primaryContact: '',
     numberOfVessels: '',
   });
+
+  // Fetch customers
+  const { data: customers = [], isLoading } = useQuery<Customer[]>({
+    queryKey: ['customers', activeTab],
+    queryFn: async () => {
+      const status = activeTab === 'accepted' ? 'accepted' : 'pending';
+      const response = await authenticatedFetch(`/api/v1/admin/customers?status=${status}`);
+      if (!response.ok) throw new Error('Failed to fetch customers');
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
+
+  // Filter customers by search query
+  const filteredCustomers = useMemo(() => {
+    if (!searchQuery.trim()) return customers;
+    const query = searchQuery.toLowerCase();
+    return customers.filter(
+      (customer) =>
+        customer.companyName.toLowerCase().includes(query) ||
+        customer.email.toLowerCase().includes(query) ||
+        customer.phoneNumber.toLowerCase().includes(query) ||
+        customer.primaryContact.toLowerCase().includes(query)
+    );
+  }, [customers, searchQuery]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -104,13 +146,60 @@ export function CustomersPage() {
               </tr>
             </thead>
             <tbody className="bg-[hsl(var(--card))] divide-y divide-gray-200 dark:divide-gray-800">
-              <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                  {activeTab === 'accepted'
-                    ? "No accepted customers found. A list of all accepted Customers."
-                    : "No pending customers found. A list of all pending Customers."}
-                </td>
-              </tr>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    Loading customers...
+                  </td>
+                </tr>
+              ) : filteredCustomers.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    {activeTab === 'accepted'
+                      ? "No accepted customers found. A list of all accepted Customers."
+                      : "No pending customers found. A list of all pending Customers."}
+                  </td>
+                </tr>
+              ) : (
+                filteredCustomers.map((customer, index) => (
+                  <tr key={customer._id} className="hover:bg-[hsl(var(--secondary))]/50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {index + 1}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[hsl(var(--foreground))]">
+                      {customer.companyName}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {customer.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {customer.phoneNumber}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {customer.primaryContact}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {customer.numberOfVessels}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                          title="Edit"
+                        >
+                          <MdEdit className="w-5 h-5" />
+                        </button>
+                        <button
+                          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                          title="Delete"
+                        >
+                          <MdDelete className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

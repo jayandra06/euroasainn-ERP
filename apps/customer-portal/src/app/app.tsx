@@ -13,6 +13,7 @@ import { RFQsPage } from '../pages/RFQs/RFQsPage';
 import { FleetOverviewPage } from '../pages/FleetOverview/FleetOverviewPage';
 import { VesselManagementPage } from '../pages/VesselManagement/VesselManagementPage';
 import { BranchPage } from '../pages/Branch/BranchPage';
+import { BUProfilePage } from '../pages/Branch/BUProfilePage';
 import { PortManagementPage } from '../pages/PortManagement/PortManagementPage';
 import { RoleManagementPage } from '../pages/RoleManagement/RoleManagementPage';
 import { CrewManagementPage } from '../pages/CrewManagement/CrewManagementPage';
@@ -29,6 +30,8 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 300000, // 5 minutes - data is considered fresh
+      gcTime: 600000, // 10 minutes - cache time (formerly cacheTime)
     },
   },
 });
@@ -65,6 +68,7 @@ export function App() {
                     <Route path="port" element={<PortManagementPage />} />
                     <Route path="port-management" element={<PortManagementPage />} />
                     <Route path="branch" element={<BranchPage />} />
+                    <Route path="branch/:buId" element={<BUProfilePage />} />
                     <Route path="role-management" element={<RoleManagementPage />} />
                     <Route path="crew-management" element={<CrewManagementPage />} />
                     <Route path="create-enquiry" element={<CreateEnquiryPage />} />

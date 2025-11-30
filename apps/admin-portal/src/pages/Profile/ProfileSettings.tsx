@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '../../components/shared/Toast';
+import { authenticatedFetch } from '../../lib/api';
 import { MdLock, MdSecurity, MdTranslate, MdAccessTime, MdCalendarToday, MdKeyboardArrowDown } from 'react-icons/md';
 
 interface ProfileSettingsProps {
@@ -108,14 +109,25 @@ function PasswordSettings() {
 
     setIsSaving(true);
     try {
-      // TODO: Implement API call to change password
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authenticatedFetch('/api/v1/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to change password');
+      }
+
       showToast('Password changed successfully', 'success');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error) {
-      showToast('Failed to change password', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to change password', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -209,14 +221,24 @@ function SecurityQuestionsSettings() {
 
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save security question and answer
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authenticatedFetch('/api/v1/auth/security-question', {
+        method: 'PUT',
+        body: JSON.stringify({
+          question: selectedQuestion,
+          answer: answer.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save security question');
+      }
+
       showToast('Security question saved successfully', 'success');
-      // Optionally clear fields after successful save
       setSelectedQuestion('');
       setAnswer('');
-    } catch (error) {
-      showToast('Failed to save security question', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save security question', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -298,11 +320,21 @@ function LanguageSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save language preference
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authenticatedFetch('/api/v1/auth/preferences', {
+        method: 'PUT',
+        body: JSON.stringify({
+          language: selectedLanguage,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save language preference');
+      }
+
       showToast('Language preference saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save language preference', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save language preference', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -372,11 +404,21 @@ function TimezoneSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save timezone
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authenticatedFetch('/api/v1/auth/preferences', {
+        method: 'PUT',
+        body: JSON.stringify({
+          timezone: selectedTimezone,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save timezone');
+      }
+
       showToast('Timezone saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save timezone', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save timezone', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -438,11 +480,22 @@ function DateFormatSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement API call to save date/time format
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authenticatedFetch('/api/v1/auth/preferences', {
+        method: 'PUT',
+        body: JSON.stringify({
+          dateFormat,
+          timeFormat,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save date and time format');
+      }
+
       showToast('Date and time format saved successfully', 'success');
-    } catch (error) {
-      showToast('Failed to save date and time format', 'error');
+    } catch (error: any) {
+      showToast(error.message || 'Failed to save date and time format', 'error');
     } finally {
       setIsSaving(false);
     }

@@ -1,10 +1,69 @@
-import React, { useState } from 'react';
-import { MdAdd, MdClose } from 'react-icons/md';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { MdAdd, MdClose, MdEdit, MdDelete, MdCheck, MdClose as MdCloseIcon } from 'react-icons/md';
+import { authenticatedFetch } from '../../lib/api';
+import { useToast } from '../../components/shared/Toast';
+
+interface Model {
+  _id: string;
+  name: string;
+  description?: string;
+  brandId?: {
+    _id: string;
+    name: string;
+  };
+  status: string;
+}
+
+interface Brand {
+  _id: string;
+  name: string;
+}
 
 export function ModelsPage() {
+  const { showToast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('active');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [models, setModels] = useState<Model[]>([]);
+  const [formData, setFormData] = useState({ name: '', description: '', brandId: '' });
+
+  // Fetch brands using React Query
+  const { data: brands = [] } = useQuery<Brand[]>({
+    queryKey: ['admin-brands', 'active'],
+    queryFn: async () => {
+      const response = await authenticatedFetch('/api/v1/admin/brands?status=active');
+      if (!response.ok) {
+        throw new Error('Failed to fetch brands');
+      }
+      const data = await response.json();
+      return data.data || [];
+    },
+    staleTime: 300000, // Consider data fresh for 5 minutes
+    refetchOnWindowFocus: false, // Disable refetch on window focus for better performance
+  });
+
+  useEffect(() => {
+    fetchModels();
+  }, [activeTab]);
+
+  const fetchModels = async () => {
+    setIsLoading(true);
+    try {
+      const status = activeTab === 'active' ? 'active' : 'pending';
+      const response = await authenticatedFetch(`/api/v1/admin/models?status=${status}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch models');
+      }
+      const data = await response.json();
+      setModels(data.data || []);
+    } catch (error: any) {
+      showToast(error.message || 'Failed to fetch models', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -12,13 +71,100 @@ export function ModelsPage() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setFormData({ name: '', description: '' });
+    setFormData({ name: '', description: '', brandId: '' });
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement submit logic
-    console.log('Add Model:', formData);
-    handleCloseModal();
+  const handleSubmit = async () => {
+    if (!formData.name.trim()) {
+      showToast('Model name is required', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/models', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create model');
+      }
+
+      showToast('Model created successfully', 'success');
+      handleCloseModal();
+      fetchModels();
+      // Invalidate queries so CreateEnquiryPage refetches (both admin and customer portals)
+      queryClient.invalidateQueries({ queryKey: ['models'] });
+      queryClient.invalidateQueries({ queryKey: ['customer-models'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-brands'] }); // Refresh brands in case new ones were created
+    } catch (error: any) {
+      showToast(error.message || 'Failed to create model', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApprove = async (id: string) => {
+    try {
+      const response = await authenticatedFetch(`/api/v1/admin/models/${id}/approve`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to approve model');
+      }
+
+      showToast('Model approved successfully', 'success');
+      fetchModels();
+      // Invalidate queries so CreateEnquiryPage refetches (both admin and customer portals)
+      queryClient.invalidateQueries({ queryKey: ['models'] });
+      queryClient.invalidateQueries({ queryKey: ['customer-models'] });
+    } catch (error: any) {
+      showToast(error.message || 'Failed to approve model', 'error');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      const response = await authenticatedFetch(`/api/v1/admin/models/${id}/reject`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to reject model');
+      }
+
+      showToast('Model rejected successfully', 'success');
+      fetchModels();
+    } catch (error: any) {
+      showToast(error.message || 'Failed to reject model', 'error');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this model?')) {
+      return;
+    }
+
+    try {
+      const response = await authenticatedFetch(`/api/v1/admin/models/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete model');
+      }
+
+      showToast('Model deleted successfully', 'success');
+      fetchModels();
+    } catch (error: any) {
+      showToast(error.message || 'Failed to delete model', 'error');
+    }
   };
 
   return (
@@ -74,13 +220,70 @@ export function ModelsPage() {
               </tr>
             </thead>
             <tbody className="bg-[hsl(var(--card))] divide-y divide-gray-200 dark:divide-gray-800">
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
-                  {activeTab === 'active'
-                    ? "No models found in the 'active' tab."
-                    : "No models found in the 'pending' tab."}
-                </td>
-              </tr>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    Loading...
+                  </td>
+                </tr>
+              ) : models.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-[hsl(var(--muted-foreground))]">
+                    {activeTab === 'active'
+                      ? "No models found in the 'active' tab."
+                      : "No models found in the 'pending' tab."}
+                  </td>
+                </tr>
+              ) : (
+                models.map((model) => (
+                  <tr key={model._id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">
+                      {model.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[hsl(var(--muted-foreground))]">
+                      {model.description || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        model.status === 'active'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      }`}>
+                        {model.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        {activeTab === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(model._id)}
+                              className="text-green-600 hover:text-green-900 dark:hover:text-green-400"
+                              title="Approve"
+                            >
+                              <MdCheck className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleReject(model._id)}
+                              className="text-red-600 hover:text-red-900 dark:hover:text-red-400"
+                              title="Reject"
+                            >
+                              <MdCloseIcon className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => handleDelete(model._id)}
+                          className="text-red-600 hover:text-red-900 dark:hover:text-red-400"
+                          title="Delete"
+                        >
+                          <MdDelete className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -104,6 +307,23 @@ export function ModelsPage() {
                 Enter the details for the new model.
               </p>
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
+                    Brand (Optional)
+                  </label>
+                  <select
+                    value={formData.brandId}
+                    onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
+                    className="w-full px-4 py-2 border border-[hsl(var(--primary))] rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
+                  >
+                    <option value="">Select a brand (optional)</option>
+                    {brands.map((brand) => (
+                      <option key={brand._id} value={brand._id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-[hsl(var(--foreground))] mb-2">
                     Name
@@ -139,9 +359,10 @@ export function ModelsPage() {
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors"
+                disabled={isLoading}
+                className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add Model
+                {isLoading ? 'Adding...' : 'Add Model'}
               </button>
             </div>
           </div>

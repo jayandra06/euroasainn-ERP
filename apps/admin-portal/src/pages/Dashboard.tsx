@@ -3,8 +3,11 @@
  * Simplified dashboard matching the design
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
+import { authenticatedFetch } from '../lib/api';
+import { useToast } from '../components/shared/Toast';
 import {
   MdRequestQuote,
   MdPeople,
@@ -27,8 +30,30 @@ import {
   Legend,
 } from 'recharts';
 
+interface RFQ {
+  _id: string;
+  createdAt?: string;
+}
+
+interface Organization {
+  _id: string;
+  type: string;
+  createdAt?: string;
+}
+
+interface Brand {
+  _id: string;
+  createdAt?: string;
+}
+
+interface Category {
+  _id: string;
+  createdAt?: string;
+}
+
 export function Dashboard() {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -36,6 +61,132 @@ export function Dashboard() {
     lastName: '',
     role: 'admin',
   });
+
+  // Fetch RFQs
+  const { data: rfqs = [], isLoading: isLoadingRFQs } = useQuery({
+    queryKey: ['dashboard-rfqs'],
+    queryFn: async () => {
+      try {
+        const response = await authenticatedFetch('/api/v1/admin/rfq');
+        if (!response.ok) {
+          // If endpoint fails, return empty array (admin might not have RFQs)
+          return [];
+        }
+        const data = await response.json();
+        return (data.data || []) as RFQ[];
+      } catch (error) {
+        // Return empty array on error
+        return [];
+      }
+    },
+  });
+
+  // Fetch organizations
+  const { data: organizations = [], isLoading: isLoadingOrgs } = useQuery({
+    queryKey: ['dashboard-organizations'],
+    queryFn: async () => {
+      const response = await authenticatedFetch('/api/v1/admin/organizations');
+      if (!response.ok) throw new Error('Failed to fetch organizations');
+      const data = await response.json();
+      return data.data as Organization[];
+    },
+  });
+
+  // Fetch brands
+  const { data: brands = [], isLoading: isLoadingBrands } = useQuery({
+    queryKey: ['dashboard-brands'],
+    queryFn: async () => {
+      const response = await authenticatedFetch('/api/v1/admin/brands');
+      if (!response.ok) throw new Error('Failed to fetch brands');
+      const data = await response.json();
+      return data.data as Brand[];
+    },
+  });
+
+  // Fetch categories
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['dashboard-categories'],
+    queryFn: async () => {
+      const response = await authenticatedFetch('/api/v1/admin/categories');
+      if (!response.ok) throw new Error('Failed to fetch categories');
+      const data = await response.json();
+      return data.data as Category[];
+    },
+  });
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    const totalRFQs = rfqs.length;
+    const totalMerchants = organizations.filter(org => org.type === 'vendor').length;
+    const totalCustomers = organizations.filter(org => org.type === 'customer').length;
+    const totalBrands = brands.length;
+    const totalCategories = categories.length;
+    // For "Total Items Send", we'll use RFQ items count or show 0 if not available
+    const totalItemsSent = 0; // This would need a specific endpoint for items/orders
+
+    return {
+      totalRFQs,
+      totalMerchants,
+      totalCustomers,
+      totalBrands,
+      totalCategories,
+      totalItemsSent,
+    };
+  }, [rfqs, organizations, brands, categories]);
+
+  // Calculate monthly data for charts (last 6 months)
+  const monthlyData = useMemo(() => {
+    const now = new Date();
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const data = [];
+    
+    for (let i = 5; i >= 0; i--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+      const monthName = monthNames[monthDate.getMonth()];
+      
+      const rfqsInMonth = rfqs.filter(rfq => {
+        if (!rfq.createdAt) return false;
+        const created = new Date(rfq.createdAt);
+        return created >= monthDate && created <= monthEnd;
+      }).length;
+      
+      data.push({ 
+        name: `${monthName} ${monthDate.getFullYear().toString().slice(-2)}`, 
+        value: rfqsInMonth 
+      });
+    }
+    
+    return data;
+  }, [rfqs]);
+
+  // Calculate visitor data (using organizations created as proxy)
+  const visitorData = useMemo(() => {
+    const now = new Date();
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const data = [];
+    
+    for (let i = 5; i >= 0; i--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+      const monthName = monthNames[monthDate.getMonth()];
+      
+      const orgsInMonth = organizations.filter(org => {
+        if (!org.createdAt) return false;
+        const created = new Date(org.createdAt);
+        return created >= monthDate && created <= monthEnd;
+      }).length;
+      
+      data.push({ 
+        name: `${monthName} ${monthDate.getFullYear().toString().slice(-2)}`, 
+        visitors: orgsInMonth 
+      });
+    }
+    
+    return data;
+  }, [organizations]);
+
+  const isLoading = isLoadingRFQs || isLoadingOrgs || isLoadingBrands || isLoadingCategories;
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -51,30 +202,29 @@ export function Dashboard() {
     });
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement submit logic
-    console.log('Invite Admin:', formData);
-    handleCloseModal();
+  const handleSubmit = async () => {
+    try {
+      const response = await authenticatedFetch('/api/v1/admin/users/invite', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          role: formData.role,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to invite admin');
+      }
+
+      showToast('Admin invitation sent successfully!', 'success');
+      handleCloseModal();
+    } catch (error: any) {
+      showToast(error.message || 'Failed to invite admin', 'error');
+    }
   };
-
-  // Chart data
-  const monthlyData = [
-    { name: 'Jan', value: 0 },
-    { name: 'Feb', value: 0 },
-    { name: 'Mar', value: 0 },
-    { name: 'Apr', value: 0 },
-    { name: 'May', value: 0 },
-    { name: 'Jun', value: 0 },
-  ];
-
-  const visitorData = [
-    { name: 'Jan', visitors: 0 },
-    { name: 'Feb', visitors: 0 },
-    { name: 'Mar', visitors: 0 },
-    { name: 'Apr', visitors: 0 },
-    { name: 'May', visitors: 0 },
-    { name: 'Jun', visitors: 0 },
-  ];
 
   return (
     <div className="w-full min-h-screen p-8 space-y-8">
@@ -89,7 +239,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total RFQs Received</p>
-              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                {isLoading ? '...' : stats.totalRFQs.toLocaleString()}
+              </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
@@ -102,7 +254,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Merchants</p>
-              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                {isLoading ? '...' : stats.totalMerchants.toLocaleString()}
+              </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
@@ -115,7 +269,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Happy Customers</p>
-              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                {isLoading ? '...' : stats.totalCustomers.toLocaleString()}
+              </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
@@ -128,7 +284,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Brands</p>
-              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                {isLoading ? '...' : stats.totalBrands.toLocaleString()}
+              </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
@@ -141,7 +299,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Items Send</p>
-              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                {isLoading ? '...' : stats.totalItemsSent.toLocaleString()}
+              </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
@@ -154,7 +314,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Categories</p>
-              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">0</p>
+              <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                {isLoading ? '...' : stats.totalCategories.toLocaleString()}
+              </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Updated Now</p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-md">
@@ -198,8 +360,14 @@ export function Dashboard() {
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 text-sm text-[hsl(var(--muted-foreground))]">
-              <p>Trending up by 5.2% this month</p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">Showing total visitors for the last 6 months</p>
+              <p>
+                {monthlyData.length > 1 && monthlyData[monthlyData.length - 1].value > monthlyData[monthlyData.length - 2].value
+                  ? `Trending up by ${((monthlyData[monthlyData.length - 1].value - monthlyData[monthlyData.length - 2].value) / Math.max(monthlyData[monthlyData.length - 2].value, 1) * 100).toFixed(1)}% this month`
+                  : monthlyData.length > 1 && monthlyData[monthlyData.length - 1].value < monthlyData[monthlyData.length - 2].value
+                  ? `Trending down by ${((monthlyData[monthlyData.length - 2].value - monthlyData[monthlyData.length - 1].value) / Math.max(monthlyData[monthlyData.length - 2].value, 1) * 100).toFixed(1)}% this month`
+                  : 'No change this month'}
+              </p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">Showing RFQs for the last 6 months</p>
             </div>
           </div>
 
@@ -237,8 +405,14 @@ export function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
             <div className="mt-4 text-sm text-[hsl(var(--muted-foreground))]">
-              <p>Trending up by 5.2% this month</p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">January - June 2024</p>
+              <p>
+                {visitorData.length > 1 && visitorData[visitorData.length - 1].visitors > visitorData[visitorData.length - 2].visitors
+                  ? `Trending up by ${((visitorData[visitorData.length - 1].visitors - visitorData[visitorData.length - 2].visitors) / Math.max(visitorData[visitorData.length - 2].visitors, 1) * 100).toFixed(1)}% this month`
+                  : visitorData.length > 1 && visitorData[visitorData.length - 1].visitors < visitorData[visitorData.length - 2].visitors
+                  ? `Trending down by ${((visitorData[visitorData.length - 2].visitors - visitorData[visitorData.length - 1].visitors) / Math.max(visitorData[visitorData.length - 2].visitors, 1) * 100).toFixed(1)}% this month`
+                  : 'No change this month'}
+              </p>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">Showing organizations created for the last 6 months</p>
             </div>
           </div>
         </div>

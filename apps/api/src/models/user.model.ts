@@ -12,6 +12,14 @@ export interface IUser extends Document {
   organizationId?: mongoose.Types.ObjectId;
   isActive: boolean;
   lastLogin?: Date;
+  preferences?: {
+    language?: string;
+    timezone?: string;
+    dateFormat?: string;
+    timeFormat?: '12h' | '24h';
+  };
+  securityQuestion?: string;
+  securityAnswer?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -69,6 +77,32 @@ const UserSchema = new Schema<IUser>(
     },
     lastLogin: {
       type: Date,
+    },
+    preferences: {
+      language: {
+        type: String,
+        default: 'en',
+      },
+      timezone: {
+        type: String,
+        default: 'UTC',
+      },
+      dateFormat: {
+        type: String,
+        default: 'MM/DD/YYYY',
+      },
+      timeFormat: {
+        type: String,
+        enum: ['12h', '24h'],
+        default: '12h',
+      },
+    },
+    securityQuestion: {
+      type: String,
+    },
+    securityAnswer: {
+      type: String,
+      select: false, // Don't return in queries by default
     },
   },
   {

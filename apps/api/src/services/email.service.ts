@@ -151,6 +151,7 @@ export class EmailService {
     portalLink,
     temporaryPassword,
     organizationType,
+    isExternalVendor = false,
   }: {
     to: string;
     firstName: string;
@@ -158,6 +159,7 @@ export class EmailService {
     portalLink: string;
     temporaryPassword: string;
     organizationType?: 'customer' | 'vendor';
+    isExternalVendor?: boolean;
   }) {
     try {
       const subject = 'Welcome to Euroasiann ERP - Your Login Credentials';
@@ -194,6 +196,16 @@ export class EmailService {
                 <p style="color: #d32f2f; font-size: 12px;"><em>Please change your password after first login for security.</em></p>
               </div>
               
+              ${isExternalVendor ? `
+              <p>Click the button below to log in to your portal:</p>
+              
+              <div style="text-align: center;">
+                <a href="${portalLink}" class="button">Login to Portal</a>
+              </div>
+              
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; color: #0066cc;"><a href="${portalLink}" style="color: #0066cc; text-decoration: none;">${portalLink}</a></p>
+              ` : `
               <p><strong>Important:</strong> To access the portal and all features, you need to complete your subscription payment first.</p>
               
               <p>Click the button below to log in and complete payment:</p>
@@ -208,6 +220,7 @@ export class EmailService {
               <p style="background: #fff3cd; padding: 12px; border-radius: 6px; border-left: 4px solid #ffc107; margin: 20px 0;">
                 <strong>Note:</strong> After logging in, you will be redirected to the payment page. Once payment is completed, you will have full access to the portal and dashboard.
               </p>
+              `}
               
               <p>If you have any questions, please contact our support team.</p>
               
@@ -234,11 +247,15 @@ export class EmailService {
         
         Please change your password after first login for security.
         
+        ${isExternalVendor ? `
+        Login to portal: ${portalLink}
+        ` : `
         IMPORTANT: To access the portal and all features, you need to complete your subscription payment first.
         
         Login and complete payment: ${portalLink}
         
         Note: After logging in, you will be redirected to the payment page. Once payment is completed, you will have full access to the portal and dashboard.
+        `}
         
         Best regards,
         Euroasiann ERP Team
