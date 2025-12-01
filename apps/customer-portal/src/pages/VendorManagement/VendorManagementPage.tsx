@@ -20,6 +20,7 @@ interface Vendor {
   organizationName?: string;
   role?: string;
   isActive: boolean;
+  onboardingStatus?: 'pending' | 'completed' | 'approved' | 'rejected';
   lastLogin?: string;
   createdAt?: string;
 }
@@ -36,13 +37,8 @@ export function VendorManagementPage() {
     queryKey: ['customer-vendors', activeFilter],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (activeFilter !== 'all') {
-        if (activeFilter === 'approved' || activeFilter === 'active') {
-          params.append('isActive', 'true');
-        } else if (activeFilter === 'disabled' || activeFilter === 'inactive') {
-          params.append('isActive', 'false');
-        }
-      }
+      // Note: Filtering by onboarding status is done on the frontend
+      // The backend returns all vendors with their onboarding status
 
       const response = await fetch(`${API_URL}/api/v1/customer/vendors/users?${params}`, {
         headers: {
@@ -56,22 +52,40 @@ export function VendorManagementPage() {
     },
   });
 
-  // Filter vendors by search query
+  // Filter vendors by search query and status
   const filteredVendors = useMemo(() => {
     if (!vendorsData) return [];
-    if (!searchQuery.trim()) return vendorsData;
-
-    const query = searchQuery.toLowerCase();
-    return vendorsData.filter(
-      (vendor) =>
-        vendor.email?.toLowerCase().includes(query) ||
-        vendor.firstName?.toLowerCase().includes(query) ||
-        vendor.lastName?.toLowerCase().includes(query) ||
-        vendor.fullName?.toLowerCase().includes(query) ||
-        vendor.organizationName?.toLowerCase().includes(query) ||
-        vendor.phone?.toLowerCase().includes(query)
-    );
-  }, [vendorsData, searchQuery]);
+    
+    let filtered = vendorsData;
+    
+    // Filter by status
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter((vendor) => {
+        let status = vendor.onboardingStatus || (vendor.isActive ? 'approved' : 'pending');
+        // Map 'completed' to 'pending' for filtering
+        if (status === 'completed') {
+          status = 'pending';
+        }
+        return status === activeFilter;
+      });
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (vendor) =>
+          vendor.email?.toLowerCase().includes(query) ||
+          vendor.firstName?.toLowerCase().includes(query) ||
+          vendor.lastName?.toLowerCase().includes(query) ||
+          vendor.fullName?.toLowerCase().includes(query) ||
+          vendor.organizationName?.toLowerCase().includes(query) ||
+          vendor.phone?.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [vendorsData, searchQuery, activeFilter]);
 
   const handleSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ['customer-vendors'] });
@@ -114,20 +128,45 @@ export function VendorManagementPage() {
       ),
     },
     {
-      key: 'isActive',
+      key: 'onboardingStatus',
       header: 'Status',
-      render: (vendor: Vendor) => (
-        <span
-          className={cn(
-            'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
-            vendor.isActive
-              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
-              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
-          )}
-        >
-          {vendor.isActive ? 'Active' : 'Inactive'}
-        </span>
-      ),
+      render: (vendor: Vendor) => {
+        // Show onboarding status if available, otherwise fall back to isActive
+        let status = vendor.onboardingStatus || (vendor.isActive ? 'approved' : 'pending');
+        
+        // Map 'completed' to 'pending' since both mean waiting for approval
+        if (status === 'completed') {
+          status = 'pending';
+        }
+        
+        const statusConfig: Record<string, { label: string; className: string }> = {
+          pending: {
+            label: 'Pending',
+            className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 ring-1 ring-yellow-200 dark:ring-yellow-800',
+          },
+          approved: {
+            label: 'Approved',
+            className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800',
+          },
+          rejected: {
+            label: 'Rejected',
+            className: 'bg-red-100 text-red-800 dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800',
+          },
+        };
+        
+        const config = statusConfig[status] || statusConfig.pending;
+        
+        return (
+          <span
+            className={cn(
+              'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+              config.className
+            )}
+          >
+            {config.label}
+          </span>
+        );
+      },
     },
   ];
 
@@ -155,8 +194,9 @@ export function VendorManagementPage() {
             className="px-3 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
           >
             <option value="all">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
           </select>
         </div>
         <div className="flex items-center gap-2 flex-1">

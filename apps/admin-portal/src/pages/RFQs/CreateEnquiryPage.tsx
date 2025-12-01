@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../components/shared/Toast';
+import { authenticatedFetch } from '../../lib/api';
 import { MdDelete, MdCalendarToday } from 'react-icons/md';
-
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 interface Vendor {
   _id: string;
@@ -22,17 +21,20 @@ interface Vessel {
 interface Category {
   _id: string;
   name: string;
+  status: string;
 }
 
 interface Brand {
   _id: string;
   name: string;
+  status: string;
 }
 
 interface Model {
   _id: string;
   name: string;
   brandId?: string;
+  status: string;
 }
 
 interface Item {
@@ -122,51 +124,130 @@ export function CreateEnquiryPage() {
     },
   });
 
-  // Fetch categories
-  const { data: categories } = useQuery<Category[]>({
+  // Fetch categories (only active)
+  const { data: categories, refetch: refetchCategories } = useQuery<Category[]>({
     queryKey: ['categories'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/admin/categories`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const response = await authenticatedFetch('/api/v1/admin/categories?status=active');
       if (!response.ok) return [];
       const data = await response.json();
       return data.data || [];
     },
   });
 
-  // Fetch brands
-  const { data: brands } = useQuery<Brand[]>({
+  // Fetch brands (only active)
+  const { data: brands, refetch: refetchBrands } = useQuery<Brand[]>({
     queryKey: ['brands'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/admin/brands`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const response = await authenticatedFetch('/api/v1/admin/brands?status=active');
       if (!response.ok) return [];
       const data = await response.json();
       return data.data || [];
     },
   });
 
-  // Fetch models (filtered by brand)
-  const { data: models } = useQuery<Model[]>({
+  // Fetch models (only active, filtered by brand)
+  const { data: models, refetch: refetchModels } = useQuery<Model[]>({
     queryKey: ['models', formData.brand],
     queryFn: async () => {
       if (!formData.brand) return [];
-      const response = await fetch(`${API_URL}/api/v1/admin/models?brandId=${formData.brand}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      // Find brand ID from brand name
+      const selectedBrand = brands?.find(b => b.name === formData.brand);
+      if (!selectedBrand) return [];
+      const response = await authenticatedFetch(`/api/v1/admin/models?brandId=${selectedBrand._id}&status=active`);
       if (!response.ok) return [];
       const data = await response.json();
       return data.data || [];
     },
-    enabled: !!formData.brand,
+    enabled: !!formData.brand && !!brands && brands.length > 0,
+  });
+
+  // State for modals
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
+  const [newBrandName, setNewBrandName] = useState('');
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newModelName, setNewModelName] = useState('');
+
+  // Create brand mutation (admin creates active brands immediately)
+  const createBrandMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const response = await authenticatedFetch('/api/v1/admin/brands', {
+        method: 'POST',
+        body: JSON.stringify({ name }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create brand');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchBrands();
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
+      setShowBrandModal(false);
+      setNewBrandName('');
+      showToast('Brand created successfully!', 'success');
+    },
+    onError: (error: any) => {
+      showToast(error.message || 'Failed to create brand', 'error');
+    },
+  });
+
+  // Create category mutation (admin creates active categories immediately)
+  const createCategoryMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const response = await authenticatedFetch('/api/v1/admin/categories', {
+        method: 'POST',
+        body: JSON.stringify({ name }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create category');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchCategories();
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      setShowCategoryModal(false);
+      setNewCategoryName('');
+      showToast('Category created successfully!', 'success');
+    },
+    onError: (error: any) => {
+      showToast(error.message || 'Failed to create category', 'error');
+    },
+  });
+
+  // Create model mutation (admin creates active models immediately)
+  const createModelMutation = useMutation({
+    mutationFn: async (name: string) => {
+      // Find brand ID from brand name
+      const selectedBrand = brands?.find(b => b.name === formData.brand);
+      if (!selectedBrand) {
+        throw new Error('Please select a brand first');
+      }
+      const response = await authenticatedFetch('/api/v1/admin/models', {
+        method: 'POST',
+        body: JSON.stringify({ name, brandId: selectedBrand._id }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create model');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchModels();
+      queryClient.invalidateQueries({ queryKey: ['models'] });
+      setShowModelModal(false);
+      setNewModelName('');
+      showToast('Model created successfully!', 'success');
+    },
+    onError: (error: any) => {
+      showToast(error.message || 'Failed to create model', 'error');
+    },
   });
 
   // Create RFQ mutation
@@ -201,6 +282,17 @@ export function CreateEnquiryPage() {
     // Reset model when brand changes
     if (field === 'brand') {
       setFormData((prev) => ({ ...prev, model: '' }));
+    }
+    // Handle "Add New" option
+    if (value === '__add_new_brand__') {
+      setShowBrandModal(true);
+      setFormData((prev) => ({ ...prev, [field]: '' }));
+    } else if (value === '__add_new_category__') {
+      setShowCategoryModal(true);
+      setFormData((prev) => ({ ...prev, [field]: '' }));
+    } else if (value === '__add_new_model__') {
+      setShowModelModal(true);
+      setFormData((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -285,8 +377,16 @@ export function CreateEnquiryPage() {
           imoNumber: formData.imoNo,
         };
 
+    // Generate title from vessel name and category/brand
+    const vesselName = selectedVessel?.name || formData.vesselName || 'Vessel';
+    const categoryInfo = formData.category ? ` - ${formData.category}` : '';
+    const brandInfo = formData.brand ? ` (${formData.brand})` : '';
+    const title = `RFQ for ${vesselName}${categoryInfo}${brandInfo}`;
+
     createRFQMutation.mutate({
       ...vesselData,
+      title, // Required field
+      description: formData.remarks || `RFQ for ${vesselName}`,
       supplyPort: formData.supplyPort,
       equipmentTags: formData.equipmentTags,
       category: formData.category,
@@ -302,6 +402,7 @@ export function CreateEnquiryPage() {
       typeOfLogisticContainer: formData.typeOfLogisticContainer,
       createdDate: formData.createdDate,
       leadDate: formData.leadDate,
+      dueDate: formData.leadDate ? new Date(formData.leadDate) : undefined,
       recipientVendorIds: selectedVendors,
       items: items.map((item) => ({
         impaNo: item.impaNo,
@@ -425,11 +526,14 @@ export function CreateEnquiryPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Category</option>
-              {categories?.map((cat) => (
-                <option key={cat._id} value={cat._id}>
+              {categories?.filter(cat => cat.status === 'active').map((cat) => (
+                <option key={cat._id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
+              <option value="__add_new_category__" className="text-blue-600 font-semibold">
+                + Add New Category
+              </option>
             </select>
           </div>
           <div>
@@ -441,9 +545,9 @@ export function CreateEnquiryPage() {
               onChange={(e) => handleInputChange('subCategory', e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Select Category</option>
-              {categories?.map((cat) => (
-                <option key={cat._id} value={cat._id}>
+              <option value="">Select Sub Category</option>
+              {categories?.filter(cat => cat.status === 'active').map((cat) => (
+                <option key={cat._id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
@@ -459,11 +563,14 @@ export function CreateEnquiryPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Brand</option>
-              {brands?.map((brand) => (
-                <option key={brand._id} value={brand._id}>
+              {brands?.filter(brand => brand.status === 'active').map((brand) => (
+                <option key={brand._id} value={brand.name}>
                   {brand.name}
                 </option>
               ))}
+              <option value="__add_new_brand__" className="text-blue-600 font-semibold">
+                + Add New Brand
+              </option>
             </select>
           </div>
         </div>
@@ -480,12 +587,17 @@ export function CreateEnquiryPage() {
               disabled={!formData.brand}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value="">Select Model</option>
-              {models?.map((model) => (
-                <option key={model._id} value={model._id}>
+              <option value="">{formData.brand ? 'Select Model' : 'Select Brand First'}</option>
+              {models?.filter(model => model.status === 'active').map((model) => (
+                <option key={model._id} value={model.name}>
                   {model.name}
                 </option>
               ))}
+              {formData.brand && (
+                <option value="__add_new_model__" className="text-blue-600 font-semibold">
+                  + Add New Model
+                </option>
+              )}
             </select>
           </div>
           <div>
@@ -855,6 +967,120 @@ export function CreateEnquiryPage() {
           {createRFQMutation.isPending ? 'Creating...' : 'Get Quote'}
         </button>
       </div>
+
+      {/* Add Brand Modal */}
+      {showBrandModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Brand</h3>
+            <input
+              type="text"
+              value={newBrandName}
+              onChange={(e) => setNewBrandName(e.target.value)}
+              placeholder="Enter brand name"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowBrandModal(false);
+                  setNewBrandName('');
+                }}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (newBrandName.trim()) {
+                    createBrandMutation.mutate(newBrandName.trim());
+                  }
+                }}
+                disabled={!newBrandName.trim() || createBrandMutation.isPending}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {createBrandMutation.isPending ? 'Creating...' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Category Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Category</h3>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="Enter category name"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  setNewCategoryName('');
+                }}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (newCategoryName.trim()) {
+                    createCategoryMutation.mutate(newCategoryName.trim());
+                  }
+                }}
+                disabled={!newCategoryName.trim() || createCategoryMutation.isPending}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {createCategoryMutation.isPending ? 'Creating...' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Model Modal */}
+      {showModelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Model</h3>
+            <input
+              type="text"
+              value={newModelName}
+              onChange={(e) => setNewModelName(e.target.value)}
+              placeholder="Enter model name"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowModelModal(false);
+                  setNewModelName('');
+                }}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (newModelName.trim()) {
+                    createModelMutation.mutate(newModelName.trim());
+                  }
+                }}
+                disabled={!newModelName.trim() || createModelMutation.isPending}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {createModelMutation.isPending ? 'Creating...' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

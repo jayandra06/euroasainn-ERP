@@ -129,9 +129,19 @@ export function OrganizationProfilePage() {
     queryKey: ['organization-vessels', id],
     queryFn: async () => {
       if (organization?.type !== 'customer') return [];
-      // TODO: Add admin endpoint to fetch vessels for organization
-      // For now, return empty array
-      return [];
+      const token = localStorage.getItem('accessToken');
+      const url = `${API_URL}/api/v1/admin/organizations/${id}/vessels`;
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch vessels');
+      }
+      const data = await response.json();
+      return data.success ? data.data : [];
     },
     enabled: !!id && organization?.type === 'customer',
   });
@@ -141,9 +151,19 @@ export function OrganizationProfilePage() {
     queryKey: ['organization-business-units', id],
     queryFn: async () => {
       if (organization?.type !== 'customer') return [];
-      // TODO: Add admin endpoint to fetch business units for organization
-      // For now, return empty array
-      return [];
+      const token = localStorage.getItem('accessToken');
+      const url = `${API_URL}/api/v1/admin/organizations/${id}/business-units`;
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch business units');
+      }
+      const data = await response.json();
+      return data.success ? data.data : [];
     },
     enabled: !!id && organization?.type === 'customer',
   });

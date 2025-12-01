@@ -169,7 +169,11 @@ export class PaymentController {
         });
       }
 
-      const user = await import('../models/user.model').then(m => m.User.findById(userId));
+      const { User } = await import('../models/user.model');
+      const { Organization } = await import('../models/organization.model');
+      const { OrganizationType } = await import('../../../../packages/shared/src/types/index.ts');
+      
+      const user = await User.findById(userId);
       if (!user || !user.organizationId) {
         return res.status(400).json({
           success: false,
@@ -177,6 +181,37 @@ export class PaymentController {
         });
       }
 
+      // Check if this is an external vendor (invited by customer)
+      const organization = await Organization.findById(user.organizationId);
+      if (organization) {
+        const orgType = String(organization.type).toLowerCase();
+        const isVendorOrg = orgType === 'vendor' || orgType === OrganizationType.VENDOR.toLowerCase();
+        
+        if (isVendorOrg) {
+          // Check if external vendor (invited by customer)
+          const hasInvitedByOrgId = !!(organization.invitedByOrganizationId && organization.invitedByOrganizationId.toString());
+          const invitedBy = organization.invitedBy ? String(organization.invitedBy).toLowerCase() : null;
+          const isAdminInvited = organization.isAdminInvited === true;
+          
+          const isExternalVendor = 
+            invitedBy === 'customer' ||
+            hasInvitedByOrgId ||
+            (!isAdminInvited && invitedBy !== 'admin' && invitedBy !== 'tech');
+          
+          if (isExternalVendor) {
+            logger.info(`✅ External vendor - returning hasActivePayment=true for organization: ${organization.name}`);
+            return res.status(200).json({
+              success: true,
+              data: {
+                hasActivePayment: true, // External vendors don't need payment
+                organizationId: user.organizationId.toString(),
+              },
+            });
+          }
+        }
+      }
+
+      // For internal vendors and customers, check actual payment status
       const paymentStatus = await paymentService.checkOrganizationPaymentStatus(
         user.organizationId.toString()
       );
