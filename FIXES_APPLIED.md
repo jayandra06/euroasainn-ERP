@@ -1,6 +1,6 @@
 # TypeScript Compilation Fixes Applied
 
-## Issues Fixed
+## Issues Fixed.
 
 ### 1. CASBIN MongoDB Adapter
 **Issue**: `MongooseAdapter` doesn't exist, should be `MongoAdapter`
