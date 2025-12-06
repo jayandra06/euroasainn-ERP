@@ -1,103 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdEdit, MdDelete, MdClose } from "react-icons/md";
 
-const PORTALS = [{ label: "Tech Portal", value: "tech_portal" }];
-
-const PERMISSION_MAP = {
-  tech_portal: [
-    "adminUsersCreate",
-    "adminUsersUpdate",
-    "adminUsersDelete",
-    "adminUsersView",
-
-    "techUsersCreate",
-    "techUsersUpdate",
-    "techUsersDelete",
-    "techUsersView",
-
-    "licensesFullControl",
-    "licensesIssue",
-    "licensesRevoke",
-
-    "systemLogsView",
-    "systemConfigManage",
-    "systemStatusView",
-
-    "manageRoles",
-  ],
-};
+const PORTALS = [{ label: "Tech Portal", value: "tech" }];
+const API_URL = "http://localhost:3000/api/v1";
 
 export default function RolesPage() {
-  const [roles, setRoles] = useState([
-    {
-      _id: "1",
-      portal: "tech_portal",
-      name: "Tech Superadmin",
-      permissions: Object.fromEntries(
-        PERMISSION_MAP.tech_portal.map((p) => [p, true])
-      ),
-    },
-    {
-      _id: "2",
-      portal: "tech_portal",
-      name: "Tech Manager",
-      permissions: {
-        adminUsersCreate: true,
-        adminUsersUpdate: true,
-        adminUsersDelete: false,
-        adminUsersView: true,
-
-        techUsersCreate: true,
-        techUsersUpdate: true,
-        techUsersDelete: false,
-        techUsersView: true,
-
-        licensesIssue: true,
-        licensesRevoke: true,
-        licensesFullControl: false,
-
-        systemLogsView: true,
-        systemConfigManage: false,
-        systemStatusView: true,
-
-        manageRoles: true,
-      },
-    },
-    {
-      _id: "3",
-      portal: "tech_portal",
-      name: "Tech Developer",
-      permissions: {
-        systemLogsView: true,
-        systemStatusView: true,
-        techUsersView: true,
-
-        adminUsersCreate: false,
-        adminUsersUpdate: false,
-        techUsersCreate: false,
-        licensesIssue: false,
-        licensesFullControl: false,
-
-        manageRoles: false,
-      },
-    },
-    {
-      _id: "4",
-      portal: "tech_portal",
-      name: "Tech Support",
-      permissions: {
-        systemStatusView: true,
-        systemLogsView: true,
-        techUsersView: true,
-
-        adminUsersCreate: false,
-        adminUsersUpdate: false,
-        techUsersCreate: false,
-        licensesIssue: false,
-        manageRoles: false,
-      },
-    },
-  ]);
+  const [roles, setRoles] = useState([]);
+  const [permissionsList, setPermissionsList] = useState([]); // ⭐ backend permissions
+  const [loading, setLoading] = useState(false);
 
   const [portal, setPortal] = useState("");
   const [roleName, setRoleName] = useState("");
@@ -105,37 +15,93 @@ export default function RolesPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
 
-  const handlePortalChange = (value) => {
-    setPortal(value);
-    const defaultPerms = {};
-    PERMISSION_MAP[value]?.forEach((p) => (defaultPerms[p] = false));
-    setPermissions(defaultPerms);
+  // ⭐ Fetch permissions from backend
+  const fetchPermissions = async () => {
+    const res = await fetch(`${API_URL}/permissions?portalType=tech`);
+    const json = await res.json();
+
+    if (json.success) {
+      setPermissionsList(json.data); // [{key,label}]
+    }
   };
 
-  const handleAddRole = () => {
-    if (!portal || !roleName.trim()) return;
-    setRoles([
-      ...roles,
-      {
-        _id: Date.now().toString(),
-        portal,
+  // ⭐ Fetch roles
+  const fetchRoles = async () => {
+    if (permissionsList.length === 0) return;
+
+    setLoading(true);
+    const res = await fetch(`${API_URL}/roles?portalType=tech`);
+    const json = await res.json();
+    setLoading(false);
+
+    if (!json.success) return;
+
+    const mapped = json.data.map((role) => ({
+      _id: role._id,
+      portal: role.portalType,
+      name: role.name,
+
+      // ⭐ Map permissions with backend labels
+      permissions: Object.fromEntries(
+        permissionsList.map((p) => [p.key, role.permissions.includes(p.key)])
+      ),
+    }));
+
+    setRoles(mapped);
+  };
+
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
+
+  useEffect(() => {
+    fetchRoles();
+  }, [permissionsList]);
+
+  // ⭐ Add new role
+  const handleAddRole = async () => {
+    if (!roleName.trim() || !portal) return;
+
+    const selectedPermissions = Object.keys(permissions).filter(
+      (p) => permissions[p]
+    );
+
+    await fetch(`${API_URL}/roles`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         name: roleName,
-        permissions,
-      },
-    ]);
+        portalType: portal,
+        permissions: selectedPermissions,
+      }),
+    });
 
     setPortal("");
     setRoleName("");
     setPermissions({});
+    fetchRoles();
   };
 
-  const deleteRole = (id) => {
-    setRoles(roles.filter((r) => r._id !== id));
+  // ⭐ Delete role
+  const deleteRole = async (id) => {
+    await fetch(`${API_URL}/roles/${id}`, { method: "DELETE" });
+    fetchRoles();
   };
 
-  const saveEdit = () => {
-    setRoles(roles.map((r) => (r._id === editingRole._id ? editingRole : r)));
+  // ⭐ Save edited role
+  const saveEdit = async () => {
+    const selectedPermissions = Object.keys(editingRole.permissions).filter(
+      (p) => editingRole.permissions[p]
+    );
+
+    await fetch(`${API_URL}/roles/${editingRole._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ permissions: selectedPermissions }),
+    });
+
     setIsEditModalOpen(false);
+    fetchRoles();
   };
 
   return (
@@ -150,7 +116,15 @@ export default function RolesPage() {
           <select
             className="border p-2 rounded-lg w-1/2"
             value={portal}
-            onChange={(e) => handlePortalChange(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setPortal(val);
+
+              // ⭐ Default map: all false
+              const permMap = {};
+              permissionsList.forEach((p) => (permMap[p.key] = false));
+              setPermissions(permMap);
+            }}
           >
             <option value="">Select Portal</option>
             {PORTALS.map((p) => (
@@ -170,16 +144,19 @@ export default function RolesPage() {
 
         {portal && (
           <div className="grid grid-cols-2 gap-3">
-            {Object.keys(permissions).map((perm) => (
-              <label key={perm} className="flex gap-2 text-sm">
+            {permissionsList.map((perm) => (
+              <label key={perm.key} className="flex gap-2 text-sm">
                 <input
                   type="checkbox"
-                  checked={permissions[perm]}
+                  checked={permissions[perm.key]}
                   onChange={() =>
-                    setPermissions({ ...permissions, [perm]: !permissions[perm] })
+                    setPermissions((prev) => ({
+                      ...prev,
+                      [perm.key]: !prev[perm.key],
+                    }))
                   }
                 />
-                {perm.replace(/([A-Z])/g, " $1")}
+                {perm.label}
               </label>
             ))}
           </div>
@@ -193,7 +170,7 @@ export default function RolesPage() {
         </button>
       </div>
 
-      {/* ROLES TABLE */}
+      {/* EXISTING ROLES TABLE */}
       <div className="bg-white border p-6 rounded-lg shadow-sm">
         <h2 className="font-semibold mb-4">Existing Tech Roles</h2>
 
@@ -215,45 +192,42 @@ export default function RolesPage() {
 
                 <td className="border p-2 text-sm">
                   <div className="grid grid-cols-2 gap-1">
-                    {Object.entries(r.permissions)
-                      .filter(([_, v]) => v)
-                      .map(([p]) => (
-                        <div key={p}>• {p.replace(/([A-Z])/g, " $1")}</div>
+                    {permissionsList
+                      .filter((p) => r.permissions[p.key])
+                      .map((p) => (
+                        <div key={p.key}>• {p.label}</div>
                       ))}
                   </div>
                 </td>
 
-               <td className="border p-2 align-middle text-center">
-  <div className="flex items-center justify-center gap-3">
-    <button
-      onClick={() => {
-        setEditingRole(r);
-        setIsEditModalOpen(true);
-      }}
-      className="hover:bg-blue-100 p-1 rounded"
-    >
-      <MdEdit size={18} className="text-blue-600" />
-    </button>
+                <td className="border p-2 text-center">
+                  <button
+                    onClick={() => {
+                      setEditingRole(r);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="hover:bg-blue-100 p-1 rounded"
+                  >
+                    <MdEdit size={18} className="text-blue-600" />
+                  </button>
 
-    <button
-      onClick={() => deleteRole(r._id)}
-      className="hover:bg-red-100 p-1 rounded"
-    >
-      <MdDelete size={18} className="text-red-600" />
-    </button>
-  </div>
-</td>
-
+                  <button
+                    onClick={() => deleteRole(r._id)}
+                    className="hover:bg-red-100 p-1 rounded"
+                  >
+                    <MdDelete size={18} className="text-red-600" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* EDIT MODAL */}
+      {/* EDIT ROLE MODAL */}
       {isEditModalOpen && editingRole && (
         <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-[400px] shadow-xl space-y-4 relative">
+          <div className="bg-white p-6 rounded-lg w-[400px] shadow-xl relative">
             <button
               className="absolute right-3 top-3"
               onClick={() => setIsEditModalOpen(false)}
@@ -276,28 +250,28 @@ export default function RolesPage() {
             />
 
             <div className="grid grid-cols-2 gap-3">
-              {Object.keys(editingRole.permissions).map((perm) => (
-                <label key={perm} className="flex gap-2 text-sm">
+              {permissionsList.map((perm) => (
+                <label key={perm.key} className="flex gap-2 text-sm">
                   <input
                     type="checkbox"
-                    checked={editingRole.permissions[perm]}
+                    checked={editingRole.permissions[perm.key]}
                     onChange={() =>
                       setEditingRole({
                         ...editingRole,
                         permissions: {
                           ...editingRole.permissions,
-                          [perm]: !editingRole.permissions[perm],
+                          [perm.key]: !editingRole.permissions[perm.key],
                         },
                       })
                     }
                   />
-                  {perm.replace(/([A-Z])/g, " $1")}
+                  {perm.label}
                 </label>
               ))}
             </div>
 
             <button
-              className="bg-blue-600 text-white py-2 rounded-lg w-full hover:bg-blue-700"
+              className="bg-blue-600 text-white py-2 rounded-lg w-full mt-4"
               onClick={saveEdit}
             >
               Save Changes

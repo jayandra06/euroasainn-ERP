@@ -51,6 +51,7 @@
     "vitest": "^3.0.0"
   },
   "dependencies": {
+    "@aws-crypto/util": "^5.2.0",
     "@tanstack/react-query": "^5.90.6",
     "axios": "^1.13.1",
     "bcryptjs": "^3.0.3",

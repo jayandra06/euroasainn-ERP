@@ -74,6 +74,23 @@ export class RoleController {
       });
     }
   }
+  async deleteRole(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    await roleService.deleteRole(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Role deleted successfully",
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || "Failed to delete role",
+    });
+  }
+}
+
 }
 
 export const roleController = new RoleController();
