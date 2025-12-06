@@ -88,25 +88,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       )}
     >
       {/* Logo Section */}
-<<<<<<< HEAD
-      <div className="flex items-center justify-between px-6 py-5 border-b border-[hsl(var(--border))]">
-=======
       <div className="flex items-center justify-between px-6 py-5 border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]">
->>>>>>> main
         <div className={cn('flex items-center gap-3 flex-1 min-w-0', collapsed && 'justify-center')}>
           <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
             <MdRocketLaunch className="w-6 h-6 text-white" />
           </div>
           {!collapsed && (
-<<<<<<< HEAD
-            <div>
-              <h1 className="text-lg font-bold text-[hsl(var(--foreground))]">Euroasiann ERP</h1>
-=======
             <div className="flex-1 min-w-0">
               <h1 className="text-lg font-bold text-[hsl(var(--foreground))] truncate">
                 Euroasiann ERP
               </h1>
->>>>>>> main
               <p className="text-xs text-[hsl(var(--muted-foreground))]">Tech Portal</p>
             </div>
           )}
@@ -114,12 +105,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
         <button
           onClick={() => onToggle(!collapsed)}
-<<<<<<< HEAD
-          className="p-1.5 rounded-lg hover:bg-[hsl(var(--muted))]"
-=======
           className="p-1.5 rounded-lg hover:bg-[hsl(var(--muted))] transition-colors text-[hsl(var(--muted-foreground))]"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
->>>>>>> main
         >
           {collapsed ? <MdChevronRight /> : <MdChevronLeft />}
         </button>
@@ -189,21 +176,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           return (
             <NavLink
               key={item.path}
-<<<<<<< HEAD
-              to={item.path!}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-                  collapsed && 'justify-center',
-                  isActive
-                    ? 'bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-semibold'
-                    : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
-                )
-              }
-            >
-              <item.icon className="w-5 h-5" />
-              {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
-=======
               to={item.path}
               className={cn(
                 'group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
@@ -229,26 +201,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   {item.label}
                 </div>
               )}
->>>>>>> main
             </NavLink>
           );
         })}
       </nav>
 
       {/* User Section */}
-<<<<<<< HEAD
-      <div className="p-4 border-t border-[hsl(var(--border))]">
-        {!collapsed && (
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold">
-              {user?.firstName?.[0] || user?.email?.[0] || 'A'}
-            </div>
-            <div>
-              <p className="font-semibold">
-                {user?.firstName} {user?.lastName}
-              </p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">{user?.role}</p>
-=======
       <div className="p-4 border-t border-[hsl(var(--border))] bg-[hsl(var(--background))]">
         {!collapsed && (
           <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[hsl(var(--secondary))] mb-3">
@@ -269,7 +227,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <div className="flex justify-center mb-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
               {user?.firstName?.[0] || user?.email?.[0] || 'A'}
->>>>>>> main
             </div>
           </div>
         )}
@@ -277,11 +234,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <button
           onClick={handleLogout}
           className={cn(
-<<<<<<< HEAD
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[hsl(var(--destructive))] bg-[hsl(var(--destructive))]/10 hover:bg-[hsl(var(--destructive))]/20',
-=======
             'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-semibold text-[hsl(var(--destructive))] bg-[hsl(var(--destructive))]/10 hover:bg-[hsl(var(--destructive))]/20 transition-colors',
->>>>>>> main
             collapsed && 'justify-center'
           )}
         >
