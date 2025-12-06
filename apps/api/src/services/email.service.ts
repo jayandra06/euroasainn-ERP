@@ -15,25 +15,6 @@ interface SendInvitationEmailParams {
 }
 
 export class EmailService {
-<<<<<<< HEAD
-  /** Utility: loads and compiles a Handlebars template */
-  private renderTemplate(templateName: string, data: any) {
-    const templatePath = path.join(
-      __dirname,
-      "..",
-      "templates",
-      `${templateName}.hbs`
-    );
-
-    const source = fs.readFileSync(templatePath, "utf8");
-    const template = handlebars.compile(source);
-
-    return template(data);
-  }
-
-  /** Sends invitation email with template */
-  async sendInvitationEmail(params: SendInvitationEmailParams) {
-=======
   async sendInvitationEmail({
     to,
     firstName,
@@ -44,7 +25,6 @@ export class EmailService {
     portalLink: _portalLink,
     temporaryPassword: _temporaryPassword,
   }: SendInvitationEmailParams) {
->>>>>>> main
     try {
       const {
         to,
@@ -92,17 +72,6 @@ export class EmailService {
     }
   }
 
-<<<<<<< HEAD
-  /** Sends welcome email using template */
-  async sendWelcomeEmail(data: { to: string; firstName: string; lastName: string }) {
-    try {
-      const { to, firstName, lastName } = data;
-
-      const html = this.renderTemplate("welcome", {
-        firstName,
-        lastName,
-      });
-=======
   async sendWelcomeEmail({
     to,
     firstName,
@@ -219,7 +188,6 @@ export class EmailService {
         Best regards,
         Euroasiann ERP Team
       `;
->>>>>>> main
 
       const mailOptions = {
         from: `"Euroasiann ERP" <${process.env.EMAIL_USER}>`,
@@ -233,10 +201,6 @@ export class EmailService {
 
       return info;
     } catch (error: any) {
-<<<<<<< HEAD
-      logger.error("❌ Failed to send welcome email:", error);
-      throw new Error(error.message);
-=======
       logger.error(`Failed to send welcome email to ${to}:`, error);
       throw new Error(`Failed to send email: ${error.message}`);
     }
@@ -670,7 +634,6 @@ export class EmailService {
     } catch (error: any) {
       logger.error(`Failed to send payment processing email to ${to}:`, error);
       throw new Error(`Failed to send email: ${error.message}`);
->>>>>>> main
     }
   }
 }

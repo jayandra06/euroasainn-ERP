@@ -39,7 +39,7 @@ export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   apiPrefix: process.env.API_PREFIX || '/api/v1',
   nodeEnv: process.env.NODE_ENV || 'development',
-  mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/euroasiann',
+  mongoUri: process.env.MONGODB_URI || 'mongodb+srv://jay:jay123@cluster0.hwu6k94.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
 
   redis: {
     host: process.env.REDIS_HOST || 'localhost',

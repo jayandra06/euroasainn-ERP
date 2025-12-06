@@ -69,13 +69,10 @@ export function App() {
                     <Route path="port" element={<PortManagementPage />} />
                     <Route path="port-management" element={<PortManagementPage />} />
                     <Route path="branch" element={<BranchPage />} />
-<<<<<<< HEAD
                     <Route path="roles-permissions" element={<RolesPage />} />
                       <Route path="assign-roles" element={<AssignRolesPage />} />
-=======
                     <Route path="branch/:buId" element={<BUProfilePage />} />
-                    <Route path="role-management" element={<RoleManagementPage />} />
->>>>>>> main
+                  
                     <Route path="crew-management" element={<CrewManagementPage />} />
                     <Route path="create-enquiry" element={<CreateEnquiryPage />} />
                     <Route path="become-a-seller" element={<BecomeAVendorPage />} />

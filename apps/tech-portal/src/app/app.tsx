@@ -41,40 +41,6 @@ export function App() {
             <ToastProvider>
               <AuthProvider>
                 <Routes>
-<<<<<<< HEAD
-
-                  <Route path="/login" element={<Login />} />
-
-                  <Route
-                    path="/"
-                    element={
-                      <ProtectedRoute>
-                        <TemplateLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-
-                    <Route index element={<Navigate to="/dashboard" replace />} />
-
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="users" element={<UsersPage />} />
-                    <Route path="organizations" element={<OrganizationsPage />} />
-                    <Route path="organizations/:id" element={<OrganizationProfilePage />} />
-                    <Route path="licenses" element={<LicensesPage />} />
-
-                    <Route path="onboarding-data" element={<OnboardingDataPage />} />
-
-                    {/* ⭐ NEW ROLE MANAGEMENT ROUTES */}
-                    <Route path="roles" element={<RolesPage />} />
-                    <Route path="assign-roles" element={<AssignRolesPage />} />
-
-                    <Route path="analytics" element={<AnalyticsPage />} />
-                    <Route path="settings" element={<SettingsPage />} />
-
-                    <Route path="profile" element={<div className="p-8">Profile Page - Coming Soon</div>} />
-
-                  </Route>
-=======
                 <Route path="/login" element={<Login />} />
                 <Route
                   path="/"
@@ -92,12 +58,12 @@ export function App() {
                   <Route path="licenses" element={<LicensesPage />} />
                   <Route path="licenses/create" element={<CreateLicensePage />} />
                   <Route path="onboarding-data" element={<OnboardingDataPage />} />
-                  <Route path="admin-users" element={<AdminUsersPage />} />
+                  <Route path="roles" element={<RolesPage/>} />
+                  <Route path="assign-roles" element={<AssignRolesPage/>} />
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="profile" element={<div className="p-8">Profile Page - Coming Soon</div>} />
                 </Route>
->>>>>>> main
                 </Routes>
               </AuthProvider>
             </ToastProvider>

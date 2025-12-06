@@ -159,12 +159,6 @@ export class UserController {
           }
         }
 
-<<<<<<< HEAD
-        const baseUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
-        const invitationLink = `${baseUrl}/login`;
-
-        await emailService.sendInvitationEmail({
-=======
         // Generate portal login link based on portal type
         let portalUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
         if (data.portalType === PortalType.ADMIN) {
@@ -180,7 +174,6 @@ export class UserController {
 
         // Send user invitation email with temporary password
         await emailService.sendUserInvitationEmail({
->>>>>>> main
           to: result.email,
           firstName: result.firstName,
           lastName: result.lastName,

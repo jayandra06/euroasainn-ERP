@@ -109,12 +109,8 @@ class RoleService {
     const existing = await Role.findOne({ name, portalType: normalizedPortal });
     if (existing) throw new Error("Role already exists");
 
-<<<<<<< HEAD
     // Generate unique key
     let keyBase = generateRoleKey(name, normalizedPortal);
-=======
-    const keyBase = generateRoleKey(name, normalizedPortal);
->>>>>>> main
     let key = keyBase;
     let counter = 1;
 

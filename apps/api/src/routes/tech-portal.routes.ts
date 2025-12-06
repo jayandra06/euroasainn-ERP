@@ -48,18 +48,12 @@ router.get(
   userController.getUserById.bind(userController)
 );
 
-<<<<<<< HEAD
 // UPDATE user
 router.put(
   '/users/:id',
   casbinMiddleware("tech_users", "update"),
   userController.updateUser.bind(userController)
 );
-=======
-router.post('/licenses', async (req, res) => {
-  try {
-    const { organizationId, expiresAt, usageLimits, pricing } = req.body;
->>>>>>> main
 
 // DELETE user
 router.delete(
@@ -72,26 +66,12 @@ router.delete(
    ORGANIZATION ROUTES
 =========================== */
 
-<<<<<<< HEAD
 // VIEW ORGS
 router.get(
   '/organizations',
   casbinMiddleware("organizations", "view"),
   organizationController.getOrganizations.bind(organizationController)
 );
-=======
-    const license = await licenseService.createLicense({
-      organizationId,
-      organizationType: organization.type as OrganizationType,
-      expiresAt: new Date(expiresAt),
-      usageLimits,
-      pricing: pricing || {
-        monthlyPrice: 0,
-        yearlyPrice: 0,
-        currency: 'INR',
-      },
-    });
->>>>>>> main
 
 // CREATE ORG
 router.post(

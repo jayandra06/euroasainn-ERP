@@ -9,11 +9,7 @@ import { licenseService } from '../services/license.service';
 import { License } from '../models/license.model';
 import { Organization } from '../models/organization.model';
 import { userService } from '../services/user.service';
-<<<<<<< HEAD
 import { casbinMiddleware } from "../middleware/casbin.middleware";
-=======
-import { rfqService } from '../services/rfq.service';
->>>>>>> main
 
 const router = Router();
 
@@ -37,7 +33,6 @@ router.get(
   }
 );
 
-<<<<<<< HEAD
 router.post(
   '/users',
   casbinMiddleware("admin_users", "create"),
@@ -166,34 +161,6 @@ router.post(
       const { organizationId, expiresAt, usageLimits } = req.body;
       if (!organizationId || !expiresAt || !usageLimits) {
         return res.status(400).json({ success: false, error: 'Missing fields' });
-=======
-// Get organizations with licenses and onboarding status
-router.get('/organizations-with-licenses', async (req, res) => {
-  try {
-    const { organizationService } = await import('../services/organization.service');
-    const { licenseService } = await import('../services/license.service');
-    const { onboardingService } = await import('../services/onboarding.service');
-    // const { OrganizationType } = await import('@euroasiann/shared');
-    // const { logger } = await import('../config/logger');
-    
-    // Get all organizations (customer and vendor)
-    const organizations = await organizationService.getOrganizations();
-    
-    // Get all licenses
-    const licenses = await licenseService.getLicenses();
-    
-    // Get all customer and vendor onboardings
-    const customerOnboardings = await onboardingService.getCustomerOnboardings();
-    const vendorOnboardings = await onboardingService.getVendorOnboardings();
-    
-    // Create a map of organizationId -> onboarding status
-    // Only mark as completed if onboarding is approved (license should only exist for approved onboardings)
-    const onboardingMap = new Map<string, boolean>();
-    customerOnboardings.forEach((onboarding: any) => {
-      if (onboarding.organizationId && onboarding.status === 'approved') {
-        const orgId = onboarding.organizationId.toString();
-        onboardingMap.set(orgId, true);
->>>>>>> main
       }
 
       const organization = await Organization.findById(organizationId);
@@ -201,139 +168,17 @@ router.get('/organizations-with-licenses', async (req, res) => {
         return res.status(404).json({ success: false, error: 'Organization not found' });
       }
 
-<<<<<<< HEAD
       const license = await licenseService.createLicense({
         organizationId,
         organizationType: organization.type as OrganizationType,
         expiresAt: new Date(expiresAt),
         usageLimits
-=======
-// Get logins from vendor and customer portals
-router.get('/logins', async (req, res) => {
-  try {
-    // Get users from customer and vendor portals with lastLogin info
-    const customerUsers = await userService.getUsers(PortalType.CUSTOMER);
-    const vendorUsers = await userService.getUsers(PortalType.VENDOR);
-
-    // Combine and format login data
-    const allUsers = [...customerUsers, ...vendorUsers];
-
-    // Get organization names for users
-    const logins = await Promise.all(
-      allUsers
-        .filter((user) => user.lastLogin) // Only show users who have logged in
-        .map(async (user) => {
-          let organizationName = null;
-          if (user.organizationId) {
-            const org = await Organization.findById(user.organizationId);
-            organizationName = org?.name || null;
-          }
-
-          return {
-            _id: user._id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            fullName: `${user.firstName} ${user.lastName}`,
-            portalType: user.portalType,
-            role: user.role,
-            organizationId: user.organizationId,
-            organizationName,
-            lastLogin: user.lastLogin,
-            isActive: user.isActive,
-          };
-        })
-    );
-
-    // Sort by lastLogin descending (most recent first)
-    logins.sort((a, b) => {
-      const dateA = a.lastLogin ? new Date(a.lastLogin).getTime() : 0;
-      const dateB = b.lastLogin ? new Date(b.lastLogin).getTime() : 0;
-      return dateB - dateA;
-    });
-
-    res.status(200).json({
-      success: true,
-      data: logins,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to get logins',
-    });
-  }
-});
-
-// Licenses routes (shared with Tech Portal)
-router.get('/licenses', async (req, res) => {
-  try {
-    const { organizationId } = req.query;
-    const filters: any = {};
-    if (req.query.status) {
-      filters.status = req.query.status;
-    }
-    const licenses = await licenseService.getLicenses(organizationId as string, filters);
-    res.status(200).json({
-      success: true,
-      data: licenses,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to get licenses',
-    });
-  }
-});
-
-router.post('/licenses', async (req, res) => {
-  try {
-    const { organizationId, expiresAt, usageLimits, pricing } = req.body;
-
-    if (!organizationId || !expiresAt || !usageLimits) {
-      return res.status(400).json({
-        success: false,
-        error: 'Missing required fields',
->>>>>>> main
       });
 
       res.status(201).json({ success: true, data: license });
     } catch (error: any) {
       res.status(400).json({ success: false, error: error.message });
     }
-<<<<<<< HEAD
-=======
-
-    // Determine organization type
-    const organization = await Organization.findById(organizationId);
-    if (!organization) {
-      return res.status(404).json({
-        success: false,
-        error: 'Organization not found',
-      });
-    }
-
-    const license = await licenseService.createLicense({
-      organizationId,
-      organizationType: organization.type as OrganizationType,
-      expiresAt: new Date(expiresAt),
-      usageLimits,
-      pricing: pricing || {
-        monthlyPrice: 0,
-        yearlyPrice: 0,
-        currency: 'INR',
-      },
-    });
-
-    res.status(201).json({
-      success: true,
-      data: license,
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      error: error.message || 'Failed to create license',
-    });
->>>>>>> main
   }
 );
 
