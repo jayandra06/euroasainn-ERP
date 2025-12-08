@@ -27,6 +27,8 @@ import { TemplateLayout } from '../components/template/Layout';
 import { VendorOnboardingPage } from '../pages/Onboarding/VendorOnboardingPage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { PaymentPage } from '../pages/Payment/PaymentPage';
+import RolesPage from '../pages/Roles/RolesPage'
+import  AssignRolesPage  from '../pages/Roles/AssignRolesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,6 +68,8 @@ export function App() {
                   <Route path="models" element={<ModelsPage />} />
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="details" element={<DetailsPage />} />
+                  <Route path="roles-permissions" element={<RolesPage/>}/>
+                    <Route path="assign-roles" element={<AssignRolesPage />} />
                   <Route path="vessel-management" element={<VesselManagementPage />} />
                   <Route path="vessel-details" element={<VesselDetailsPage />} />
                   <Route path="catalog" element={<CatalogPage />} />

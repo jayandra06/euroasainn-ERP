@@ -16,8 +16,11 @@ import { VesselManagementPage } from '../pages/VesselManagement/VesselManagement
 import { BranchPage } from '../pages/Branch/BranchPage';
 import { BUProfilePage } from '../pages/Branch/BUProfilePage';
 import { PortManagementPage } from '../pages/PortManagement/PortManagementPage';
-import { RoleManagementPage } from '../pages/RoleManagement/RoleManagementPage';
+import {RolesPage} from "../pages/Roles/RolesPage"
+import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
 import { CrewManagementPage } from '../pages/CrewManagement/CrewManagementPage';
+import { RoleManagementPage } from '../pages/RoleManagement/RoleManagementPage';
+import { PayrollManagementPage } from '../pages/PayrollManagement/PayrollManagementPage';
 import { VendorManagementPage } from '../pages/VendorManagement/VendorManagementPage';
 import { ClaimRaisedPage } from '../pages/ClaimRaised/ClaimRaisedPage';
 import { CreateEnquiryPage } from '../pages/CreateEnquiry/CreateEnquiryPage';
@@ -71,6 +74,10 @@ function AppContent() {
               <Route path="port-management" element={<PortManagementPage />} />
               <Route path="branch" element={<BranchPage />} />
               <Route path="branch/:buId" element={<BUProfilePage />} />
+              <Route path="roles-permissions" element={<RolesPage />} />
+              <Route path="assign-roles" element={<AssignRolesPage />} />
+              <Route path="payroll-management" element={<PayrollManagementPage />} />
+              <Route path="employee-management" element={<CrewManagementPage />} />
               <Route path="role-management" element={<RoleManagementPage />} />
               <Route path="crew-management" element={<CrewManagementPage />} />
               <Route path="create-enquiry" element={<CreateEnquiryPage />} />

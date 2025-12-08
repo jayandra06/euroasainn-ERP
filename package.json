@@ -14,8 +14,9 @@
     "@nx/vite": "^22.0.2",
     "@nx/web": "22.0.2",
     "@nx/workspace": "22.0.2",
-    "@swc-node/register": "~1.9.1",
-    "@swc/core": "~1.5.7",
+    "@swc-node/core": "^1.14.1",
+    "@swc-node/register": "^1.9.2",
+    "@swc/core": "^1.15.2",
     "@swc/helpers": "~0.5.11",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.16",
@@ -50,6 +51,7 @@
     "vitest": "^3.0.0"
   },
   "dependencies": {
+    "@aws-crypto/util": "^5.2.0",
     "@tanstack/react-query": "^5.90.6",
     "axios": "^1.13.1",
     "bcryptjs": "^3.0.3",
@@ -68,6 +70,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.1",
+    "react-select": "^5.10.2",
     "reactflow": "^11.11.4",
     "recharts": "^2.15.4",
     "uuid": "^13.0.0"

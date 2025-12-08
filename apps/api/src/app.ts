@@ -8,6 +8,9 @@ import adminPortalRoutes from './routes/admin-portal.routes';
 import customerPortalRoutes from './routes/customer-portal.routes';
 import vendorPortalRoutes from './routes/vendor-portal.routes';
 import roleRoutes from './routes/role.routes';
+import assignRoleRoutes from './routes/assign-role.routes';
+import permissionRoutes from './routes/permission.routes';
+
 import onboardingRoutes from './routes/onboarding.routes';
 import adminOnboardingRoutes from './routes/admin-onboarding.routes';
 import paymentRoutes from './routes/payment.routes';
@@ -42,10 +45,13 @@ app.use(`${config.apiPrefix}/admin`, adminOnboardingRoutes);
 app.use(`${config.apiPrefix}/customer`, customerPortalRoutes);
 app.use(`${config.apiPrefix}/vendor`, vendorPortalRoutes);
 app.use(`${config.apiPrefix}/roles`, roleRoutes);
+app.use(`${config.apiPrefix}/assign-role`, assignRoleRoutes);
+app.use(`${config.apiPrefix}/permissions`, permissionRoutes);
+
 // Public onboarding routes (no auth required)
 app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
 // Payment routes
-app.use(`${config.apiPrefix}/payments`, paymentRoutes);
+// app.use(`${config.apiPrefix}/payments`, paymentRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {

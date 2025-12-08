@@ -68,13 +68,16 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin/customers/support', label: 'Support', icon: MdSupport },
     ],
   },
-  { path: '/users', label: 'Users', icon: MdPeople },
-  { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
-  { path: '/onboarding-data', label: 'Onboarding', icon: MdAssignment },
-  { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
-  { path: '/admin-users', label: 'Admin Users', icon: MdAdminPanelSettings },
-  { path: '/analytics', label: 'Analytics', icon: MdBarChart },
-  { path: '/settings', label: 'Settings', icon: MdSettings },
+
+  // 🔥 ADDED ROLE MANAGEMENT SECTION
+  {
+    label: 'Role Management',
+    icon: MdVpnKey,
+    children: [
+      { path: '/dashboard/admin/roles', label: 'Roles & Permissions', icon: MdSettings },
+      { path: '/dashboard/admin/assign-roles', label: 'Assign Roles', icon: MdPeople },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -89,17 +92,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [tooltip, setTooltip] = useState<{ label: string; x: number; y: number } | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Admin Dashboard', 'Vendors', 'Customers']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['Admin Dashboard', 'Vendors', 'Customers', 'Role Management']));
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     try {
       await logout();
-      // Navigation is already handled in AuthContext logout function
     } catch (error) {
       console.error('Logout error:', error);
-      // Even if logout fails, clear local storage and navigate
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       navigate('/login');
@@ -108,56 +109,28 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const handleMouseEnter = (e: React.MouseEvent, label: string) => {
     if (collapsed) {
-      // Clear any existing timeout
-      if (tooltipTimeoutRef.current) {
-        clearTimeout(tooltipTimeoutRef.current);
-        tooltipTimeoutRef.current = null;
-      }
-      
-      // Set tooltip data immediately but delay showing it
+      if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
+
       setTooltip({ label, x: e.clientX, y: e.clientY });
       setShowTooltip(false);
-      
-      // Show tooltip after a short delay for smoother experience
-      tooltipTimeoutRef.current = setTimeout(() => {
-        setShowTooltip(true);
-      }, 150);
+
+      tooltipTimeoutRef.current = setTimeout(() => setShowTooltip(true), 150);
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (collapsed && tooltip) {
-      // Update tooltip position and keep it visible
-      setTooltip({ ...tooltip, x: e.clientX, y: e.clientY });
-      // Ensure tooltip stays visible while mouse is moving over button
-      if (showTooltip) {
-        // Tooltip is already visible, just update position
-      } else if (tooltipTimeoutRef.current) {
-        // Tooltip is scheduled to appear, keep it that way
-      } else {
-        // Tooltip should be visible but isn't, show it immediately
-        setShowTooltip(true);
-      }
-    }
+    if (collapsed && tooltip) setTooltip({ ...tooltip, x: e.clientX, y: e.clientY });
   };
 
   const handleMouseLeave = () => {
-    // Clear timeout if mouse leaves before tooltip appears
-    if (tooltipTimeoutRef.current) {
-      clearTimeout(tooltipTimeoutRef.current);
-      tooltipTimeoutRef.current = null;
-    }
-    // Hide tooltip immediately when mouse leaves
+    if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
     setShowTooltip(false);
     setTooltip(null);
   };
 
-  // Cleanup timeout on unmount or when collapsed changes
   useEffect(() => {
     return () => {
-      if (tooltipTimeoutRef.current) {
-        clearTimeout(tooltipTimeoutRef.current);
-      }
+      if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
     };
   }, [collapsed]);
 
@@ -209,17 +182,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             return (
               <div key={item.label}>
                 <button
-                  onClick={() => {
-                    if (!collapsed) {
-                      const newExpanded = new Set(expandedSections);
-                      if (isExpanded) {
-                        newExpanded.delete(item.label);
-                      } else {
-                        newExpanded.add(item.label);
-                      }
-                      setExpandedSections(newExpanded);
-                    }
-                  }}
+                  onClick={() => !collapsed && setExpandedSections(prev => {
+                    const next = new Set(prev);
+                    isExpanded ? next.delete(item.label) : next.add(item.label);
+                    return next;
+                  })}
                   onMouseEnter={(e) => handleMouseEnter(e, item.label)}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
@@ -235,35 +202,32 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   {!collapsed && (
                     <>
                       <span className="flex-1 text-sm font-medium">{item.label}</span>
-                      {isExpanded ? (
-                        <MdExpandLess className="w-4 h-4" />
-                      ) : (
-                        <MdExpandMore className="w-4 h-4" />
-                      )}
+                      {isExpanded ? <MdExpandLess className="w-4 h-4" /> : <MdExpandMore className="w-4 h-4" />}
                     </>
                   )}
                 </button>
+
                 {!collapsed && isExpanded && item.children && (
                   <div className="ml-4 mt-1 space-y-1">
                     {item.children.map((child) => {
                       const ChildIcon = child.icon;
                       const isChildActive = child.path ? location.pathname === child.path : false;
+
                       return (
                         <NavLink
-                          key={child.path || child.label}
-                          to={child.path || '#'}
+                          key={child.path}
+                          to={child.path}
                           onMouseEnter={(e) => handleMouseEnter(e, child.label)}
                           onMouseMove={handleMouseMove}
                           onMouseLeave={handleMouseLeave}
                           className={cn(
-                            'group relative flex items-center gap-3 py-2 rounded-lg transition-all duration-200',
-                            'px-3',
+                            'group relative flex items-center gap-3 py-2 rounded-lg transition-all duration-200 px-3',
                             isChildActive
                               ? 'bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] font-semibold'
                               : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]'
                           )}
                         >
-                          <ChildIcon className={cn('w-4 h-4 flex-shrink-0', isChildActive && 'text-[hsl(var(--primary))]')} />
+                          <ChildIcon className="w-4 h-4 flex-shrink-0" />
                           <span className="flex-1 text-sm">{child.label}</span>
                         </NavLink>
                       );
@@ -350,7 +314,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </button>
       </div>
 
-      {/* Tooltip that follows mouse */}
+      {/* Tooltip */}
       {collapsed && tooltip && (
         <div
           className={cn(
@@ -360,7 +324,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           style={{
             left: `${tooltip.x + 10}px`,
             top: `${tooltip.y + 10}px`,
-            transform: showTooltip ? 'translate(0, 0) scale(1)' : 'translate(0, 0) scale(0.95)',
           }}
         >
           {tooltip.label}
@@ -369,6 +332,3 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     </aside>
   );
 }
-
-
-

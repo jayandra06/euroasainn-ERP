@@ -84,6 +84,15 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    label: 'Role Management',
+    icon: MdPeople,
+    isExpandable: true,
+    subItems: [
+      { path: "/roles-permissions", label: "Roles & Permissions", icon: MdAssignment },
+      { path: '/assign-roles', label: 'Assign Roles', icon: MdAssignment },
+    ],
+  },
+  {
     label: 'Support',
     icon: MdHelp,
     isExpandable: true,

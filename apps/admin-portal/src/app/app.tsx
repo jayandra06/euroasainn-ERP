@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../context/ThemeContext';
@@ -35,6 +35,8 @@ import { ModelsPage } from '../pages/Models/ModelsPage';
 import { CustomersPage } from '../pages/Customers/CustomersPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
+import  {RolesPage } from '../pages/Roles/RolesPage';
+import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -75,6 +77,10 @@ export function App() {
                     <Route path="dashboard/admin/rfqs" element={<RFQsPage />} />
                     <Route path="dashboard/admin/create-enquiry" element={<CreateEnquiryPage />} />
                     <Route path="dashboard/admin/inventory" element={<InventoryPage />} />
+                    {/* Role Management Routes */}
+                    <Route path="dashboard/admin/roles" element={<RolesPage />} />
+                    <Route path="dashboard/admin/assign-roles" element={<AssignRolesPage />} />
+
                     {/* Vendors Routes */}
                     <Route path="dashboard/admin/vendors" element={<VendorsPage />} />
                     <Route path="dashboard/admin/brands" element={<BrandsPage />} />

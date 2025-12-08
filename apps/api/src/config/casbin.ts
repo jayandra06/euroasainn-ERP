@@ -1,54 +1,84 @@
-import { newEnforcer } from 'casbin';
-import { MongoAdapter } from 'casbin-mongodb-adapter';
-import { logger } from './logger';
-import { config } from './environment';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+// apps/api/src/config/casbin.ts
+import { newEnforcer } from "casbin";
+import { MongoAdapter } from "casbin-mongodb-adapter";
+import { logger } from "./logger";
+import { config } from "./environment";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+// Seed default policies (used ONLY when database is empty)
+import { seedDefaultPolicies } from "../../../../packages/casbin-config/src/seed-policies.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 let enforcerInstance: any = null;
 
-export async function getCasbinEnforcer(): Promise<any> {
-  if (enforcerInstance) {
-    return enforcerInstance;
-  }
+export async function getCasbinEnforcer() {
+  // Return existing instance
+  if (enforcerInstance) return enforcerInstance;
 
   try {
-    // Load CASBIN model from package - correct path calculation
-    // From apps/api/src/config/casbin.ts -> ../../../../packages/casbin-config/src/model.conf
-    let modelPath = join(__dirname, '../../../../packages/casbin-config/src/model.conf');
-    
-    // Check if file exists, if not try from process.cwd()
+    // -----------------------------
+    // 1️⃣ Load CASBIN MODEL FILE
+    // -----------------------------
+    let modelPath = join(
+      __dirname,
+      "../../../../packages/casbin-config/src/model.conf"
+    );
+
+    // Fallback check
     try {
-      readFileSync(modelPath, 'utf-8');
+      readFileSync(modelPath, "utf-8");
     } catch {
-      modelPath = join(process.cwd(), 'packages/casbin-config/src/model.conf');
+      modelPath = join(process.cwd(), "packages/casbin-config/src/model.conf");
     }
 
-    // Extract database name from MongoDB URI
+    // -----------------------------
+    // 2️⃣ Create MongoDB Adapter
+    // -----------------------------
     const uriObj = new URL(config.mongoUri);
-    const databaseName = uriObj.pathname?.split('/')[1] || 'casbin';
+    const dbName = uriObj.pathname?.replace("/", "") || "casbin";
 
-    // Create MongoDB adapter
     const adapter = await MongoAdapter.newAdapter({
       uri: config.mongoUri,
-      database: databaseName,
-      collection: 'casbin_rule',
+      database: dbName,
+      collection: "casbin_rule",
     });
 
-    // Create enforcer with file path (not content)
+    // -----------------------------
+    // 3️⃣ Create Enforcer
+    // -----------------------------
     enforcerInstance = await newEnforcer(modelPath, adapter);
-    
-    logger.info('✅ CASBIN enforcer initialized successfully');
+
+    // Load policies from DB
+    await enforcerInstance.loadPolicy();
+
+    // ---------------------------------------------------
+    // ⭐ ADDED — SEED DEFAULT POLICIES ONLY IF DB IS EMPTY
+    // ---------------------------------------------------
+    const existing = await enforcerInstance.getPolicy();
+
+    if (existing.length === 0) {
+      console.log("🌱 Casbin database empty → Seeding default policies...");
+      await seedDefaultPolicies(enforcerInstance);
+      await enforcerInstance.savePolicy();
+      console.log("✅ Default Casbin policies seeded");
+    } else {
+      console.log("🔄 Casbin policies already exist → Skipping seeding");
+    }
+    // ---------------------------------------------------
+
+    logger.info("✅ Casbin enforcer initialized");
     return enforcerInstance;
   } catch (error) {
-    logger.error('❌ CASBIN initialization error:', error);
-    // Create a basic model if file not found - use inline model string
-    const basicModel = `
+    logger.error("❌ CASBIN initialization error:", error);
+
+    // -----------------------------
+    // 5️⃣ Fallback minimal model
+    // -----------------------------
+    const fallbackModel = `
 [request_definition]
 r = sub, obj, act
 
@@ -64,21 +94,22 @@ e = some(where (p.eft == allow))
 [matchers]
 m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 `;
-    // Extract database name from MongoDB URI
+
     const uriObj = new URL(config.mongoUri);
-    const databaseName = uriObj.pathname?.split('/')[1] || 'casbin';
-    
+    const dbName = uriObj.pathname?.replace("/", "") || "casbin";
+
     const adapter = await MongoAdapter.newAdapter({
       uri: config.mongoUri,
-      database: databaseName,
-      collection: 'casbin_rule',
+      database: dbName,
+      collection: "casbin_rule",
     });
-    
-    // Use newModelFromString for inline model
-    const { newModelFromString } = await import('casbin');
-    const model = newModelFromString(basicModel);
+
+    const { newModelFromString } = await import("casbin");
+    const model = newModelFromString(fallbackModel);
+
     enforcerInstance = await newEnforcer(model, adapter);
-    logger.info('✅ CASBIN enforcer initialized with basic model');
+
+    logger.info("🚨 CASBIN initialized with fallback model");
     return enforcerInstance;
   }
 }

@@ -4,6 +4,7 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ToastProvider } from '../components/shared/Toast';
+
 import Login from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
 import { UsersPage } from '../pages/Users/UsersPage';
@@ -12,9 +13,13 @@ import { OrganizationProfilePage } from '../pages/Organizations/OrganizationProf
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { CreateLicensePage } from '../pages/Licenses/CreateLicensePage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
-import { AdminUsersPage } from '../pages/AdminUsers/AdminUsersPage';
+
+import RolesPage from '../pages/Roles/RolesPage';
+import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
+
 import { SettingsPage } from '../pages/Settings/SettingsPage';
 import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
+
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 
@@ -53,7 +58,8 @@ export function App() {
                   <Route path="licenses" element={<LicensesPage />} />
                   <Route path="licenses/create" element={<CreateLicensePage />} />
                   <Route path="onboarding-data" element={<OnboardingDataPage />} />
-                  <Route path="admin-users" element={<AdminUsersPage />} />
+                  <Route path="roles" element={<RolesPage/>} />
+                  <Route path="assign-roles" element={<AssignRolesPage/>} />
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                   <Route path="profile" element={<div className="p-8">Profile Page - Coming Soon</div>} />
