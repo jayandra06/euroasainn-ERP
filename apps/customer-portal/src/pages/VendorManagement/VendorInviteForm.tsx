@@ -9,6 +9,7 @@ import { MdSave, MdCancel } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 import { useToast } from '../../components/shared/Toast';
 import { authenticatedFetch } from '../../lib/api';
+import { triggerCrossTabSync } from '../../hooks/useCrossTabSync';
 
 interface VendorInviteFormProps {
   onSuccess: () => void;
@@ -88,6 +89,10 @@ export function VendorInviteForm({ onSuccess, onCancel }: VendorInviteFormProps)
       } else {
         showToast('Vendor invited successfully!', 'success');
       }
+      
+      // Trigger cross-tab sync to update vendor list on all devices/tabs
+      triggerCrossTabSync([['vendors'], ['vendor-invitations']]);
+      
       onSuccess();
     },
     onError: (error: Error) => {

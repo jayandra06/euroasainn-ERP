@@ -1,0 +1,177 @@
+[1mdiff --git a/RAZORPAY_SETUP.md b/RAZORPAY_SETUP.md[m
+[1mindex 19b2ee0..e9fde7a 100644[m
+[1m--- a/RAZORPAY_SETUP.md[m
+[1m+++ b/RAZORPAY_SETUP.md[m
+[36m@@ -53,3 +53,4 @@[m [mUse Razorpay test cards:[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/hooks/usePermissions.ts b/apps/admin-portal/src/hooks/usePermissions.ts[m
+[1mindex b3c9ff5..cb34d5f 100644[m
+[1m--- a/apps/admin-portal/src/hooks/usePermissions.ts[m
+[1m+++ b/apps/admin-portal/src/hooks/usePermissions.ts[m
+[36m@@ -190,3 +190,4 @@[m [mexport function usePermissions() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/AdminUsers/AdminUsersPage.tsx b/apps/admin-portal/src/pages/AdminUsers/AdminUsersPage.tsx[m
+[1mindex 5116d92..8e047cc 100644[m
+[1m--- a/apps/admin-portal/src/pages/AdminUsers/AdminUsersPage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/AdminUsers/AdminUsersPage.tsx[m
+[36m@@ -315,3 +315,4 @@[m [mexport function AdminUsersPage() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Licenses/CreateLicensePage.tsx b/apps/admin-portal/src/pages/Licenses/CreateLicensePage.tsx[m
+[1mindex 7aee55c..2f13f00 100644[m
+[1m--- a/apps/admin-portal/src/pages/Licenses/CreateLicensePage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Licenses/CreateLicensePage.tsx[m
+[36m@@ -96,3 +96,4 @@[m [mexport function CreateLicensePage() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Licenses/LicenseForm.tsx b/apps/admin-portal/src/pages/Licenses/LicenseForm.tsx[m
+[1mindex 31d6de5..c4860bf 100644[m
+[1m--- a/apps/admin-portal/src/pages/Licenses/LicenseForm.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Licenses/LicenseForm.tsx[m
+[36m@@ -390,3 +390,4 @@[m [mexport function LicenseForm({ license, organizations, organizationId: preFilledO[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Organizations/OrganizationForm.tsx b/apps/admin-portal/src/pages/Organizations/OrganizationForm.tsx[m
+[1mindex 890d912..b25f2bf 100644[m
+[1m--- a/apps/admin-portal/src/pages/Organizations/OrganizationForm.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Organizations/OrganizationForm.tsx[m
+[36m@@ -311,3 +311,4 @@[m [mexport function OrganizationForm({ organization, organizationType, onSuccess, on[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Reports/FinancialReportsPage.tsx b/apps/admin-portal/src/pages/Reports/FinancialReportsPage.tsx[m
+[1mindex c5a45bb..9e876d5 100644[m
+[1m--- a/apps/admin-portal/src/pages/Reports/FinancialReportsPage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Reports/FinancialReportsPage.tsx[m
+[36m@@ -316,3 +316,4 @@[m [mexport function FinancialReportsPage() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Reports/TransactionReportsPage.tsx b/apps/admin-portal/src/pages/Reports/TransactionReportsPage.tsx[m
+[1mindex 2185a67..a2e5be5 100644[m
+[1m--- a/apps/admin-portal/src/pages/Reports/TransactionReportsPage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Reports/TransactionReportsPage.tsx[m
+[36m@@ -279,3 +279,4 @@[m [mexport function TransactionReportsPage() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Reports/UserAccessReportsPage.tsx b/apps/admin-portal/src/pages/Reports/UserAccessReportsPage.tsx[m
+[1mindex 51e0a36..6424b63 100644[m
+[1m--- a/apps/admin-portal/src/pages/Reports/UserAccessReportsPage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Reports/UserAccessReportsPage.tsx[m
+[36m@@ -295,3 +295,4 @@[m [mexport function UserAccessReportsPage() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Settings/SettingsPage.tsx b/apps/admin-portal/src/pages/Settings/SettingsPage.tsx[m
+[1mindex 2066130..4a2f683 100644[m
+[1m--- a/apps/admin-portal/src/pages/Settings/SettingsPage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Settings/SettingsPage.tsx[m
+[36m@@ -276,3 +276,4 @@[m [mexport function SettingsPage() {[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/admin-portal/src/pages/Users/UserCreatePage.tsx b/apps/admin-portal/src/pages/Users/UserCreatePage.tsx[m
+[1mindex 07e03de..517b8e9 100644[m
+[1m--- a/apps/admin-portal/src/pages/Users/UserCreatePage.tsx[m
+[1m+++ b/apps/admin-portal/src/pages/Users/UserCreatePage.tsx[m
+[36m@@ -87,3 +87,4 @@[m [mexport default UserCreatePage;[m
+ [m
+ [m
+ [m
+[41m+[m
+[1mdiff --git a/apps/api/logs/combined.log b/apps/api/logs/combined.log[m
+[1mindex c879f3d..5735a01 100644[m
+[1m--- a/apps/api/logs/combined.log[m
+[1m+++ b/apps/api/logs/combined.log[m
+[36m@@ -79274,3 +79274,174 @@[m
+ {"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-11-30 16:39:58"}[m
+ {"level":"error","message":"❌ Redis connection error: Reached the max retries per request limit (which is 20). Refer to \"maxRetriesPerRequest\" option for details.","service":"euroasiann-api","stack":"MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to \"maxRetriesPerRequest\" option for details.\n    at Socket.<anonymous> (C:\\dev\\euroasiann\\euroasainn-ERP\\apps\\api\\node_modules\\ioredis\\built\\redis\\event_handler.js:207:37)\n    at Object.onceWrapper (node:events:639:26)\n    at Socket.emit (node:events:524:28)\n    at TCP.<anonymous> (node:net:343:12)","timestamp":"2025-11-30 16:39:58"}[m
+ {"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-11-30 16:40:00"}[m
+[32m+[m[32m{"level":"info","message":"✅ Loaded .env from: D:\\Euroasainn-ERP-Project\\euroasainn-ERP\\apps\\api\\.env","service":"euroasiann-api","timestamp":"2025-12-01 15:17:20"}[m
+[32m+[m[32m{"level":"info","message":"   EMAIL_PASS is SET","service":"euroasiann-api","timestamp":"2025-12-01 15:17:20"}[m
+[32m+[m[32m{"host":"smtppro.zoho.in","level":"info","message":"Email config:","pass":"***SET***","port":465,"secure":true,"service":"euroasiann-api","timestamp":"2025-12-01 15:17:20","user":"technical@euroasianngroup.com"}[m
+[32m+[m[32m{"level":"info","message":"✅ Razorpay service initialized","service":"euroasiann-api","timestamp":"2025-12-01 15:17:20"}[m
+[32m+[m[32m{"level":"info","message":"🔗 Connecting to MongoDB Atlas...","service":"euroasiann-api","timestamp":"2025-12-01 15:17:21"}[m
+[32m+[m[32m{"level":"info","message":"Email transporter is ready to send emails","service":"euroasiann-api","timestamp":"2025-12-01 15:17:21"}[m
+[32m+[m[32m{"level":"info","message":"✅ MongoDB connected","service":"euroasiann-api","timestamp":"2025-12-01 15:17:21"}[m
+[32m+[m[32m{"level":"info","message":"✅ MongoDB connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:21"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:22"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:22"}[m
+[32m+[m[32m{"level":"info","message":"✅ CASBIN enforcer initialized successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:22"}[m
+[32m+[m[32m{"level":"info","message":"🚀 Server running on port 3000","service":"euroasiann-api","timestamp":"2025-12-01 15:17:22"}[m
+[32m+[m[32m{"level":"info","message":"📝 API available at http://localhost:3000/api/v1","service":"euroasiann-api","timestamp":"2025-12-01 15:17:22"}[m
+[32m+[m[32m{"level":"info","message":"🏥 Health check: http://localhost:3000/health","service":"euroasiann-api","timestamp":"2025-12-01 15:17:22"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:23"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:23"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:24"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:25"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:26"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:27"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:28"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:29"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:30"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:31"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:32"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:33"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:34"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:36"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:37"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:38"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:40"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:17:41"}[m
+[32m+[m[32m{"level":"info","message":"✅ Loaded .env from: D:\\Euroasainn-ERP-Project\\euroasainn-ERP\\apps\\api\\.env","service":"euroasiann-api","timestamp":"2025-12-01 15:18:18"}[m
+[32m+[m[32m{"level":"info","message":"   EMAIL_PASS is SET","service":"euroasiann-api","timestamp":"2025-12-01 15:18:18"}[m
+[32m+[m[32m{"host":"smtppro.zoho.in","level":"info","message":"Email config:","pass":"***SET***","port":465,"secure":true,"service":"euroasiann-api","timestamp":"2025-12-01 15:18:18","user":"technical@euroasianngroup.com"}[m
+[32m+[m[32m{"level":"info","message":"✅ Razorpay service initialized","service":"euroasiann-api","timestamp":"2025-12-01 15:18:19"}[m
+[32m+[m[32m{"level":"info","message":"🔗 Connecting to MongoDB Atlas...","service":"euroasiann-api","timestamp":"2025-12-01 15:18:19"}[m
+[32m+[m[32m{"level":"info","message":"Email transporter is ready to send emails","service":"euroasiann-api","timestamp":"2025-12-01 15:18:20"}[m
+[32m+[m[32m{"level":"info","message":"✅ MongoDB connected","service":"euroasiann-api","timestamp":"2025-12-01 15:18:20"}[m
+[32m+[m[32m{"level":"info","message":"✅ MongoDB connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:20"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:20"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:21"}[m
+[32m+[m[32m{"level":"info","message":"✅ CASBIN enforcer initialized successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:21"}[m
+[32m+[m[32m{"level":"info","message":"🚀 Server running on port 3000","service":"euroasiann-api","timestamp":"2025-12-01 15:18:21"}[m
+[32m+[m[32m{"level":"info","message":"📝 API available at http://localhost:3000/api/v1","service":"euroasiann-api","timestamp":"2025-12-01 15:18:21"}[m
+[32m+[m[32m{"level":"info","message":"🏥 Health check: http://localhost:3000/health","service":"euroasiann-api","timestamp":"2025-12-01 15:18:21"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:22"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:22"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:23"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:24"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:25"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:26"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:27"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:27"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:29"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:30"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:31"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:32"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:33"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:35"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:36"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:37"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:39"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:40"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:42"}[m
+[32m+[m[32m{"level":"error","message":"❌ Redis connection error: Reached the max retries per request limit (which is 20). Refer to \"maxRetriesPerRequest\" option for details.","service":"euroasiann-api","stack":"MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to \"maxRetriesPerRequest\" option for details.\n    at Socket.<anonymous> (D:\\Euroasainn-ERP-Project\\euroasainn-ERP\\apps\\api\\node_modules\\ioredis\\built\\redis\\event_handler.js:207:37)\n    at Object.onceWrapper (node:events:639:26)\n    at Socket.emit (node:events:524:28)\n    at TCP.<anonymous> (node:net:351:12)","timestamp":"2025-12-01 15:18:42"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:43"}[m
+[32m+[m[32m{"code":"ECONNRESET","errno":-4077,"level":"error","message":"❌ Redis connection error: read ECONNRESET","service":"euroasiann-api","stack":"Error: read ECONNRESET\n    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)","syscall":"read","timestamp":"2025-12-01 15:18:44"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 15:18:45"}[m
+[32m+[m[32m{"level":"info","message":"✅ Redis connected successfully","service":"euroasiann-api","timestamp":"2025-12-01 

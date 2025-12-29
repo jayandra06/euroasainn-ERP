@@ -20,6 +20,36 @@ const authFetch = (url: string, options: RequestInit = {}) => {
   });
 };
 
+// Type definitions
+interface Role {
+  _id: string;
+  name: string;
+  key: string;
+  portalType: string;
+  permissions?: string[];
+}
+
+interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  portalType: string;
+  role?: string;
+  roleName?: string;
+  roleId?: string;
+}
+
+interface RoleOption {
+  label: string;
+  value: string;
+}
+
+interface UserOption {
+  label: string;
+  value: string;
+}
+
 export function AssignRolesPage() {
   const queryClient = useQueryClient();
 
@@ -65,8 +95,8 @@ export function AssignRolesPage() {
     },
   });
 
-  const roles = rolesQuery.data || [];
-  const users = usersQuery.data || [];
+  const roles: Role[] = rolesQuery.data || [];
+  const users: User[] = usersQuery.data || [];
 
   const roleOptions = roles.map((r: any) => ({
     label: r.name,
@@ -103,6 +133,10 @@ export function AssignRolesPage() {
       await authFetch(`${API_URL}/assign-role/assign/${userId}`, {
         method: "DELETE",
       });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to remove role");
+      }
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["users", FIXED_PORTAL] }),
@@ -140,12 +174,14 @@ export function AssignRolesPage() {
 
         <button
           disabled={!selectedRole || !selectedUser}
-          onClick={() =>
-            assignRoleMutation.mutate({
-              userId: selectedUser.value,
-              roleId: selectedRole.value,
-            })
-          }
+          onClick={() => {
+            if (selectedRole && selectedUser) {
+              assignRoleMutation.mutate({
+                userId: selectedUser.value,
+                roleId: selectedRole.value,
+              });
+            }
+          }}
           className="bg-blue-600 text-white p-2 rounded w-full disabled:bg-gray-300"
         >
           Assign Role
@@ -224,11 +260,13 @@ export function AssignRolesPage() {
             <button
               className="bg-blue-600 text-white py-2 rounded-lg w-full mt-4"
               onClick={() => {
-                assignRoleMutation.mutate({
-                  userId: editingUser._id,
-                  roleId: editingRole,
-                });
-                setEditModalOpen(false);
+                if (editingUser && editingRole) {
+                  assignRoleMutation.mutate({
+                    userId: editingUser._id,
+                    roleId: editingRole,
+                  });
+                  setEditModalOpen(false);
+                }
               }}
             >
               Save Role

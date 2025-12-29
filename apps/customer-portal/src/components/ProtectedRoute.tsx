@@ -18,23 +18,42 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { data: paymentStatus, isLoading: paymentLoading } = useQuery({
     queryKey: ['payment-status'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/payments/status/check`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!response.ok) {
-        // If 403, it means payment is required
-        if (response.status === 403) {
-          return { hasActivePayment: false };
+      try {
+        const response = await fetch(`${API_URL}/api/v1/payments/status/check`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        if (!response.ok) {
+          // If 403, it means payment is required
+          if (response.status === 403) {
+            return { hasActivePayment: false };
+          }
+          // For connection errors, allow access (backend might be starting)
+          if (response.status === 0 || response.type === 'error') {
+            return { hasActivePayment: true }; // Assume payment is active to allow access
+          }
+          throw new Error('Failed to check payment status');
         }
-        throw new Error('Failed to check payment status');
+        const data = await response.json();
+        return data.data;
+      } catch (error: any) {
+        // On connection errors, allow access (don't block user if backend is down)
+        if (error?.message?.includes('Failed to fetch') || error?.message?.includes('ERR_CONNECTION_REFUSED')) {
+          return { hasActivePayment: true }; // Assume payment is active to allow access
+        }
+        throw error;
       }
-      const data = await response.json();
-      return data.data;
     },
     enabled: isAuthenticated && !loading,
     retry: false,
+    // Don't show errors for connection issues
+    onError: (error: any) => {
+      // Only log non-connection errors
+      if (!error?.message?.includes('Failed to fetch') && !error?.message?.includes('ERR_CONNECTION_REFUSED')) {
+        console.error('Payment status check error:', error);
+      }
+    },
   });
 
   useEffect(() => {

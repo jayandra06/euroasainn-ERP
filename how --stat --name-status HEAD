@@ -1,0 +1,26 @@
+*   [33m67808c3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mzainab/ERP[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #14 from jayandra06/Lalithya
+[31m|[m[32m\[m  
+[31m|[m * [33m6c6527f[m Update RFQ and vendor management pages
+[31m|[m *   [33m67f0c90[m Merge origin/main into Lalithya branch
+[31m|[m [33m|[m[31m\[m  
+[31m|[m [33m|[m[31m/[m  
+[31m|[m[31m/[m[33m|[m   
+* [33m|[m   [33m2a9aff3[m Merge pull request #12 from jayandra06/zainab/ERP
+[35m|[m[36m\[m [33m\[m  
+[35m|[m * [33m|[m [33m1243325[m[33m ([m[1;31morigin/zainab/ERP[m[33m)[m Fix theme styling across portals and resolve ESLint errors
+[35m|[m[35m/[m [33m/[m  
+* [33m|[m   [33me6618c0[m[33m ([m[1;32mmain[m[33m)[m Merge pull request #9 from jayandra06/Lalithya
+[1;31m|[m[1;32m\[m [33m\[m  
+[1;31m|[m [1;32m|[m * [33mea1d5b1[m Add onboarding details modal with approve/reject functionality and update RFQ forms
+[1;31m|[m [1;32m|[m * [33me113c69[m Add Create Enquiry page with exact layout matching design
+[1;31m|[m [1;32m|[m * [33m4ffc75d[m Implement RFQ workflow with vendor invitation filtering and sender tracking
+[1;31m|[m [1;32m|[m[1;32m/[m  
+[1;31m|[m * [33m6878e7d[m[33m ([m[1;31morigin/Lalithya[m[33m)[m Implement payment workflow and onboarding email fixes
+[1;31m|[m[1;31m/[m  
+*   [33m19e072d[m Merge pull request #7 from jayandra06/Lalithya
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33ma7930c7[m Customer portal update
+* [1;34m|[m [33m1a50572[m Remove business rules feature and improve auth/email handling
+* [1;34m|[m [33m1536970[m Merge pull request #6 from jayandra06/Lalithya
+[1;35m|[m[1;34m\[m[1;34m|[m 
+[1;35m|[m * [33m492a48b[m Fix: Improve .env path resolution and fix duplicate createMutation

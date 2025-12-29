@@ -13,6 +13,7 @@ import { licenseService } from '../services/license.service';
 import { brandService } from '../services/brand.service';
 import { categoryService } from '../services/category.service';
 import { modelService } from '../services/model.service';
+import { rolePayrollStructureService } from '../services/role-payroll-structure.service';
 
 const router = Router();
 
@@ -183,11 +184,211 @@ router.get('/employees', async (req, res) => {
   }
 });
 
+router.get('/employees/onboarding-review', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    const filters: { status?: string } = {};
+    if (req.query.status && req.query.status !== 'all') {
+      filters.status = req.query.status as string;
+    }
+
+    const employees = await employeeService.getEmployeesWithOnboardingStatus(orgId, filters);
+    res.json({ success: true, data: employees });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.post('/employees', async (req, res) => {
   try {
     const orgId = (req as any).user?.organizationId;
     const employee = await employeeService.createEmployee(orgId, req.body);
     res.status(201).json({ success: true, data: employee });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/employees/invite', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    const result = await employeeService.inviteEmployee(orgId, req.body);
+    res.status(201).json({
+      success: true,
+      data: {
+        employee: result.employee,
+        emailSent: result.emailSent,
+        invitationLink: result.invitationLink,
+      },
+      message: result.emailSent
+        ? 'Employee invited successfully! Onboarding email sent with invitation link.'
+        : 'Employee created successfully, but email could not be sent.',
+    });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/employees/:id', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const employee = await employeeService.getEmployeeById(req.params.id, orgId);
+    res.json({ success: true, data: employee });
+  } catch (error: any) {
+    res.status(404).json({ success: false, error: error.message });
+  }
+});
+
+router.put('/employees/:id', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const employee = await employeeService.updateEmployee(req.params.id, orgId, req.body);
+    res.json({ success: true, data: employee });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Employee Onboarding Review Routes (must come before /employees/:id to avoid route conflicts)
+router.get('/employees/onboardings', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    const filters: { status?: string } = {};
+    if (req.query.status) {
+      filters.status = req.query.status as string;
+    }
+
+    const onboardings = await employeeService.getEmployeeOnboardings(orgId, filters);
+    res.json({ success: true, data: onboardings });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/employees/onboardings/:id', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    const onboarding = await employeeService.getEmployeeOnboardingById(req.params.id, orgId);
+    res.json({ success: true, data: onboarding });
+  } catch (error: any) {
+    res.status(404).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/employees/onboardings/:id/approve', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const userId = (req as any).user?.userId || (req as any).user?._id;
+    const onboardingId = req.params.id;
+    
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found. Please ensure you are authenticated.',
+      });
+    }
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: 'User ID not found. Please ensure you are authenticated.',
+      });
+    }
+
+    if (!onboardingId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Onboarding ID is required',
+      });
+    }
+
+    const { remarks } = req.body;
+    const result = await employeeService.approveEmployeeOnboarding(onboardingId, orgId, userId, remarks);
+    res.json({ success: true, data: result, message: result.message });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message || 'Failed to approve onboarding' });
+  }
+});
+
+router.post('/employees/onboardings/:id/reject', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    const userId = (req as any).user?.userId || (req as any).user?._id;
+    
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: 'User ID not found',
+      });
+    }
+
+    const { rejectionReason } = req.body;
+    const result = await employeeService.rejectEmployeeOnboarding(req.params.id, orgId, userId, rejectionReason);
+    res.json({ success: true, data: result, message: result.message });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.delete('/employees/onboardings/:id', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    
+    if (!orgId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Organization ID not found',
+      });
+    }
+
+    const result = await employeeService.deleteEmployeeOnboarding(req.params.id, orgId);
+    res.json({ success: true, data: result, message: result.message });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Employee routes (must come after onboarding routes to avoid conflicts)
+router.delete('/employees/:id', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    await employeeService.deleteEmployee(req.params.id, orgId);
+    res.json({ success: true, message: 'Employee deleted successfully' });
   } catch (error: any) {
     res.status(400).json({ success: false, error: error.message });
   }
@@ -794,6 +995,103 @@ router.post('/models', async (req, res) => {
       success: false,
       error: error.message || 'Failed to create model',
     });
+  }
+});
+
+// Role Payroll Structure routes
+router.get('/role-payroll-structures', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({ success: false, error: 'Organization ID is required' });
+    }
+    const structures = await rolePayrollStructureService.getPayrollStructures(orgId);
+    res.json({ success: true, data: structures });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get('/role-payroll-structures/:roleId', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({ success: false, error: 'Organization ID is required' });
+    }
+    const structure = await rolePayrollStructureService.getPayrollStructureByRole(orgId, req.params.roleId);
+    res.json({ success: true, data: structure });
+  } catch (error: any) {
+    res.status(404).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/role-payroll-structures', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({ success: false, error: 'Organization ID is required' });
+    }
+    const { roleId, payrollStructure } = req.body;
+    if (!roleId) {
+      return res.status(400).json({ success: false, error: 'Role ID is required' });
+    }
+    const structure = await rolePayrollStructureService.createOrUpdatePayrollStructure(
+      orgId,
+      roleId,
+      payrollStructure
+    );
+    res.status(201).json({ success: true, data: structure });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.put('/role-payroll-structures/:roleId', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({ success: false, error: 'Organization ID is required' });
+    }
+    const { payrollStructure } = req.body;
+    const structure = await rolePayrollStructureService.createOrUpdatePayrollStructure(
+      orgId,
+      req.params.roleId,
+      payrollStructure
+    );
+    res.json({ success: true, data: structure });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.delete('/role-payroll-structures/:roleId', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({ success: false, error: 'Organization ID is required' });
+    }
+    await rolePayrollStructureService.deletePayrollStructure(orgId, req.params.roleId);
+    res.json({ success: true, message: 'Payroll structure deleted successfully' });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+router.patch('/role-payroll-structures/:roleId/toggle-status', async (req, res) => {
+  try {
+    const orgId = (req as any).user?.organizationId;
+    if (!orgId) {
+      return res.status(400).json({ success: false, error: 'Organization ID is required' });
+    }
+    const { isActive } = req.body;
+    const structure = await rolePayrollStructureService.togglePayrollStructureStatus(
+      orgId,
+      req.params.roleId,
+      isActive
+    );
+    res.json({ success: true, data: structure });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
   }
 });
 

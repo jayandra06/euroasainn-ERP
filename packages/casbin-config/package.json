@@ -2,8 +2,15 @@
   "name": "@euroasiann/casbin-config",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "main": "src/index.ts",
-  "types": "src/index.ts"
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  }
 }
 
 

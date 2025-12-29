@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { onboardingController } from '../controllers/onboarding.controller';
+import { employeeService } from '../services/employee.service';
 
 const router = Router();
 
@@ -7,6 +8,58 @@ const router = Router();
 router.get('/invitation', onboardingController.getInvitationByToken.bind(onboardingController));
 router.post('/customer', onboardingController.submitCustomerOnboarding.bind(onboardingController));
 router.post('/vendor', onboardingController.submitVendorOnboarding.bind(onboardingController));
+
+// Employee onboarding routes (public routes)
+router.get('/employee', async (req, res) => {
+  try {
+    const { token } = req.query;
+    
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invitation token is required',
+      });
+    }
+
+    const result = await employeeService.getEmployeeOnboardingByToken(token as string);
+    
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to get employee onboarding',
+    });
+  }
+});
+
+router.post('/employee', async (req, res) => {
+  try {
+    const { token, ...formData } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invitation token is required',
+      });
+    }
+
+    const result = await employeeService.submitEmployeeOnboardingForm(token, formData);
+    
+    res.status(200).json({
+      success: true,
+      data: result,
+      message: result.message,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to submit employee onboarding',
+    });
+  }
+});
 
 // Public endpoints for fetching active brands, categories, and models (for onboarding forms)
 router.get('/brands', async (req, res) => {

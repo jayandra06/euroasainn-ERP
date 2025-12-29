@@ -1,4 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
+import path from 'path';
+import fs from 'fs';
 import cors from 'cors';
 import helmet from 'helmet';
 import { config } from './config/environment';
@@ -28,6 +30,40 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static uploaded files (e.g. /uploads/employee-onboarding/xxx.png)
+// This MUST be BEFORE API routes and 404 handler to serve files directly
+// This prevents React Router from intercepting /uploads/* paths
+const uploadsDir = path.resolve(process.cwd(), 'uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log(`✅ Created uploads directory: ${uploadsDir}`);
+}
+
+// Serve static files from /uploads path
+app.use('/uploads', express.static(uploadsDir, {
+  setHeaders: (res, filePath) => {
+    // Set appropriate content-type headers for images and PDFs
+    if (filePath.endsWith('.pdf')) {
+      res.setHeader('Content-Type', 'application/pdf');
+    } else if (filePath.match(/\.(jpg|jpeg)$/i)) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    } else if (filePath.match(/\.png$/i)) {
+      res.setHeader('Content-Type', 'image/png');
+    } else if (filePath.match(/\.gif$/i)) {
+      res.setHeader('Content-Type', 'image/gif');
+    } else if (filePath.match(/\.webp$/i)) {
+      res.setHeader('Content-Type', 'image/webp');
+    }
+    // Allow CORS for static files
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+  },
+}));
+
+console.log(`✅ Static file serving enabled for: ${uploadsDir}`);
+
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
@@ -51,7 +87,7 @@ app.use(`${config.apiPrefix}/permissions`, permissionRoutes);
 // Public onboarding routes (no auth required)
 app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
 // Payment routes
-// app.use(`${config.apiPrefix}/payments`, paymentRoutes);
+app.use(`${config.apiPrefix}/payments`, paymentRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {

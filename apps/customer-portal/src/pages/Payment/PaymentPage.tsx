@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/shared/Toast';
+import { triggerCrossTabSync } from '../../hooks/useCrossTabSync';
 import { MdPayment, MdCheckCircle, MdCancel, MdInfo, MdHistory, MdCreditCard } from 'react-icons/md';
 import { cn } from '../../lib/utils';
 
@@ -124,6 +125,9 @@ export function PaymentPage() {
                 queryClient.invalidateQueries({ queryKey: ['payments'] });
                 queryClient.invalidateQueries({ queryKey: ['payment-status'] });
                 
+                // Trigger cross-tab sync to update all devices/tabs
+                triggerCrossTabSync([['payments'], ['payment-status']]);
+                
                 // Redirect to dashboard after successful payment
                 setTimeout(() => {
                   window.location.href = '/dashboard';
@@ -190,8 +194,9 @@ export function PaymentPage() {
     },
   ];
 
-  const handlePayment = (amount: number) => {
+  const handlePayment = (amount: number, period: 'month' | 'year') => {
     if (!paymentStatus?.hasActivePayment) {
+      setSelectedPlan(period === 'month' ? 'monthly' : 'yearly');
       createPaymentMutation.mutate(amount);
     } else {
       showToast('You already have an active subscription', 'info');
@@ -331,7 +336,7 @@ export function PaymentPage() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => handlePayment(plan.price)}
+                  onClick={() => handlePayment(plan.price, plan.period as 'month' | 'year')}
                   disabled={createPaymentMutation.isPending}
                   className={cn(
                     'w-full py-3 px-4 rounded-lg font-semibold transition-colors',

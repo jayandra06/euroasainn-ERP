@@ -72,7 +72,7 @@ export default function RolesPage() {
     if (!roleName.trim() || !portal) return;
 
     const selectedPermissions = Object.keys(permissions).filter(
-      (p) => permissions[p]
+      (p: string) => permissions[p]
     );
 
     await authFetch(`${API_URL}/roles`, {
@@ -154,11 +154,11 @@ export default function RolesPage() {
 
         {portal && (
           <div className="grid grid-cols-2 gap-3">
-            {permissionsList.map((perm) => (
+            {permissionsList.map((perm: Permission) => (
               <label key={perm.key} className="flex gap-2 text-sm">
                 <input
                   type="checkbox"
-                  checked={permissions[perm.key]}
+                  checked={permissions[perm.key] || false}
                   onChange={() =>
                     setPermissions((prev) => ({
                       ...prev,
@@ -249,11 +249,11 @@ export default function RolesPage() {
             />
 
             <div className="grid grid-cols-2 gap-3">
-              {permissionsList.map((perm) => (
+              {permissionsList.map((perm: Permission) => (
                 <label key={perm.key} className="flex gap-2 text-sm">
                   <input
                     type="checkbox"
-                    checked={editingRole.permissions[perm.key]}
+                    checked={editingRole.permissions[perm.key] || false}
                     onChange={() =>
                       setEditingRole({
                         ...editingRole,

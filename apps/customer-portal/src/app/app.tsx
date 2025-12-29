@@ -4,6 +4,7 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ToastProvider } from '../components/shared/Toast';
+import { useCrossTabSync } from '../hooks/useCrossTabSync';
 import Login from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
 import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
@@ -15,74 +16,104 @@ import { VesselManagementPage } from '../pages/VesselManagement/VesselManagement
 import { BranchPage } from '../pages/Branch/BranchPage';
 import { BUProfilePage } from '../pages/Branch/BUProfilePage';
 import { PortManagementPage } from '../pages/PortManagement/PortManagementPage';
-import {RolesPage} from "../pages/Roles/RolesPage"
-import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
 import { CrewManagementPage } from '../pages/CrewManagement/CrewManagementPage';
 import { VendorManagementPage } from '../pages/VendorManagement/VendorManagementPage';
 import { ClaimRaisedPage } from '../pages/ClaimRaised/ClaimRaisedPage';
 import { CreateEnquiryPage } from '../pages/CreateEnquiry/CreateEnquiryPage';
 import { BecomeAVendorPage } from '../pages/BecomeAVendor/BecomeAVendorPage';
 import { OnboardingFormPage } from '../pages/Onboarding/OnboardingFormPage';
+import { EmployeeOnboardingFormPage } from '../pages/Onboarding/EmployeeOnboardingFormPage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { PaymentPage } from '../pages/Payment/PaymentPage';
+import { PayrollManagementPage } from '../pages/PayrollManagement/PayrollManagementPage';
+import { EmployeeOnboardingReviewPage } from '../pages/EmployeeOnboarding/EmployeeOnboardingReviewPage';
 
+/* ✅ Role Management Imports */
+import { RolesPage } from '../pages/Roles/RolesPage';
+import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      refetchOnWindowFocus: false,
-      staleTime: 300000, // 5 minutes - data is considered fresh
-      gcTime: 600000, // 10 minutes - cache time (formerly cacheTime)
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      staleTime: 30 * 1000,
+      gcTime: 5 * 60 * 1000,
+      refetchInterval: 60 * 1000,
     },
   },
 });
+
+function AppContent() {
+  useCrossTabSync();
+  
+  return (
+    <ToastProvider>
+      <BrowserRouter
+        future={{
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+
+            {/* Public routes */}
+            <Route path="/onboarding/customer" element={<OnboardingFormPage />} />
+            <Route path="/onboarding/employee" element={<EmployeeOnboardingFormPage />} />
+
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <TemplateLayout />
+                </ProtectedRoute>
+              }
+            >
+
+              {/* Default redirect */}
+              <Route index element={<Navigate to="/dashboard" replace />} />
+
+              {/* Normal Routes */}
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="fleet-overview" element={<FleetOverviewPage />} />
+              <Route path="rfqs" element={<RFQsPage />} />
+              <Route path="vendor-management" element={<VendorManagementPage />} />
+              <Route path="claim-raised" element={<ClaimRaisedPage />} />
+              <Route path="vessels" element={<VesselManagementPage />} />
+              <Route path="vessel-management" element={<VesselManagementPage />} />
+              <Route path="port" element={<PortManagementPage />} />
+              <Route path="port-management" element={<PortManagementPage />} />
+              <Route path="branch" element={<BranchPage />} />
+              <Route path="branch/:buId" element={<BUProfilePage />} />
+              <Route path="payroll-management" element={<PayrollManagementPage />} />
+              <Route path="employee-management" element={<CrewManagementPage />} />
+              <Route path="crew-management" element={<CrewManagementPage />} />
+              <Route path="employee-onboarding-review" element={<EmployeeOnboardingReviewPage />} />
+              <Route path="create-enquiry" element={<CreateEnquiryPage />} />
+              <Route path="become-a-seller" element={<BecomeAVendorPage />} />
+              <Route path="licenses" element={<LicensesPage />} />
+              <Route path="payment" element={<PaymentPage />} />
+
+              {/* ✅ Role Management Routes Added */}
+              <Route path="roles-permissions" element={<RolesPage />} />
+              <Route path="assign-roles" element={<AssignRolesPage />} />
+
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </ToastProvider>
+  );
+}
 
 export function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <ToastProvider>
-            <BrowserRouter>
-              <AuthProvider>
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  {/* Public onboarding route (no auth required) */}
-                  <Route path="/onboarding/customer" element={<OnboardingFormPage />} />
-                  <Route
-                    path="/"
-                    element={
-                      <ProtectedRoute>
-                        <TemplateLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route index element={<Navigate to="/dashboard" replace />} />
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="analytics" element={<AnalyticsPage />} />
-                    <Route path="fleet-overview" element={<FleetOverviewPage />} />
-                    <Route path="rfqs" element={<RFQsPage />} />
-                    <Route path="vendor-management" element={<VendorManagementPage />} />
-                    <Route path="claim-raised" element={<ClaimRaisedPage />} />
-                    <Route path="vessels" element={<VesselManagementPage />} />
-                    <Route path="vessel-management" element={<VesselManagementPage />} />
-                    <Route path="port" element={<PortManagementPage />} />
-                    <Route path="port-management" element={<PortManagementPage />} />
-                    <Route path="branch" element={<BranchPage />} />
-                    <Route path="roles-permissions" element={<RolesPage />} />
-                      <Route path="assign-roles" element={<AssignRolesPage />} />
-                    <Route path="branch/:buId" element={<BUProfilePage />} />
-                  
-                    <Route path="crew-management" element={<CrewManagementPage />} />
-                    <Route path="create-enquiry" element={<CreateEnquiryPage />} />
-                    <Route path="become-a-seller" element={<BecomeAVendorPage />} />
-                    <Route path="licenses" element={<LicensesPage />} />
-                    <Route path="payment" element={<PaymentPage />} />
-                  </Route>
-                </Routes>
-              </AuthProvider>
-            </BrowserRouter>
-          </ToastProvider>
+          <AppContent />
         </QueryClientProvider>
       </ThemeProvider>
     </ErrorBoundary>
@@ -90,9 +121,3 @@ export function App() {
 }
 
 export default App;
-
-
-
-
-
-

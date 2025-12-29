@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface User {
   _id: string;
@@ -27,10 +28,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Periodic user data refresh for real-time sync
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (localStorage.getItem('accessToken')) {
+        checkAuth();
+      }
+    }, 60 * 1000); // Refresh every 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Listen for visibility change to refresh data when tab becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && localStorage.getItem('accessToken')) {
+        checkAuth();
+        // Invalidate all queries to ensure fresh data
+        queryClient.invalidateQueries();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [queryClient]);
+
+  // Listen for localStorage changes (cross-tab token sync)
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'accessToken' && event.newValue) {
+        // Token was updated in another tab, refresh user data
+        checkAuth();
+        queryClient.invalidateQueries();
+      } else if (event.key === 'accessToken' && !event.newValue) {
+        // Token was removed in another tab, clear user
+        setUser(null);
+        queryClient.clear();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [queryClient]);
 
   const checkAuth = async () => {
     try {
@@ -49,14 +94,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         setUser(data.data);
+      } else if (response.status === 401 || response.status === 403) {
+        // Token is invalid, clear it
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setUser(null);
+      }
+      // For other errors (like 500), keep the user logged in if token exists
+    } catch (error: any) {
+      // Only log non-connection errors to avoid console spam
+      if (error?.message && !error.message.includes('Failed to fetch') && !error.message.includes('ERR_CONNECTION_REFUSED')) {
+        console.error('Auth check error:', error);
+      }
+      // Don't clear tokens on connection errors - backend might just be starting up
+      // Only clear if it's a real auth error
+      if (error?.name === 'TypeError' && error?.message?.includes('Failed to fetch')) {
+        // Connection error - backend might not be running, keep user state
+        // This prevents clearing auth state when backend is temporarily unavailable
       } else {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        setUser(null);
       }
-    } catch (error) {
-      console.error('Auth check error:', error);
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
     } finally {
       setLoading(false);
     }

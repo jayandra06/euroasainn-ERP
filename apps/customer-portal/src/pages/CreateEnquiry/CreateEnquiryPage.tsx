@@ -425,7 +425,7 @@ export function CreateEnquiryPage() {
       {/* Page Title */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create RFQ</h1>
-      </div>
+        </div>
 
       {/* RFQ and Vessel Information Section */}
       <div className="mb-8 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
@@ -715,7 +715,7 @@ export function CreateEnquiryPage() {
               Created Date
             </label>
             <div className="relative">
-              <input
+            <input
                 type="date"
                 value={formData.createdDate}
                 onChange={(e) => handleInputChange('createdDate', e.target.value)}
@@ -728,14 +728,14 @@ export function CreateEnquiryPage() {
               Lead Date <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <input
+            <input
                 type="date"
                 value={formData.leadDate}
                 onChange={(e) => handleInputChange('leadDate', e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            />
           </div>
+        </div>
         </div>
       </div>
 
@@ -850,51 +850,51 @@ export function CreateEnquiryPage() {
                     <div className="space-y-2">
                       {/* First Row: Impa No, Part No, Position No */}
                       <div className="grid grid-cols-3 gap-2">
-                        <input
-                          type="text"
+                      <input
+                        type="text"
                           value={item.impaNo}
                           onChange={(e) => handleItemChange(item.id, 'impaNo', e.target.value)}
-                          placeholder="Impa No"
+                        placeholder="Impa No"
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <input
-                          type="text"
+                      />
+                      <input
+                        type="text"
                           value={item.partNo}
                           onChange={(e) => handleItemChange(item.id, 'partNo', e.target.value)}
-                          placeholder="Part No."
+                        placeholder="Part No."
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <input
-                          type="text"
+                      />
+                      <input
+                        type="text"
                           value={item.positionNo}
                           onChange={(e) => handleItemChange(item.id, 'positionNo', e.target.value)}
-                          placeholder="Position No"
+                        placeholder="Position No"
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
+                      />
                       </div>
                       {/* Second Row: Item Description, alt. Part No, W x B x H */}
                       <div className="grid grid-cols-3 gap-2">
-                        <input
-                          type="text"
+                      <input
+                        type="text"
                           value={item.itemDescription}
                           onChange={(e) => handleItemChange(item.id, 'itemDescription', e.target.value)}
-                          placeholder="Item Description.."
+                        placeholder="Item Description.."
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <input
-                          type="text"
+                      />
+                      <input
+                        type="text"
                           value={item.altPartNo}
                           onChange={(e) => handleItemChange(item.id, 'altPartNo', e.target.value)}
-                          placeholder="alt. Part No."
+                        placeholder="alt. Part No."
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
-                        <input
-                          type="text"
+                      />
+                      <input
+                        type="text"
                           value={item.dimensions}
                           onChange={(e) => handleItemChange(item.id, 'dimensions', e.target.value)}
-                          placeholder="W x B x H"
+                        placeholder="W x B x H"
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        />
+                      />
                       </div>
                     </div>
                   </td>
@@ -997,8 +997,8 @@ export function CreateEnquiryPage() {
                 {createBrandMutation.isPending ? 'Creating...' : 'Create'}
               </button>
             </div>
+            </div>
           </div>
-        </div>
       )}
 
       {/* Add Category Modal */}
@@ -1034,9 +1034,9 @@ export function CreateEnquiryPage() {
               >
                 {createCategoryMutation.isPending ? 'Creating...' : 'Create'}
               </button>
-            </div>
           </div>
         </div>
+      </div>
       )}
 
       {/* Add Model Modal */}
@@ -1071,8 +1071,8 @@ export function CreateEnquiryPage() {
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createModelMutation.isPending ? 'Creating...' : 'Create'}
-              </button>
-            </div>
+        </button>
+      </div>
           </div>
         </div>
       )}

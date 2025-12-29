@@ -31,6 +31,8 @@ import {
   MdBarChart,
   MdVpnKey,
   MdPayment,
+  MdGroups,
+  MdAccountBalanceWallet,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
@@ -71,16 +73,18 @@ const navItems: NavItem[] = [
   { path: '/sustainability', label: 'Sustuabinability & ESG Repor...', icon: MdEco },
   { path: '/port-management', label: 'Port Management', icon: MdLocationOn },
   { path: '/vessels', label: 'Vessel Management', icon: MdLocalShipping },
-{
-  label: "Role Management",
-  icon: MdManageAccounts,
-  submenu: [
-     { path: "/roles-permissions", label: "Roles & Permissions" },
-    { path: "/assign-roles", label: "Assign Roles" },
-    // ✅ Added
-  ]
-},
-
+  { path: '/payroll-management', label: 'Payroll Management', icon: MdAccountBalanceWallet },
+  { path: '/employee-management', label: 'Employee Management', icon: MdGroups },
+  { path: '/employee-onboarding-review', label: 'Onboarding Review', icon: MdPeople },
+  {
+    label: "Role Management",
+    icon: MdManageAccounts,
+    submenu: [
+       { path: "/roles-permissions", label: "Roles & Permissions" },
+      { path: "/assign-roles", label: "Assign Roles" },
+      // ✅ Added
+    ]
+  },
   { path: '/branch', label: 'Branch', icon: MdBusiness },
   { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
   { path: '/payment', label: 'Payment', icon: MdPayment },

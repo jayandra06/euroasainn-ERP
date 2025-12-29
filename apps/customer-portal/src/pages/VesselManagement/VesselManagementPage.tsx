@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MdAdd, MdFileUpload, MdEdit, MdDelete } from 'react-icons/md';
+import { MdAdd, MdFileUpload, MdEdit, MdDelete, MdRemove } from 'react-icons/md';
 import { authenticatedFetch } from '../../lib/api';
 import { useToast } from '../../components/shared/Toast';
 
@@ -28,12 +28,15 @@ export function VesselManagementPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [formData, setFormData] = useState({
-    name: '',
-    imoNumber: '',
-    exVesselName: '',
-    type: '',
-  });
+  const [vesselBlocks, setVesselBlocks] = useState([
+    {
+      id: Date.now(),
+      name: '',
+      imoNumber: '',
+      exVesselName: '',
+      type: '',
+    },
+  ]);
 
   // Fetch vessels using React Query
   const { data: vessels = [], isLoading } = useQuery<Vessel[]>({
@@ -86,32 +89,91 @@ export function VesselManagementPage() {
       // Invalidate and refetch vessels query
       queryClient.invalidateQueries({ queryKey: ['customer-vessels'] });
       queryClient.invalidateQueries({ queryKey: ['customer-license'] });
-      showToast('Vessel created successfully', 'success');
-      setShowAddModal(false);
-      setFormData({ name: '', imoNumber: '', exVesselName: '', type: '' });
     },
     onError: (error: any) => {
       showToast(error.message || 'Failed to create vessel', 'error');
     },
   });
 
-  const handleAddVessel = () => {
-    if (!formData.name.trim()) {
-      showToast('Vessel name is required', 'error');
+  const handleAddVesselBlock = () => {
+    setVesselBlocks([
+      ...vesselBlocks,
+      {
+        id: Date.now(),
+        name: '',
+        imoNumber: '',
+        exVesselName: '',
+        type: '',
+      },
+    ]);
+  };
+
+  const handleRemoveVesselBlock = (id: number) => {
+    if (vesselBlocks.length > 1) {
+      setVesselBlocks(vesselBlocks.filter((block) => block.id !== id));
+    }
+  };
+
+  const handleUpdateVesselBlock = (id: number, field: string, value: string) => {
+    setVesselBlocks(
+      vesselBlocks.map((block) => (block.id === id ? { ...block, [field]: value } : block))
+    );
+  };
+
+  const handleSubmitVessels = async () => {
+    // Validate all blocks
+    for (const block of vesselBlocks) {
+      if (!block.name.trim()) {
+        showToast('Vessel name is required for all vessels', 'error');
+        return;
+      }
+      if (!block.type.trim()) {
+        showToast('Vessel type is required for all vessels', 'error');
+        return;
+      }
+    }
+
+    // Check license limits
+    const vesselsUsed = license?.currentUsage?.vessels || 0;
+    const vesselsLimit = license?.usageLimits?.vessels || 0;
+    if (vesselsLimit > 0 && vesselsUsed + vesselBlocks.length > vesselsLimit) {
+      showToast(`Cannot add ${vesselBlocks.length} vessels. Only ${vesselsLimit - vesselsUsed} remaining.`, 'error');
       return;
     }
 
-    if (!formData.type.trim()) {
-      showToast('Vessel type is required', 'error');
-      return;
+    // Create all vessels
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const block of vesselBlocks) {
+      try {
+        await createVesselMutation.mutateAsync({
+          name: block.name,
+          imoNumber: block.imoNumber,
+          exVesselName: block.exVesselName,
+          type: block.type,
+        });
+        successCount++;
+      } catch (error) {
+        errorCount++;
+      }
     }
 
-    createVesselMutation.mutate({
-      name: formData.name,
-      imoNumber: formData.imoNumber,
-      exVesselName: formData.exVesselName,
-      type: formData.type,
-    });
+    if (successCount > 0) {
+      showToast(`${successCount} vessel(s) created successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`, 'success');
+      setShowAddModal(false);
+      setVesselBlocks([
+        {
+          id: Date.now(),
+          name: '',
+          imoNumber: '',
+          exVesselName: '',
+          type: '',
+        },
+      ]);
+    } else if (errorCount > 0) {
+      showToast('Failed to create vessels', 'error');
+    }
   };
 
   // Delete vessel mutation
@@ -202,13 +264,13 @@ export function VesselManagementPage() {
       {/* Table */}
       <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-100 dark:bg-gray-700">
+          <thead className="bg-[hsl(var(--secondary))]">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">IMO NUMBER</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">VESSEL NAME</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">EX VESSEL NAME</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">VESSEL TYPE</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-[hsl(var(--foreground))] uppercase">ACTIONS</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[hsl(var(--muted-foreground))] uppercase">IMO NUMBER</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[hsl(var(--muted-foreground))] uppercase">VESSEL NAME</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[hsl(var(--muted-foreground))] uppercase">EX VESSEL NAME</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[hsl(var(--muted-foreground))] uppercase">VESSEL TYPE</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-[hsl(var(--muted-foreground))] uppercase">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -280,71 +342,99 @@ export function VesselManagementPage() {
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-[hsl(var(--foreground))] mb-2 block">Vessel Details</label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">IMO Number (optional)</label>
-                    <input
-                      type="text"
-                      value={formData.imoNumber}
-                      onChange={(e) => setFormData({ ...formData, imoNumber: e.target.value })}
-                      className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">Vessel Name *</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                      className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">Ex Vessel Name (optional)</label>
-                    <input
-                      type="text"
-                      value={formData.exVesselName}
-                      onChange={(e) => setFormData({ ...formData, exVesselName: e.target.value })}
-                      className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">
-                      Vessel Type *
+              {vesselBlocks.map((block, index) => (
+                <div key={block.id} className="p-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))]">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-medium text-[hsl(var(--foreground))]">
+                      Vessel {index + 1}
                     </label>
-                    <input
-                      type="text"
-                      value={formData.type}
-                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                      className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
-                    />
+                    {vesselBlocks.length > 1 && (
+                      <button
+                        onClick={() => handleRemoveVesselBlock(block.id)}
+                        className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
+                        title="Remove vessel"
+                      >
+                        <MdRemove className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">IMO Number (optional)</label>
+                      <input
+                        type="text"
+                        value={block.imoNumber}
+                        onChange={(e) => handleUpdateVesselBlock(block.id, 'imoNumber', e.target.value)}
+                        className="w-full px-3 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">Vessel Name *</label>
+                      <input
+                        type="text"
+                        value={block.name}
+                        onChange={(e) => handleUpdateVesselBlock(block.id, 'name', e.target.value)}
+                        required
+                        className="w-full px-3 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">Ex Vessel Name (optional)</label>
+                      <input
+                        type="text"
+                        value={block.exVesselName}
+                        onChange={(e) => handleUpdateVesselBlock(block.id, 'exVesselName', e.target.value)}
+                        className="w-full px-3 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-[hsl(var(--foreground))] font-semibold mb-1 block">
+                        Vessel Type *
+                      </label>
+                      <input
+                        type="text"
+                        value={block.type}
+                        onChange={(e) => handleUpdateVesselBlock(block.id, 'type', e.target.value)}
+                        className="w-full px-3 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))]"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-
+              ))}
+              
+              <button
+                onClick={handleAddVesselBlock}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-[hsl(var(--border))] rounded-lg text-[hsl(var(--foreground))] hover:border-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/10 transition-colors"
+              >
+                <MdAdd className="w-5 h-5" />
+                Add Another Vessel
+              </button>
             </div>
 
             <div className="flex items-center justify-end gap-3 mt-6">
               <button
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setVesselBlocks([
+                    {
+                      id: Date.now(),
+                      name: '',
+                      imoNumber: '',
+                      exVesselName: '',
+                      type: '',
+                    },
+                  ]);
+                }}
+                className="px-4 py-2 bg-[hsl(var(--muted))] dark:bg-[hsl(var(--secondary))] hover:bg-gray-200 dark:hover:bg-gray-700 text-[hsl(var(--foreground))] rounded-lg font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={handleAddVessel}
-                disabled={
-                  createVesselMutation.isPending ||
-                  !formData.name.trim() ||
-                  !formData.type.trim() ||
-                  (vesselsLimit > 0 && vesselsUsed >= vesselsLimit)
-                }
+                onClick={handleSubmitVessels}
+                disabled={createVesselMutation.isPending}
                 className="px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {createVesselMutation.isPending ? 'Adding...' : 'Add Vessel'}
+                {createVesselMutation.isPending ? 'Adding...' : `Add ${vesselBlocks.length} Vessel(s)`}
               </button>
             </div>
           </div>
@@ -378,7 +468,7 @@ export function VesselManagementPage() {
               <input
                 type="file"
                 accept=".xlsx,.xls,.csv"
-                className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[hsl(var(--primary))] file:text-[hsl(var(--primary-foreground))] hover:file:bg-blue-700"
+                className="w-full px-4 py-2 bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg text-sm text-[hsl(var(--foreground))] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[hsl(var(--primary))] file:text-[hsl(var(--primary-foreground))] hover:file:bg-blue-700"
               />
             </div>
 
