@@ -76,7 +76,7 @@ router.get(
 // CREATE ORG
 router.post(
   '/organizations',
-  casbinMiddleware("organizations", "create"),
+  // casbinMiddleware("organizations", "create"),
   organizationController.createOrganization.bind(organizationController)
 );
 
