@@ -1,16 +1,5 @@
-import fs from "fs";
-import path from "path";
-import handlebars from "handlebars";
-import transporter from "../config/email";
-import { logger } from "../config/logger";
-import { fileURLToPath } from "url";
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-
-
+import transporter from '../config/email';
+import { logger } from '../config/logger';
 
 interface SendInvitationEmailParams {
   to: string;
@@ -24,61 +13,137 @@ interface SendInvitationEmailParams {
 }
 
 export class EmailService {
-async sendInvitationEmail({
-  to,
-  firstName,
-  lastName,
-  organizationName,
-  organizationType,
-  invitationLink,
-  temporaryPassword,
-}: SendInvitationEmailParams) {
-  try {
-    const organizationTypeText =
-      organizationType === "customer" ? "Customer" : "Vendor";
+  async sendInvitationEmail({
+    to,
+    firstName,
+    lastName,
+    organizationName,
+    organizationType,
+    invitationLink,
+    portalLink: _portalLink,
+    temporaryPassword: _temporaryPassword,
+  }: SendInvitationEmailParams) {
+    try {
+      const subject = `Welcome to Euroasiann ERP - ${organizationName} Onboarding`;
+      
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #0066cc; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; padding: 12px 30px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+            .credentials { background: #fff; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #0066cc; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Welcome to Euroasiann ERP</h1>
+            </div>
+            <div class="content">
+              <p>Dear ${firstName} ${lastName},</p>
+              
+              <p>You have been invited to join <strong>${organizationName}</strong> as a ${organizationType === 'customer' ? 'Customer' : 'Vendor'} Organization Administrator on the Euroasiann ERP Platform.</p>
+              
+              <p>To complete your onboarding, please click the button below:</p>
+              
+              <div style="text-align: center;">
+                <a href="${invitationLink}" class="button">Start Onboarding</a>
+              </div>
+              
+              <p><em>Note: You will receive your login credentials after completing the onboarding process.</em></p>
+              
+              <p>If you have any questions, please contact our support team.</p>
+              
+              <p>Best regards,<br>Euroasiann ERP Team</p>
+            </div>
+            <div class="footer">
+              <p>This is an automated email. Please do not reply to this message.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
 
-    // ✅ FIXED PATH (NO process.cwd)
-    const templatePath = path.join(
-      __dirname,
-      "../templates/invitation.hbs"
-    );
+      const text = `
+        Welcome to Euroasiann ERP
+        
+        Dear ${firstName} ${lastName},
+        
+        You have been invited to join ${organizationName} as a ${organizationType === 'customer' ? 'Customer' : 'Vendor'} Organization Administrator on the Euroasiann ERP Platform.
+        
+        To complete your onboarding, please visit: ${invitationLink}
+        
+        Note: You will receive your login credentials after completing the onboarding process.
+        
+        Best regards,
+        Euroasiann ERP Team
+      `;
 
-    const source = fs.readFileSync(templatePath, "utf-8");
-    const template = handlebars.compile(source);
+      // For Zoho SMTP, the "from" address must exactly match the authenticated EMAIL_USER
+      // Using just the email address without display name to avoid 553 errors
+      const fromEmail = process.env.EMAIL_USER || 'technical@euroasianngroup.com';
+      
+      const mailOptions = {
+        from: fromEmail, // Zoho requires exact match with authenticated user
+        to, // This is the email address from the form (e.g., lalithyachavala@gmail.com)
+        subject,
+        text,
+        html,
+        // Add reply-to if you want a different reply address
+        replyTo: `"Euroasiann ERP" <${fromEmail}>`,
+      };
 
-    const html = template({
-      to,
-      firstName,
-      lastName,
-      organizationName,
-      organizationTypeText,
-      invitationLink,
-      temporaryPassword,
-    });
+      // Log the exact email address we're sending to
+      logger.info(`📧 Email service: Preparing to send invitation email`);
+      logger.info(`   FROM: ${mailOptions.from}`);
+      logger.info(`   TO: ${to} (this is the email from the form)`);
+      logger.info(`   SUBJECT: ${subject}`);
 
-    const subject = `Welcome to Euroasiann ERP - ${organizationName} Onboarding`;
-
-    const mailOptions = {
-      from: `"Euroasiann ERP" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    };
-
-    logger.info(`📧 Sending invitation email to: ${to}`);
-
-    const info = await transporter.sendMail(mailOptions);
-
-    logger.info(
-      `✅ Invitation email sent successfully. Message ID: ${info.messageId}`
-    );
-
-    return info;
-  } catch (error: any) {
-    logger.error("❌ Error sending invitation email:", error);
-    throw error;
+      const info = await transporter.sendMail(mailOptions);
+      logger.info(`✅ Email service: Invitation email successfully sent to ${to}`);
+      logger.info(`   Message ID: ${info.messageId}`);
+      logger.info(`   Response: ${info.response || 'N/A'}`);
+      return info;
+    } catch (error: any) {
+      logger.error(`❌ Failed to send invitation email to ${to}:`, error);
+      
+      // Provide more helpful error messages for common issues
+      if (error.code === 'EAUTH' || error.responseCode === 535) {
+        logger.error(`   ⚠️  EMAIL AUTHENTICATION FAILED`);
+        logger.error(`   This usually means:`);
+        logger.error(`   1. The EMAIL_PASS in .env is incorrect`);
+        logger.error(`   2. The email account requires an app-specific password (if 2FA is enabled)`);
+        logger.error(`   3. The email account credentials have changed`);
+        logger.error(`   Current email config: ${process.env.EMAIL_USER || 'NOT SET'}`);
+        logger.error(`   Please verify EMAIL_USER and EMAIL_PASS in your .env file`);
+      } else if (error.code === 'ECONNECTION' || error.code === 'ETIMEDOUT') {
+        logger.error(`   ⚠️  EMAIL CONNECTION FAILED`);
+        logger.error(`   This usually means:`);
+        logger.error(`   1. The EMAIL_HOST or EMAIL_PORT in .env is incorrect`);
+        logger.error(`   2. The SMTP server is unreachable`);
+        logger.error(`   Current config: ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT}`);
+      } else if (error.responseCode === 553 || error.code === 'EENVELOPE') {
+        logger.error(`   ⚠️  EMAIL RELAY/Mailbox ERROR (553)`);
+        logger.error(`   This usually means:`);
+        logger.error(`   1. The "from" address doesn't match the authenticated EMAIL_USER`);
+        logger.error(`   2. Zoho SMTP requires the from address to exactly match EMAIL_USER`);
+        logger.error(`   3. The email domain might not be authorized for sending`);
+        logger.error(`   Current FROM: ${process.env.EMAIL_USER || 'NOT SET'}`);
+        logger.error(`   Make sure EMAIL_USER in .env matches the authenticated email account`);
+        logger.error(`   For Zoho, the from address must be exactly: ${process.env.EMAIL_USER || 'technical@euroasianngroup.com'}`);
+      }
+      
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
   }
-}
+
 
 
 
