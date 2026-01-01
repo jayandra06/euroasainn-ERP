@@ -18,7 +18,6 @@ import { VendorOnboardingPage } from '../pages/Onboarding/VendorOnboardingPage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
 import { UsersPage } from '../pages/Users/UsersPage';
 import { UserCreatePage } from '../pages/Users/UserCreatePage';
-import { AdminUsersPage } from '../pages/AdminUsers/AdminUsersPage';
 import { SettingsPage } from '../pages/Settings/SettingsPage';
 import { ActivityLogPage } from '../pages/ActivityLog/ActivityLogPage';
 import { ReportsPage } from '../pages/Reports/ReportsPage';
@@ -118,8 +117,7 @@ export function App() {
                     <Route path="users" element={<UsersPage />} />
                     <Route path="users/new" element={<UserCreatePage />} />
 
-                    {/* Admin Users */}
-                    <Route path="admin-users" element={<AdminUsersPage />} />
+                   
 
                     {/* Settings + Logs */}
                     <Route path="settings" element={<SettingsPage />} />

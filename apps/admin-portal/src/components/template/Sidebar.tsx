@@ -53,19 +53,10 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin/inventory', label: 'Inventory', icon: MdInventory },
     ],
   },
-
-  {
-    label: 'Vendors',
-    icon: MdStore,
-    children: [
-      { path: '/dashboard/admin/vendors', label: 'All Vendors', icon: MdPeople },
-      { path: '/dashboard/admin/brands', label: 'Brands', icon: MdStore },
-      { path: '/dashboard/admin/categories', label: 'Categories', icon: MdCategory },
-      { path: '/dashboard/admin/models', label: 'Models', icon: MdModelTraining },
-    ],
-  },
-
-  {
+   { path: '/users', label: 'Users', icon: MdPeople },
+   
+   
+   {
     label: 'Customers',
     icon: MdPeople,
     children: [
@@ -73,8 +64,25 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin/customers/support', label: 'Support', icon: MdSupport },
     ],
   },
+  {
+     label: 'Vendors',
+     icon: MdStore,
+     children: [
+       { path: '/dashboard/admin/vendors', label: 'All Vendors', icon: MdPeople },
+       { path: '/dashboard/admin/brands', label: 'Brands', icon: MdStore },
+       { path: '/dashboard/admin/categories', label: 'Categories', icon: MdCategory },
+       { path: '/dashboard/admin/models', label: 'Models', icon: MdModelTraining },
+     ],
+   },
 
   // ⭐ ADDED FROM BRANCH-2
+  
+
+  // ⭐ RESTORED FROM BRANCH-1
+  
+  { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
+  { path: '/onboarding-data', label: 'Onboarding', icon: MdAssignment },
+  { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
   {
     label: 'Role Management',
     icon: MdVpnKey,
@@ -83,13 +91,7 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin/assign-roles', label: 'Assign Roles', icon: MdPeople },
     ],
   },
-
-  // ⭐ RESTORED FROM BRANCH-1
-  { path: '/users', label: 'Users', icon: MdPeople },
-  { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
-  { path: '/onboarding-data', label: 'Onboarding', icon: MdAssignment },
-  { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
-  { path: '/admin-users', label: 'Admin Users', icon: MdAdminPanelSettings },
+ 
   { path: '/analytics', label: 'Analytics', icon: MdBarChart },
   { path: '/settings', label: 'Settings', icon: MdSettings },
 ];

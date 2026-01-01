@@ -4,7 +4,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { validateLicense } from '../middleware/license.middleware';
 import { paymentStatusMiddleware } from '../middleware/payment.middleware';
-import { PortalType } from '../../../../packages/shared/src/types/index.ts';
+import { PortalType } from '../../../../packages/shared/src/types/index';
 import { itemService } from '../services/item.service';
 import { quotationService } from '../services/quotation.service';
 import { userController } from '../controllers/user.controller';

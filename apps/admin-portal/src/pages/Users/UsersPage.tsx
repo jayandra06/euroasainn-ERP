@@ -1,102 +1,93 @@
 /**
- * Users Management Page
- * Admin portal page to manage users across all organizations
+ * Ultra-Modern Users Page
+ * World-Class SaaS ERP Platform Design
  */
 
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { UserForm } from './UserForm';
 import { useToast } from '../../components/shared/Toast';
-import { MdSearch, MdFilterList, MdDownload, MdCheckCircle, MdVpnKey, MdPeople, MdAdd, MdEdit, MdDelete } from 'react-icons/md';
+import { useAuth } from '../../context/AuthContext';
+import {
+  MdCheckCircle,
+  MdCancel,
+  MdFilterList,
+  MdPeople,
+  MdSearch,
+  MdEmail,
+} from 'react-icons/md';
 import { cn } from '../../lib/utils';
-import { apiFetch } from '../../utils/api';
 
-// Use relative URL in development (with Vite proxy) or env var, otherwise default to localhost:3000
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:3000');
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 interface User {
   _id: string;
   email: string;
   firstName: string;
   lastName: string;
+  portalType: string;
   role: string;
-  roleId?: string | {
-    _id: string;
-    name: string;
-    key: string;
-    permissions?: string[];
-  };
+  roleId?: string | { _id: string; name: string; key: string; permissions?: string[] };
   roleName?: string;
-  organizationId?: string;
-  organizationName?: string;
   isActive: boolean;
+  organizationId?: string;
   lastLogin?: string;
   createdAt?: string;
 }
 
 export function UsersPage() {
   const queryClient = useQueryClient();
-  const { showToast } = useToast();
+  const toast = useToast();
+  const { permissions } = useAuth();
+
+  // Permission flags
+  const canCreate = permissions.includes('techUsersCreate');
+  const canUpdate = permissions.includes('techUsersUpdate');
+  const canDelete = permissions.includes('techUsersDelete');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [filterRole, setFilterRole] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
+  const [filterActive, setFilterActive] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch users
-  const { data: usersData, isLoading } = useQuery({
-    queryKey: ['admin-users', filterRole, filterStatus, searchQuery],
+  const { data: usersData, isLoading, error: queryError } = useQuery<User[]>({
+    queryKey: ['tech-users', filterActive],
     queryFn: async () => {
-      try {
-        const params = new URLSearchParams();
-        if (filterRole !== 'all') {
-          params.append('role', filterRole);
-        }
-        if (filterStatus !== 'all') {
-          params.append('isActive', filterStatus === 'active' ? 'true' : 'false');
-        }
-        if (searchQuery) {
-          params.append('search', searchQuery);
-        }
-
-        const url = API_URL ? `${API_URL}/api/v1/admin/users?${params}` : `/api/v1/admin/users?${params}`;
-        const response = await apiFetch(url);
-
-        if (!response.ok) {
-          const error = await response.json().catch(() => ({}));
-          throw new Error(error.error || error.message || 'Failed to fetch users');
-        }
-        const data = await response.json();
-        return data.data as User[];
-      } catch (error: any) {
-        console.error('Error fetching users:', error);
-        return [];
+      console.log('Fetching users from API...');
+      const params = new URLSearchParams();
+      if (filterActive !== 'all') {
+        params.append('isActive', filterActive === 'active' ? 'true' : 'false');
       }
+
+      const response = await fetch(`${API_URL}/api/v1/admin/users?${params}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Users API Error:', error);
+        throw new Error(error.error || 'Failed to fetch users');
+      }
+      const data = await response.json();
+      console.log('Users API Response:', data);
+      console.log('Users Count:', data.data?.length || 0);
+      return data.data as User[];
     },
   });
-
-  // Filter users by search query
-  const filteredUsers = React.useMemo(() => {
-    if (!usersData) return [];
-    if (!searchQuery) return usersData;
-    const query = searchQuery.toLowerCase();
-    return usersData.filter(user => 
-      user.email.toLowerCase().includes(query) ||
-      user.firstName.toLowerCase().includes(query) ||
-      user.lastName.toLowerCase().includes(query) ||
-      user.organizationName?.toLowerCase().includes(query)
-    );
-  }, [usersData, searchQuery]);
 
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const url = API_URL ? `${API_URL}/api/v1/admin/users/${userId}` : `/api/v1/admin/users/${userId}`;
-      const response = await apiFetch(url, {
+      const response = await fetch(`${API_URL}/api/v1/admin/users/${userId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
       });
 
       if (!response.ok) {
@@ -105,27 +96,30 @@ export function UsersPage() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      showToast('User deleted successfully!', 'success');
+      queryClient.invalidateQueries({ queryKey: ['tech-users'] });
+      toast.success('User deleted successfully!');
     },
     onError: (error: Error) => {
-      showToast(`Failed to delete: ${error.message}`, 'error');
+      toast.error(`Failed to delete user: ${error.message}`);
     },
   });
 
+  // Handlers with permission checks
   const handleInvite = () => {
+    if (!canCreate) return;
     setEditingUser(null);
     setIsModalOpen(true);
   };
 
   const handleEdit = (user: User) => {
+    if (!canUpdate) return;
     setEditingUser(user);
     setIsModalOpen(true);
   };
 
   const handleDelete = (user: User) => {
-    if (window.confirm(`Are you sure you want to delete ${user.email}?`)) {
+    if (!canDelete) return;
+    if (window.confirm(`Are you sure you want to delete user ${user.email}?`)) {
       deleteMutation.mutate(user._id);
     }
   };
@@ -136,69 +130,95 @@ export function UsersPage() {
   };
 
   const handleSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-    queryClient.invalidateQueries({ queryKey: ['users'] });
+    queryClient.invalidateQueries({ queryKey: ['tech-users'] });
     handleClose();
   };
 
+  // ⭐ SAFE ROLE DISPLAY HELPER
+  const getSafeRoleLabel = (user: User): string => {
+    if (typeof user.roleId === 'object' && user.roleId?.name) {
+      return user.roleId.name;
+    }
+    if (user.roleName) {
+      return user.roleName;
+    }
+    if (user.role) {
+      return user.role.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+    return 'No Role';
+  };
+
+  // Filter users by search term (with safe role handling)
+  const filteredUsers = usersData?.filter((user) => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    const roleLabel = getSafeRoleLabel(user).toLowerCase();
+
+    return (
+      user.email.toLowerCase().includes(search) ||
+      user.firstName.toLowerCase().includes(search) ||
+      user.lastName.toLowerCase().includes(search) ||
+      roleLabel.includes(search)
+    );
+  });
+
   const columns = [
     {
-      key: 'name',
-      header: 'Name',
+      key: 'email',
+      header: 'Email',
       render: (user: User) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm shadow-sm">
             {user.firstName?.[0] || user.email[0].toUpperCase()}
           </div>
           <div>
-            <div className="font-semibold text-[hsl(var(--foreground))]">
-              {(() => {
-                const first = user.firstName?.trim() || '';
-                const last = user.lastName?.trim() || '';
-                if (!last || first.toLowerCase() === last.toLowerCase()) {
-                  return first || user.email;
-                }
-                return `${first} ${last}`;
-              })()}
+            <div className="font-semibold text-[hsl(var(--foreground))]">{user.email}</div>
+            <div className="text-xs text-[hsl(var(--muted-foreground))]">
+              {user.firstName} {user.lastName}
             </div>
-            <div className="text-sm text-[hsl(var(--muted-foreground))]">{user.email}</div>
           </div>
         </div>
-      ),
-    },
-    {
-      key: 'organization',
-      header: 'Organization',
-      render: (user: User) => (
-        <span className="text-[hsl(var(--muted-foreground))]">
-          {user.organizationName || 'N/A'}
-        </span>
       ),
     },
     {
       key: 'role',
       header: 'Role',
       render: (user: User) => (
-        <span className="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50 ring-1 ring-blue-200 dark:ring-blue-800">
-          {typeof user.roleId === 'object'
-            ? user.roleId.name
-            : user.roleName || user.role}
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/30">
+          {getSafeRoleLabel(user)}
         </span>
       ),
     },
     {
-      key: 'status',
+      key: 'portalType',
+      header: 'Portal Type',
+      render: (user: User) => (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-[hsl(var(--foreground))] font-semibold dark:bg-purple-900/30">
+          {user.portalType.charAt(0).toUpperCase() + user.portalType.slice(1)}
+        </span>
+      ),
+    },
+    {
+      key: 'isActive',
       header: 'Status',
       render: (user: User) => (
         <span
           className={cn(
-            'px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+            'px-3 py-1 inline-flex items-center gap-1.5 text-xs font-semibold rounded-full',
             user.isActive
-              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800'
-              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800'
+              ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/30'
+              : 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/30'
           )}
         >
-          {user.isActive ? 'Active' : 'Inactive'}
+          {user.isActive ? (
+            <>
+              <MdCheckCircle className="w-3.5 h-3.5" /> Active
+            </>
+          ) : (
+            <>
+              <MdCancel className="w-3.5 h-3.5" /> Inactive
+            </>
+          )}
         </span>
       ),
     },
@@ -206,137 +226,110 @@ export function UsersPage() {
       key: 'lastLogin',
       header: 'Last Login',
       render: (user: User) => (
-        <span className="text-[hsl(var(--muted-foreground))]">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
           {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}
-        </span>
+        </div>
+      ),
+    },
+    {
+      key: 'createdAt',
+      header: 'Created At',
+      render: (user: User) => (
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+        </div>
       ),
     },
   ];
 
-  // Calculate stats
-  const stats = React.useMemo(() => {
-    if (!usersData) {
-      return {
-        total: 0,
-        active: 0,
-        superAdmins: 0,
-        supportStaff: 0,
-      };
-    }
-    return {
-      total: usersData.length,
-      active: usersData.filter(u => u.isActive).length,
-      superAdmins: usersData.filter(u => u.role?.toLowerCase().includes('super') || u.role === 'super_admin').length,
-      supportStaff: usersData.filter(u => u.role?.toLowerCase().includes('support')).length,
-    };
-  }, [usersData]);
+  const stats = [
+    { label: 'Total Users', value: usersData?.length || 0, icon: MdPeople },
+    { label: 'Active', value: usersData?.filter((u) => u.isActive).length || 0, icon: MdCheckCircle },
+    { label: 'Inactive', value: usersData?.filter((u) => !u.isActive).length || 0, icon: MdCancel },
+  ];
 
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-[hsl(var(--foreground))] mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            User Management
+          <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-1">
+            Users Management
           </h1>
-          <p className="text-lg text-[hsl(var(--muted-foreground))] font-medium">
-            Manage admin users and their permissions
+          <p className="text-gray-600 dark:text-gray-400">
+            Manage users and permissions across the platform
           </p>
         </div>
-        <button
-          onClick={handleInvite}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold shadow-sm"
-        >
-          <MdAdd className="w-5 h-5" />
-          Invite User
-        </button>
-      </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleInvite}
+            disabled={!canCreate}
+            className={cn(
+              'relative flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-semibold shadow-sm transition-all',
+              canCreate
+                ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-indigo-700'
+                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            )}
+          >
+            <MdEmail className="w-5 h-5" />
+            Invite User
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Total Admin Users</p>
-              <p className="text-3xl font-bold text-[hsl(var(--foreground))]">{stats.total}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-              <MdPeople className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </div>
-        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Active Users</p>
-              <p className="text-3xl font-bold text-[hsl(var(--foreground))] font-semibold">{stats.active}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
-              <MdCheckCircle className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </div>
-        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Super Admins</p>
-              <p className="text-3xl font-bold text-[hsl(var(--foreground))] font-semibold">{stats.superAdmins}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
-              <MdVpnKey className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </div>
-        <div className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-[hsl(var(--muted-foreground))] mb-1">Support Staff</p>
-              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.supportStaff}</p>
-            </div>
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
-              <MdPeople className="w-6 h-6 text-white" />
-            </div>
-          </div>
+            {!canCreate && (
+              <span className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
+                <span className="text-red-600 text-2xl font-bold drop-shadow">⌀</span>
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
-        <div className="space-y-4">
-          {/* Search Bar */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
-            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
-            <input
-              type="text"
-              placeholder="Search users by name, email, or organization..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-[hsl(var(--foreground))] font-semibold">
-              <MdFilterList className="w-5 h-5" />
-              <span>Filters:</span>
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={index}
+              className="p-6 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
+                  <p className="text-3xl font-bold text-[hsl(var(--foreground))]">{stat.value}</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/20 flex items-center justify-center">
+                  <Icon className="w-6 h-6 text-[hsl(var(--foreground))] font-semibold" />
+                </div>
+              </div>
             </div>
+          );
+        })}
+      </div>
+
+      {/* Filters and Search */}
+      <div className="p-4 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
+            <div className="relative flex-1 sm:max-w-md">
+              <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <MdFilterList className="w-5 h-5 text-gray-400" />
             <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
+              value={filterActive}
+              onChange={(e) => setFilterActive(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all"
             >
-              <option value="all">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="manager">Manager</option>
-              <option value="user">User</option>
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-[hsl(var(--primary))] transition-all duration-200 font-medium"
-            >
-              <option value="all">All Status</option>
+              <option value="all">All Users</option>
               <option value="active">Active Only</option>
               <option value="inactive">Inactive Only</option>
             </select>
@@ -344,70 +337,44 @@ export function UsersPage() {
         </div>
       </div>
 
-      {/* Admin Users Section */}
-      <div className="p-6 rounded-2xl bg-[hsl(var(--card))]/80 backdrop-blur-xl border border-[hsl(var(--border))]/50 shadow-lg">
-        <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4">Admin Users</h2>
-        
-        {/* Search Bar */}
-        <div className="mb-4">
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] focus-within:border-[hsl(var(--primary))] focus-within:ring-2 focus-within:ring-[hsl(var(--primary))]/20 transition-all">
-            <MdSearch className="w-5 h-5 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
-            />
-          </div>
+      {/* Table */}
+      {isLoading ? (
+        <div className="p-12 text-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
+          <div className="inline-block w-8 h-8 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))] rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading users...</p>
         </div>
+      ) : queryError ? (
+        <div className="p-12 text-center rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 shadow-sm">
+          <p className="text-red-600 dark:text-red-400 font-semibold mb-2">Error loading users</p>
+          <p className="text-sm text-red-500 dark:text-red-400">{(queryError as Error).message}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={filteredUsers || []}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          canEdit={canUpdate}
+          canDelete={canDelete}
+          emptyMessage="No users found."
+        />
+      )}
 
-        {/* Table */}
-        {isLoading ? (
-          <div className="p-12 text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
-            <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading users...</p>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                Showing {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''}
-              </p>
-              <button
-                onClick={() => showToast('Export functionality will be implemented soon', 'info')}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--card))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))] transition-colors text-sm font-medium text-[hsl(var(--foreground))]"
-              >
-                <MdDownload className="w-4 h-4" />
-                Export
-              </button>
-            </div>
-            <DataTable
-              columns={columns}
-              data={filteredUsers}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              actionsLabel="Quick Actions"
-              emptyMessage="No users found."
-            />
-          </>
-        )}
-      </div>
-
-      {/* User Form Modal */}
+      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
         title={editingUser ? 'Edit User' : 'Invite User'}
         size="large"
       >
-        <UserForm
-          user={editingUser || undefined}
-          onSuccess={handleSuccess}
-          onCancel={handleClose}
-        />
+        <UserForm user={editingUser} onSuccess={handleSuccess} onCancel={handleClose} />
       </Modal>
     </div>
   );
 }
-
