@@ -3,7 +3,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { validateLicense } from '../middleware/license.middleware';
 import { paymentStatusMiddleware } from '../middleware/payment.middleware';
-import { PortalType } from '../../../../packages/shared/src/types/index.ts';
+import { PortalType } from '../../../../packages/shared/src/types/index';
 import { rfqService } from '../services/rfq.service';
 import { vesselService } from '../services/vessel.service';
 import { employeeService } from '../services/employee.service';

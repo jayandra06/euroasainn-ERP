@@ -87,7 +87,7 @@ app.use(`${config.apiPrefix}/permissions`, permissionRoutes);
 // Public onboarding routes (no auth required)
 app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
 // Payment routes
-app.use(`${config.apiPrefix}/payments`, paymentRoutes);
+// app.use(`${config.apiPrefix}/payments`, paymentRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
