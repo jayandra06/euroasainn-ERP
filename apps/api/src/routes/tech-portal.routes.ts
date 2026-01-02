@@ -7,7 +7,6 @@ import { onboardingController } from "../controllers/onboarding.controller";
 import { licenseController } from "../controllers/license.controller";
 import { casbinMiddleware } from "../middleware/casbin.middleware";
 import { PortalType } from "../../../../packages/shared/src/types/index";
-
 const router = Router();
 // 🔐 Secure TECH portal
 router.use(authMiddleware);

@@ -1,10 +1,7 @@
-/**
- * Unified Organizations Page
- * Combines Customer and Vendor Organizations
- */
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom'; // ← Added for navigation
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
@@ -25,6 +22,8 @@ interface Organization {
 export function OrganizationsPage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const navigate = useNavigate(); // ← Hook for navigation
+
   const [filterActive, setFilterActive] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -50,13 +49,11 @@ export function OrganizationsPage() {
         if (searchQuery) {
           params.append('search', searchQuery);
         }
-
         const response = await fetch(`${API_URL}/api/v1/admin/organizations?${params}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         });
-
         if (!response.ok) {
           const error = await response.json().catch(() => ({ error: 'Failed to fetch organizations' }));
           throw new Error(error.error || 'Failed to fetch organizations');
@@ -80,7 +77,6 @@ export function OrganizationsPage() {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
-
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to delete organization');
@@ -95,12 +91,12 @@ export function OrganizationsPage() {
     },
   });
 
-  // Filter organizations by search query
+  // Filter organizations by search query (client-side fallback)
   const filteredOrgs = React.useMemo(() => {
     if (!orgsData) return [];
     if (!searchQuery) return orgsData;
     const query = searchQuery.toLowerCase();
-    return orgsData.filter(org => 
+    return orgsData.filter(org =>
       org.name.toLowerCase().includes(query) ||
       org.type.toLowerCase().includes(query)
     );
@@ -151,16 +147,12 @@ export function OrganizationsPage() {
     mutationFn: async () => {
       const trimmedName = newOrgName.trim();
       const trimmedEmail = newOrgEmail.trim();
-
       if (!trimmedName || !trimmedEmail) {
         throw new Error('Name and admin email are required');
       }
-
-      // Basic email validation
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
         throw new Error('Please enter a valid email address');
       }
-
       const requestData = {
         name: trimmedName,
         type: newOrgType,
@@ -168,7 +160,6 @@ export function OrganizationsPage() {
         isActive: true,
         adminEmail: trimmedEmail,
       };
-
       const response = await fetch(`${API_URL}/api/v1/admin/organizations`, {
         method: 'POST',
         headers: {
@@ -177,7 +168,6 @@ export function OrganizationsPage() {
         },
         body: JSON.stringify(requestData),
       });
-
       if (!response.ok) {
         let errorMessage = 'Failed to create organization';
         try {
@@ -188,7 +178,6 @@ export function OrganizationsPage() {
         }
         throw new Error(errorMessage);
       }
-
       return response.json();
     },
     onSuccess: (data: any) => {
@@ -198,7 +187,6 @@ export function OrganizationsPage() {
       setNewOrgType('customer');
       setFormError(null);
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
-
       if (data?.emailSent === false && data.emailError) {
         showToast(`Organization created, but email failed: ${data.emailError}`, 'warning');
       } else if (data?.emailSent === true) {
@@ -233,11 +221,9 @@ export function OrganizationsPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         throw new Error('Failed to export organizations');
       }
-
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -289,7 +275,12 @@ export function OrganizationsPage() {
       key: 'name',
       header: 'Name',
       render: (org: Organization) => (
-        <div className="font-semibold text-[hsl(var(--foreground))]">{org.name}</div>
+        <button
+          onClick={() => navigate(`/organizations/${org._id}`)}
+          className="font-semibold text-[hsl(var(--primary))] hover:underline focus:outline-none focus:underline text-left w-full block text-left"
+        >
+          {org.name}
+        </button>
       ),
     },
     {
@@ -399,6 +390,7 @@ export function OrganizationsPage() {
                 <option value="inactive">Inactive Only</option>
               </select>
             </div>
+
             {selectedOrgs.size > 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-[hsl(var(--muted-foreground))]">
@@ -437,11 +429,15 @@ export function OrganizationsPage() {
               Export
             </button>
           </div>
+
           <DataTable
             columns={columns}
             data={filteredOrgs}
             onDelete={handleDelete}
             emptyMessage="No organizations found."
+            // Optional: make entire row clickable (if your DataTable supports onRowClick)
+            // onRowClick={(org) => navigate(`/organizations/${org._id}`)}
+            // rowClassName="cursor-pointer hover:bg-[hsl(var(--muted))]/50"
           />
         </div>
       )}
@@ -454,7 +450,6 @@ export function OrganizationsPage() {
         icon={<MdBusiness className="w-6 h-6 text-[hsl(var(--primary))]" />}
       >
         <div className="space-y-4">
-          {/* Name */}
           <div>
             <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Organization Name <span className="text-red-500">*</span>
@@ -471,7 +466,6 @@ export function OrganizationsPage() {
             />
           </div>
 
-          {/* Admin Email */}
           <div>
             <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Admin Email <span className="text-red-500">*</span>
@@ -491,7 +485,6 @@ export function OrganizationsPage() {
             </p>
           </div>
 
-          {/* Type Dropdown */}
           <div>
             <label className="block text-sm font-semibold text-[hsl(var(--foreground))] mb-2">
               Organization Type <span className="text-red-500">*</span>
@@ -512,7 +505,6 @@ export function OrganizationsPage() {
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-[hsl(var(--border))]">
             <button
               type="button"
@@ -536,9 +528,6 @@ export function OrganizationsPage() {
           </div>
         </div>
       </Modal>
-
     </div>
   );
 }
-
-
