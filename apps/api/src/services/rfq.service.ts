@@ -184,7 +184,7 @@ export class RFQService {
     return await RFQ.find(query).populate('vesselId', 'name imoNumber type');
   }
 
-  async getRFQById(rfqId: string, organizationId?: string) {
+  async getRFQById(rfqId: string, organizationId?: string): Promise<any> {
     const query: any = { _id: rfqId };
     // If organizationId is provided, filter by it (for customer portal)
     // If not provided, return any RFQ (for admin portal)
@@ -300,7 +300,7 @@ export class RFQService {
   /**
    * Get a specific RFQ for a vendor by ID
    */
-  async getRFQForVendorById(rfqId: string, vendorOrganizationId: string) {
+  async getRFQForVendorById(rfqId: string, vendorOrganizationId: string): Promise<any> {
     const vendorObjectId = new mongoose.Types.ObjectId(vendorOrganizationId);
     const rfq = await RFQ.findOne({
       _id: rfqId,
@@ -320,7 +320,7 @@ export class RFQService {
   /**
    * Get all RFQs for admin portal (both from admin and customers)
    */
-  async getAllRFQs(filters?: any) {
+  async getAllRFQs(filters?: any): Promise<any[]> {
     const query: any = {};
     
     // Map frontend filter status values to actual RFQ status values
