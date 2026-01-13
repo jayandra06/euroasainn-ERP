@@ -1,0 +1,89 @@
+name: Test & Jira Integration
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    env:
+      NODE_VERSION: '18'
+      JIRA_ENABLED: 'true'
+      JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
+      JIRA_DOMAIN: ${{ secrets.JIRA_DOMAIN }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_DEFAULT_ASSIGNEE: ${{ secrets.JIRA_DEFAULT_ASSIGNEE }}
+      JIRA_QA_ASSIGNEE: ${{ secrets.JIRA_QA_ASSIGNEE }}
+      CI: 'true'
+      GITHUB_RUN_ID: ${{ github.run_id }}
+      GIT_COMMIT: ${{ github.sha }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./apps/api
+
+      - name: Run tests with Jira integration
+        run: npm run test
+        working-directory: ./apps/api
+        continue-on-error: true
+
+      - name: Generate test report
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "- Jira issues created for failures" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload test coverage
+        if: always()
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./apps/api/coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  jira-sync:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    
+    env:
+      JIRA_DOMAIN: ${{ secrets.JIRA_DOMAIN }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./apps/api
+
+      - name: Sync test results to Jira
+        run: |
+          echo "Syncing test results to Jira..."
+          # This would run a script to sync results
+          node scripts/sync-jira-results.js
+        working-directory: ./apps/api

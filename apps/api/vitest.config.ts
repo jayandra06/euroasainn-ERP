@@ -28,6 +28,10 @@ export default defineConfig({
     testTimeout: 10000,
     hookTimeout: 10000,
     setupFiles: ['./src/tests/setup.ts'],
+    // Add Jira reporter if enabled (using custom reporter path)
+    reporters: process.env.JIRA_ENABLED === 'true' 
+      ? ['default', './src/reporters/jira-reporter.ts']
+      : ['default'],
   },
   resolve: {
     alias: {

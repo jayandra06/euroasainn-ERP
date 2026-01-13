@@ -28,7 +28,7 @@ export class JiraReporter implements Reporter {
     this.reporterService = new JiraTestReporterService();
   }
 
-  onFinished(_files = []) {
+  onFinished(files = []) {
     const summary: TestRunSummary = {
       totalTests: this.testResults.total,
       passed: this.testResults.passed,
@@ -61,7 +61,7 @@ export class JiraReporter implements Reporter {
   }
 
   onTaskUpdate(packs: TaskResultPack[]) {
-    for (const [, result] of packs) {
+    for (const [id, result] of packs) {
       if (result?.state === 'pass') {
         this.testResults.passed++;
         this.testResults.total++;

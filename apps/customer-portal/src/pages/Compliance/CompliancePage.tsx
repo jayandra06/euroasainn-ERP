@@ -7,7 +7,6 @@ import {
   MdCloudUpload,
   MdImage,
   MdDelete,
-  MdDownload,
   MdVisibility
 } from 'react-icons/md';
 import { cn } from '../../lib/utils';
@@ -39,6 +38,8 @@ interface ComplianceItem {
   imageUrl?: string;
   uploadedAt: string;
   uploadedBy?: string;
+  certificateNumber?: string;
+  expiryDate?: string;
 }
 
 // Compliance Level Definitions (based on PDF structure)
@@ -198,6 +199,8 @@ export function CompliancePage() {
   const [selectedItemName, setSelectedItemName] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [certificateNumber, setCertificateNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
   const [complianceItems, setComplianceItems] = useState<ComplianceItem[]>([]);
 
   // Load items from localStorage on mount
@@ -248,7 +251,7 @@ export function CompliancePage() {
 
   // Create compliance item mutation
   const createComplianceMutation = useMutation({
-    mutationFn: async (data: { complianceLevel: ComplianceLevel; itemType: ItemType; itemName: string; file: File }) => {
+    mutationFn: async (data: { complianceLevel: ComplianceLevel; itemType: ItemType; itemName: string; file: File; certificateNumber?: string; expiryDate?: string }) => {
       // Create image URL from uploaded file
       const imageUrl = URL.createObjectURL(data.file);
 
@@ -260,6 +263,8 @@ export function CompliancePage() {
         itemName: data.itemName,
         imageUrl: imageUrl,
         uploadedAt: new Date().toISOString(),
+        certificateNumber: data.certificateNumber,
+        expiryDate: data.expiryDate,
       };
 
       // TODO: Replace with actual API endpoint when available
@@ -349,6 +354,8 @@ export function CompliancePage() {
     setSelectedItemType('');
     setSelectedItemName('');
     setUploadedFile(null);
+    setCertificateNumber('');
+    setExpiryDate('');
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
@@ -372,12 +379,24 @@ export function CompliancePage() {
       showToast('Please upload an image', 'error');
       return;
     }
+    if (selectedItemType === 'certificate') {
+      if (!certificateNumber) {
+        showToast('Please enter certificate number', 'error');
+        return;
+      }
+      if (!expiryDate) {
+        showToast('Please enter expiry date', 'error');
+        return;
+      }
+    }
 
     createComplianceMutation.mutate({
       complianceLevel: selectedLevel,
       itemType: selectedItemType,
       itemName: selectedItemName,
       file: uploadedFile,
+      certificateNumber: selectedItemType === 'certificate' ? certificateNumber : undefined,
+      expiryDate: selectedItemType === 'certificate' ? expiryDate : undefined,
     });
   };
 
@@ -481,8 +500,20 @@ export function CompliancePage() {
                       <h4 className="font-medium text-[hsl(var(--foreground))] mb-1 line-clamp-2">
                         {item.itemName}
                       </h4>
+                      {item.itemType === 'certificate' && item.expiryDate && (
+                        <div className="mb-1">
+                          <p className="text-xs text-gray-500 dark:text-gray-500">
+                            Expiry: {new Date(item.expiryDate).toLocaleDateString()}
+                          </p>
+                          {item.certificateNumber && (
+                            <p className="text-xs text-gray-500 dark:text-gray-500">
+                              Cert #: {item.certificateNumber}
+                            </p>
+                          )}
+                        </div>
+                      )}
                       <p className="text-xs text-gray-500 dark:text-gray-500">
-                        {new Date(item.uploadedAt).toLocaleDateString()}
+                        Uploaded: {new Date(item.uploadedAt).toLocaleDateString()}
                       </p>
                       <button
                         onClick={() => handleDelete(item._id)}
@@ -550,6 +581,8 @@ export function CompliancePage() {
                       onClick={() => {
                         setSelectedItemType('compliance');
                         setSelectedItemName('');
+                        setCertificateNumber('');
+                        setExpiryDate('');
                       }}
                       className={cn(
                         'flex-1 px-4 py-3 rounded-lg border-2 transition-colors',
@@ -564,6 +597,8 @@ export function CompliancePage() {
                       onClick={() => {
                         setSelectedItemType('certificate');
                         setSelectedItemName('');
+                        setCertificateNumber('');
+                        setExpiryDate('');
                       }}
                       className={cn(
                         'flex-1 px-4 py-3 rounded-lg border-2 transition-colors',
@@ -670,7 +705,14 @@ export function CompliancePage() {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={!selectedLevel || !selectedItemType || !selectedItemName || !uploadedFile || createComplianceMutation.isPending}
+                  disabled={
+                    !selectedLevel || 
+                    !selectedItemType || 
+                    !selectedItemName || 
+                    !uploadedFile || 
+                    (selectedItemType === 'certificate' && (!certificateNumber || !expiryDate)) ||
+                    createComplianceMutation.isPending
+                  }
                   className="px-6 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createComplianceMutation.isPending ? 'Adding...' : 'Add Compliance'}

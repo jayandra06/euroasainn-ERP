@@ -21,8 +21,8 @@ export class JiraAutomationController {
       // Verify webhook (optional - add signature verification)
       const webhookSecret = process.env.JIRA_WEBHOOK_SECRET;
       if (webhookSecret) {
+        const signature = req.headers['x-jira-webhook-signature'];
         // Add signature verification logic here if needed
-        // const signature = req.headers['x-jira-webhook-signature'];
       }
 
       // Process webhook asynchronously

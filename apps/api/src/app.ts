@@ -65,19 +65,6 @@ app.use('/uploads', express.static(uploadsDir, {
 
 console.log(`✅ Static file serving enabled for: ${uploadsDir}`);
 
-// Root route
-app.get('/', (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: 'Euroasiann ERP API',
-    version: '1.0.0',
-    endpoints: {
-      health: '/health',
-      api: config.apiPrefix,
-    },
-  });
-});
-
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
