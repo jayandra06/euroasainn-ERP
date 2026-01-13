@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@euroasiann/shared": ["../../packages/shared/src/index.ts"],
+      "@euroasiann/api-client": ["../../packages/api-client/src/index.ts"],
+      "@euroasiann/ui-components": ["../../packages/ui-components/src/index.ts"],
+      "@euroasiann/casbin-config": ["../../packages/casbin-config/src/index.ts"]
+    },
+    "types": ["node"]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "../../apps/admin-portal/**/*",
+    "../../apps/customer-portal/**/*",
+    "../../apps/vendor-portal/**/*",
+    "../../apps/tech-portal/**/*"
+  ]
+}
