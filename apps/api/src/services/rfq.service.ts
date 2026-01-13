@@ -17,8 +17,8 @@ export class RFQService {
     senderType: 'admin' | 'customer',
     recipientVendorIds: string[]
   ) {
-    // Check license limit
-    await licenseService.checkUsageLimit(organizationId, 'employees');
+    // Check license limit (DISABLED FOR NOW)
+    // await licenseService.checkUsageLimit(organizationId, 'employees');
 
     // Validate recipient vendor IDs
     if (!recipientVendorIds || recipientVendorIds.length === 0) {

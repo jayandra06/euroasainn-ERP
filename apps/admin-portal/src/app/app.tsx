@@ -36,8 +36,8 @@ import { RolesPage } from '../pages/Roles/RolesPage';
 import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
-
-
+import { UserProfilePage } from '../pages/Users/UserProfilePage';
+import{ProfilePage} from "../pages/Profile/ProfilePage.tsx"
 
 
 const queryClient = new QueryClient({
@@ -120,6 +120,7 @@ export function App() {
 
                     {/* Users */}
                     <Route path="users" element={<UsersPage />} />
+                    <Route path="/users/:userId" element={<UserProfilePage />} />
                     <Route path="users/new" element={<UserCreatePage />} />
 
 
@@ -134,7 +135,7 @@ export function App() {
                     <Route path="support" element={<SupportPage />} />
                     <Route path="subscription" element={<SubscriptionPage />} />
                     <Route path="logins" element={<LoginsPage />} />
-
+                    <Route path="/profile" element={<ProfilePage />} />
                   </Route>
                 </Routes>
               </ToastProvider>

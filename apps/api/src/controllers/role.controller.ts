@@ -9,10 +9,22 @@ export class RoleController {
   async listRoles(req: AuthRequest, res: Response) {
     try {
       const portalType = req.query.portalType as PortalType | undefined;
+      const organizationIdFromQuery = req.query.organizationId as string | undefined;
+      
+      // Get organizationId from authenticated user (source of truth)
+      const userOrganizationId = req.user!.organizationId;
+      
+      // Validate: if organizationId is provided in URL, it must match user's organization
+      if (organizationIdFromQuery && organizationIdFromQuery !== userOrganizationId) {
+        return res.status(403).json({ 
+          success: false, 
+          error: "You can only access roles from your own organization" 
+        });
+      }
 
       const roles = await roleService.listRoles({
         portalType,
-        organizationId: req.user!.organizationId,
+        organizationId: userOrganizationId,
       });
 
       return res.status(200).json({ success: true, data: roles });
@@ -44,7 +56,8 @@ export class RoleController {
   async updateRole(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
-      const updated = await roleService.updateRole(id, req.body);
+      const organizationId = req.user!.organizationId;
+      const updated = await roleService.updateRole(id, req.body, organizationId);
 
       return res.status(200).json({ success: true, data: updated });
     } catch (error: any) {

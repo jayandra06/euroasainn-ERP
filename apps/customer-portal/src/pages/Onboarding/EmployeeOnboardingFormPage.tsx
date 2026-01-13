@@ -559,8 +559,8 @@ export function EmployeeOnboardingFormPage() {
                       className="w-full sm:w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     >
-                      {countryCodeOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
+                      {countryCodeOptions.map((option, index) => (
+                        <option key={`${option.value}-${index}`} value={option.value}>
                           {option.label}
                         </option>
                       ))}
@@ -1009,8 +1009,8 @@ export function EmployeeOnboardingFormPage() {
                       )}
                       required
                     >
-                      {countryCodeOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
+                      {countryCodeOptions.map((option, index) => (
+                        <option key={`${option.value}-${index}`} value={option.value}>
                           {option.label}
                         </option>
                       ))}

@@ -1,838 +1,556 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  MdAdd, MdEdit, MdDelete, MdChevronRight, MdBusiness, 
+  MdModelTraining, MdCategory, MdLabel, 
+  MdSearch, MdLayers, MdOutlineInventory
+} from 'react-icons/md';
+
+import { authenticatedFetch } from '../../lib/api';
+import { useToast } from '../../components/shared/Toast';
+import { Modal } from '../../components/shared/Modal';
+
+// ─── Interfaces ───
 
 interface Part {
-  id: number;
+  _id: string;
   name: string;
   partNumber: string;
-  description: string;
+  description?: string;
   priceUSD: number;
   stockQuantity: number;
 }
 
 interface SubCategory {
-  id: number;
+  _id: string;
   name: string;
-  subCategories?: never; // To avoid confusion, but not needed
+  description?: string;
   parts: Part[];
 }
 
 interface Category {
-  id: number;
+  _id: string;
   name: string;
+  description?: string;
   subCategories: SubCategory[];
 }
 
 interface Model {
-  id: number;
+  _id: string;
   name: string;
+  description?: string;
   categories: Category[];
 }
 
 interface Brand {
-  id: number;
+  _id: string;
   name: string;
+  description?: string;
   models: Model[];
 }
 
-export default function ProductHierarchy() {
-  const [brands, setBrands] = useState<Brand[]>([
-    {
-      id: 1,
-      name: "MAN Energy Solutions",
-      models: [
-        {
-          id: 11,
-          name: "MAN B&W 6S50ME-C",
-          categories: [
-            {
-              id: 111,
-              name: "Fuel System",
-              subCategories: [
-                {
-                  id: 1111,
-                  name: "Fuel Pump",
-                  parts: [
-                    {
-                      id: 11111,
-                      name: "Fuel Pump Assembly",
-                      partNumber: "90910-45-012",
-                      description: "Complete fuel pump for precise fuel delivery in MAN B&W engines. High-quality OEM replacement.",
-                      priceUSD: 3450,
-                      stockQuantity: 5,
-                    },
-                    {
-                      id: 11112,
-                      name: "Plunger and Barrel",
-                      partNumber: "90910-45-098",
-                      description: "Pump barrel ensuring correct fuel delivery; replace if index >10%.",
-                      priceUSD: 850,
-                      stockQuantity: 12,
-                    },
-                  ],
-                },
-                {
-                  id: 1112,
-                  name: "Fuel Injector",
-                  parts: [
-                    {
-                      id: 11121,
-                      name: "Fuel Injector Nozzle",
-                      partNumber: "221-015",
-                      description: "High-precision nozzle for fuel injection; withstands extreme temperatures.",
-                      priceUSD: 450,
-                      stockQuantity: 20,
-                    },
-                  ],
-                },
-                { id: 1113, name: "High Pressure Fuel Pipe", parts: [] },
-                { id: 1114, name: "Fuel Valve", parts: [] },
-              ],
-            },
-            {
-              id: 112,
-              name: "Cylinder & Piston",
-              subCategories: [
-                { id: 1121, name: "Cylinder Liner", parts: [] },
-                { id: 1122, name: "Piston Crown", parts: [] },
-                { id: 1123, name: "Piston Rings", parts: [] },
-                { id: 1124, name: "Piston Skirt", parts: [] },
-                { id: 1125, name: "Connecting Rod", parts: [] },
-              ],
-            },
-            {
-              id: 113,
-              name: "Turbocharger",
-              subCategories: [
-                { id: 1131, name: "Turbine Rotor", parts: [] },
-                { id: 1132, name: "Compressor Wheel", parts: [] },
-                { id: 1133, name: "Nozzle Ring", parts: [] },
-                { id: 1134, name: "Bearing Assembly", parts: [] },
-              ],
-            },
-          ],
-        },
-        {
-          id: 12,
-          name: "MAN L35/44DF",
-          categories: [
-            {
-              id: 121,
-              name: "Cooling System",
-              subCategories: [
-                { id: 1211, name: "Fresh Water Pump", parts: [] },
-                { id: 1212, name: "Sea Water Pump", parts: [] },
-                { id: 1213, name: "Heat Exchanger", parts: [] },
-                { id: 1214, name: "Thermostat", parts: [] },
-              ],
-            },
-            {
-              id: 122,
-              name: "Lubrication System",
-              subCategories: [
-                { id: 1221, name: "Lube Oil Pump", parts: [] },
-                { id: 1222, name: "Lube Oil Filter", parts: [] },
-                { id: 1223, name: "Lube Oil Cooler", parts: [] },
-                { id: 1224, name: "Crankcase Breather", parts: [] },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Wärtsilä",
-      models: [
-        {
-          id: 21,
-          name: "Wärtsilä 31",
-          categories: [
-            {
-              id: 211,
-              name: "Exhaust System",
-              subCategories: [
-                {
-                  id: 2111,
-                  name: "Exhaust Valve",
-                  parts: [
-                    {
-                      id: 21111,
-                      name: "Exhaust Valve Spindle",
-                      partNumber: "121-015",
-                      description: "High-stress exhaust valve for Wärtsilä engines; features vane wheel for heat distribution.",
-                      priceUSD: 67,
-                      stockQuantity: 15,
-                    },
-                  ],
-                },
-                { id: 2112, name: "Valve Seat", parts: [] },
-                { id: 2113, name: "Exhaust Manifold", parts: [] },
-                { id: 2114, name: "Turbocharger Silencer", parts: [] },
-              ],
-            },
-            {
-              id: 212,
-              name: "Starting System",
-              subCategories: [
-                { id: 2121, name: "Starting Air Valve", parts: [] },
-                { id: 2122, name: "Air Distributor", parts: [] },
-                { id: 2123, name: "Starting Motor", parts: [] },
-              ],
-            },
-          ],
-        },
-        {
-          id: 22,
-          name: "Wärtsilä 20",
-          categories: [
-            {
-              id: 221,
-              name: "Governor & Control",
-              subCategories: [
-                { id: 2211, name: "Electronic Governor", parts: [] },
-                { id: 2212, name: "Actuator", parts: [] },
-                { id: 2213, name: "Speed Sensor", parts: [] },
-                { id: 2214, name: "Overspeed Trip", parts: [] },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "Caterpillar Marine (MaK)",
-      models: [
-        {
-          id: 31,
-          name: "MaK M32C",
-          categories: [
-            {
-              id: 311,
-              name: "Crankshaft & Bearings",
-              subCategories: [
-                { id: 3111, name: "Main Bearing", parts: [] },
-                { id: 3112, name: "Crankshaft", parts: [] },
-                { id: 3113, name: "Thrust Bearing", parts: [] },
-                { id: 3114, name: "Vibration Damper", parts: [] },
-              ],
-            },
-            {
-              id: 312,
-              name: "Camshaft & Valve Train",
-              subCategories: [
-                { id: 3121, name: "Camshaft", parts: [] },
-                { id: 3122, name: "Rocker Arm", parts: [] },
-                { id: 3123, name: "Push Rod", parts: [] },
-                { id: 3124, name: "Inlet Valve", parts: [] },
-              ],
-            },
-          ],
-        },
-        {
-          id: 32,
-          name: "CAT C280-16",
-          categories: [
-            {
-              id: 321,
-              name: "Auxiliary Systems",
-              subCategories: [
-                {
-                  id: 3211,
-                  name: "Jacket Water Pump",
-                  parts: [
-                    {
-                      id: 32111,
-                      name: "Jacket Water Pump Assembly",
-                      partNumber: "6057481",
-                      description: "Water pump for CAT C280-16 marine engine cooling system.",
-                      priceUSD: 1200,
-                      stockQuantity: 3,
-                    },
-                  ],
-                },
-                { id: 3212, name: "Pre-lube Pump", parts: [] },
-                { id: 3213, name: "Fuel Transfer Pump", parts: [] },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: "YANMAR",
-      models: [
-        {
-          id: 41,
-          name: "6EY26",
-          categories: [
-            {
-              id: 411,
-              name: "Fuel Injection Equipment",
-              subCategories: [
-                {
-                  id: 4111,
-                  name: "Injection Pump",
-                  parts: [
-                    {
-                      id: 41111,
-                      name: "Fuel Injection Pump",
-                      partNumber: "729670-51450",
-                      description: "Remanufactured injection pump for YANMAR marine engines; tested to standards.",
-                      priceUSD: 2000,
-                      stockQuantity: 4,
-                    },
-                  ],
-                },
-                { id: 4112, name: "Delivery Valve", parts: [] },
-                { id: 4113, name: "Nozzle Holder", parts: [] },
-                { id: 4114, name: "Plunger & Barrel", parts: [] },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 5,
-      name: "Alfa Laval",
-      models: [
-        {
-          id: 51,
-          name: "PureSOx Scrubber",
-          categories: [
-            {
-              id: 511,
-              name: "Scrubber Components",
-              subCategories: [
-                {
-                  id: 5111,
-                  name: "Packing Material",
-                  parts: [],
-                },
-                {
-                  id: 5112,
-                  name: "Spray Nozzles",
-                  parts: [
-                    {
-                      id: 51121,
-                      name: "Tapered Spray Nozzle",
-                      partNumber: "418",
-                      description: "High-quality tapered nozzle for PureSOx scrubber system; ensures efficient spraying.",
-                      priceUSD: 333,
-                      stockQuantity: 50,
-                    },
-                  ],
-                },
-                { id: 5113, name: "Demister", parts: [] },
-                { id: 5114, name: "Water Pump", parts: [] },
-              ],
-            },
-          ],
-        },
-        {
-          id: 52,
-          name: "MAB Separator",
-          categories: [
-            {
-              id: 521,
-              name: "Separator Bowl",
-              subCategories: [
-                { id: 5211, name: "Bowl Spindle", parts: [] },
-                { id: 5212, name: "Disc Stack", parts: [] },
-                { id: 5213, name: "Gravity Disc", parts: [] },
-                { id: 5214, name: "Seal Rings", parts: [] },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+type ItemType = 'brand' | 'model' | 'category' | 'subcategory' | 'part';
 
-  // Inputs for adding new items
-  const [newBrand, setNewBrand] = useState("");
-  const [newModel, setNewModel] = useState({ brandId: null as number | null, value: "" });
-  const [newCategory, setNewCategory] = useState({ modelId: null as number | null, value: "" });
-  const [newSubcategory, setNewSubcategory] = useState({ categoryId: null as number | null, value: "" });
-  const [newPart, setNewPart] = useState({
-    subcategoryId: null as number | null,
-    name: "",
-    partNumber: "",
-    description: "",
+interface EditItem {
+  type: ItemType;
+  id: string;
+  parentId?: string;
+  data: any;
+}
+
+// ─── Main Component ───
+
+export default function ProductHierarchy() {
+  const { showToast } = useToast();
+
+  const [loading, setLoading] = useState(true);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [editItem, setEditItem] = useState<EditItem | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addType, setAddType] = useState<ItemType | null>(null);
+  const [addParentId, setAddParentId] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    partNumber: '',
     priceUSD: 0,
     stockQuantity: 0,
   });
 
-  // Add Brand
-  const handleAddBrand = () => {
-    if (!newBrand.trim()) return;
-    setBrands((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        name: newBrand.trim(),
-        models: [],
-      },
-    ]);
-    setNewBrand("");
+  useEffect(() => {
+    fetchHierarchy();
+  }, []);
+
+  const fetchHierarchy = async () => {
+    setLoading(true);
+    try {
+      const res = await authenticatedFetch('/api/v1/admin/product-hierarchy');
+      if (!res.ok) throw new Error('Failed to load hierarchy');
+      const data = await res.json();
+      setBrands(data.data || []);
+      
+      // Auto-expand the first brand to guide the user
+      if (data.data?.length > 0) {
+        setExpandedItems(new Set([data.data[0]._id]));
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Connection error', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Add Model
-  const handleAddModel = (brandId: number) => {
-    if (!newModel.value.trim()) return;
-    setBrands((prev) =>
-      prev.map((brand) =>
-        brand.id === brandId
-          ? {
-              ...brand,
-              models: [
-                ...brand.models,
-                {
-                  id: Date.now(),
-                  name: newModel.value.trim(),
-                  categories: [],
-                },
-              ],
-            }
-          : brand
-      )
-    );
-    setNewModel({ brandId: null, value: "" });
-  };
-
-  // Add Category
-  const handleAddCategory = (modelId: number) => {
-    if (!newCategory.value.trim()) return;
-    setBrands((prev) =>
-      prev.map((brand) => ({
-        ...brand,
-        models: brand.models.map((model) =>
-          model.id === modelId
-            ? {
-                ...model,
-                categories: [
-                  ...model.categories,
-                  {
-                    id: Date.now(),
-                    name: newCategory.value.trim(),
-                    subCategories: [],
-                  },
-                ],
-              }
-            : model
-        ),
-      }))
-    );
-    setNewCategory({ modelId: null, value: "" });
-  };
-
-  // Add Subcategory
-  const handleAddSubcategory = (categoryId: number) => {
-    if (!newSubcategory.value.trim()) return;
-    setBrands((prev) =>
-      prev.map((brand) => ({
-        ...brand,
-        models: brand.models.map((model) => ({
-          ...model,
-          categories: model.categories.map((cat) =>
-            cat.id === categoryId
-              ? {
-                  ...cat,
-                  subCategories: [
-                    ...cat.subCategories,
-                    { id: Date.now(), name: newSubcategory.value.trim(), parts: [] },
-                  ],
-                }
-              : cat
-          ),
-        })),
-      }))
-    );
-    setNewSubcategory({ categoryId: null, value: "" });
-  };
-
-  // Add Part
-  const handleAddPart = (subcategoryId: number) => {
-    if (!newPart.name.trim() || !newPart.partNumber.trim() || newPart.priceUSD <= 0) return;
-    setBrands((prev) =>
-      prev.map((brand) => ({
-        ...brand,
-        models: brand.models.map((model) => ({
-          ...model,
-          categories: model.categories.map((cat) => ({
-            ...cat,
-            subCategories: cat.subCategories.map((sub) =>
-              sub.id === subcategoryId
-                ? {
-                    ...sub,
-                    parts: [
-                      ...sub.parts,
-                      {
-                        id: Date.now(),
-                        name: newPart.name.trim(),
-                        partNumber: newPart.partNumber.trim(),
-                        description: newPart.description.trim(),
-                        priceUSD: newPart.priceUSD,
-                        stockQuantity: newPart.stockQuantity,
-                      },
-                    ],
-                  }
-                : sub
-            ),
-          })),
-        })),
-      }))
-    );
-    setNewPart({
-      subcategoryId: null,
-      name: "",
-      partNumber: "",
-      description: "",
-      priceUSD: 0,
-      stockQuantity: 0,
+  const toggleExpand = (id: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
     });
   };
 
+  const openAddModal = (type: ItemType, parentId?: string) => {
+    setAddType(type);
+    setAddParentId(parentId || null);
+    setFormData({ name: '', description: '', partNumber: '', priceUSD: 0, stockQuantity: 0 });
+    setIsAddModalOpen(true);
+  };
+
+  const openEditModal = (type: ItemType, item: any, parentId?: string) => {
+    setEditItem({ type, id: item._id, parentId, data: item });
+    setFormData({
+      name: item.name || '',
+      description: item.description || '',
+      partNumber: (type === 'part' ? item.partNumber : '') || '',
+      priceUSD: type === 'part' ? Number(item.priceUSD) || 0 : 0,
+      stockQuantity: type === 'part' ? Number(item.stockQuantity) || 0 : 0,
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      let url = '';
+      let method: 'POST' | 'PUT' = 'POST';
+      const isEdit = !!editItem;
+      const type = editItem?.type || addType!;
+      let body: any = { name: formData.name.trim(), description: formData.description?.trim() };
+
+      if (type === 'brand') {
+        url = isEdit ? `/api/v1/admin/brands/${editItem!.id}` : '/api/v1/admin/brands';
+        method = isEdit ? 'PUT' : 'POST';
+      } else if (type === 'model') {
+        url = isEdit ? `/api/v1/admin/models/${editItem!.id}` : '/api/v1/admin/models';
+        method = isEdit ? 'PUT' : 'POST';
+        body.brandId = isEdit ? editItem!.parentId : addParentId;
+      } else if (type === 'category') {
+        url = isEdit ? `/api/v1/admin/categories/${editItem!.id}` : '/api/v1/admin/categories';
+        method = isEdit ? 'PUT' : 'POST';
+      } else if (type === 'subcategory') {
+        url = isEdit ? `/api/v1/admin/product-hierarchy/subcategories/${editItem!.id}` : '/api/v1/admin/product-hierarchy/subcategories';
+        method = isEdit ? 'PUT' : 'POST';
+        body.categoryId = isEdit ? editItem!.parentId : addParentId;
+      } else if (type === 'part') {
+        url = isEdit ? `/api/v1/admin/product-hierarchy/parts/${editItem!.id}` : '/api/v1/admin/product-hierarchy/parts';
+        method = isEdit ? 'PUT' : 'POST';
+        body = {
+          ...body,
+          partNumber: formData.partNumber.trim(),
+          priceUSD: Number(formData.priceUSD),
+          stockQuantity: Number(formData.stockQuantity),
+          ...(isEdit ? {} : { subCategoryId: addParentId }),
+        };
+      }
+
+      const res = await authenticatedFetch(url, { method, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error('Save operation failed');
+
+      showToast(`Item ${isEdit ? 'updated' : 'created'}`, 'success');
+      setEditItem(null);
+      setIsAddModalOpen(false);
+      fetchHierarchy();
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    }
+  };
+
+  const handleDelete = async (type: ItemType, id: string, name: string) => {
+    if (!window.confirm(`Delete ${name}?`)) return;
+    try {
+      let url = '';
+      if (type === 'brand') url = `/api/v1/admin/brands/${id}`;
+      else if (type === 'model') url = `/api/v1/admin/models/${id}`;
+      else if (type === 'category') url = `/api/v1/admin/categories/${id}`;
+      else if (type === 'subcategory') url = `/api/v1/admin/product-hierarchy/subcategories/${id}`;
+      else if (type === 'part') url = `/api/v1/admin/product-hierarchy/parts/${id}`;
+
+      const res = await authenticatedFetch(url, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Delete failed');
+      showToast('Successfully deleted', 'success');
+      fetchHierarchy();
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    }
+  };
+
+  // Filter hierarchy based on search query
+  const filterHierarchy = (brandsList: Brand[], query: string): Brand[] => {
+    if (!query.trim()) return brandsList;
+    
+    const lowerQuery = query.toLowerCase();
+    
+    return brandsList
+      .map((brand) => {
+        const brandMatches = 
+          brand.name.toLowerCase().includes(lowerQuery) ||
+          brand.description?.toLowerCase().includes(lowerQuery);
+        
+        const filteredModels = brand.models
+          ?.map((model) => {
+            const modelMatches =
+              model.name.toLowerCase().includes(lowerQuery) ||
+              model.description?.toLowerCase().includes(lowerQuery);
+            
+            const filteredCategories = model.categories
+              ?.map((category) => {
+                const categoryMatches =
+                  category.name.toLowerCase().includes(lowerQuery) ||
+                  category.description?.toLowerCase().includes(lowerQuery);
+                
+                const filteredSubCategories = category.subCategories
+                  ?.map((subCategory) => {
+                    const subCategoryMatches =
+                      subCategory.name.toLowerCase().includes(lowerQuery) ||
+                      subCategory.description?.toLowerCase().includes(lowerQuery);
+                    
+                    const filteredParts = subCategory.parts?.filter(
+                      (part) =>
+                        part.name.toLowerCase().includes(lowerQuery) ||
+                        part.partNumber.toLowerCase().includes(lowerQuery) ||
+                        part.description?.toLowerCase().includes(lowerQuery)
+                    );
+                    
+                    // Include subcategory if it matches or has matching parts
+                    if (subCategoryMatches || (filteredParts && filteredParts.length > 0)) {
+                      return { ...subCategory, parts: filteredParts || [] };
+                    }
+                    return null;
+                  })
+                  .filter(Boolean) as SubCategory[];
+                
+                // Include category if it matches or has matching subcategories
+                if (categoryMatches || (filteredSubCategories && filteredSubCategories.length > 0)) {
+                  return { ...category, subCategories: filteredSubCategories || [] };
+                }
+                return null;
+              })
+              .filter(Boolean) as Category[];
+            
+            // Include model if it matches or has matching categories
+            if (modelMatches || (filteredCategories && filteredCategories.length > 0)) {
+              return { ...model, categories: filteredCategories || [] };
+            }
+            return null;
+          })
+          .filter(Boolean) as Model[];
+        
+        // Include brand if it matches or has matching models
+        if (brandMatches || (filteredModels && filteredModels.length > 0)) {
+          return { ...brand, models: filteredModels || [] };
+        }
+        return null;
+      })
+      .filter(Boolean) as Brand[];
+  };
+
+  const filteredBrands = useMemo(() => {
+    return filterHierarchy(brands, searchQuery);
+  }, [brands, searchQuery]);
+
+  if (loading) return <Loader />;
+
   return (
-    <div style={{ padding: 28, fontFamily: "system-ui, sans-serif" }}>
-      {/* Header */}
-      <div
-        style={{
-          marginBottom: 20,
-          padding: "15px 20px",
-          background: "#f8fafc",
-          borderRadius: 12,
-          border: "1px solid #e5e7eb",
-        }}
-      >
-        <h2 style={{ margin: 0 }}>🚢 Shipping Parts Hierarchy</h2>
-        <p style={{ margin: "6px 0 0", color: "#555" }}>
-          Manage Brand → Model → Category → Sub-Category → Parts
-        </p>
-      </div>
-
-      {/* Add Brand Section */}
-      <div
-        style={{
-          marginBottom: 20,
-          padding: 16,
-          borderRadius: 12,
-          border: "1px solid #e5e7eb",
-          background: "white",
-        }}
-      >
-        <h3 style={{ margin: "0 0 12px" }}>Add Brand</h3>
-        <div style={{ display: "flex", gap: 10 }}>
-          <input
-            value={newBrand}
-            onChange={(e) => setNewBrand(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAddBrand()}
-            placeholder="Enter Brand Name"
-            style={{
-              flex: 1,
-              padding: 10,
-              borderRadius: 8,
-              border: "1px solid #d1d5db",
-            }}
-          />
-          <button
-            onClick={handleAddBrand}
-            style={{
-              padding: "10px 16px",
-              borderRadius: 8,
-              border: "none",
-              background: "#2563eb",
-              color: "white",
-              cursor: "pointer",
-              fontWeight: 500,
-            }}
-          >
-            + Add Brand
-          </button>
-        </div>
-      </div>
-
-      {/* Brands List */}
-      {brands.map((brand) => (
-        <div
-          key={brand.id}
-          style={{
-            marginBottom: 24,
-            padding: 20,
-            borderRadius: 14,
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-            background: "white",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <strong style={{ fontSize: 18 }}>Brand: {brand.name}</strong>
-
-            {/* Add Model */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {newModel.brandId === brand.id ? (
-                <>
-                  <input
-                    autoFocus
-                    value={newModel.value}
-                    onChange={(e) => setNewModel({ ...newModel, value: e.target.value })}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleAddModel(brand.id);
-                      if (e.key === "Escape") setNewModel({ brandId: null, value: "" });
-                    }}
-                    placeholder="Model name"
-                    style={{ padding: 8, borderRadius: 6, border: "1px solid #9ca3af" }}
-                  />
-                  <button
-                    onClick={() => handleAddModel(brand.id)}
-                    style={{ padding: "6px 10px", background: "#16a34a", color: "white", border: "none", borderRadius: 6 }}
-                  >
-                    ✓
-                  </button>
-                  <button
-                    onClick={() => setNewModel({ brandId: null, value: "" })}
-                    style={{ padding: "6px 10px", background: "#dc2626", color: "white", border: "none", borderRadius: 6 }}
-                  >
-                    ✕
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setNewModel({ brandId: brand.id, value: "" })}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: 8,
-                    border: "1px solid #d1d5db",
-                    background: "white",
-                    cursor: "pointer",
-                  }}
-                >
-                  + Add Model
-                </button>
-              )}
+    <div className="min-h-screen bg-[#F9FAFB] pb-20">
+      {/* Dynamic Glass Header */}
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-5">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+              <MdLayers className="text-white w-7 h-7" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight leading-none">Catalog Architecture</h1>
+              <p className="text-sm text-gray-500 mt-1 font-medium">Configure nested product relationships</p>
             </div>
           </div>
 
-          {/* Models */}
-          {brand.models.map((model) => (
-            <div
-              key={model.id}
-              style={{
-                marginLeft: 24,
-                marginTop: 16,
-                padding: 14,
-                borderRadius: 10,
-                border: "1px solid #e5e7eb",
-                background: "#f9fafb",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <strong style={{ fontSize: 16 }}>Model: {model.name}</strong>
-
-                {/* Add Category */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {newCategory.modelId === model.id ? (
-                    <>
-                      <input
-                        autoFocus
-                        value={newCategory.value}
-                        onChange={(e) => setNewCategory({ ...newCategory, value: e.target.value })}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleAddCategory(model.id);
-                          if (e.key === "Escape") setNewCategory({ modelId: null, value: "" });
-                        }}
-                        placeholder="Category name"
-                        style={{ padding: 8, borderRadius: 6, border: "1px solid #9ca3af" }}
-                      />
-                      <button onClick={() => handleAddCategory(model.id)} style={{ padding: "6px 10px", background: "#16a34a", color: "white", border: "none", borderRadius: 6 }}>
-                        ✓
-                      </button>
-                      <button onClick={() => setNewCategory({ modelId: null, value: "" })} style={{ padding: "6px 10px", background: "#dc2626", color: "white", border: "none", borderRadius: 6 }}>
-                        ✕
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => setNewCategory({ modelId: model.id, value: "" })}
-                      style={{
-                        padding: "6px 10px",
-                        borderRadius: 8,
-                        border: "1px solid #d1d5db",
-                        background: "white",
-                        cursor: "pointer",
-                      }}
-                    >
-                      + Add Category
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Categories */}
-              {model.categories.map((cat) => (
-                <div
-                  key={cat.id}
-                  style={{
-                    marginLeft: 32,
-                    marginTop: 14,
-                    padding: 12,
-                    borderRadius: 10,
-                    border: "1px solid #e5e7eb",
-                    background: "white",
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <strong>Category: {cat.name}</strong>
-
-                    {/* Add Subcategory */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {newSubcategory.categoryId === cat.id ? (
-                        <>
-                          <input
-                            autoFocus
-                            value={newSubcategory.value}
-                            onChange={(e) => setNewSubcategory({ ...newSubcategory, value: e.target.value })}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") handleAddSubcategory(cat.id);
-                              if (e.key === "Escape") setNewSubcategory({ categoryId: null, value: "" });
-                            }}
-                            placeholder="Subcategory name"
-                            style={{ padding: 8, borderRadius: 6, border: "1px solid #9ca3af" }}
-                          />
-                          <button onClick={() => handleAddSubcategory(cat.id)} style={{ padding: "6px 10px", background: "#16a34a", color: "white", border: "none", borderRadius: 6 }}>
-                            ✓
-                          </button>
-                          <button onClick={() => setNewSubcategory({ categoryId: null, value: "" })} style={{ padding: "6px 10px", background: "#dc2626", color: "white", border: "none", borderRadius: 6 }}>
-                            ✕
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={() => setNewSubcategory({ categoryId: cat.id, value: "" })}
-                          style={{
-                            padding: "6px 10px",
-                            borderRadius: 8,
-                            border: "1px solid #d1d5db",
-                            background: "white",
-                            cursor: "pointer",
-                            fontSize: 13,
-                          }}
-                        >
-                          + Add Subcategory
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Subcategories */}
-                  {cat.subCategories.map((sub) => (
-                    <div
-                      key={sub.id}
-                      style={{
-                        marginLeft: 32,
-                        marginTop: 10,
-                        padding: 10,
-                        borderRadius: 8,
-                        border: "1px solid #e5e7eb",
-                        background: "#f3f4f6",
-                      }}
-                    >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <strong style={{ fontSize: 15 }}>Subcategory: {sub.name}</strong>
-
-                        {/* Add Part */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          {newPart.subcategoryId === sub.id ? (
-                            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                              <input
-                                autoFocus
-                                value={newPart.name}
-                                onChange={(e) => setNewPart({ ...newPart, name: e.target.value })}
-                                placeholder="Part name"
-                                style={{ padding: 6, borderRadius: 4, border: "1px solid #9ca3af" }}
-                              />
-                              <input
-                                value={newPart.partNumber}
-                                onChange={(e) => setNewPart({ ...newPart, partNumber: e.target.value })}
-                                placeholder="Part number"
-                                style={{ padding: 6, borderRadius: 4, border: "1px solid #9ca3af" }}
-                              />
-                              <input
-                                value={newPart.description}
-                                onChange={(e) => setNewPart({ ...newPart, description: e.target.value })}
-                                placeholder="Description"
-                                style={{ padding: 6, borderRadius: 4, border: "1px solid #9ca3af" }}
-                              />
-                              <input
-                                type="number"
-                                value={newPart.priceUSD}
-                                onChange={(e) => setNewPart({ ...newPart, priceUSD: parseFloat(e.target.value) || 0 })}
-                                placeholder="Price USD"
-                                style={{ padding: 6, borderRadius: 4, border: "1px solid #9ca3af" }}
-                              />
-                              <input
-                                type="number"
-                                value={newPart.stockQuantity}
-                                onChange={(e) => setNewPart({ ...newPart, stockQuantity: parseInt(e.target.value) || 0 })}
-                                placeholder="Stock quantity"
-                                style={{ padding: 6, borderRadius: 4, border: "1px solid #9ca3af" }}
-                              />
-                              <div style={{ display: "flex", gap: 4 }}>
-                                <button onClick={() => handleAddPart(sub.id)} style={{ padding: "4px 8px", background: "#16a34a", color: "white", border: "none", borderRadius: 4 }}>
-                                  ✓
-                                </button>
-                                <button onClick={() => setNewPart({ subcategoryId: null, name: "", partNumber: "", description: "", priceUSD: 0, stockQuantity: 0 })} style={{ padding: "4px 8px", background: "#dc2626", color: "white", border: "none", borderRadius: 4 }}>
-                                  ✕
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setNewPart({ ...newPart, subcategoryId: sub.id })}
-                              style={{
-                                padding: "4px 8px",
-                                borderRadius: 6,
-                                border: "1px solid #d1d5db",
-                                background: "white",
-                                cursor: "pointer",
-                                fontSize: 12,
-                              }}
-                            >
-                              + Add Part
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Parts */}
-                      {sub.parts.map((part) => (
-                        <div
-                          key={part.id}
-                          style={{
-                            marginLeft: 32,
-                            marginTop: 8,
-                            padding: 8,
-                            borderRadius: 6,
-                            border: "1px solid #d1d5db",
-                            background: "#fafafa",
-                            fontSize: 13,
-                          }}
-                        >
-                          <strong>Part: {part.name}</strong> ({part.partNumber})<br />
-                          Description: {part.description}<br />
-                          Price: ${part.priceUSD} USD | Stock: {part.stockQuantity}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              ))}
+          <div className="flex items-center gap-3">
+            <div className="relative group">
+              <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Filter catalog..." 
+                value={searchQuery}
+                className="pl-10 pr-4 py-2.5 bg-gray-100 border-none rounded-xl w-64 focus:ring-2 ring-indigo-500/20 transition-all text-sm font-medium"
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+            <button 
+              onClick={() => openAddModal('brand')}
+              className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-md shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-2"
+            >
+              <MdAdd className="w-5 h-5" /> Brand
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-8 mt-10">
+        {searchQuery && filteredBrands.length === 0 && (
+          <div className="text-center py-16">
+            <MdSearch className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+            <h3 className="text-xl font-bold text-gray-600 mb-2">No results found</h3>
+            <p className="text-gray-400">Try adjusting your search query</p>
+          </div>
+        )}
+        <div className="space-y-6">
+          {filteredBrands.map(brand => (
+            <Node
+              key={brand._id} item={brand} type="brand" icon={<MdBusiness />}
+              accent="indigo" expandedItems={expandedItems} toggleExpand={toggleExpand}
+              onAdd={openAddModal} onEdit={openEditModal} onDelete={handleDelete}
+            >
+              {brand.models?.map(model => (
+                <Node
+                  key={model._id} item={model} type="model" icon={<MdModelTraining />}
+                  accent="blue" expandedItems={expandedItems} toggleExpand={toggleExpand}
+                  onAdd={openAddModal} onEdit={openEditModal} onDelete={handleDelete} parentId={brand._id}
+                >
+                  {model.categories?.map(cat => (
+                    <Node
+                      key={cat._id} item={cat} type="category" icon={<MdCategory />}
+                      accent="purple" expandedItems={expandedItems} toggleExpand={toggleExpand}
+                      onAdd={openAddModal} onEdit={openEditModal} onDelete={handleDelete} parentId={model._id}
+                    >
+                      {cat.subCategories?.map(sub => (
+                        <Node
+                          key={sub._id} item={sub} type="subcategory" icon={<MdLabel />}
+                          accent="amber" expandedItems={expandedItems} toggleExpand={toggleExpand}
+                          onAdd={openAddModal} onEdit={openEditModal} onDelete={handleDelete} parentId={cat._id}
+                        >
+                          <div className="grid grid-cols-1 gap-2 mt-4">
+                            {sub.parts?.map(part => (
+                              <PartCard 
+                                key={part._id} part={part} 
+                                onEdit={() => openEditModal('part', part, sub._id)}
+                                onDelete={() => handleDelete('part', part._id, part.name)}
+                              />
+                            ))}
+                          </div>
+                        </Node>
+                      ))}
+                    </Node>
+                  ))}
+                </Node>
+              ))}
+            </Node>
           ))}
         </div>
-      ))}
+      </main>
+
+      {/* ── Modal Component ── */}
+      {(editItem || isAddModalOpen) && (
+        <Modal
+          isOpen={true}
+          onClose={() => { setEditItem(null); setIsAddModalOpen(false); }}
+          title={`${editItem ? 'Edit' : 'Create'} ${editItem?.type || addType}`}
+          size="medium"
+        >
+          <div className="space-y-6 py-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="md:col-span-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Primary Name</label>
+                <input
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:bg-white focus:ring-2 ring-indigo-500/10 transition-all outline-none"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+
+              {(editItem?.type === 'part' || addType === 'part') && (
+                <>
+                  <div className="md:col-span-2">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Part SKU / Number</label>
+                    <input
+                      className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl outline-none"
+                      value={formData.partNumber}
+                      onChange={e => setFormData({ ...formData, partNumber: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Unit Price (USD)</label>
+                    <input
+                      type="number"
+                      className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl outline-none"
+                      value={formData.priceUSD}
+                      onChange={e => setFormData({ ...formData, priceUSD: Number(e.target.value) })}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Stock Inventory</label>
+                    <input
+                      type="number"
+                      className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl outline-none"
+                      value={formData.stockQuantity}
+                      onChange={e => setFormData({ ...formData, stockQuantity: Number(e.target.value) })}
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="md:col-span-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Summary</label>
+                <textarea
+                  rows={3}
+                  className="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl resize-none outline-none"
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-6">
+              <button 
+                onClick={() => { setEditItem(null); setIsAddModalOpen(false); }}
+                className="px-6 py-3 font-bold text-gray-400 hover:text-gray-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSave}
+                className="px-10 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:shadow-lg shadow-indigo-100 transition-all"
+              >
+                Confirm Changes
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
+}
+
+// ── Shared Node Component ──
+
+function Node({ item, type, icon, accent, expandedItems, toggleExpand, onAdd, onEdit, onDelete, parentId, children }: any) {
+  const isExpanded = expandedItems.has(item._id);
+  const nextType = getNextType(type);
+
+  const colors: any = {
+    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100",
+    blue: "bg-blue-50 text-blue-600 border-blue-100",
+    purple: "bg-purple-50 text-purple-600 border-purple-100",
+    amber: "bg-amber-50 text-amber-600 border-amber-100",
+  };
+
+  return (
+    <div className="relative group/node">
+      <div className={`
+        flex items-center justify-between p-4 rounded-2xl border transition-all duration-300
+        ${isExpanded ? 'bg-white shadow-xl ring-1 ring-black/5 border-transparent mb-4' : 'bg-white border-transparent hover:bg-gray-50 hover:shadow-md'}
+      `}>
+        <div className="flex items-center gap-4 flex-1">
+          <button 
+            onClick={() => toggleExpand(item._id)}
+            className={`p-1.5 rounded-lg transition-all ${isExpanded ? 'rotate-90 bg-gray-100 text-gray-900 shadow-inner' : 'text-gray-400 hover:bg-gray-200'}`}
+          >
+            <MdChevronRight className="w-6 h-6" />
+          </button>
+
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${colors[accent]}`}>
+            {React.cloneElement(icon, { className: "w-5 h-5" })}
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-[17px] font-bold text-gray-900">{item.name}</h4>
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-300 bg-gray-50 px-2 py-0.5 rounded border border-gray-100">{type}</span>
+            </div>
+            {item.description && <p className="text-xs text-gray-400 line-clamp-1 mt-0.5">{item.description}</p>}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1 opacity-0 group-hover/node:opacity-100 transition-all transform translate-x-2 group-hover/node:translate-x-0">
+          {nextType && (
+            <button 
+              onClick={() => onAdd(nextType, item._id)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100"
+            >
+              <MdAdd /> {nextType}
+            </button>
+          )}
+          <div className="w-px h-6 bg-gray-200 mx-2" />
+          <button onClick={() => onEdit(type, item, parentId)} className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg"><MdEdit className="w-5 h-5" /></button>
+          <button onClick={() => onDelete(type, item._id, item.name)} className="p-2 text-red-300 hover:text-red-600 hover:bg-red-50 rounded-lg"><MdDelete className="w-5 h-5" /></button>
+        </div>
+      </div>
+
+      {isExpanded && children && (
+        <div className="ml-14 pl-10 border-l-2 border-dashed border-gray-200 relative animate-in slide-in-from-top-2 duration-500">
+          {children}
+          {/* Connector Node */}
+          <div className="absolute -left-[2px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-gray-200 to-transparent" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Part Leaf Component ──
+
+function PartCard({ part, onEdit, onDelete }: any) {
+  return (
+    <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:shadow-lg hover:border-indigo-200 transition-all group/part">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 group-hover/part:text-indigo-600 transition-colors">
+          <MdOutlineInventory className="w-5 h-5" />
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-gray-800">{part.name}</span>
+            <span className="text-[10px] font-mono font-black text-gray-400 bg-gray-50 border px-1.5 rounded uppercase">{part.partNumber}</span>
+          </div>
+          <div className="flex items-center gap-4 mt-1.5">
+            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">${part.priceUSD.toFixed(2)}</span>
+            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-black uppercase ${part.stockQuantity < 10 ? 'bg-red-50 text-red-600 animate-pulse' : 'bg-emerald-50 text-emerald-600'}`}>
+              Inventory: {part.stockQuantity}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1 opacity-0 group-hover/part:opacity-100 transition-all">
+        <button onClick={onEdit} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg"><MdEdit className="w-5 h-5" /></button>
+        <button onClick={onDelete} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><MdDelete className="w-5 h-5" /></button>
+      </div>
+    </div>
+  );
+}
+
+function Loader() {
+  return (
+    <div className="h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-14 h-14 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin shadow-inner" />
+        <span className="text-xs font-black text-gray-400 uppercase tracking-[0.2em] animate-pulse">Synchronizing</span>
+      </div>
+    </div>
+  );
+}
+
+function getNextType(current: string) {
+  const flow: any = { brand: 'model', model: 'category', category: 'subcategory', subcategory: 'part' };
+  return flow[current] || null;
 }

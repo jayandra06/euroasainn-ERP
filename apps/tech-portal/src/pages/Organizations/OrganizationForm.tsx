@@ -113,6 +113,38 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (!organization?._id) throw new Error('Organization ID is required for update');
+      
+      const submitData = {
+        name: data.name,
+        type: data.type,
+        portalType: data.portalType,
+        isActive: data.isActive,
+      };
+
+      const response = await apiFetch(`/api/v1/tech/organizations/${organization._id}`, {
+        method: 'PUT',
+        body: JSON.stringify(submitData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update organization');
+      }
+      return await response.json();
+    },
+    onSuccess: () => {
+      showToast('Organization updated successfully!', 'success');
+      onSuccess();
+    },
+    onError: (error: Error) => {
+      setErrors({ submit: error.message });
+      showToast(`Failed to update organization: ${error.message}`, 'error');
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -143,11 +175,15 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
       }
     }
 
-    // Create organization with admin invitation
-    createMutation.mutate(formData);
+    // Create or update organization
+    if (organization?._id) {
+      updateMutation.mutate(formData);
+    } else {
+      createMutation.mutate(formData);
+    }
   };
 
-  const isLoading = createMutation.isPending;
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -294,10 +330,13 @@ export function OrganizationForm({ organization, organizationType, onSuccess, on
         </button>
         <button
           type="submit"
-          disabled={createMutation.isPending}
+          disabled={isLoading}
           className="px-6 py-3 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
         >
-          {createMutation.isPending ? 'Creating Organization...' : 'Create Organization'}
+          {isLoading 
+            ? (organization?._id ? 'Updating Organization...' : 'Creating Organization...')
+            : (organization?._id ? 'Update Organization' : 'Create Organization')
+          }
         </button>
       </div>
     </form>

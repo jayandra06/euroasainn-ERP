@@ -2,7 +2,6 @@
  * Ultra-Modern Sidebar Component
  * World-Class SaaS ERP Platform Design
  */
-
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -41,7 +40,7 @@ interface NavItem {
 }
 
 /* ============================================================
-   ⭐ MERGED NAV ITEMS (Branch-1 + Role Management Added)
+   ⭐ NAV ITEMS WITH PARTS HIERARCHY ADDED
    ============================================================ */
 const navItems: NavItem[] = [
   {
@@ -51,12 +50,17 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin', label: 'Dashboard', icon: MdDashboard },
       { path: '/dashboard/admin/rfqs', label: 'RFQs', icon: MdRequestQuote },
       { path: '/dashboard/admin/inventory', label: 'Inventory', icon: MdInventory },
+      // ⭐ NEW: Parts Hierarchy
+      {
+        path: '/dashboard/admin/product-hierarchy',
+        label: 'Parts Hierarchy',
+        icon: MdCategory,
+      },
     ],
   },
-   { path: '/users', label: 'Users', icon: MdPeople },
-   
-   
-   {
+  { path: '/users', label: 'Users', icon: MdPeople },
+
+  {
     label: 'Customers',
     icon: MdPeople,
     children: [
@@ -65,24 +69,20 @@ const navItems: NavItem[] = [
     ],
   },
   {
-     label: 'Vendors',
-     icon: MdStore,
-     children: [
-       { path: '/dashboard/admin/vendors', label: 'All Vendors', icon: MdPeople },
-       { path: '/dashboard/admin/brands', label: 'Brands', icon: MdStore },
-       { path: '/dashboard/admin/categories', label: 'Categories', icon: MdCategory },
-       { path: '/dashboard/admin/models', label: 'Models', icon: MdModelTraining },
-     ],
-   },
+    label: 'Vendors',
+    icon: MdStore,
+    children: [
+      { path: '/dashboard/admin/vendors', label: 'All Vendors', icon: MdPeople },
+      { path: '/dashboard/admin/brands', label: 'Brands', icon: MdStore },
+      { path: '/dashboard/admin/categories', label: 'Categories', icon: MdCategory },
+      { path: '/dashboard/admin/models', label: 'Models', icon: MdModelTraining },
+    ],
+  },
 
-  // ⭐ ADDED FROM BRANCH-2
-  
-
-  // ⭐ RESTORED FROM BRANCH-1
-  
   { path: '/organizations', label: 'Organizations', icon: MdBusinessCenter },
   { path: '/onboarding-data', label: 'Onboarding', icon: MdAssignment },
   { path: '/licenses', label: 'Licenses', icon: MdVpnKey },
+
   {
     label: 'Role Management',
     icon: MdVpnKey,
@@ -91,15 +91,14 @@ const navItems: NavItem[] = [
       { path: '/dashboard/admin/assign-roles', label: 'Assign Roles', icon: MdPeople },
     ],
   },
- 
+
   { path: '/analytics', label: 'Analytics', icon: MdBarChart },
   { path: '/settings', label: 'Settings', icon: MdSettings },
 ];
 
 /* ============================================================
-   ⭐ SIDEBAR COMPONENT BEGINS
+   ⭐ SIDEBAR COMPONENT
    ============================================================ */
-
 interface SidebarProps {
   collapsed: boolean;
   onToggle: (collapsed: boolean) => void;
@@ -114,7 +113,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  // ⭐ Updated default expanded sections to include Role Management
+  // Default expanded sections including all collapsible groups
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set([
       'Admin Dashboard',
@@ -140,10 +139,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const handleMouseEnter = (e: React.MouseEvent, label: string) => {
     if (collapsed) {
       if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
-
       setTooltip({ label, x: e.clientX, y: e.clientY });
       setShowTooltip(false);
-
       tooltipTimeoutRef.current = setTimeout(() => setShowTooltip(true), 150);
     }
   };
@@ -164,7 +161,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     return () => {
       if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
     };
-  }, [collapsed]);
+  }, []);
 
   return (
     <aside
@@ -196,7 +193,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </div>
           )}
         </div>
-
         <button
           onClick={() => onToggle(!collapsed)}
           className={cn(
@@ -282,6 +278,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             );
           }
 
+          // Single-level items
           return (
             <NavLink
               key={item.path}
@@ -313,7 +310,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         })}
       </nav>
 
-      {/* User Section */}
+      {/* User & Logout Section */}
       <div className={cn('border-t border-[hsl(var(--border))] bg-[hsl(var(--background))] overflow-hidden', collapsed ? 'px-2 py-3' : 'p-4')}>
         {!collapsed && (
           <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[hsl(var(--secondary))] mb-3">
@@ -330,7 +327,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </div>
           </div>
         )}
-
         {collapsed && (
           <div className="flex justify-center mb-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
@@ -355,7 +351,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </button>
       </div>
 
-      {/* Tooltip */}
+      {/* Tooltip for collapsed mode */}
       {collapsed && tooltip && (
         <div
           className={cn(

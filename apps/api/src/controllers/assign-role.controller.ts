@@ -9,13 +9,21 @@ export class AssignRoleController {
     try {
       const portalType = (req.query.portalType as string) || "all";
       const organizationId = req.user!.organizationId;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string | undefined;
+      const roleFilter = req.query.roleFilter as string | undefined;
 
-      const users = await assignRoleService.listUsers(
+      const result = await assignRoleService.listUsers(
         portalType,
-        organizationId
+        organizationId,
+        page,
+        limit,
+        search,
+        roleFilter
       );
 
-      res.status(200).json({ success: true, data: users });
+      res.status(200).json({ success: true, ...result });
     } catch (error: any) {
       logger.error("Failed to list users:", error);
       res.status(500).json({ success: false, error: error.message });

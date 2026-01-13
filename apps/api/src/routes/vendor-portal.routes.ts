@@ -2,454 +2,186 @@ import { Router } from 'express';
 import multer from 'multer';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
+import { casbinMiddleware } from '../middleware/casbin.middleware';
 import { validateLicense } from '../middleware/license.middleware';
 import { paymentStatusMiddleware } from '../middleware/payment.middleware';
 import { PortalType } from '../../../../packages/shared/src/types/index';
-import { itemService } from '../services/item.service';
-import { quotationService } from '../services/quotation.service';
+
 import { userController } from '../controllers/user.controller';
-import { licenseService } from '../services/license.service';
-import { rfqService } from '../services/rfq.service';
-import { parseCatalogCSV } from '../utils/csv-parser';
-import { logger } from '../config/logger';
+import { vendorPortalController } from '../controllers/vendor-portal.controller';
+import { onboardingController } from '../controllers/onboarding.controller'; // Make sure this exists
 
 const router = Router();
 
+/* ======================================
+   🔐 GLOBAL MIDDLEWARE FOR VENDOR PORTAL
+====================================== */
 router.use(authMiddleware);
 router.use(requirePortal(PortalType.VENDOR));
-router.use(validateLicense);
 
-// Payment routes should be accessible without active payment
-// All other routes require active payment
+// Optional: enable when ready
+// router.use(validateLicense);
+// router.use(casbinMiddleware);
+
+// Skip payment check for payment/license/onboarding related routes
 router.use((req, res, next) => {
-  // Allow access to payment-related routes without payment check
-  if (req.path.startsWith('/payment') || req.path === '/licenses') {
+  if (
+    req.path.startsWith('/payment') ||
+    req.path.startsWith('/licenses') ||
+    req.path.startsWith('/onboarding') ||
+    req.path === '/license/pricing'
+  ) {
     return next();
   }
-  // Apply payment middleware to all other routes
   return paymentStatusMiddleware(req as any, res, next);
 });
 
-router.post('/users/invite', async (req, res) => {
-  try {
-    req.body.portalType = PortalType.VENDOR;
-    if (!(req as any).user?.organizationId && !req.body.organizationId) {
-      return res.status(400).json({
-        success: false,
-        error: 'organizationId is required',
-      });
-    }
-    req.body.organizationId = req.body.organizationId || (req as any).user?.organizationId;
-    await userController.inviteUser(req, res);
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to invite user',
-    });
-  }
-});
-
-// Items routes
-router.get('/items', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const items = await itemService.getItems(orgId, req.query);
-    res.json({ success: true, data: items });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-router.post('/items', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const item = await itemService.createItem(orgId, req.body);
-    res.status(201).json({ success: true, data: item });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
-  }
-});
-
-// Quotation routes
-router.get('/quotation', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const quotations = await quotationService.getQuotations(orgId, req.query);
-    res.json({ success: true, data: quotations });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-router.post('/quotation', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const quotation = await quotationService.createQuotation(orgId, req.body);
-    res.status(201).json({ success: true, data: quotation });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
-  }
-});
-
-// Catalogue route (same as items)
-router.get('/catalogue', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const items = await itemService.getItems(orgId, req.query);
-    res.json({ success: true, data: items });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Upload catalog file (CSV)
+/* ===========================
+   MULTER CONFIG FOR UPLOADS
+=========================== */
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 20 * 1024 * 1024, // 20MB
   },
   fileFilter: (req, file, cb) => {
-    // Accept CSV files
-    if (file.mimetype === 'text/csv' || file.mimetype === 'application/vnd.ms-excel' || file.originalname.endsWith('.csv')) {
+    const allowed = [
+      'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ];
+    const extOk = ['.csv', '.xls', '.xlsx'].some(ext =>
+      file.originalname.toLowerCase().endsWith(ext)
+    );
+
+    if (allowed.includes(file.mimetype) || extOk) {
       cb(null, true);
     } else {
-      cb(new Error('Only CSV files are allowed'));
+      cb(new Error('Only CSV, XLS, or XLSX files are allowed'));
     }
   },
 });
 
-router.post('/catalog/upload', upload.single('file'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        error: 'No file uploaded',
-      });
+// Multer config for image uploads (logos)
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPEG, PNG, GIF, and WebP images are allowed'));
     }
+  },
+});
 
-    const orgId = (req as any).user?.organizationId;
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Organization ID not found',
-      });
-    }
+/* ===========================
+   VENDOR ONBOARDING / PROFILE ROUTES
+=========================== */
+// Get current logged-in vendor's onboarding/profile data
+router.get('/onboarding/me', vendorPortalController.getCurrentVendorOnboarding.bind(vendorPortalController));
 
-    // Parse CSV file
-    const parsedItems = parseCatalogCSV(req.file.buffer);
+// Update current vendor's onboarding/profile (edit profile)
+router.patch('/onboarding/me', vendorPortalController.updateCurrentVendorOnboarding.bind(vendorPortalController));
 
-    if (parsedItems.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'No valid items found in CSV file',
-      });
-    }
+// Upload vendor company logo
+router.post('/onboarding/logo', imageUpload.single('logo'), vendorPortalController.uploadLogo.bind(vendorPortalController));
 
-    // Create items in bulk
-    const createdItems = [];
-    const errors = [];
+// Optional: Get current onboarding status (approved/pending/rejected)
+// router.get('/onboarding/status', vendorPortalController.getCurrentOnboardingStatus.bind(vendorPortalController));
 
-    for (const itemData of parsedItems) {
-      try {
-        const item = await itemService.createItem(orgId, itemData);
-        createdItems.push(item);
-      } catch (error: any) {
-        logger.error(`Failed to create item ${itemData.name}:`, error);
-        errors.push({
-          item: itemData.name,
-          error: error.message || 'Failed to create item',
-        });
-      }
-    }
+/* ===========================
+   USER ROUTES (VENDOR PORTAL USERS)
+=========================== */
+router.post('/users/invite', (req, res) => {
+  req.body.portalType = PortalType.VENDOR;
+  req.body.organizationId = req.body.organizationId || (req as any).user?.organizationId;
 
-    logger.info(`Catalog upload completed: ${createdItems.length} items created, ${errors.length} errors`);
-
-    res.status(201).json({
-      success: true,
-      data: {
-        created: createdItems.length,
-        failed: errors.length,
-        items: createdItems,
-        errors: errors.length > 0 ? errors : undefined,
-      },
-      message: `Successfully uploaded ${createdItems.length} items${errors.length > 0 ? ` (${errors.length} failed)` : ''}`,
-    });
-  } catch (error: any) {
-    logger.error('Catalog upload error:', error);
-    res.status(400).json({
+  if (!req.body.organizationId) {
+    return res.status(400).json({
       success: false,
-      error: error.message || 'Failed to upload catalog file',
+      error: 'organizationId is required',
     });
   }
+
+  userController.inviteUser(req, res);
 });
 
-// Inventory route
-router.get('/inventory', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const items = await itemService.getItems(orgId, req.query);
-    // Transform items to inventory format
-    const inventory = items.map((item: any) => ({
-      itemId: item._id,
-      name: item.name,
-      sku: item.sku,
-      stockQuantity: item.stockQuantity,
-      unitPrice: item.unitPrice,
-      currency: item.currency,
-    }));
-    res.json({ success: true, data: inventory });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+/* ===========================
+   CATALOGUE ROUTES (Full CRUD + Bulk Upload)
+=========================== */
+// List / Search / Paginated catalog
+router.get('/catalogue', vendorPortalController.getCatalogue.bind(vendorPortalController));
 
-// License routes - Get licenses for user's organization
-// Get license pricing for organization
-router.get('/license/pricing', async (req: any, res) => {
-  try {
-    const userId = req.user?.userId;
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        error: 'User not authenticated',
-      });
-    }
+// Create single catalog item
+router.post('/catalogue', vendorPortalController.createCatalogueItem.bind(vendorPortalController));
 
-    const { User } = await import('../models/user.model');
-    const user = await User.findById(userId);
-    if (!user || !user.organizationId) {
-      return res.status(404).json({
-        success: false,
-        error: 'Organization not found',
-      });
-    }
+// Bulk upload (Excel/CSV)
+router.post(
+  '/catalogue/upload',
+  upload.single('file'),
+  vendorPortalController.uploadCatalog.bind(vendorPortalController)
+);
 
-    const licenses = await licenseService.getLicenses(user.organizationId.toString());
-    const activeLicense = licenses.find((l: any) => l.status === 'active' && new Date(l.expiresAt) > new Date());
+// Update single catalog item
+router.patch('/catalogue/:id', vendorPortalController.updateCatalogueItem.bind(vendorPortalController));
 
-    if (!activeLicense || !activeLicense.pricing) {
-      return res.status(404).json({
-        success: false,
-        error: 'No active license with pricing found',
-      });
-    }
+// Delete single catalog item
+router.delete('/catalogue/:id', vendorPortalController.deleteCatalogueItem.bind(vendorPortalController));
 
-    res.status(200).json({
-      success: true,
-      data: {
-        monthlyPrice: activeLicense.pricing.monthlyPrice,
-        yearlyPrice: activeLicense.pricing.yearlyPrice,
-        currency: activeLicense.pricing.currency,
-      },
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to get license pricing',
-    });
-  }
-});
+/* ===========================
+   ITEM / INVENTORY / QUOTATION / RFQ ROUTES
+=========================== */
+router.get('/items', vendorPortalController.getItems.bind(vendorPortalController));
+router.post('/items', vendorPortalController.createItem.bind(vendorPortalController));
 
-router.get('/licenses', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Organization ID not found',
-      });
-    }
-    const licenses = await licenseService.getLicenses(orgId);
-    res.json({ success: true, data: licenses });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+router.get('/quotations', vendorPortalController.getQuotations.bind(vendorPortalController));
+router.post('/quotations', vendorPortalController.createQuotation.bind(vendorPortalController));
 
-// Brands routes (vendor can create brands that need approval)
-router.get('/brands', async (req, res) => {
-  try {
-    const { brandService } = await import('../services/brand.service');
-    const orgId = (req as any).user?.organizationId;
-    const brands = await brandService.getBrands({
-      organizationId: orgId,
-      includeGlobal: true, // Include global brands + vendor's own brands
-    });
-    res.status(200).json({
-      success: true,
-      data: brands,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to get brands',
-    });
-  }
-});
+router.get('/inventory', vendorPortalController.getInventory.bind(vendorPortalController));
 
-router.post('/brands', async (req, res) => {
-  try {
-    const { brandService } = await import('../services/brand.service');
-    const userId = (req as any).user?.userId;
-    const orgId = (req as any).user?.organizationId;
-    const brand = await brandService.createBrand({
-      name: req.body.name,
-      description: req.body.description,
-      createdBy: userId,
-      organizationId: orgId,
-      isGlobal: false, // Vendor-created brands are organization-specific
-      status: 'pending', // Need admin approval
-    });
-    res.status(201).json({
-      success: true,
-      data: brand,
-      message: 'Brand created successfully. It will appear after admin approval.',
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      error: error.message || 'Failed to create brand',
-    });
-  }
-});
+router.get('/rfqs', vendorPortalController.getRFQs.bind(vendorPortalController));
+router.get('/rfqs/:id', vendorPortalController.getRFQById.bind(vendorPortalController));
 
-// Categories routes (vendor can create categories that need approval)
-router.get('/categories', async (req, res) => {
-  try {
-    const { categoryService } = await import('../services/category.service');
-    const orgId = (req as any).user?.organizationId;
-    const categories = await categoryService.getCategories({
-      organizationId: orgId,
-      includeGlobal: true, // Include global categories + vendor's own categories
-    });
-    res.status(200).json({
-      success: true,
-      data: categories,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to get categories',
-    });
-  }
-});
+/* ===========================
+   BRAND / CATEGORY / MODEL ROUTES
+=========================== */
+router.get('/brands', vendorPortalController.getBrands.bind(vendorPortalController));
+router.post('/brands', vendorPortalController.createBrand.bind(vendorPortalController));
 
-router.post('/categories', async (req, res) => {
-  try {
-    const { categoryService } = await import('../services/category.service');
-    const userId = (req as any).user?.userId;
-    const orgId = (req as any).user?.organizationId;
-    const category = await categoryService.createCategory({
-      name: req.body.name,
-      description: req.body.description,
-      createdBy: userId,
-      organizationId: orgId,
-      isGlobal: false, // Vendor-created categories are organization-specific
-      status: 'pending', // Need admin approval
-    });
-    res.status(201).json({
-      success: true,
-      data: category,
-      message: 'Category created successfully. It will appear after admin approval.',
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      error: error.message || 'Failed to create category',
-    });
-  }
-});
+router.get('/categories', vendorPortalController.getCategories.bind(vendorPortalController));
+router.post('/categories', vendorPortalController.createCategory.bind(vendorPortalController));
 
-// Models routes (vendor can create models that need approval)
-router.get('/models', async (req, res) => {
-  try {
-    const { modelService } = await import('../services/model.service');
-    const orgId = (req as any).user?.organizationId;
-    const filters: any = {
-      organizationId: orgId,
-      includeGlobal: true, // Include global models + vendor's own models
-    };
-    if (req.query.brandId) {
-      filters.brandId = req.query.brandId;
-    }
-    const models = await modelService.getModels(filters);
-    res.status(200).json({
-      success: true,
-      data: models,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to get models',
-    });
-  }
-});
+router.get('/models', vendorPortalController.getModels.bind(vendorPortalController));
+router.post('/models', vendorPortalController.createModel.bind(vendorPortalController));
 
-router.post('/models', async (req, res) => {
-  try {
-    const { modelService } = await import('../services/model.service');
-    const userId = (req as any).user?.userId;
-    const orgId = (req as any).user?.organizationId;
-    const model = await modelService.createModel({
-      name: req.body.name,
-      description: req.body.description,
-      brandId: req.body.brandId,
-      createdBy: userId,
-      organizationId: orgId,
-      isGlobal: false, // Vendor-created models are organization-specific
-      status: 'pending', // Need admin approval
-    });
-    res.status(201).json({
-      success: true,
-      data: model,
-      message: 'Model created successfully. It will appear after admin approval.',
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      error: error.message || 'Failed to create model',
-    });
-  }
-});
+/* ===========================
+   LICENSE & PAYMENT ROUTES
+=========================== */
+router.get('/license/pricing', vendorPortalController.getLicensePricing.bind(vendorPortalController));
+router.get('/licenses', vendorPortalController.getLicenses.bind(vendorPortalController));
 
-// RFQ routes (vendor's RFQ inbox)
-router.get('/rfq', async (req, res) => {
-  try {
-    const vendorOrgId = (req as any).user?.organizationId;
-    if (!vendorOrgId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Organization ID not found',
-      });
-    }
-    const rfqs = await rfqService.getRFQsForVendor(vendorOrgId, req.query);
-    res.json({ success: true, data: rfqs });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+/* ===========================
+   EMPLOYEE ROUTES
+=========================== */
+router.get('/employees', vendorPortalController.getEmployees.bind(vendorPortalController));
+router.get('/employees/onboarding-review', vendorPortalController.getEmployeesWithOnboardingStatus.bind(vendorPortalController));
+router.post('/employees', vendorPortalController.createEmployee.bind(vendorPortalController));
+router.post('/employees/invite', vendorPortalController.inviteEmployee.bind(vendorPortalController));
+router.get('/employees/:id', vendorPortalController.getEmployeeById.bind(vendorPortalController));
+router.put('/employees/:id', vendorPortalController.updateEmployee.bind(vendorPortalController));
+router.delete('/employees/:id', vendorPortalController.deleteEmployee.bind(vendorPortalController));
 
-router.get('/rfq/:id', async (req, res) => {
-  try {
-    const vendorOrgId = (req as any).user?.organizationId;
-    if (!vendorOrgId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Organization ID not found',
-      });
-    }
-    const rfqs = await rfqService.getRFQsForVendor(vendorOrgId);
-    const rfq = rfqs.find((r: any) => r._id.toString() === req.params.id);
-    if (!rfq) {
-      return res.status(404).json({
-        success: false,
-        error: 'RFQ not found',
-      });
-    }
-    res.json({ success: true, data: rfq });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+/* ===========================
+   EMPLOYEE ONBOARDING ROUTES
+=========================== */
+router.get('/employees/onboardings', vendorPortalController.getEmployeeOnboardings.bind(vendorPortalController));
+router.get('/employees/onboardings/:id', vendorPortalController.getEmployeeOnboardingById.bind(vendorPortalController));
+router.post('/employees/onboardings/:id/approve', vendorPortalController.approveEmployeeOnboarding.bind(vendorPortalController));
+router.post('/employees/onboardings/:id/reject', vendorPortalController.rejectEmployeeOnboarding.bind(vendorPortalController));
+router.delete('/employees/onboardings/:id', vendorPortalController.deleteEmployeeOnboarding.bind(vendorPortalController));
 
 export default router;

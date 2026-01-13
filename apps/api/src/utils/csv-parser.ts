@@ -1,94 +1,128 @@
-import { parse } from 'csv-parse/sync';
+import XLSX from 'xlsx';
 import { logger } from '../config/logger';
 
-export interface CatalogRow {
-  IMPA?: string;
-  Description?: string;
-  'Part No'?: string;
-  'Position No'?: string;
-  'Alternative No'?: string;
-  Brand?: string;
-  Model?: string;
-  Category?: string;
-  'Dimensions (W x B x H)'?: string;
-  Remarks?: string;
-}
-
 export interface ParsedCatalogItem {
-  name: string;
-  description?: string;
+  impa: string;
+  description: string;
+  partNo?: string;
+  positionNo?: string;
+  alternativeNo?: string;
+  brand?: string;
+  model?: string;
   category?: string;
-  sku?: string;
-  unitPrice: number;
+  dimensions?: string;
+  uom: string;
+  moq: string;
+  leadTime?: string;
+  price: number;
   currency: string;
-  metadata: {
-    impa?: string;
-    partNo?: string;
-    positionNo?: string;
-    alternativeNo?: string;
-    brand?: string;
-    model?: string;
-    dimensions?: string;
-    remarks?: string;
-  };
+  stockStatus: 'In Stock' | 'Limited' | 'Backorder' | 'Discontinued';
 }
 
 /**
- * Parse CSV file buffer and convert to catalog items
+ * Parse uploaded catalog file (CSV or Excel) and return clean items
+ * Compatible with your frontend template and CatalogItem model
  */
-export function parseCatalogCSV(fileBuffer: Buffer): ParsedCatalogItem[] {
+export function parseCatalogFile(fileBuffer: Buffer): ParsedCatalogItem[] {
   try {
-    const records = parse(fileBuffer.toString('utf-8'), {
-      columns: true,
-      skip_empty_lines: true,
-      trim: true,
-      relax_column_count: true,
-    }) as CatalogRow[];
+    let rows: any[] = [];
+
+    // Detect file type and parse accordingly
+    const fileString = fileBuffer.toString('binary');
+    const isExcel = ['xlsx', 'xls'].some(ext => 
+      fileBuffer.slice(0, 4).toString('hex') === '504b0304' && fileString.includes(ext)
+    );
+
+    if (isExcel || fileBuffer[0] === 0x50 && fileBuffer[1] === 0x4b) { // ZIP header for .xlsx
+      const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+    } else {
+      // Fallback to CSV parsing if not Excel
+      const { parse } = require('csv-parse/sync');
+      rows = parse(fileBuffer.toString('utf-8'), {
+        columns: true,
+        skip_empty_lines: true,
+        trim: true,
+        relax_column_count: true,
+      });
+    }
+
+    if (rows.length === 0) {
+      logger.warn('No rows found in uploaded catalog file');
+      return [];
+    }
 
     const items: ParsedCatalogItem[] = [];
 
-    for (const record of records) {
-      // Skip empty rows
-      if (!record.Description && !record.IMPA && !record['Part No']) {
+    // Flexible field matcher
+    const getField = (row: any, names: string[]): string => {
+      for (const name of names) {
+        if (row[name] !== undefined && row[name] !== '') {
+          return String(row[name]).trim();
+        }
+        const match = Object.keys(row).find(
+          k => k.toLowerCase().replace(/\s/g, '') === name.toLowerCase().replace(/\s/g, '')
+        );
+        if (match && row[match] !== '') {
+          return String(row[match]).trim();
+        }
+      }
+      return '';
+    };
+
+    for (const row of rows) {
+      const impa = getField(row, ['IMPA', 'impa', 'Impa Code']);
+      const description = getField(row, ['Description', 'description', 'Item Description']);
+
+      // Skip completely empty rows
+      if (!impa && !description) {
         continue;
       }
 
-      // Use Description as name, fallback to IMPA or Part No
-      const name = record.Description || record.IMPA || record['Part No'] || 'Unnamed Item';
-      
-      // Extract price from metadata or use default
-      // For now, we'll use 0 as default - vendors can update prices later
-      const unitPrice = 0;
-      const currency = 'USD'; // Default currency
+      // Required fields
+      if (!impa || !description) {
+        logger.warn(`Skipping row - missing IMPA or Description: ${JSON.stringify(row)}`);
+        continue;
+      }
+
+      const priceStr = getField(row, ['Price', 'price', 'Unit Price']);
+      const price = parseFloat(priceStr) || 0;
 
       const item: ParsedCatalogItem = {
-        name: name.trim(),
-        description: record.Description?.trim() || undefined,
-        category: record.Category?.trim() || undefined,
-        sku: record['Part No']?.trim() || record.IMPA?.trim() || undefined,
-        unitPrice,
-        currency,
-        metadata: {
-          impa: record.IMPA?.trim() || undefined,
-          partNo: record['Part No']?.trim() || undefined,
-          positionNo: record['Position No']?.trim() || undefined,
-          alternativeNo: record['Alternative No']?.trim() || undefined,
-          brand: record.Brand?.trim() || undefined,
-          model: record.Model?.trim() || undefined,
-          dimensions: record['Dimensions (W x B x H)']?.trim() || undefined,
-          remarks: record.Remarks?.trim() || undefined,
-        },
+        impa,
+        description,
+        partNo: getField(row, ['Part No', 'partNo', 'Part Number']) || undefined,
+        positionNo: getField(row, ['Position No', 'positionNo']) || undefined,
+        alternativeNo: getField(row, ['Alternative No', 'alternativeNo']) || undefined,
+        brand: getField(row, ['Brand', 'brand']) || undefined,
+        model: getField(row, ['Model', 'model']) || undefined,
+        category: getField(row, ['Category', 'category']) || 'General',
+        dimensions: getField(row, ['Dimensions', 'dimensions', 'Dimensions (W x B x H)']) || undefined,
+        uom: getField(row, ['UoM', 'uom', 'Unit']) || 'PCS',
+        moq: getField(row, ['MOQ', 'moq', 'Min Order']) || '1',
+        leadTime: getField(row, ['Lead Time', 'leadTime']) || undefined,
+        price,
+        currency: getField(row, ['Currency', 'currency']) || 'USD',
+        stockStatus: (() => {
+          const status = getField(row, ['Stock Status', 'stockStatus', 'Status', 'Availability']);
+          const normalized = status.toLowerCase();
+          if (normalized.includes('limited')) return 'Limited';
+          if (normalized.includes('backorder')) return 'Backorder';
+          if (normalized.includes('discontinued')) return 'Discontinued';
+          return 'In Stock';
+        })() as ParsedCatalogItem['stockStatus'],
       };
 
       items.push(item);
     }
 
-    logger.info(`Parsed ${items.length} items from CSV`);
+    logger.info(`Successfully parsed ${items.length} catalog items from file`);
     return items;
+
   } catch (error: any) {
-    logger.error('Failed to parse CSV:', error);
-    throw new Error(`Failed to parse CSV file: ${error.message}`);
+    logger.error('Failed to parse catalog file:', error);
+    throw new Error(`Invalid file format or parsing error: ${error.message}`);
   }
 }
-
-

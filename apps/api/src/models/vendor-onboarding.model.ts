@@ -8,6 +8,9 @@ export interface IVendorOnboarding extends Document {
   companyName: string;
   contactPerson: string;
   email: string;
+  logo?: string; // URL or path to logo image
+  companyDescription?: string; // Company description/information
+  website?: string; // Company website URL
   
   // Phone Numbers
   mobileCountryCode: string;
@@ -88,6 +91,9 @@ const VendorOnboardingSchema = new Schema<IVendorOnboarding>(
     companyName: { type: String, required: true },
     contactPerson: { type: String, required: true },
     email: { type: String, required: true, index: true },
+    logo: { type: String }, // URL or path to logo image
+    companyDescription: { type: String }, // Company description/information
+    website: { type: String }, // Company website URL
     mobileCountryCode: { type: String, required: true },
     mobilePhone: { type: String, required: true },
     deskCountryCode: { type: String, required: true },

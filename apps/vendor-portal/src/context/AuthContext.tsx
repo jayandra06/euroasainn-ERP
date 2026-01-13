@@ -49,14 +49,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         setUser(data.data);
+      } else if (response.status === 401 || response.status === 403) {
+        // Token is invalid, clear it
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setUser(null);
+      }
+      // For other errors (like 500), keep the user logged in if token exists
+    } catch (error: any) {
+      // Only log non-connection errors to avoid console spam
+      if (error?.message && !error.message.includes('Failed to fetch') && !error.message.includes('ERR_CONNECTION_REFUSED')) {
+        console.error('Auth check error:', error);
+      }
+      // Don't clear tokens on connection errors - backend might just be starting up
+      // Only clear if it's a real auth error
+      if (error?.name === 'TypeError' && error?.message?.includes('Failed to fetch')) {
+        // Connection error - backend might not be running, keep user state
+        // This prevents clearing auth state when backend is temporarily unavailable
       } else {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        setUser(null);
       }
-    } catch (error) {
-      console.error('Auth check error:', error);
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
     } finally {
       setLoading(false);
     }

@@ -102,13 +102,23 @@ export const getCountryOptions = () => {
   }));
 };
 
-// Get all country code options for phone pickers
+// Get all country code options for phone pickers (deduplicated by phone code)
 export const getCountryCodeOptions = () => {
-  return countries.map(country => ({
-    value: country.phoneCode,
-    label: `${country.flag} ${country.phoneCode} (${country.code})`,
-    country: country.name,
-  }));
+  const seen = new Set<string>();
+  const options: Array<{ value: string; label: string; country: string }> = [];
+  
+  for (const country of countries) {
+    if (!seen.has(country.phoneCode)) {
+      seen.add(country.phoneCode);
+      options.push({
+        value: country.phoneCode,
+        label: `${country.flag} ${country.phoneCode} (${country.code})`,
+        country: country.name,
+      });
+    }
+  }
+  
+  return options;
 };
 
 // Helper function to check if country uses IFSC (India) or SWIFT (others)
