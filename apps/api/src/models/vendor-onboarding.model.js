@@ -1,0 +1,68 @@
+import mongoose, { Schema } from 'mongoose';
+const VendorOnboardingSchema = new Schema({
+    organizationId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Organization',
+        index: true,
+    },
+    invitationToken: {
+        type: String,
+        index: true,
+    },
+    companyName: { type: String, required: true },
+    contactPerson: { type: String, required: true },
+    email: { type: String, required: true, index: true },
+    mobileCountryCode: { type: String, required: true },
+    mobilePhone: { type: String, required: true },
+    deskCountryCode: { type: String, required: true },
+    deskPhone: { type: String, required: true },
+    address1: { type: String, required: true },
+    address2: { type: String },
+    city: { type: String, required: true },
+    province: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, required: true },
+    taxId: { type: String, required: true },
+    accountName: { type: String, required: true },
+    bankName: { type: String, required: true },
+    iban: { type: String, required: true },
+    swift: { type: String },
+    invoiceEmail: { type: String, required: true },
+    billingAddress1: { type: String, required: true },
+    billingAddress2: { type: String },
+    billingCity: { type: String, required: true },
+    billingProvince: { type: String, required: true },
+    billingPostal: { type: String, required: true },
+    billingCountry: { type: String, required: true },
+    brands: [{ type: String }],
+    categories: [{ type: String }],
+    models: [{ type: String }],
+    warehouseAddress: { type: String, required: true },
+    managingDirector: { type: String, required: true },
+    managingDirectorEmail: { type: String, required: true },
+    managingDirectorPhone: { type: String, required: true },
+    managingDirectorDeskPhone: { type: String, required: true },
+    port: { type: String, required: true },
+    salesManager: { type: String, required: true },
+    salesManagerEmail: { type: String, required: true },
+    salesManagerPhone: { type: String, required: true },
+    salesManagerDeskPhone: { type: String, required: true },
+    logisticService: { type: String, required: true },
+    status: {
+        type: String,
+        enum: ['pending', 'completed', 'approved', 'rejected'],
+        default: 'pending',
+        index: true,
+    },
+    submittedAt: { type: Date },
+    approvedAt: { type: Date },
+    rejectedAt: { type: Date },
+    rejectionReason: { type: String },
+}, {
+    timestamps: true,
+});
+VendorOnboardingSchema.index({ organizationId: 1, status: 1 });
+VendorOnboardingSchema.index({ email: 1 });
+VendorOnboardingSchema.index({ invitationToken: 1 });
+export const VendorOnboarding = mongoose.model('VendorOnboarding', VendorOnboardingSchema);
+//# sourceMappingURL=vendor-onboarding.model.js.map
