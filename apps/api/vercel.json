@@ -9,12 +9,6 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
   "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npm run build"
 }
