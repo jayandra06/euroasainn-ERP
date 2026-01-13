@@ -15,6 +15,7 @@ import permissionRoutes from './routes/permission.routes';
 
 import onboardingRoutes from './routes/onboarding.routes';
 import adminOnboardingRoutes from './routes/admin-onboarding.routes';
+import jiraRoutes from './routes/jira.routes';
 // import paymentRoutes from './routes/payment.routes';
 
 const app: Express = express();
@@ -64,6 +65,19 @@ app.use('/uploads', express.static(uploadsDir, {
 
 console.log(`✅ Static file serving enabled for: ${uploadsDir}`);
 
+// Root route
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    message: 'Euroasiann ERP API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      api: config.apiPrefix,
+    },
+  });
+});
+
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
@@ -86,6 +100,8 @@ app.use(`${config.apiPrefix}/permissions`, permissionRoutes);
 
 // Public onboarding routes (no auth required)
 app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
+// Jira integration routes
+app.use(`${config.apiPrefix}/jira`, jiraRoutes);
 // Payment routes
 // app.use(`${config.apiPrefix}/payments`, paymentRoutes);
 
