@@ -32,6 +32,7 @@ import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { PaymentPage } from '../pages/Payment/PaymentPage';
 import RolesPage from '../pages/Roles/RolesPage';
 import AssignRolesPage from '../pages/Roles/AssignRolesPage';
+import { CompliancePage } from '../pages/Compliance/CompliancePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,7 @@ export function App() {
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="licenses" element={<LicensesPage />} />
                   <Route path="payment" element={<PaymentPage />} />
+                  <Route path="compliance" element={<CompliancePage />} />
                 </Route>
                 </Routes>
               </AuthProvider>
