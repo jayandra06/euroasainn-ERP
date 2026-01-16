@@ -4,8 +4,6 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { ToastProvider } from '../components/shared/Toast';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-
-/* Pages */
 import Login from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
 import { OrganizationsPage } from '../pages/Organizations/OrganizationsPage';
@@ -34,14 +32,14 @@ import { BrandsPage } from '../pages/Brands/BrandsPage';
 import { CategoriesPage } from '../pages/Categories/CategoriesPage';
 import { ModelsPage } from '../pages/Models/ModelsPage';
 import { CustomersPage } from '../pages/Customers/CustomersPage';
-
-/* Role Management */
+import ProductHierarchy from "../pages/ProductHierarchy/ProductHierarchy";
 import { RolesPage } from '../pages/Roles/RolesPage';
 import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
-
-/* Layout + Protected */
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
+import { UserProfilePage } from '../pages/Users/UserProfilePage';
+import{ProfilePage} from "../pages/Profile/ProfilePage.tsx"
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,6 +82,13 @@ export function App() {
                     {/* Dashboard */}
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="dashboard/admin" element={<Dashboard />} />
+                    <Route
+                      path="/dashboard/admin/product-hierarchy"
+                      element={<ProductHierarchy />}
+                    />
+
+
+
 
                     {/* Admin Section */}
                     <Route path="dashboard/admin/rfqs" element={<RFQsPage />} />
@@ -117,9 +122,10 @@ export function App() {
 
                     {/* Users */}
                     <Route path="users" element={<UsersPage />} />
+                    <Route path="/users/:userId" element={<UserProfilePage />} />
                     <Route path="users/new" element={<UserCreatePage />} />
 
-                   
+
 
                     {/* Settings + Logs */}
                     <Route path="settings" element={<SettingsPage />} />
@@ -131,7 +137,7 @@ export function App() {
                     <Route path="support" element={<SupportPage />} />
                     <Route path="subscription" element={<SubscriptionPage />} />
                     <Route path="logins" element={<LoginsPage />} />
-
+                    <Route path="/profile" element={<ProfilePage />} />
                   </Route>
                 </Routes>
               </ToastProvider>

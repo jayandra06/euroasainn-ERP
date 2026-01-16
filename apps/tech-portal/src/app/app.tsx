@@ -4,15 +4,17 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ToastProvider } from '../components/shared/Toast';
-
 import Login from '../pages/Login';
 import { Dashboard } from '../pages/Dashboard';
 import { UsersPage } from '../pages/Users/UsersPage';
+import { UserProfilePage } from '../pages/Users/UserProfilePage';
+
 import { OrganizationsPage } from '../pages/Organizations/OrganizationsPage';
 import { OrganizationProfilePage } from '../pages/Organizations/OrganizationProfilePage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { CreateLicensePage } from '../pages/Licenses/CreateLicensePage';
 import { OnboardingDataPage } from '../pages/Onboarding/OnboardingDataPage';
+import { OnboardingProfilePage } from '../pages/Onboarding/OnboardingProfilePage';
 
 import RolesPage from '../pages/Roles/RolesPage';
 import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
@@ -22,7 +24,7 @@ import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
 
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
-
+import {ProfilePage} from "../pages/ProfilePage/ProfilePage"
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -58,11 +60,13 @@ export function App() {
                   <Route path="licenses" element={<LicensesPage />} />
                   <Route path="licenses/create" element={<CreateLicensePage />} />
                   <Route path="onboarding-data" element={<OnboardingDataPage />} />
+                  <Route path="onboarding-data/:type/:id" element={<OnboardingProfilePage />} />
                   <Route path="roles" element={<RolesPage/>} />
+                  <Route path="/users/:userId" element={<UserProfilePage />} />
                   <Route path="assign-roles" element={<AssignRolesPage/>} />
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="settings" element={<SettingsPage />} />
-                  <Route path="profile" element={<div className="p-8">Profile Page - Coming Soon</div>} />
+                  <Route path="profile" element={<ProfilePage/>}/>
                 </Route>
                 </Routes>
               </AuthProvider>

@@ -4,9 +4,9 @@
  */
 
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
-import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
 import { MdFilterList, MdBusiness, MdPerson, MdCheckCircle, MdCancel, MdInfo } from 'react-icons/md';
 import { cn } from '../../lib/utils';
@@ -39,11 +39,9 @@ interface VendorOnboarding {
 export function OnboardingDataPage() {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [filterType, setFilterType] = useState<'all' | 'customer' | 'vendor'>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [selectedOnboarding, setSelectedOnboarding] = useState<CustomerOnboarding | VendorOnboarding | null>(null);
-  const [selectedType, setSelectedType] = useState<'customer' | 'vendor' | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch customer onboardings
   const { data: customerOnboardings, isLoading: customerLoading, error: customerError } = useQuery<CustomerOnboarding[]>({
@@ -122,11 +120,7 @@ export function OnboardingDataPage() {
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
-      queryClient.invalidateQueries({ queryKey: ['onboarding-details'] });
       showToast('Customer onboarding approved successfully', 'success');
-      setIsModalOpen(false);
-      setSelectedOnboarding(null);
-      setSelectedType(null);
       // Redirect to license creation page with organizationId
       if (data?.data?.organizationId) {
         window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=customer`;
@@ -154,7 +148,6 @@ export function OnboardingDataPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       showToast('Customer onboarding rejected successfully', 'success');
-      setIsModalOpen(false);
     },
     onError: (error: any) => {
       showToast(error.message || 'Failed to reject onboarding', 'error');
@@ -179,11 +172,7 @@ export function OnboardingDataPage() {
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
-      queryClient.invalidateQueries({ queryKey: ['onboarding-details'] });
       showToast('Vendor onboarding approved successfully', 'success');
-      setIsModalOpen(false);
-      setSelectedOnboarding(null);
-      setSelectedType(null);
       // Redirect to license creation page with organizationId
       if (data?.data?.organizationId) {
         window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=vendor`;
@@ -211,57 +200,14 @@ export function OnboardingDataPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       showToast('Vendor onboarding rejected successfully', 'success');
-      setIsModalOpen(false);
     },
     onError: (error: any) => {
       showToast(error.message || 'Failed to reject onboarding', 'error');
     },
   });
 
-  // Fetch full onboarding details
-  const { data: onboardingDetails } = useQuery({
-    queryKey: ['onboarding-details', selectedOnboarding?._id, selectedType],
-    queryFn: async () => {
-      if (!selectedOnboarding || !selectedType) return null;
-      const endpoint = selectedType === 'customer' 
-        ? `/api/v1/tech/customer-onboardings/${selectedOnboarding._id}`
-        : `/api/v1/tech/vendor-onboardings/${selectedOnboarding._id}`;
-      
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!response.ok) throw new Error('Failed to fetch onboarding details');
-      const data = await response.json();
-      return data.data;
-    },
-    enabled: !!selectedOnboarding && !!selectedType && isModalOpen,
-  });
-
-  const handleViewDetails = async (item: CustomerOnboarding | VendorOnboarding, type: 'customer' | 'vendor') => {
-    setSelectedOnboarding(item);
-    setSelectedType(type);
-    setIsModalOpen(true);
-  };
-
-  const handleApprove = () => {
-    if (!selectedOnboarding || !selectedType) return;
-    if (selectedType === 'customer') {
-      approveCustomerMutation.mutate(selectedOnboarding._id);
-    } else {
-      approveVendorMutation.mutate(selectedOnboarding._id);
-    }
-  };
-
-  const handleReject = () => {
-    if (!selectedOnboarding || !selectedType) return;
-    const reason = prompt('Please provide a reason for rejection (optional):');
-    if (selectedType === 'customer') {
-      rejectCustomerMutation.mutate({ id: selectedOnboarding._id, reason: reason || undefined });
-    } else {
-      rejectVendorMutation.mutate({ id: selectedOnboarding._id, reason: reason || undefined });
-    }
+  const handleViewDetails = (item: CustomerOnboarding | VendorOnboarding, type: 'customer' | 'vendor') => {
+    navigate(`/onboarding-data/${type}/${item._id}`);
   };
 
   // Combine data based on filter
@@ -741,6 +687,7 @@ export function OnboardingDataPage() {
                 <DataTable
                   columns={combinedColumns}
                   data={allOnboardings}
+                  onRowClick={(item: any) => handleViewDetails(item, item.type)}
                   emptyMessage="No onboarding data found."
                 />
               </div>
@@ -757,6 +704,7 @@ export function OnboardingDataPage() {
                 <DataTable
                   columns={customerColumns}
                   data={customerOnboardings || []}
+                  onRowClick={(item: CustomerOnboarding) => handleViewDetails(item, 'customer')}
                   emptyMessage="No customer onboarding data found."
                 />
               </div>
@@ -773,6 +721,7 @@ export function OnboardingDataPage() {
                 <DataTable
                   columns={vendorColumns}
                   data={vendorOnboardings || []}
+                  onRowClick={(item: VendorOnboarding) => handleViewDetails(item, 'vendor')}
                   emptyMessage="No vendor onboarding data found."
                 />
               </div>
@@ -781,254 +730,6 @@ export function OnboardingDataPage() {
         </div>
       )}
 
-      {/* Onboarding Details Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedOnboarding(null);
-          setSelectedType(null);
-        }}
-        title={`${selectedType === 'customer' ? 'Customer' : 'Vendor'} Onboarding Details - ${selectedOnboarding?.companyName || ''}`}
-        size="large"
-      >
-        {onboardingDetails ? (
-          <div className="space-y-6">
-            {/* Basic Information */}
-            <div>
-              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                Basic Information
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Company Name</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.companyName || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Contact Person</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.contactPerson || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Email</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.email || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Status</label>
-                  <p className="text-[hsl(var(--foreground))]">
-                    <span className={cn(
-                      'px-2 py-1 rounded text-xs font-semibold',
-                      onboardingDetails.status === 'approved' ? 'bg-emerald-100 text-[hsl(var(--foreground))] font-semibold dark:bg-emerald-900/50' :
-                      onboardingDetails.status === 'rejected' ? 'bg-red-100 text-[hsl(var(--foreground))] font-semibold dark:bg-red-900/50' :
-                      onboardingDetails.status === 'completed' ? 'bg-blue-100 text-[hsl(var(--foreground))] font-semibold dark:bg-blue-900/50' :
-                      'bg-amber-100 text-[hsl(var(--foreground))] font-semibold dark:bg-amber-900/50'
-                    )}>
-                      {onboardingDetails.status?.toUpperCase() || 'N/A'}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Information */}
-            <div>
-              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                Contact Information
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Mobile Phone</label>
-                  <p className="text-[hsl(var(--foreground))]">
-                    {onboardingDetails.mobileCountryCode || ''} {onboardingDetails.mobilePhone || 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Desk Phone</label>
-                  <p className="text-[hsl(var(--foreground))]">
-                    {onboardingDetails.deskCountryCode || ''} {onboardingDetails.deskPhone || 'N/A'}
-                  </p>
-                </div>
-                <div className="col-span-2">
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Address</label>
-                  <p className="text-[hsl(var(--foreground))]">
-                    {onboardingDetails.address1 || 'N/A'}
-                    {onboardingDetails.address2 && `, ${onboardingDetails.address2}`}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">City</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.city || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Province</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.province || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Postal Code</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.postalCode || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Country</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.country || 'N/A'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Vendor-specific fields */}
-            {selectedType === 'vendor' && (
-              <>
-                {onboardingDetails.managingDirector && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                      Managing Director
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Name</label>
-                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.managingDirector || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Email</label>
-                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.managingDirectorEmail || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Phone</label>
-                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.managingDirectorPhone || 'N/A'}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {onboardingDetails.salesManager && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                      Sales Manager
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Name</label>
-                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.salesManager || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Email</label>
-                        <p className="text-[hsl(var(--foreground))]">{onboardingDetails.salesManagerEmail || 'N/A'}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {(onboardingDetails.brands?.length > 0 || onboardingDetails.categories?.length > 0 || onboardingDetails.models?.length > 0) && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                      Product Information
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      {onboardingDetails.brands?.length > 0 && (
-                        <div>
-                          <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Brands</label>
-                          <div className="flex flex-wrap gap-2 mt-1">
-                            {onboardingDetails.brands.map((brand: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-[hsl(var(--foreground))] font-semibold rounded text-xs">
-                                {brand}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {onboardingDetails.categories?.length > 0 && (
-                        <div>
-                          <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Categories</label>
-                          <div className="flex flex-wrap gap-2 mt-1">
-                            {onboardingDetails.categories.map((cat: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/50 text-[hsl(var(--foreground))] font-semibold rounded text-xs">
-                                {cat}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {onboardingDetails.models?.length > 0 && (
-                        <div>
-                          <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Models</label>
-                          <div className="flex flex-wrap gap-2 mt-1">
-                            {onboardingDetails.models.map((model: string, i: number) => (
-                              <span key={i} className="px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 rounded text-xs">
-                                {model}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Customer-specific fields */}
-            {selectedType === 'customer' && onboardingDetails.vessels && (
-              <div>
-                <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                  Vessel Information
-                </h3>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Number of Vessels</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.vessels || 'N/A'}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Banking Information */}
-            <div>
-              <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-4 pb-2 border-b border-[hsl(var(--border))]">
-                Banking Information
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Account Name</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.accountName || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Bank Name</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.bankName || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">IBAN</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.iban || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[hsl(var(--muted-foreground))]">SWIFT</label>
-                  <p className="text-[hsl(var(--foreground))]">{onboardingDetails.swift || 'N/A'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            {onboardingDetails.status === 'completed' && (
-              <div className="flex items-center justify-end gap-4 pt-4 border-t border-[hsl(var(--border))]">
-                <button
-                  onClick={handleReject}
-                  disabled={rejectCustomerMutation.isPending || rejectVendorMutation.isPending}
-                  className="px-4 py-2 bg-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/90 disabled:opacity-50 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
-                >
-                  <MdCancel className="w-5 h-5" />
-                  Reject
-                </button>
-                <button
-                  onClick={handleApprove}
-                  disabled={approveCustomerMutation.isPending || approveVendorMutation.isPending}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
-                >
-                  <MdCheckCircle className="w-6 h-6" />
-                  Approve
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[hsl(var(--border))] border-t-[hsl(var(--primary))]"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading onboarding details...</p>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }

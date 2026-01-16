@@ -543,16 +543,18 @@ export function EmployeeOnboardingFormPage() {
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="w-full sm:w-40">
-                      <SearchableSelect
-                        options={countryCodeOptions}
-                        value={formData.phoneCountryCode}
-                        onChange={(selectedCode) => setFormData({ ...formData, phoneCountryCode: selectedCode })}
-                        placeholder="Search country code..."
-                        className={errors.phoneCountryCode ? 'border-red-500' : ''}
-                        required
-                      />
-                    </div>
+                    <select
+                      value={formData.phoneCountryCode}
+                      onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
+                      className="w-full sm:w-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      {countryCodeOptions.map((option, index) => (
+                        <option key={`${option.value}-${index}`} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       type="tel"
                       value={formData.phone}
@@ -992,21 +994,26 @@ export function EmployeeOnboardingFormPage() {
                     Nominee Phone <span className="text-red-500">*</span>
                   </label>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="w-full sm:w-40">
-                      <SearchableSelect
-                        options={countryCodeOptions}
-                        value={formData.nomineePhoneCountryCode}
-                        onChange={(selectedCode) => {
-                          setFormData({ ...formData, nomineePhoneCountryCode: selectedCode });
-                          if (errors.nomineePhoneCountryCode) {
-                            setErrors({ ...errors, nomineePhoneCountryCode: '' });
-                          }
-                        }}
-                        placeholder="Search country code..."
-                        className={errors.nomineePhoneCountryCode ? 'border-red-500' : ''}
-                        required
-                      />
-                    </div>
+                    <select
+                      value={formData.nomineePhoneCountryCode}
+                      onChange={(e) => {
+                        setFormData({ ...formData, nomineePhoneCountryCode: e.target.value });
+                        if (errors.nomineePhoneCountryCode) {
+                          setErrors({ ...errors, nomineePhoneCountryCode: '' });
+                        }
+                      }}
+                      className={cn(
+                        'w-full sm:w-32 px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500',
+                        errors.nomineePhoneCountryCode ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      )}
+                      required
+                    >
+                      {countryCodeOptions.map((option, index) => (
+                        <option key={`${option.value}-${index}`} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       type="tel"
                       value={formData.nomineePhone}

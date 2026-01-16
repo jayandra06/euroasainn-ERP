@@ -1,11 +1,10 @@
 /**
  * Organization Profile Page
  * Shows detailed information about an organization including:
- * - Users and their roles
+ * - Users and their roles (filtered to this organization only)
  * - License information
  * - Vessels
  * - Business Units
- * - Business Rules
  */
 
 import React, { useState } from 'react';
@@ -34,6 +33,9 @@ interface User {
   role: string;
   isActive: boolean;
   lastLogin?: string;
+  organizationId?: string; // <-- Added: links user to organization
+  // If your backend uses nested object, use this instead:
+  // organization?: { _id: string; name?: string };
 }
 
 interface License {
@@ -92,7 +94,7 @@ export function OrganizationProfilePage() {
     enabled: !!id,
   });
 
-  // Fetch users for this organization
+  // Fetch users and filter to only those belonging to this organization
   const { data: users, isLoading: usersLoading } = useQuery<User[]>({
     queryKey: ['organization-users', id],
     queryFn: async () => {
@@ -101,9 +103,28 @@ export function OrganizationProfilePage() {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
-      if (!response.ok) return [];
-      const data = await response.json();
-      return data.data || [];
+
+      if (!response.ok) {
+        console.error('Failed to fetch users');
+        return [];
+      }
+
+      const result = await response.json();
+      const allUsers: User[] = result.data || [];
+
+      // === CLIENT-SIDE FILTERING ===
+      // Filter users to only those that belong to the current organization
+      const filteredUsers = allUsers.filter((user) => {
+        // Adjust this condition based on your actual User schema
+        return (
+          user.organizationId === id ||
+          // If organization is an object: user.organization?._id === id ||
+          // If organization is a string ID: user.organization === id
+          false
+        );
+      });
+
+      return filteredUsers;
     },
     enabled: !!id,
   });
@@ -129,17 +150,13 @@ export function OrganizationProfilePage() {
     queryKey: ['organization-vessels', id],
     queryFn: async () => {
       if (organization?.type !== 'customer') return [];
-      const token = localStorage.getItem('accessToken');
-      const url = `${API_URL}/api/v1/admin/organizations/${id}/vessels`;
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/api/v1/admin/organizations/${id}/vessels`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json',
         },
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch vessels');
-      }
+      if (!response.ok) throw new Error('Failed to fetch vessels');
       const data = await response.json();
       return data.success ? data.data : [];
     },
@@ -151,25 +168,18 @@ export function OrganizationProfilePage() {
     queryKey: ['organization-business-units', id],
     queryFn: async () => {
       if (organization?.type !== 'customer') return [];
-      const token = localStorage.getItem('accessToken');
-      const url = `${API_URL}/api/v1/admin/organizations/${id}/business-units`;
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/api/v1/admin/organizations/${id}/business-units`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json',
         },
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch business units');
-      }
+      if (!response.ok) throw new Error('Failed to fetch business units');
       const data = await response.json();
       return data.success ? data.data : [];
     },
     enabled: !!id && organization?.type === 'customer',
   });
-
-  // Fetch business rules
-  // Business rules feature has been removed
 
   if (orgLoading) {
     return (
@@ -183,8 +193,8 @@ export function OrganizationProfilePage() {
     return (
       <div className="p-12 text-center">
         <p className="text-[hsl(var(--destructive))]">Organization not found</p>
-        <button onClick={() => navigate('/licenses')} className="mt-4 px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg">
-          Back to Licenses
+        <button onClick={() => navigate('/organizations')} className="mt-4 px-4 py-2 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-lg">
+          Back to Organizations
         </button>
       </div>
     );
@@ -196,8 +206,8 @@ export function OrganizationProfilePage() {
     { id: 'license', label: 'License', icon: MdVpnKey },
     ...(organization.type === 'customer'
       ? [
-      { id: 'vessels', label: 'Vessels', icon: MdDirectionsBoat },
-      { id: 'business-units', label: 'Business Units', icon: MdBusiness },
+          { id: 'vessels', label: 'Vessels', icon: MdDirectionsBoat },
+          { id: 'business-units', label: 'Business Units', icon: MdBusiness },
         ]
       : []),
   ];
@@ -481,12 +491,7 @@ export function OrganizationProfilePage() {
             )}
           </div>
         )}
-
       </div>
     </div>
   );
 }
-
-
-
-

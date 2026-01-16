@@ -1,7 +1,6 @@
 /**
  * Ultra-Modern DataTable Component
- * World-Class SaaS ERP Platform Design
- * Supports permission-based edit/delete actions
+ * Now supports full row click to edit + isolated action buttons
  */
 
 import React from 'react';
@@ -15,11 +14,12 @@ interface Column<T> {
   className?: string;
 }
 
-interface DataTableProps<T> {
+interface DataTableProps<T extends { _id?: string }> {
   columns: Column<T>[];
   data: T[];
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
+  onRowClick?: (item: T) => void;        // NEW: Optional row click handler
   canEdit?: boolean;
   canDelete?: boolean;
   emptyMessage?: string;
@@ -30,6 +30,7 @@ export function DataTable<T extends { _id?: string }>({
   data,
   onEdit,
   onDelete,
+  onRowClick,                           // NEW
   canEdit = true,
   canDelete = true,
   emptyMessage = 'No data found',
@@ -41,6 +42,9 @@ export function DataTable<T extends { _id?: string }>({
       </div>
     );
   }
+
+  // Determine if row should be clickable
+  const isRowClickable = !!onRowClick && canEdit;
 
   return (
     <div className="overflow-x-auto rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm">
@@ -69,7 +73,18 @@ export function DataTable<T extends { _id?: string }>({
           {data.map((item, index) => (
             <tr
               key={item._id || index}
-              className="hover:bg-[hsl(var(--muted))] transition-colors"
+              onClick={(e) => {
+                // Only trigger row click if it's enabled and click didn't come from actions column
+                if (isRowClickable && !(e.target as HTMLElement).closest('[data-actions]')) {
+                  onRowClick(item);
+                }
+              }}
+              className={cn(
+                'transition-colors',
+                isRowClickable
+                  ? 'hover:bg-[hsl(var(--accent))] cursor-pointer'
+                  : 'hover:bg-[hsl(var(--muted))]'
+              )}
             >
               {columns.map((column) => (
                 <td
@@ -83,7 +98,11 @@ export function DataTable<T extends { _id?: string }>({
                 </td>
               ))}
               {(onEdit || onDelete) && (
-                <td className="px-6 py-4 text-center">
+                <td
+                  data-actions // Marker to detect clicks in actions column
+                  onClick={(e) => e.stopPropagation()} // Prevent row click
+                  className="px-6 py-4 text-center"
+                >
                   <div className="flex items-center justify-center gap-2">
                     {onEdit && (
                       <button
@@ -98,11 +117,6 @@ export function DataTable<T extends { _id?: string }>({
                         aria-label="Edit"
                       >
                         <MdEdit className="w-4 h-4" />
-                        {!canEdit && (
-                          <span className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                            <span className="text-red-600 text-lg font-bold drop-shadow-md">⌀</span>
-                          </span>
-                        )}
                       </button>
                     )}
 
@@ -119,11 +133,6 @@ export function DataTable<T extends { _id?: string }>({
                         aria-label="Delete"
                       >
                         <MdDelete className="w-4 h-4" />
-                        {!canDelete && (
-                          <span className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
-                            <span className="text-red-600 text-lg font-bold drop-shadow-md">⌀</span>
-                          </span>
-                        )}
                       </button>
                     )}
                   </div>

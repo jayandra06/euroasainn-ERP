@@ -94,6 +94,15 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    label: 'Employee Management',
+    icon: MdPeople,
+    isExpandable: true,
+    subItems: [
+      { path: '/employee-management', label: 'Employee Management', icon: MdPeople },
+      { path: '/employee-onboarding-review', label: 'Onboarding Review', icon: MdPeople },
+    ],
+  },
+  {
     label: 'Support',
     icon: MdHelp,
     isExpandable: true,

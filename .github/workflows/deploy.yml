@@ -5,6 +5,20 @@ on:
     branches:
       - main
       - master
+<<<<<<< HEAD
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  deploy-api:
+    name: Deploy API to Server
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+=======
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -18,6 +32,7 @@ jobs:
       APP_DIR: /var/www/euroasiann-erp
       DOMAIN: erp.euroasianngroup.com
 
+>>>>>>> main
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,6 +44,95 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+<<<<<<< HEAD
+        run: npm ci
+
+      - name: Build API
+        run: |
+          cd apps/api
+          npm run build
+
+      - name: Deploy to server via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: "apps/api/dist,apps/api/package.json,package.json,package-lock.json"
+          target: "/var/www/euroasiann-erp/api"
+          strip_components: 0
+
+      - name: Deploy packages
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: "packages"
+          target: "/var/www/euroasiann-erp"
+          strip_components: 0
+
+      - name: Install and restart on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            cd /var/www/euroasiann-erp/api
+            npm install --production
+            pm2 restart euroasiann-api || pm2 start dist/main.js --name euroasiann-api
+            pm2 save
+
+  deploy-frontends:
+    name: Deploy Frontends to Vercel
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    strategy:
+      matrix:
+        portal:
+          - name: vendor-portal
+            project-id: ${{ secrets.VERCEL_VENDOR_PROJECT_ID }}
+          - name: customer-portal
+            project-id: ${{ secrets.VERCEL_CUSTOMER_PROJECT_ID }}
+          - name: admin-portal
+            project-id: ${{ secrets.VERCEL_ADMIN_PROJECT_ID }}
+          - name: tech-portal
+            project-id: ${{ secrets.VERCEL_TECH_PROJECT_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment Information
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ matrix.portal.project-id }}
+          working-directory: apps/${{ matrix.portal.name }}
+
+      - name: Build and Deploy ${{ matrix.portal.name }}
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ matrix.portal.project-id }}
+          vercel-args: '--prod'
+          working-directory: apps/${{ matrix.portal.name }}
+=======
         run: npm ci --legacy-peer-deps
         working-directory: ./apps/api
 
@@ -91,3 +195,4 @@ jobs:
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch**: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Deployed to**: ${{ env.DOMAIN }}" >> $GITHUB_STEP_SUMMARY
+>>>>>>> main

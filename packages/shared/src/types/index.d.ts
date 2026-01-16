@@ -43,4 +43,3 @@ export interface JwtPayload {
     portalType: PortalType;
     role: string;
 }
-//# sourceMappingURL=index.d.ts.map

@@ -18,7 +18,8 @@ export class RFQService {
     senderType: 'admin' | 'customer',
     recipientVendorIds: string[]
   ) {
-    // License validation removed - RFQ creation does not require a license
+    // Check license limit (DISABLED FOR NOW)
+    // await licenseService.checkUsageLimit(organizationId, 'employees');
 
     // Validate recipient vendor IDs
     if (!recipientVendorIds || recipientVendorIds.length === 0) {

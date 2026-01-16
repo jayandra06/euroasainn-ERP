@@ -18,6 +18,32 @@ export interface IRFQ extends Document {
   senderId: mongoose.Types.ObjectId; // Organization ID of sender (admin org or customer org)
   // RFQ recipients (vendors)
   recipientVendorIds: mongoose.Types.ObjectId[]; // Array of vendor organization IDs
+  // Additional fields for RFQ details
+  vesselName?: string;
+  vesselExName?: string;
+  imoNumber?: string;
+  equipmentTags?: string;
+  subCategory?: string;
+  hullNo?: string;
+  serialNumber?: string;
+  drawingNumber?: string;
+  remarks?: string;
+  preferredQuality?: string;
+  typeOfIncoterms?: string;
+  typeOfLogisticContainer?: string;
+  createdDate?: Date;
+  leadDate?: string;
+  items?: Array<{
+    impaNo?: string;
+    itemDescription: string;
+    partNo?: string;
+    altPartNo?: string;
+    positionNo?: string;
+    dimensions?: string;
+    requiredQuantity: string | number;
+    uom: string;
+    generalRemark: string;
+  }>;
   metadata?: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
@@ -77,6 +103,77 @@ const RFQSchema = new Schema<IRFQ>(
     supplyPort: {
       type: String,
       trim: true,
+    },
+    vesselName: {
+      type: String,
+      trim: true,
+    },
+    vesselExName: {
+      type: String,
+      trim: true,
+    },
+    imoNumber: {
+      type: String,
+      trim: true,
+    },
+    equipmentTags: {
+      type: String,
+      trim: true,
+    },
+    subCategory: {
+      type: String,
+      trim: true,
+    },
+    hullNo: {
+      type: String,
+      trim: true,
+    },
+    serialNumber: {
+      type: String,
+      trim: true,
+    },
+    drawingNumber: {
+      type: String,
+      trim: true,
+    },
+    remarks: {
+      type: String,
+      trim: true,
+    },
+    preferredQuality: {
+      type: String,
+      trim: true,
+    },
+    typeOfIncoterms: {
+      type: String,
+      trim: true,
+    },
+    typeOfLogisticContainer: {
+      type: String,
+      trim: true,
+    },
+    createdDate: {
+      type: Date,
+    },
+    leadDate: {
+      type: String,
+      trim: true,
+    },
+    items: {
+      type: [
+        {
+          impaNo: { type: String, trim: true },
+          itemDescription: { type: String, required: true, trim: true },
+          partNo: { type: String, trim: true },
+          altPartNo: { type: String, trim: true },
+          positionNo: { type: String, trim: true },
+          dimensions: { type: String, trim: true },
+          requiredQuantity: { type: Schema.Types.Mixed, required: true },
+          uom: { type: String, required: true, trim: true },
+          generalRemark: { type: String, required: true, trim: true },
+        },
+      ],
+      default: [],
     },
     senderType: {
       type: String,

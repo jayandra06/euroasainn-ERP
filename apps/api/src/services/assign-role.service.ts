@@ -1,25 +1,50 @@
 import mongoose from "mongoose";
 import { User, IUser } from "../models/user.model";
 import { Role, IRole } from "../models/role.model";
-import { getCasbinEnforcer, resetCasbinEnforcer } from "../config/casbin";
+import { getCasbinEnforcer } from "../config/casbin";
 import { redisService } from "./redis.service";
 
 class AssignRoleService {
 
-  async listUsers(portalType: string, organizationId: string) {
-    const cacheKey = `assign-role:users:${organizationId}:${portalType}`;
-    const cached = await redisService.getCacheJSON<any[]>(cacheKey);
-    if (cached) return cached;
-
+  async listUsers(portalType: string, organizationId: string, page: number = 1, limit: number = 10, search?: string, roleFilter?: string) {
     const query: any = { organizationId };
     if (portalType !== "all") query.portalType = portalType;
+    
+    // Apply role filter if provided
+    if (roleFilter && roleFilter !== "all") {
+      query.roleId = roleFilter;
+    }
 
+    // Apply search filter if provided
+    if (search && search.trim()) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination
+    const total = await User.countDocuments(query);
+
+    // Get paginated users
     const users = await User.find(query)
       .select("firstName lastName email portalType role roleName roleId organizationId")
+      .skip(skip)
+      .limit(limit)
       .lean();
 
-    redisService.setCacheJSON(cacheKey, users, 180).catch(() => {});
-    return users;
+    return {
+      data: users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async listRoles(portalType: string, organizationId: string) {
@@ -75,10 +100,8 @@ class AssignRoleService {
       portal
     );
 
-    await enforcer.savePolicy();
-
-    // 🔥 PERMANENT FIX
-    resetCasbinEnforcer();
+    // ✅ AutoSave enabled - policies are automatically persisted to MongoDB
+    // ✅ In-memory enforcer cache is automatically updated (no reset needed)
 
     await User.updateOne(
       { _id: userId },
@@ -110,10 +133,8 @@ class AssignRoleService {
 
     if (existingRoles.length > 0) {
       await enforcer.removeGroupingPolicies(existingRoles);
-      await enforcer.savePolicy();
-
-      // 🔥 PERMANENT FIX
-      resetCasbinEnforcer();
+      // ✅ AutoSave enabled - policies are automatically persisted to MongoDB
+      // ✅ In-memory enforcer cache is automatically updated (no reset needed)
     }
 
     await User.updateOne(

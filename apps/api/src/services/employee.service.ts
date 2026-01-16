@@ -8,6 +8,9 @@ import { Organization } from '../models/organization.model';
 import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
 import { logger } from '../config/logger';
 import mongoose from 'mongoose';
+import { getCasbinEnforcer } from '../config/casbin';
+import { Role } from '../models/role.model';
+import { User } from '../models/user.model';
 
 // Helper function to calculate payroll totals
 function calculatePayrollTotals(payroll: Partial<IPayrollDetails>): { grossSalary: number; netSalary: number } {
@@ -40,7 +43,8 @@ export class EmployeeService {
     // License validation removed - create employee without license checks
     const employee = new Employee({
       ...data,
-      organizationId,
+      organizationId: new mongoose.Types.ObjectId(organizationId),
+      portalType,
     });
 
     await employee.save();
@@ -56,8 +60,12 @@ export class EmployeeService {
     return employee;
   }
 
-  async getEmployees(organizationId: string, filters?: any) {
-    const query: any = { organizationId };
+  async getEmployees(organizationId: string, portalType: PortalType, filters?: any) {
+    // Strictly filter by organizationId AND portalType to prevent cross-organization/portal access
+    const query: any = { 
+      organizationId: new mongoose.Types.ObjectId(organizationId),
+      portalType: portalType,
+    };
     if (filters?.businessUnitId) {
       query.businessUnitId = filters.businessUnitId;
     }
@@ -125,19 +133,33 @@ export class EmployeeService {
     }
   }
 
-  async getEmployeeById(employeeId: string, organizationId: string) {
-    const employee = await Employee.findOne({ _id: employeeId, organizationId });
+  async getEmployeeById(employeeId: string, organizationId: string, portalType: PortalType) {
+    // Strictly filter by organizationId AND portalType to prevent cross-organization/portal access
+    const employee = await Employee.findOne({ 
+      _id: employeeId, 
+      organizationId: new mongoose.Types.ObjectId(organizationId),
+      portalType: portalType,
+    });
     if (!employee) {
       throw new Error('Employee not found');
     }
     return employee;
   }
 
-  async updateEmployee(employeeId: string, organizationId: string, data: Partial<IEmployee>) {
-    const employee = await Employee.findOne({ _id: employeeId, organizationId });
+  async updateEmployee(employeeId: string, organizationId: string, portalType: PortalType, data: Partial<IEmployee>) {
+    // Strictly filter by organizationId AND portalType to prevent cross-organization/portal access
+    const employee = await Employee.findOne({ 
+      _id: employeeId, 
+      organizationId: new mongoose.Types.ObjectId(organizationId),
+      portalType: portalType,
+    });
     if (!employee) {
       throw new Error('Employee not found');
     }
+
+    // Track if role is being updated for Casbin policy management
+    const roleChanged = data.role && data.role !== employee.role;
+    const oldRole = employee.role;
 
     // Handle metadata merging
     if (data.metadata && typeof data.metadata === 'object') {
@@ -174,19 +196,106 @@ export class EmployeeService {
 
     Object.assign(employee, data);
     await employee.save();
+
+    // Update Casbin policies if role changed and user exists
+    if (roleChanged && data.role) {
+      try {
+        const user = await User.findOne({
+          email: employee.email,
+          organizationId: new mongoose.Types.ObjectId(organizationId),
+        });
+
+        if (user) {
+          const enforcer = await getCasbinEnforcer();
+          const userIdStr = user._id.toString();
+          const orgIdStr = organizationId;
+
+          // Remove old role grouping policy
+          if (oldRole) {
+            const oldPolicies = (await enforcer.getGroupingPolicy()).filter(
+              (p: string[]) => p[0] === userIdStr && p[1] === oldRole && p[2] === orgIdStr
+            );
+            if (oldPolicies.length > 0) {
+              await enforcer.removeGroupingPolicies(oldPolicies);
+            }
+          }
+
+          // Add new role grouping policy - data.role is the role key (string)
+          const newRole = await Role.findOne({
+            key: data.role,
+            organizationId: new mongoose.Types.ObjectId(organizationId),
+          }).lean();
+
+          if (newRole) {
+            await enforcer.addGroupingPolicy(userIdStr, newRole.key, orgIdStr);
+            // Update user's role fields
+            user.role = newRole.key;
+            user.roleName = newRole.name;
+            user.roleId = newRole._id;
+            await user.save();
+            logger.info(`✅ Updated Casbin grouping policy for employee ${employeeId}: ${oldRole} → ${newRole.key}`);
+          } else {
+            logger.warn(`⚠️ Role not found for key: ${data.role}, organization: ${organizationId}. Casbin policy not updated.`);
+          }
+        }
+      } catch (error: any) {
+        logger.error(`❌ Error updating Casbin policies for employee ${employeeId}:`, error);
+        // Don't fail employee update if Casbin update fails
+      }
+    }
+
     return employee;
   }
 
-  async deleteEmployee(employeeId: string, organizationId: string) {
-    const employee = await Employee.findOneAndDelete({ _id: employeeId, organizationId });
+  async deleteEmployee(employeeId: string, organizationId: string, portalType: PortalType) {
+    // Strictly filter by organizationId AND portalType to prevent cross-organization/portal access
+    const employee = await Employee.findOne({ 
+      _id: employeeId, 
+      organizationId: new mongoose.Types.ObjectId(organizationId),
+      portalType: portalType,
+    });
     if (!employee) {
       throw new Error('Employee not found');
     }
-    await licenseService.decrementUsage(organizationId, 'employees');
+
+    // Find and delete associated user and Casbin policies
+    try {
+      const user = await User.findOne({
+        email: employee.email,
+        organizationId: new mongoose.Types.ObjectId(organizationId),
+      });
+
+      if (user) {
+        const enforcer = await getCasbinEnforcer();
+        const userIdStr = user._id.toString();
+        const orgIdStr = organizationId;
+
+        // Remove all grouping policies for this user in this organization
+        const userPolicies = (await enforcer.getGroupingPolicy()).filter(
+          (p: string[]) => p[0] === userIdStr && p[2] === orgIdStr
+        );
+        if (userPolicies.length > 0) {
+          await enforcer.removeGroupingPolicies(userPolicies);
+          logger.info(`✅ Removed ${userPolicies.length} Casbin grouping policies for user ${userIdStr}`);
+        }
+
+        // Delete the user account
+        await User.findByIdAndDelete(user._id);
+        logger.info(`✅ Deleted user account for employee ${employeeId}`);
+      }
+    } catch (error: any) {
+      logger.error(`❌ Error deleting user/Casbin policies for employee ${employeeId}:`, error);
+      // Continue with employee deletion even if user deletion fails
+    }
+
+    // Delete the employee
+    await Employee.findByIdAndDelete(employeeId);
+    // await licenseService.decrementUsage(organizationId, 'employees'); // SKIPPED FOR NOW
+
     return { success: true };
   }
 
-  async inviteEmployee(organizationId: string, data: {
+  async inviteEmployee(organizationId: string, portalType: PortalType, data: {
     firstName: string;
     lastName: string;
     email: string;
@@ -201,11 +310,11 @@ export class EmployeeService {
     // Normalize email
     const normalizedEmail = data.email.toLowerCase().trim();
 
-    // Check if employee with this email already exists
+    // Check if employee with this email already exists in this organization
     const existingEmployee = await Employee.findOne({
       organizationId: new mongoose.Types.ObjectId(organizationId),
       email: normalizedEmail,
-    });
+    }).lean();
 
     if (existingEmployee) {
       throw new Error('Employee with this email already exists');
@@ -223,6 +332,7 @@ export class EmployeeService {
       lastName: data.lastName,
       email: normalizedEmail,
       organizationId: new mongoose.Types.ObjectId(organizationId),
+      portalType: portalType,
     };
 
     if (data.phone) {
@@ -262,31 +372,42 @@ export class EmployeeService {
     // Create employee record (without user account yet)
     const employee = new Employee(employeeData);
     await employee.save();
-    await licenseService.incrementUsage(organizationId, 'employees');
+    // await licenseService.incrementUsage(organizationId, 'employees'); // SKIPPED FOR NOW
 
     // Create invitation token for employee onboarding
     let invitationLink: string | undefined;
     let emailSent = false;
 
     try {
-      // Determine role for invitation (use provided role or default)
-      const roleForInvitation = data.role || 'customer_user';
+      // Determine organization type and default role based on portal type
+      const organizationType = portalType === PortalType.VENDOR 
+        ? OrganizationType.VENDOR 
+        : OrganizationType.CUSTOMER;
+      
+      // Determine role for invitation (use provided role or default based on portal)
+      const defaultRole = portalType === PortalType.VENDOR ? 'vendor_user' : 'customer_user';
+      const roleForInvitation = data.role || defaultRole;
 
       // Create invitation token
       const invitationResult = await invitationService.createInvitationToken({
         email: normalizedEmail,
         organizationId: organizationId,
-        organizationType: OrganizationType.CUSTOMER,
-        portalType: PortalType.CUSTOMER,
+        organizationType: organizationType,
+        portalType: portalType,
         role: roleForInvitation,
         organizationName: organization.name,
       });
 
       invitationLink = invitationResult.invitationLink;
 
-      // Build employee onboarding link (different from customer/vendor onboarding)
-      const customerPortalUrl = process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300';
-      const onboardingLink = `${customerPortalUrl}/onboarding/employee?token=${invitationResult.token}`;
+      // Build employee onboarding link based on portal type
+      let portalUrl: string;
+      if (portalType === PortalType.VENDOR) {
+        portalUrl = process.env.VENDOR_PORTAL_URL || 'http://localhost:4400';
+      } else {
+        portalUrl = process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300';
+      }
+      const onboardingLink = `${portalUrl}/onboarding/employee?token=${invitationResult.token}`;
 
       // Send invitation email with onboarding link (NO credentials)
       await emailService.sendEmployeeInvitationEmail({
@@ -311,26 +432,35 @@ export class EmployeeService {
     };
   }
 
-  async completeEmployeeOnboarding(token: string, password: string) {
+  async completeEmployeeOnboarding(token: string, password: string, portalType?: PortalType) {
     // Import InvitationToken model
     const { InvitationToken } = await import('../models/invitation-token.model');
     
-    // Verify invitation token
-    const invitation = await InvitationToken.findOne({
+    // Verify invitation token - if portalType is provided, filter by it
+    const invitationQuery: any = {
       token,
       used: false,
       expiresAt: { $gt: new Date() },
-      portalType: PortalType.CUSTOMER,
-    });
+    };
+    if (portalType) {
+      invitationQuery.portalType = portalType;
+    } else {
+      // Default to CUSTOMER for backward compatibility
+      invitationQuery.portalType = PortalType.CUSTOMER;
+    }
+    
+    const invitation = await InvitationToken.findOne(invitationQuery);
 
     if (!invitation) {
       throw new Error('Invalid or expired invitation token');
     }
 
     // Check if employee already exists
+    const employeePortalType = invitation.portalType || PortalType.CUSTOMER;
     const existingEmployee = await Employee.findOne({
       email: invitation.email,
-      organizationId: invitation.organizationId,
+      organizationId: new mongoose.Types.ObjectId(invitation.organizationId!),
+      portalType: employeePortalType,
     });
 
     if (!existingEmployee) {
@@ -339,9 +469,11 @@ export class EmployeeService {
 
     // Check if user already exists
     const { User } = await import('../models/user.model');
+    const userPortalType = portalType || invitation.portalType || PortalType.CUSTOMER;
     const existingUser = await User.findOne({
       email: invitation.email,
-      portalType: PortalType.CUSTOMER,
+      portalType: userPortalType,
+      organizationId: invitation.organizationId,
     });
 
     let user: any;
@@ -361,8 +493,8 @@ export class EmployeeService {
         password: password, // Use password provided by user during onboarding
         firstName: existingEmployee.firstName,
         lastName: existingEmployee.lastName,
-        portalType: PortalType.CUSTOMER,
-        role: invitation.role || 'customer_user',
+        portalType: userPortalType,
+        role: invitation.role || (userPortalType === PortalType.VENDOR ? 'vendor_user' : 'customer_user'),
         organizationId: invitation.organizationId?.toString(),
       });
       user = userResult;
@@ -376,14 +508,17 @@ export class EmployeeService {
 
     // Send welcome email with credentials
     try {
-      const portalLink = process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300';
+      const portalUrl = userPortalType === PortalType.VENDOR 
+        ? (process.env.VENDOR_PORTAL_URL || 'http://localhost:4400')
+        : (process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300');
+      const orgType = userPortalType === PortalType.VENDOR ? 'vendor' : 'customer';
       await emailService.sendWelcomeEmail({
         to: invitation.email,
         firstName: existingEmployee.firstName,
         lastName: existingEmployee.lastName,
-        portalLink: `${portalLink}/login`,
+        portalLink: `${portalUrl}/login`,
         temporaryPassword,
-        organizationType: 'customer',
+        organizationType: orgType,
       });
       logger.info(`✅ Welcome email with credentials sent to ${invitation.email} after onboarding`);
     } catch (emailError: any) {
@@ -423,12 +558,15 @@ export class EmployeeService {
     // Import InvitationToken model
     const { InvitationToken } = await import('../models/invitation-token.model');
     
-    // Verify invitation token
+    // Verify invitation token - accept both customer and vendor portals
     const invitation = await InvitationToken.findOne({
       token,
       used: false,
       expiresAt: { $gt: new Date() },
-      portalType: PortalType.CUSTOMER,
+      $or: [
+        { portalType: PortalType.CUSTOMER },
+        { portalType: PortalType.VENDOR }
+      ],
     });
 
     if (!invitation) {
@@ -441,10 +579,12 @@ export class EmployeeService {
       throw new Error('Onboarding already submitted for this invitation');
     }
 
-    // Check if employee exists
+    // Check if employee exists - strictly filter by organizationId and portalType
+    const employeePortalType = invitation.portalType || PortalType.CUSTOMER;
     const existingEmployee = await Employee.findOne({
       email: invitation.email,
-      organizationId: invitation.organizationId,
+      organizationId: new mongoose.Types.ObjectId(invitation.organizationId!),
+      portalType: employeePortalType,
     });
 
     // Create employee onboarding record with SUBMITTED status
@@ -491,23 +631,29 @@ export class EmployeeService {
     // Import InvitationToken model
     const { InvitationToken } = await import('../models/invitation-token.model');
     
-    // Verify invitation token
+    // Verify invitation token - accept both customer and vendor portals
     const invitation = await InvitationToken.findOne({
       token,
       expiresAt: { $gt: new Date() },
-      portalType: PortalType.CUSTOMER,
+      $or: [
+        { portalType: PortalType.CUSTOMER },
+        { portalType: PortalType.VENDOR }
+      ],
     });
 
     if (!invitation) {
       throw new Error('Invalid or expired invitation token');
     }
 
-    // Find employee by email and organizationId to get fullName and phone
+    // Find employee by email, organizationId, and portalType to get fullName and phone
+    // Strictly filter by organizationId AND portalType to prevent cross-organization/portal access
     let employee = null;
     if (invitation.organizationId) {
+      const employeePortalType = invitation.portalType || PortalType.CUSTOMER;
       employee = await Employee.findOne({
         email: invitation.email,
-        organizationId: invitation.organizationId,
+        organizationId: new mongoose.Types.ObjectId(invitation.organizationId),
+        portalType: employeePortalType,
       });
     }
 
@@ -656,7 +802,10 @@ export class EmployeeService {
     }
 
     try {
-      const portalLink = process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300';
+      const portalUrl = portalType === PortalType.VENDOR 
+        ? (process.env.VENDOR_PORTAL_URL || 'http://localhost:4400')
+        : (process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300');
+      const orgType = portalType === PortalType.VENDOR ? 'vendor' : 'customer';
       // Use the same name splitting logic as user creation
       const nameParts = onboarding.fullName.trim().split(/\s+/);
       const firstName = nameParts[0] || onboarding.fullName || 'Employee';
@@ -669,9 +818,9 @@ export class EmployeeService {
         to: onboarding.email,
         firstName: firstName,
         lastName: lastName,
-        portalLink: `${portalLink}/login`,
+        portalLink: `${portalUrl}/login`,
         temporaryPassword,
-        organizationType: 'customer',
+        organizationType: orgType,
       });
       
       logger.info(`✅ Welcome email with login credentials sent successfully to ${onboarding.email}`);

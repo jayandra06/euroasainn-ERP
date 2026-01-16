@@ -4,9 +4,10 @@ import { permissionController } from "../controllers/permission.controller";
 
 const router = Router();
 
-// router.use(authMiddleware);
+// Enable auth middleware for permissions route
+router.use(authMiddleware);
 
-// GET /api/v1/permissions?portalType=tech
+// GET /api/v1/permissions?portalType=vendor
 router.get("/", permissionController.getPermissions.bind(permissionController));
 
 export default router;

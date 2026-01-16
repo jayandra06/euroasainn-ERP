@@ -186,6 +186,33 @@ export class AuthService {
     }
   }
 
+  /* ---------------- GET CURRENT USER ---------------- */
+  async getCurrentUser(userId: string) {
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate("roleId", "name key permissions")
+      .lean();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get role permissions if roleId exists
+    let permissions: string[] = [];
+    if (user.roleId && typeof user.roleId === 'object' && 'permissions' in user.roleId) {
+      permissions = (user.roleId as any).permissions || [];
+    } else if (user.roleId) {
+      // If roleId is populated but permissions not included, fetch role separately
+      const role = await Role.findById(user.roleId).select("permissions").lean();
+      permissions = role?.permissions || [];
+    }
+
+    return {
+      ...user,
+      permissions,
+    };
+  }
+
   
 }
 

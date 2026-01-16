@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 import { Role, IRole } from "../models/role.model";
 import { PortalType } from "@euroasiann/shared";
 import { logger } from "../config/logger";
-import { getCasbinEnforcer, resetCasbinEnforcer } from "../config/casbin";
+import { getCasbinEnforcer } from "../config/casbin";
 import { PERMISSION_TO_CASBIN } from
   "../../../../packages/casbin-config/src/permission-casbin.map";
+import { redisService } from "./redis.service";
 
 /* =========================
    HELPERS
@@ -32,14 +33,19 @@ class RoleService {
     portalType?: PortalType;
     organizationId: string;
   }) {
+    const orgId = new mongoose.Types.ObjectId(filter.organizationId);
+    
+    // Build query: ONLY roles that belong to this specific organization
+    // Each organization should only see their own roles, not roles from other organizations
     const query: any = {
-      $or: [
-        { organizationId: new mongoose.Types.ObjectId(filter.organizationId) },
-        { isSystem: true },
-      ],
+      organizationId: orgId,
     };
 
-    if (filter.portalType) query.portalType = filter.portalType;
+    // Add portal type filter - ensures roles match the portal type
+    // This ensures roles are filtered by both organization AND portal type
+    if (filter.portalType) {
+      query.portalType = filter.portalType;
+    }
 
     return Role.find(query)
       .sort({ isSystem: -1, name: 1 })
@@ -122,10 +128,17 @@ class RoleService {
         .filter(Boolean) as string[][];
 
       await enforcer.addPolicies(policies);
-      await enforcer.savePolicy();
+      // ✅ AutoSave enabled - policies are automatically persisted to MongoDB
+      // ✅ In-memory enforcer cache is automatically updated (no reset needed)
+    }
 
-      // 🔥 PERMANENT FIX (DO NOT RENAME)
-      resetCasbinEnforcer();
+    // Clear Redis cache for this organization's roles
+    try {
+      await redisService.deleteCacheByPattern(`assign-role:roles:${organizationId}:*`);
+      logger.info(`✅ Cleared Redis cache for organization roles after role creation`);
+    } catch (error: any) {
+      logger.warn(`⚠️ Failed to clear Redis cache for organization roles:`, error);
+      // Don't fail role creation if cache clearing fails
     }
 
     logger.info(`✅ Role created: ${role.key}`);
@@ -134,9 +147,9 @@ class RoleService {
 
   /* ---------- UPDATE ROLE ---------- */
 
-  async updateRole(roleId: string, data: Partial<IRole>) {
-    const role = await Role.findById(roleId);
-    if (!role) throw new Error("Role not found");
+  async updateRole(roleId: string, data: Partial<IRole>, organizationId: string) {
+    const role = await Role.findOne({ _id: roleId, organizationId });
+    if (!role) throw new Error("Role not found in this organization");
     if (role.isSystem) throw new Error("Cannot update system roles");
 
     const enforcer = await getCasbinEnforcer();
@@ -176,13 +189,28 @@ class RoleService {
         await enforcer.addPolicies(newPolicies);
       }
 
-      await enforcer.savePolicy();
-
-      // 🔥 PERMANENT FIX (DO NOT RENAME)
-      resetCasbinEnforcer();
+      // ✅ AutoSave enabled - policies are automatically persisted to MongoDB
+      // ✅ In-memory enforcer cache is automatically updated (no reset needed)
     }
 
+    // Update other fields if provided
+    if (data.name) role.name = data.name;
+    if (data.description !== undefined) role.description = data.description;
+
     await role.save();
+
+    // Clear Redis cache for this organization's roles and users
+    try {
+      await redisService.deleteCacheByPattern(`assign-role:roles:${orgIdStr}:*`);
+      await redisService.deleteCacheByPattern(`assign-role:users:${orgIdStr}:*`);
+      // Clear user caches that might have cached role info
+      await redisService.deleteCacheByPattern(`user:*`);
+      logger.info(`✅ Cleared Redis cache for organization roles/users after role update`);
+    } catch (error: any) {
+      logger.warn(`⚠️ Failed to clear Redis cache for organization roles/users:`, error);
+      // Don't fail role update if cache clearing fails
+    }
+
     return role;
   }
 
@@ -203,12 +231,23 @@ class RoleService {
     }
 
     await enforcer.removeFilteredNamedGroupingPolicy("g4", 0, role.key);
-    await enforcer.savePolicy();
-
-    // 🔥 PERMANENT FIX (DO NOT RENAME)
-    resetCasbinEnforcer();
+    // ✅ AutoSave enabled - policies are automatically persisted to MongoDB
+    // ✅ In-memory enforcer cache is automatically updated (no reset needed)
 
     await Role.findByIdAndDelete(roleId);
+
+    // Clear Redis cache for this organization's roles and users
+    try {
+      await redisService.deleteCacheByPattern(`assign-role:roles:${organizationId}:*`);
+      await redisService.deleteCacheByPattern(`assign-role:users:${organizationId}:*`);
+      // Clear user caches that might have cached role info
+      await redisService.deleteCacheByPattern(`user:*`);
+      logger.info(`✅ Cleared Redis cache for organization roles/users after role deletion`);
+    } catch (error: any) {
+      logger.warn(`⚠️ Failed to clear Redis cache for organization roles/users:`, error);
+      // Don't fail role deletion if cache clearing fails
+    }
+
     logger.info(`✅ Role deleted fully: ${role.key}`);
     return true;
   }

@@ -26,14 +26,14 @@ import { PrivacyPolicyPage } from '../pages/PrivacyPolicy/PrivacyPolicyPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 import { VendorOnboardingPage } from '../pages/Onboarding/VendorOnboardingPage';
-import { VendorInvitationAcceptPage } from '../pages/VendorInvitation/VendorInvitationAcceptPage';
-import { VendorInvitationDeclinePage } from '../pages/VendorInvitation/VendorInvitationDeclinePage';
+import { EmployeeOnboardingFormPage } from '../pages/Onboarding/EmployeeOnboardingFormPage';
 import { LicensesPage } from '../pages/Licenses/LicensesPage';
 import { PaymentPage } from '../pages/Payment/PaymentPage';
-import RolesPage from '../pages/Roles/RolesPage';
-import AssignRolesPage from '../pages/Roles/AssignRolesPage';
-import { CompliancePage } from '../pages/Compliance/CompliancePage';
-
+import RolesPage from '../pages/Roles/RolesPage'
+import  AssignRolesPage  from '../pages/Roles/AssignRolesPage';
+import { VendorProfilePage } from '../pages/VendorProfilePage/VendorProfilePage';
+import { EmployeeManagementPage } from '../pages/EmployeeManagement/EmployeeManagementPage';
+import { EmployeeOnboardingReviewPage } from '../pages/EmployeeOnboarding/EmployeeOnboardingReviewPage';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -53,11 +53,9 @@ export function App() {
               <AuthProvider>
                 <Routes>
                 <Route path="/login" element={<Login />} />
-                {/* Public onboarding route (no auth required) */}
+                {/* Public onboarding routes (no auth required) */}
                 <Route path="/onboarding/vendor" element={<VendorOnboardingPage />} />
-                {/* Public vendor invitation routes (no auth required) */}
-                <Route path="/vendor-invitation/accept" element={<VendorInvitationAcceptPage />} />
-                <Route path="/vendor-invitation/decline" element={<VendorInvitationDeclinePage />} />
+                <Route path="/onboarding/employee" element={<EmployeeOnboardingFormPage />} />
                 <Route
                   path="/"
                   element={
@@ -89,7 +87,9 @@ export function App() {
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="licenses" element={<LicensesPage />} />
                   <Route path="payment" element={<PaymentPage />} />
-                  <Route path="compliance" element={<CompliancePage />} />
+                  <Route path="profile" element={<VendorProfilePage />} />
+                  <Route path="employee-management" element={<EmployeeManagementPage />} />
+                  <Route path="employee-onboarding-review" element={<EmployeeOnboardingReviewPage />} />
                 </Route>
                 </Routes>
               </AuthProvider>

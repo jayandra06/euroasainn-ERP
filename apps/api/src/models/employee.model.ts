@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { PortalType } from '../../../../packages/shared/src/types/index.ts';
 
 export interface IPayrollDetails {
   // Salary Credits (Additions)
@@ -23,6 +24,7 @@ export interface IPayrollDetails {
 
 export interface IEmployee extends Document {
   organizationId: mongoose.Types.ObjectId;
+  portalType: PortalType; // customer | vendor - to filter employees by portal
   firstName: string;
   lastName: string;
   email: string;
@@ -42,6 +44,12 @@ const EmployeeSchema = new Schema<IEmployee>(
     organizationId: {
       type: Schema.Types.ObjectId,
       ref: 'Organization',
+      required: true,
+      index: true,
+    },
+    portalType: {
+      type: String,
+      enum: Object.values(PortalType),
       required: true,
       index: true,
     },
@@ -110,7 +118,8 @@ const EmployeeSchema = new Schema<IEmployee>(
   }
 );
 
-EmployeeSchema.index({ organizationId: 1, email: 1 });
+EmployeeSchema.index({ organizationId: 1, portalType: 1, email: 1 });
+EmployeeSchema.index({ organizationId: 1, portalType: 1 });
 EmployeeSchema.index({ businessUnitId: 1 });
 
 export const Employee = mongoose.model<IEmployee>('Employee', EmployeeSchema);
