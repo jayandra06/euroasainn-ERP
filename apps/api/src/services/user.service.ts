@@ -179,14 +179,9 @@ export class UserService {
       await redisService.deleteCache(`users:${data.organizationId}:all`);
       await redisService.deleteCache(`users:${data.organizationId}:${data.portalType}`);
       await redisService.deleteCache(`user:${user._id}`);
-<<<<<<< HEAD
       logger.info('Cache invalidated after user creation');
     } catch (error) {
       logger.warn('Cache invalidation failed', { error });
-=======
-    } catch {
-      // Non-critical
->>>>>>> main
     }
 
     return userDoc;
@@ -331,14 +326,9 @@ export class UserService {
         await redisService.deleteCache(`users:${orgId}:${user.portalType}`);
       }
       await redisService.deleteCache(`user:${userId}`);
-<<<<<<< HEAD
       logger.info('Cache invalidated after update');
     } catch (error) {
       logger.warn('Cache invalidation failed on update');
-=======
-    } catch {
-      // Non-critical
->>>>>>> main
     }
 
     return userDoc;
@@ -364,14 +354,9 @@ export class UserService {
         await redisService.deleteCache(`users:${orgId}:${user.portalType}`);
       }
       await redisService.deleteCache(`user:${userId}`);
-<<<<<<< HEAD
       logger.info('Cache invalidated after deletion');
     } catch (error) {
       logger.warn('Cache invalidation failed on delete');
-=======
-    } catch {
-      // Non-critical
->>>>>>> main
     }
 
     return { success: true };
@@ -509,14 +494,9 @@ export class UserService {
     try {
       await redisService.deleteCache(`users:${data.organizationId}:all`);
       await redisService.deleteCache(`users:${data.organizationId}:${data.portalType}`);
-<<<<<<< HEAD
       logger.info('Cache invalidated after invite');
     } catch (error) {
       logger.warn('Cache invalidation failed on invite');
-=======
-    } catch {
-      // Non-critical
->>>>>>> main
     }
 
     return { ...userDoc, temporaryPassword };

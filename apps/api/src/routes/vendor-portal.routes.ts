@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
+import { logger } from '../config/logger';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { casbinMiddleware } from '../middleware/casbin.middleware';
@@ -18,24 +19,30 @@ const router = Router();
 ====================================== */
 router.use(authMiddleware);
 router.use(requirePortal(PortalType.VENDOR));
-<<<<<<< HEAD
-=======
 
+// Temporarily disable license and payment validation for vendor portal
+// TODO: Re-enable when licenses are properly configured
 // Exempt certain routes from license and payment validation
 router.use((req, res, next) => {
-  // Allow access to payment, licenses, RFQ, quotation, banking details, and payment-proof routes without license/payment check
-  const exemptPaths = ['/payment', '/licenses', '/rfq', '/quotation', '/banking-details', '/payment-proof'];
-  const isExempt = exemptPaths.some(path => req.path === path || req.path.startsWith(`${path}/`));
+  // Temporarily skip license validation for all routes
+  logger.debug(`[Vendor Portal] Skipping license validation for ${req.path}`);
+  return next();
   
-  if (isExempt) {
-    logger.debug(`[Vendor Portal] Exempting ${req.path} from license validation`);
-    return next();
-  }
-  // Apply license validation to all other routes
-  logger.debug(`[Vendor Portal] Applying license validation to ${req.path}`);
-  return validateLicense(req as any, res, next);
+  // Original exempt logic (commented out for now)
+  // const exemptPaths = [
+  //   '/payment', '/licenses', '/rfq', '/quotation', '/banking-details', '/payment-proof',
+  //   '/catalogue', '/employees', '/roles', '/users', '/onboarding', '/items', '/quotations',
+  //   '/inventory', '/brands', '/categories', '/models'
+  // ];
+  // const isExempt = exemptPaths.some(path => req.path === path || req.path.startsWith(`${path}/`));
+  // 
+  // if (isExempt) {
+  //   logger.debug(`[Vendor Portal] Exempting ${req.path} from license validation`);
+  //   return next();
+  // }
+  // logger.debug(`[Vendor Portal] Applying license validation to ${req.path}`);
+  // return validateLicense(req as any, res, next);
 });
->>>>>>> main
 
 // Optional: enable when ready
 // router.use(validateLicense);
@@ -43,138 +50,29 @@ router.use((req, res, next) => {
 
 // Skip payment check for payment/license/onboarding related routes
 router.use((req, res, next) => {
-<<<<<<< HEAD
-  if (
-    req.path.startsWith('/payment') ||
-    req.path.startsWith('/licenses') ||
-    req.path.startsWith('/onboarding') ||
-    req.path === '/license/pricing'
-  ) {
-    return next();
-  }
-  return paymentStatusMiddleware(req as any, res, next);
+  // Temporarily skip payment validation for all routes
+  logger.debug(`[Vendor Portal] Skipping payment validation for ${req.path}`);
+  return next();
+  
+  // Original exempt logic (commented out for now)
+  // const exemptPaths = [
+  //   '/payment', '/licenses', '/rfq', '/quotation', '/banking-details', '/payment-proof',
+  //   '/catalogue', '/employees', '/roles', '/users', '/onboarding', '/items', '/quotations',
+  //   '/inventory', '/brands', '/categories', '/models'
+  // ];
+  // const isExempt = exemptPaths.some(path => req.path === path || req.path.startsWith(`${path}/`));
+  // 
+  // if (isExempt) {
+  //   logger.debug(`[Vendor Portal] Exempting ${req.path} from payment validation`);
+  //   return next();
+  // }
+  // logger.debug(`[Vendor Portal] Applying payment validation to ${req.path}`);
+  // return paymentStatusMiddleware(req as any, res, next);
 });
 
 /* ===========================
    MULTER CONFIG FOR UPLOADS
 =========================== */
-=======
-  // Allow access to payment-related routes, RFQ routes, quotation routes, banking details, and payment-proof routes without payment check
-  const exemptPaths = ['/payment', '/licenses', '/rfq', '/quotation', '/banking-details', '/payment-proof'];
-  const isExempt = exemptPaths.some(path => req.path === path || req.path.startsWith(`${path}/`));
-  
-  if (isExempt) {
-    logger.debug(`[Vendor Portal] Exempting ${req.path} from payment validation`);
-    return next();
-  }
-  // Apply payment middleware to all other routes
-  logger.debug(`[Vendor Portal] Applying payment validation to ${req.path}`);
-  return paymentStatusMiddleware(req as any, res, next);
-});
-
-router.post('/users/invite', async (req, res) => {
-  try {
-    req.body.portalType = PortalType.VENDOR;
-    if (!(req as any).user?.organizationId && !req.body.organizationId) {
-      return res.status(400).json({
-        success: false,
-        error: 'organizationId is required',
-      });
-    }
-    req.body.organizationId = req.body.organizationId || (req as any).user?.organizationId;
-    await userController.inviteUser(req, res);
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to invite user',
-    });
-  }
-});
-
-// Items routes
-router.get('/items', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const items = await itemService.getItems(orgId, req.query);
-    res.json({ success: true, data: items });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-router.post('/items', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const item = await itemService.createItem(orgId, req.body);
-    res.status(201).json({ success: true, data: item });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
-  }
-});
-
-// Quotation routes
-router.get('/quotation', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const quotations = await quotationService.getQuotations(orgId, req.query);
-    res.json({ success: true, data: quotations });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Get quotation by RFQ ID for current vendor
-router.get('/quotation/rfq/:rfqId', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    if (!orgId) {
-      return res.status(400).json({
-        success: false,
-        error: 'Organization ID not found',
-      });
-    }
-    const quotation = await quotationService.getQuotationByRFQIdForVendor(req.params.rfqId, orgId);
-    res.json({ success: true, data: quotation });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-router.post('/quotation', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    
-    // Check if quotation already exists for this RFQ
-    if (req.body.rfqId) {
-      const existingQuotation = await quotationService.getQuotationByRFQIdForVendor(req.body.rfqId, orgId);
-      if (existingQuotation) {
-        return res.status(400).json({
-          success: false,
-          error: 'A quotation has already been submitted for this RFQ. You can only submit one quotation per RFQ.',
-        });
-      }
-    }
-    
-    const quotation = await quotationService.createQuotation(orgId, req.body);
-    res.status(201).json({ success: true, data: quotation });
-  } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
-  }
-});
-
-// Catalogue route (same as items)
-router.get('/catalogue', async (req, res) => {
-  try {
-    const orgId = (req as any).user?.organizationId;
-    const items = await itemService.getItems(orgId, req.query);
-    res.json({ success: true, data: items });
-  } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Upload catalog file (CSV)
->>>>>>> main
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -300,7 +198,6 @@ router.post('/models', vendorPortalController.createModel.bind(vendorPortalContr
 router.get('/license/pricing', vendorPortalController.getLicensePricing.bind(vendorPortalController));
 router.get('/licenses', vendorPortalController.getLicenses.bind(vendorPortalController));
 
-<<<<<<< HEAD
 /* ===========================
    EMPLOYEE ROUTES
 =========================== */
@@ -320,7 +217,10 @@ router.get('/employees/onboardings/:id', vendorPortalController.getEmployeeOnboa
 router.post('/employees/onboardings/:id/approve', vendorPortalController.approveEmployeeOnboarding.bind(vendorPortalController));
 router.post('/employees/onboardings/:id/reject', vendorPortalController.rejectEmployeeOnboarding.bind(vendorPortalController));
 router.delete('/employees/onboardings/:id', vendorPortalController.deleteEmployeeOnboarding.bind(vendorPortalController));
-=======
+
+/* ===========================
+   RFQ ROUTES (Vendor's RFQ Inbox)
+=========================== */
 // RFQ routes (vendor's RFQ inbox)
 router.get('/rfq', async (req, res) => {
   try {
@@ -331,6 +231,7 @@ router.get('/rfq', async (req, res) => {
         error: 'Organization ID not found',
       });
     }
+    const { rfqService } = await import('../services/rfq.service');
     logger.info(`[Vendor RFQ Route] Fetching RFQs for vendor: ${vendorOrgId}, Filters: ${JSON.stringify(req.query)}`);
     const rfqs = await rfqService.getRFQsForVendor(vendorOrgId, req.query);
     logger.info(`[Vendor RFQ Route] Found ${rfqs.length} RFQs for vendor ${vendorOrgId}`);
@@ -350,6 +251,7 @@ router.get('/rfq/:id', async (req, res) => {
         error: 'Organization ID not found',
       });
     }
+    const { rfqService } = await import('../services/rfq.service');
     const rfq = await rfqService.getRFQForVendorById(req.params.id, vendorOrgId);
     res.json({ success: true, data: rfq });
   } catch (error: any) {
@@ -676,98 +578,6 @@ router.post('/payment-proof/:quotationId/vendor-shipping', async (req, res) => {
   }
 });
 
-// Submit vendor shipping details (for vendor-managed shipping)
-router.post('/payment-proof/:quotationId/vendor-shipping', async (req, res) => {
-  try {
-    const userId = (req as any).user?.userId || (req as any).user?._id;
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        error: 'User ID is required',
-      });
-    }
-
-    const { awbTrackingNumber, shippingContactName, shippingContactEmail, shippingContactPhone } = req.body;
-    
-    if (!awbTrackingNumber || !shippingContactName || !shippingContactEmail || !shippingContactPhone) {
-      return res.status(400).json({
-        success: false,
-        error: 'AWB tracking number, contact name, email, and phone number are required',
-      });
-    }
-
-    const { paymentProofService } = await import('../services/payment-proof.service');
-    const { emailService } = await import('../services/email.service');
-    const { Quotation } = await import('../models/quotation.model');
-    const { RFQ } = await import('../models/rfq.model');
-    const { User } = await import('../models/user.model');
-    const { logger } = await import('../config/logger');
-
-    const paymentProof = await paymentProofService.submitVendorShippingDetails(
-      req.params.quotationId,
-      userId,
-      {
-        awbTrackingNumber,
-        shippingContactName,
-        shippingContactEmail,
-        shippingContactPhone,
-      }
-    );
-
-    // Get quotation and RFQ details for email
-    const quotation = await Quotation.findById(req.params.quotationId)
-      .populate('organizationId', 'name')
-      .lean();
-    const rfq = await RFQ.findById((paymentProof as any).rfqId)
-      .populate('organizationId', 'name')
-      .lean();
-
-    if (quotation && rfq) {
-      // Get customer admin users to send email
-      const customerOrgId = (rfq as any).organizationId?._id || (rfq as any).organizationId;
-      const customerUsers = await User.find({
-        organizationId: customerOrgId,
-        role: 'customer_admin',
-      }).limit(5);
-
-      // Send email to customer admins
-      for (const customerUser of customerUsers) {
-        try {
-          await emailService.sendVendorShippingDetailsEmail({
-            to: customerUser.email,
-            firstName: customerUser.firstName || 'Customer',
-            lastName: customerUser.lastName || 'Admin',
-            vendorOrganizationName: (quotation as any).organizationId?.name || 'Vendor',
-            quotationNumber: (quotation as any).quotationNumber,
-            rfqNumber: (rfq as any).rfqNumber || 'N/A',
-            shippingDetails: {
-              awbTrackingNumber,
-              shippingContactName,
-              shippingContactEmail,
-              shippingContactPhone,
-            },
-            rfqLink: `${process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4200'}/rfqs/${(rfq as any)._id}`,
-          });
-          logger.info(`✅ Vendor shipping details email sent to ${customerUser.email}`);
-        } catch (emailError: any) {
-          logger.error(`❌ Failed to send vendor shipping details email: ${emailError.message}`);
-        }
-      }
-    }
-
-    res.json({
-      success: true,
-      data: paymentProof,
-      message: 'Shipping details submitted successfully. Customer has been notified.',
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      error: error.message || 'Failed to submit shipping details',
-    });
-  }
-});
-
 // Approve payment and start packing
 router.post('/payment-proof/:quotationId/approve', async (req, res) => {
   try {
@@ -836,6 +646,5 @@ router.post('/payment-proof/:quotationId/approve', async (req, res) => {
     });
   }
 });
->>>>>>> main
 
 export default router;

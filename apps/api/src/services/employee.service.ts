@@ -37,32 +37,10 @@ function calculatePayrollTotals(payroll: Partial<IPayrollDetails>): { grossSalar
     return { grossSalary, netSalary };
 }
 
-<<<<<<< HEAD
-// Helper function to build employee onboarding link
-function buildEmployeeOnboardingLink(token: string, portalType: PortalType) {
-  let portalUrl: string;
-  if (portalType === PortalType.VENDOR) {
-    portalUrl = process.env.VENDOR_PORTAL_URL || 'http://localhost:4400';
-  } else {
-    portalUrl = process.env.CUSTOMER_PORTAL_URL || 'http://localhost:4300';
-  }
-  return `${portalUrl}/onboarding/employee?token=${token}`;
-}
-
-export class EmployeeService {
-  async createEmployee(organizationId: string, portalType: PortalType, data: Partial<IEmployee>) {
-    // Check license limit - SKIPPED FOR NOW
-    // const canCreate = await licenseService.checkUsageLimit(organizationId, 'employees');
-    // if (!canCreate) {
-    //   throw new Error('Employee limit exceeded');
-    // }
-
-=======
 
 export class EmployeeService {
   async createEmployee(organizationId: string, data: Partial<IEmployee>) {
     // License validation removed - create employee without license checks
->>>>>>> main
     const employee = new Employee({
       ...data,
       organizationId: new mongoose.Types.ObjectId(organizationId),
@@ -70,9 +48,6 @@ export class EmployeeService {
     });
 
     await employee.save();
-<<<<<<< HEAD
-    // await licenseService.incrementUsage(organizationId, 'employees');
-=======
     
     // Try to increment usage if license exists, but don't fail if it doesn't
     try {
@@ -82,7 +57,6 @@ export class EmployeeService {
       console.warn('Failed to increment employee usage (license may not exist):', usageError.message);
     }
     
->>>>>>> main
     return employee;
   }
 
@@ -98,24 +72,12 @@ export class EmployeeService {
     return await Employee.find(query);
   }
 
-<<<<<<< HEAD
-  async getEmployeesWithOnboardingStatus(organizationId: string, portalType: PortalType, filters?: { status?: string }) {
-    // Strictly filter by organizationId AND portalType
-    const query: any = { 
-      organizationId: new mongoose.Types.ObjectId(organizationId),
-      portalType: portalType,
-    };
-    
-    // Get all employees
-    const employees = await Employee.find(query).sort({ createdAt: -1 });
-=======
   async getEmployeesWithOnboardingStatus(organizationId: string, filters?: { status?: string }) {
     try {
       const query: any = { organizationId: new mongoose.Types.ObjectId(organizationId) };
       
       // Get all employees
       const employees = await Employee.find(query).sort({ createdAt: -1 });
->>>>>>> main
 
       // Get all onboardings for this organization
       const onboardingQuery: any = { organizationId: new mongoose.Types.ObjectId(organizationId) };
@@ -344,16 +306,7 @@ export class EmployeeService {
     businessUnitId?: string;
     payrollDetails?: Partial<IPayrollDetails>;
   }) {
-<<<<<<< HEAD
-    // Check license limit - SKIPPED FOR NOW
-    // const canCreate = await licenseService.checkUsageLimit(organizationId, 'employees');
-    // if (!canCreate) {
-    //   throw new Error('Employee limit exceeded');
-    // }
-
-=======
     // License validation removed - invite employee without license checks
->>>>>>> main
     // Normalize email
     const normalizedEmail = data.email.toLowerCase().trim();
 
