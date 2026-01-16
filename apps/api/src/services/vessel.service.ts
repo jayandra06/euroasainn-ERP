@@ -3,19 +3,22 @@ import { licenseService } from './license.service';
 
 export class VesselService {
   async createVessel(organizationId: string, data: Partial<IVessel>) {
-    // Check license limit
-    const canCreate = await licenseService.checkUsageLimit(organizationId, 'vessels');
-    if (!canCreate) {
-      throw new Error('Vessel limit exceeded');
-    }
-
+    // License validation removed - create vessel without license checks
     const vessel = new Vessel({
       ...data,
       organizationId,
     });
 
     await vessel.save();
-    await licenseService.incrementUsage(organizationId, 'vessels');
+    
+    // Try to increment usage if license exists, but don't fail if it doesn't
+    try {
+      await licenseService.incrementUsage(organizationId, 'vessels');
+    } catch (usageError: any) {
+      // Log but don't fail vessel creation if usage increment fails (no license or other error)
+      console.warn('Failed to increment vessel usage (license may not exist):', usageError.message);
+    }
+    
     return vessel;
   }
 
@@ -48,7 +51,13 @@ export class VesselService {
     if (!vessel) {
       throw new Error('Vessel not found');
     }
-    await licenseService.decrementUsage(organizationId, 'vessels');
+    // Try to decrement usage if license exists, but don't fail if it doesn't
+    try {
+      await licenseService.decrementUsage(organizationId, 'vessels');
+    } catch (usageError: any) {
+      // Log but don't fail vessel deletion if usage decrement fails
+      console.warn('Failed to decrement vessel usage (license may not exist):', usageError.message);
+    }
     return { success: true };
   }
 }

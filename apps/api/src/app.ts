@@ -15,7 +15,8 @@ import permissionRoutes from './routes/permission.routes';
 
 import onboardingRoutes from './routes/onboarding.routes';
 import adminOnboardingRoutes from './routes/admin-onboarding.routes';
-import paymentRoutes from './routes/payment.routes';
+import jiraRoutes from './routes/jira.routes';
+// import paymentRoutes from './routes/payment.routes';
 
 const app: Express = express();
 
@@ -86,6 +87,8 @@ app.use(`${config.apiPrefix}/permissions`, permissionRoutes);
 
 // Public onboarding routes (no auth required)
 app.use(`${config.apiPrefix}/onboarding`, onboardingRoutes);
+// Jira integration routes
+app.use(`${config.apiPrefix}/jira`, jiraRoutes);
 // Payment routes
 // app.use(`${config.apiPrefix}/payments`, paymentRoutes);
 

@@ -9,13 +9,17 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
+interface PaymentStatus {
+  hasActivePayment?: boolean;
+}
+
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
   const [paymentChecked, setPaymentChecked] = useState(false);
 
   // Check payment status
-  const { data: paymentStatus, isLoading: paymentLoading } = useQuery({
+  const { data: paymentStatus, isLoading: paymentLoading, error: paymentError } = useQuery<PaymentStatus>({
     queryKey: ['payment-status'],
     queryFn: async () => {
       try {
@@ -29,8 +33,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           if (response.status === 403) {
             return { hasActivePayment: false };
           }
-          // For connection errors, allow access (backend might be starting)
-          if (response.status === 0 || response.type === 'error') {
+          // For 404 or connection errors, allow access (backend might be starting or endpoint not available)
+          if (response.status === 404 || response.status === 0 || response.type === 'error') {
             return { hasActivePayment: true }; // Assume payment is active to allow access
           }
           throw new Error('Failed to check payment status');
@@ -46,15 +50,21 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       }
     },
     enabled: isAuthenticated && !loading,
-    retry: false,
-    // Don't show errors for connection issues
-    onError: (error: any) => {
-      // Only log non-connection errors
-      if (!error?.message?.includes('Failed to fetch') && !error?.message?.includes('ERR_CONNECTION_REFUSED')) {
-        console.error('Payment status check error:', error);
-      }
-    },
+    retry: false, // Disable retry on failure
+    staleTime: Infinity, // Never consider data stale - prevent all refetching
+    gcTime: Infinity, // Keep in cache forever
+    refetchInterval: false, // Explicitly disable automatic refetching (false overrides global default)
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+    refetchOnMount: false, // Disable refetch on component mount
+    refetchOnReconnect: false, // Disable refetch on network reconnect
   });
+
+  // Log errors (but don't block access for connection issues)
+  useEffect(() => {
+    if (paymentError && !paymentError?.message?.includes('Failed to fetch') && !paymentError?.message?.includes('ERR_CONNECTION_REFUSED')) {
+      console.error('Payment status check error:', paymentError);
+    }
+  }, [paymentError]);
 
   useEffect(() => {
     if (isAuthenticated && !loading && paymentStatus !== undefined) {

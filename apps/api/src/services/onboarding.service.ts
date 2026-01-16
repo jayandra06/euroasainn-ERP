@@ -252,9 +252,44 @@ export class OnboardingService {
     await organization.save();
     logger.info(`✅ Organization ${organization.name} marked as active`);
 
-    // Don't create license automatically - redirect to license creation page
-    // License will be created manually with pricing information
-    logger.info(`✅ Onboarding approved. License should be created manually with pricing information.`);
+    // Automatically create license for the organization
+    try {
+      const { licenseService } = await import('./license.service');
+      
+      // Check if license already exists
+      const existingLicense = await licenseService.getLicenses(orgIdString);
+      if (existingLicense && existingLicense.length > 0) {
+        logger.info(`⚠️ License already exists for organization ${orgIdString}, skipping license creation`);
+      } else {
+        // Set expiration to 1 year from now
+        const expiresAt = new Date();
+        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+        
+        // Create license with default limits
+        const license = await licenseService.createLicense({
+          organizationId: orgIdString,
+          organizationType: OrganizationType.CUSTOMER,
+          expiresAt,
+          usageLimits: {
+            users: 10,
+            vessels: 10,
+            items: 1000,
+            employees: 50,
+            businessUnits: 5,
+          },
+          pricing: {
+            monthlyPrice: 0,
+            yearlyPrice: 0,
+            currency: 'USD',
+          },
+        });
+        
+        logger.info(`✅ License created automatically for customer organization ${organization.name}: ${license.licenseKey}`);
+      }
+    } catch (licenseError: any) {
+      logger.error(`❌ Failed to create license automatically: ${licenseError.message}`);
+      // Don't fail approval if license creation fails - admin can create it manually
+    }
 
     // Send success email with credentials after approval
     try {
@@ -390,9 +425,44 @@ export class OnboardingService {
     await organization.save();
     logger.info(`✅ Vendor organization ${organization.name} marked as active`);
 
-    // Don't create license automatically - redirect to license creation page
-    // License will be created manually with pricing information
-    logger.info(`✅ Vendor onboarding approved. License should be created manually with pricing information.`);
+    // Automatically create license for the organization
+    try {
+      const { licenseService } = await import('./license.service');
+      
+      // Check if license already exists
+      const existingLicense = await licenseService.getLicenses(orgIdString);
+      if (existingLicense && existingLicense.length > 0) {
+        logger.info(`⚠️ License already exists for organization ${orgIdString}, skipping license creation`);
+      } else {
+        // Set expiration to 1 year from now
+        const expiresAt = new Date();
+        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+        
+        // Create license with default limits
+        const license = await licenseService.createLicense({
+          organizationId: orgIdString,
+          organizationType: OrganizationType.VENDOR,
+          expiresAt,
+          usageLimits: {
+            users: 10,
+            vessels: 0, // Vendors typically don't have vessels
+            items: 1000,
+            employees: 50,
+            businessUnits: 5,
+          },
+          pricing: {
+            monthlyPrice: 0,
+            yearlyPrice: 0,
+            currency: 'USD',
+          },
+        });
+        
+        logger.info(`✅ License created automatically for vendor organization ${organization.name}: ${license.licenseKey}`);
+      }
+    } catch (licenseError: any) {
+      logger.error(`❌ Failed to create license automatically: ${licenseError.message}`);
+      // Don't fail approval if license creation fails - admin can create it manually
+    }
 
     // Send success email with credentials after approval
     try {

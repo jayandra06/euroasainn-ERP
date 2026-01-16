@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { MdSearch } from 'react-icons/md';
 import { authenticatedFetch } from '../../lib/api';
 
@@ -23,6 +24,7 @@ interface RFQ {
 }
 
 export function RFQsPage() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -134,7 +136,11 @@ export function RFQsPage() {
                     const dateStr = date.toLocaleDateString();
                     const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return (
-                      <tr key={rfq._id} className="hover:bg-[hsl(var(--muted))]">
+                      <tr 
+                        key={rfq._id} 
+                        onClick={() => navigate(`/rfqs/${rfq._id}`)}
+                        className="hover:bg-[hsl(var(--muted))] cursor-pointer transition-colors"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{dateStr}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{timeStr}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{rfq.supplyPort || '-'}</td>
@@ -142,13 +148,19 @@ export function RFQsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[hsl(var(--foreground))]">{rfq.brand || '-'}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            rfq.status === 'draft' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
-                            rfq.status === 'sent' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                            rfq.status === 'draft' || rfq.status === 'sent' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
                             rfq.status === 'quoted' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                             rfq.status === 'ordered' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                            rfq.status === 'cancelled' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                            rfq.status === 'completed' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
                             'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
                           }`}>
-                            {rfq.status || 'draft'}
+                            {rfq.status === 'draft' || rfq.status === 'sent' ? 'RFQ Received' :
+                             rfq.status === 'quoted' ? 'Quote Sent' :
+                             rfq.status === 'ordered' ? 'Order Confirmed' :
+                             rfq.status === 'cancelled' ? 'Order Cancelled' :
+                             rfq.status === 'completed' ? 'Order Completed' :
+                             rfq.status || 'RFQ Received'}
                           </span>
                         </td>
                       </tr>

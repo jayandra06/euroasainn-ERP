@@ -81,7 +81,7 @@ class RoleService {
       throw new Error("Role with this name already exists");
     }
 
-    let baseKey = generateRoleKey(name, portalType);
+    const baseKey = generateRoleKey(name, portalType);
     let key = baseKey;
     let counter = 1;
 

@@ -37,7 +37,7 @@ export class ModelService {
         if (typeof brandIdObj === 'string' && mongoose.Types.ObjectId.isValid(brandIdObj)) {
           brandIdObj = new mongoose.Types.ObjectId(brandIdObj);
         }
-      } catch (error) {
+      } catch {
         // If conversion fails, use as-is
       }
       query.brandId = brandIdObj;
@@ -51,7 +51,7 @@ export class ModelService {
         if (typeof orgId === 'string' && mongoose.Types.ObjectId.isValid(orgId)) {
           orgId = new mongoose.Types.ObjectId(orgId);
         }
-      } catch (error) {
+      } catch {
         // If conversion fails, use as-is
       }
 

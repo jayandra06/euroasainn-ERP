@@ -537,10 +537,27 @@ export function CrewManagementPage() {
     },
   });
 
+  // Real-time form validation
+  const isFormValid = useMemo(() => {
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    // Check all required fields
+    const firstNameValid = employeeForm.firstName.trim().length > 0;
+    const lastNameValid = employeeForm.lastName.trim().length > 0;
+    const emailValid = employeeForm.email.trim().length > 0 && emailRegex.test(employeeForm.email.trim());
+    const countryValid = employeeForm.country.trim().length > 0;
+    const phoneValid = employeeForm.phone.trim().length > 0 && employeeForm.phoneCountryCode.trim().length > 0;
+    const roleValid = employeeForm.role.trim().length > 0;
+    // Business Unit is optional - can be "Unassigned"
+    
+    return firstNameValid && lastNameValid && emailValid && countryValid && phoneValid && roleValid;
+  }, [employeeForm]);
+
   const handleSubmitEmployee = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!employeeForm.firstName || !employeeForm.lastName || !employeeForm.email) {
-      showToast('Please fill in all required fields (Name and Email)', 'error');
+    if (!isFormValid) {
+      showToast('Please fill in all required fields (First Name, Last Name, Email, Country, Phone with country code, Role)', 'error');
       return;
     }
     inviteEmployeeMutation.mutate(employeeForm);
@@ -818,12 +835,12 @@ export function CrewManagementPage() {
                     }));
                   }}
                   placeholder="Search and select country..."
-                  label="Country"
+                  label="Country *"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone
+                  Phone *
                 </label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <select
@@ -848,7 +865,7 @@ export function CrewManagementPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Role (from Customer Portal Role Management)
+                  Role (from Customer Portal Role Management) *
                 </label>
               <select
                   value={employeeForm.role}
@@ -1199,7 +1216,7 @@ export function CrewManagementPage() {
                 </button>
           <button
                   type="submit"
-                  disabled={inviteEmployeeMutation.isPending}
+                  disabled={!isFormValid || inviteEmployeeMutation.isPending}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {inviteEmployeeMutation.isPending ? 'Inviting...' : 'Invite Employee'}

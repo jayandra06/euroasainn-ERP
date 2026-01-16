@@ -3,19 +3,22 @@ import { licenseService } from './license.service';
 
 export class ItemService {
   async createItem(organizationId: string, data: Partial<IItem>) {
-    // Check license limit
-    const canCreate = await licenseService.checkUsageLimit(organizationId, 'items');
-    if (!canCreate) {
-      throw new Error('Item limit exceeded');
-    }
-
+    // License validation removed - create item without license checks
     const item = new Item({
       ...data,
       organizationId,
     });
 
     await item.save();
-    await licenseService.incrementUsage(organizationId, 'items');
+    
+    // Try to increment usage if license exists, but don't fail if it doesn't
+    try {
+      await licenseService.incrementUsage(organizationId, 'items');
+    } catch (usageError: any) {
+      // Log but don't fail item creation if usage increment fails
+      console.warn('Failed to increment item usage (license may not exist):', usageError.message);
+    }
+    
     return item;
   }
 

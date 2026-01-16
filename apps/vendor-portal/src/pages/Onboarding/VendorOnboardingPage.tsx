@@ -103,8 +103,7 @@ export function VendorOnboardingPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  // invitationData is set but not used - keeping for potential future use
-  const [, setInvitationData] = useState<any>(null);
+  const [invitationData, setInvitationData] = useState<any>(null);
   
   // State for brands, categories, and models
   const [availableBrands, setAvailableBrands] = useState<Array<{ _id: string; name: string }>>([]);
@@ -352,6 +351,13 @@ export function VendorOnboardingPage() {
             <h1 className="text-3xl font-bold text-[hsl(var(--foreground))] mb-2">
               Vendor Onboarding – Euroasiann ERP
             </h1>
+            {invitationData?.invitedByCustomerName ? (
+              <div className="mb-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-blue-800 dark:text-blue-200 font-medium">
+                  You have been invited by <strong>{invitationData.invitedByCustomerName}</strong> to join the Euroasiann ERP Platform as a vendor.
+                </p>
+              </div>
+            ) : null}
             <p className="text-gray-600 dark:text-gray-400">
               Complete your vendor organization onboarding to get started
             </p>

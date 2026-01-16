@@ -11,6 +11,7 @@ import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { TemplateLayout } from '../components/template/Layout';
 import { RFQsPage } from '../pages/RFQs/RFQsPage';
+import { RFQDetailsPage } from '../pages/RFQs/RFQDetailsPage';
 import { FleetOverviewPage } from '../pages/FleetOverview/FleetOverviewPage';
 import { VesselManagementPage } from '../pages/VesselManagement/VesselManagementPage';
 import { BranchPage } from '../pages/Branch/BranchPage';
@@ -31,7 +32,16 @@ import { EmployeeOnboardingReviewPage } from '../pages/EmployeeOnboarding/Employ
 /* ✅ Role Management Imports */
 import { RolesPage } from '../pages/Roles/RolesPage';
 import { AssignRolesPage } from '../pages/Roles/AssignRolesPage';
+<<<<<<< HEAD
 import { CustomerProfilePage } from '../pages/CustomerProfilePage/CustomerProfilePage';
+=======
+
+/* ✅ Coming Soon Pages */
+import { FleetPerformancePage } from '../pages/FleetPerformance/FleetPerformancePage';
+import { CompliancePage } from '../pages/Compliance/CompliancePage';
+import { RiskManagementPage } from '../pages/RiskManagement/RiskManagementPage';
+import { SustainabilityPage } from '../pages/Sustainability/SustainabilityPage';
+>>>>>>> main
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -80,6 +90,7 @@ function AppContent() {
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="fleet-overview" element={<FleetOverviewPage />} />
               <Route path="rfqs" element={<RFQsPage />} />
+              <Route path="rfqs/:id" element={<RFQDetailsPage />} />
               <Route path="vendor-management" element={<VendorManagementPage />} />
               <Route path="claim-raised" element={<ClaimRaisedPage />} />
               <Route path="vessels" element={<VesselManagementPage />} />
@@ -87,7 +98,7 @@ function AppContent() {
               <Route path="port" element={<PortManagementPage />} />
               <Route path="port-management" element={<PortManagementPage />} />
               <Route path="branch" element={<BranchPage />} />
-              <Route path="branch/:buId" element={<BUProfilePage />} />
+              <Route path="dashboard/branch/:buId" element={<BUProfilePage />} />
               <Route path="payroll-management" element={<PayrollManagementPage />} />
               <Route path="employee-management" element={<CrewManagementPage />} />
               <Route path="crew-management" element={<CrewManagementPage />} />
@@ -101,8 +112,16 @@ function AppContent() {
               <Route path="roles-permissions" element={<RolesPage />} />
               <Route path="assign-roles" element={<AssignRolesPage />} />
 
+<<<<<<< HEAD
               {/* ✅ Profile Route */}
               <Route path="profile" element={<CustomerProfilePage />} />
+=======
+              {/* ✅ Coming Soon Pages */}
+              <Route path="fleet-performance" element={<FleetPerformancePage />} />
+              <Route path="compliance" element={<CompliancePage />} />
+              <Route path="risk-management" element={<RiskManagementPage />} />
+              <Route path="sustainability" element={<SustainabilityPage />} />
+>>>>>>> main
 
             </Route>
           </Routes>

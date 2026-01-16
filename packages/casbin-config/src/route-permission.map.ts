@@ -108,12 +108,24 @@ export const ROUTE_PERMISSION_MAP: Record<string, string> = {
   "admin:GET /customers/:id": "customerOrgsManage",
 
 
+  /* -------- RFQ -------- */
+  "admin:GET /rfq": "adminRfqView",
+  "admin:GET /rfq/:id": "adminRfqView",
+  "admin:POST /quotation": "adminRfqManage",
+  "admin:GET /quotation/rfq/:rfqId": "adminRfqView",
+
+
   /* ======================================================
      ⭐ CUSTOMER PORTAL (UNCHANGED)
   ====================================================== */
 
-  "customer:GET /rfqs": "rfqView",
-  "customer:POST /rfqs": "rfqManage",
+  "customer:GET /rfq": "rfqView",
+  "customer:POST /rfq": "rfqManage",
+  "customer:PUT /rfq/:id": "rfqManage",
+  "customer:DELETE /rfq/:id": "rfqManage",
+  "customer:GET /rfq/:id": "rfqView",
+  "customer:GET /rfq/:id/quotations": "rfqView",
+  "customer:POST /quotations/:id/finalize": "rfqManage",
 
   "customer:GET /vessels": "vesselsView",
   "customer:POST /vessels": "vesselsManage",

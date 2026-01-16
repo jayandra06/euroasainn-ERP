@@ -30,6 +30,7 @@ import {
   MdFolder,
   MdVpnKey,
   MdPayment,
+  MdVerified,
 } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { cn } from '../../lib/utils';
@@ -111,6 +112,7 @@ const navItems: NavItem[] = [
       { path: '/privacy-policy', label: 'Privacy Policy', icon: MdDescription },
     ],
   },
+  { path: '/compliance', label: 'Compliance & Certification', icon: MdVerified },
   { path: '/analytics', label: 'Analytics', icon: MdTrendingUp },
   { path: '/users', label: 'Users', icon: MdPeople },
   { path: '/licenses', label: 'Licenses', icon: MdVpnKey },

@@ -1,4 +1,7 @@
 import { Router } from 'express';
+import mongoose from 'mongoose';
+import multer from 'multer';
+import { logger } from '../config/logger';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePortal } from '../middleware/portal.middleware';
 import { casbinMiddleware } from '../middleware/casbin.middleware';

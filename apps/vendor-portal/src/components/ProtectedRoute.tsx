@@ -52,11 +52,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // Preserve the intended destination when redirecting to login
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Allow access to payment and licenses pages without payment
-  const allowedPaths = ['/payment', '/licenses'];
+  // Allow access to payment, licenses, and RFQ pages without payment
+  const allowedPaths = ['/payment', '/licenses', '/rfqs'];
   const isAllowedPath = allowedPaths.some(path => location.pathname.startsWith(path));
 
   // If payment is checked and not active, redirect to payment (except for allowed paths)

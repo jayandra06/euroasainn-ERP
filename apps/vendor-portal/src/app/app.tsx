@@ -9,6 +9,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { UsersPage } from '../pages/Users';
 import { AnalyticsPage } from '../pages/Analytics/AnalyticsPage';
 import { RFQsPage } from '../pages/RFQs/RFQsPage';
+import { RFQDetailsPage } from '../pages/RFQs/RFQDetailsPage';
 import { ClaimRequestsPage } from '../pages/ClaimRequests/ClaimRequestsPage';
 import { CategoriesPage } from '../pages/Categories/CategoriesPage';
 import { BrandsPage } from '../pages/Brands/BrandsPage';
@@ -66,6 +67,7 @@ export function App() {
                   <Route index element={<Navigate to="/dashboard" replace />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="rfqs" element={<RFQsPage />} />
+                  <Route path="rfqs/:id" element={<RFQDetailsPage />} />
                   <Route path="claim-requests" element={<ClaimRequestsPage />} />
                   <Route path="categories" element={<CategoriesPage />} />
                   <Route path="brands" element={<BrandsPage />} />

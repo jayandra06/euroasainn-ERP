@@ -7,6 +7,14 @@ export default defineConfig({
   server: {
     port: 4400,
     host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path, // Don't rewrite the path, forward as-is
+      },
+    },
   },
   resolve: {
     alias: {

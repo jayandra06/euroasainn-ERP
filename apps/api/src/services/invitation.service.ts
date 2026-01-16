@@ -101,6 +101,7 @@ export class InvitationService {
     invitationLink: string;
     portalLink: string;
     temporaryPassword?: string;
+    invitedByCustomerName?: string;
   }) {
     try {
       // Log the exact email address we're sending to (this should be from the form)
@@ -118,6 +119,7 @@ export class InvitationService {
         invitationLink: data.invitationLink,
         portalLink: data.portalLink,
         temporaryPassword: data.temporaryPassword,
+        invitedByCustomerName: data.invitedByCustomerName,
       });
 
       logger.info(`✅ Invitation service: Email successfully sent to ${data.email}`);

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable } from '../../components/shared/DataTable';
 import { Modal } from '../../components/shared/Modal';
 import { useToast } from '../../components/shared/Toast';
-import { MdArrowBack, MdAdd, MdDelete } from 'react-icons/md';
+import { MdArrowBack, MdAdd, MdDelete, MdBusiness, MdPhone, MdEmail, MdLocationOn, MdPerson, MdDirectionsBoat, MdDescription, MdAttachMoney, MdHistory } from 'react-icons/md';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -26,13 +26,6 @@ interface User {
   fullName?: string;
 }
 
-interface Employee {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  businessUnitId?: string;
-}
 
 interface BusinessUnit {
   _id: string;
@@ -45,6 +38,47 @@ interface BusinessUnit {
     phoneNumber?: string;
     representativeId?: string;
   };
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface RFQ {
+  _id: string;
+  rfqNumber: string;
+  title: string;
+  status: string;
+  vesselId?: {
+    _id: string;
+    name: string;
+    imoNumber?: string;
+  };
+  supplyPort?: string;
+  brand?: string;
+  category?: string;
+  createdAt: string;
+}
+
+interface Payment {
+  _id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  paymentType: string;
+  paymentMethod?: string;
+  transactionId?: string;
+  description?: string;
+  createdAt: string;
+}
+
+interface Employee {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  position?: string;
+  department?: string;
+  businessUnitId?: string;
 }
 
 export function BUProfilePage() {
@@ -66,34 +100,7 @@ export function BUProfilePage() {
     }
   }, [buId]);
 
-  // Temporary test render to ensure component is working
-  // Remove this after confirming the page loads
-  if (process.env.NODE_ENV === 'development') {
-    console.log('BUProfilePage component is rendering');
-  }
-
-  // Early return if no buId
-  if (!buId) {
-    return (
-      <div className="w-full p-8">
-        <button
-          onClick={() => navigate('/dashboard/branch')}
-          className="mb-4 flex items-center gap-2 text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]"
-        >
-          <MdArrowBack className="w-5 h-5" />
-          Back to Branches
-        </button>
-        <div className="text-center py-12">
-          <p className="text-red-600 dark:text-red-400 font-medium">Invalid business unit ID</p>
-          <p className="text-[hsl(var(--muted-foreground))] text-sm mt-2">
-            Please select a business unit from the branches page.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Fetch BU details
+  // Fetch BU details - ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   const { data: businessUnit, isLoading: buLoading, error: buError } = useQuery<BusinessUnit>({
     queryKey: ['business-unit', buId],
     queryFn: async () => {
@@ -184,7 +191,74 @@ export function BUProfilePage() {
     },
   });
 
-  // Assign vessel mutation
+  // Fetch all RFQs for the organization
+  const { data: allRFQs, isLoading: rfqsLoading } = useQuery<RFQ[]>({
+    queryKey: ['customer-rfqs'],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/api/v1/customer/rfq`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
+
+  // Fetch representative employee details
+  const { data: representative } = useQuery<Employee>({
+    queryKey: ['representative', businessUnit?.metadata?.representativeId || businessUnit?.representativeId],
+    queryFn: async () => {
+      const repId = businessUnit?.metadata?.representativeId || businessUnit?.representativeId;
+      if (!repId) return null;
+      const response = await fetch(`${API_URL}/api/v1/customer/employees/${repId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.data;
+    },
+    enabled: !!businessUnit && !!(businessUnit.metadata?.representativeId || businessUnit.representativeId),
+  });
+
+  // Fetch payments/transactions
+  const { data: payments, isLoading: paymentsLoading } = useQuery<Payment[]>({
+    queryKey: ['customer-payments'],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/api/v1/payments/user`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.data || [];
+    },
+  });
+
+  // Filter RFQs by vessels assigned to this BU
+  const buRFQs = useMemo(() => {
+    if (!allRFQs || !assignedVessels) return [];
+    const vesselIds = assignedVessels.map(v => v._id);
+    return allRFQs.filter(rfq => 
+      rfq.vesselId && vesselIds.includes(rfq.vesselId._id)
+    );
+  }, [allRFQs, assignedVessels]);
+
+  // Calculate budget summary (placeholder - can be enhanced when budget API is available)
+  const budgetSummary = useMemo(() => {
+    // Placeholder calculation - can be replaced with actual budget API
+    return {
+      allocated: 0,
+      spent: 0,
+      remaining: 0,
+    };
+  }, []);
+
+  // Assign vessel mutation - ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   const assignVesselMutation = useMutation({
     mutationFn: async (vesselId: string) => {
       const response = await fetch(`${API_URL}/api/v1/customer/business-units/${buId}/vessels/${vesselId}`, {
@@ -313,6 +387,27 @@ export function BUProfilePage() {
     (user) => !assignedStaff?.some((as) => as.email === user.email)
   ) || [];
 
+  // Early return if no buId - MUST BE AFTER ALL HOOKS (useQuery, useMutation, useMemo)
+  if (!buId) {
+    return (
+      <div className="w-full p-8">
+        <button
+          onClick={() => navigate('/dashboard/branch')}
+          className="mb-4 flex items-center gap-2 text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]"
+        >
+          <MdArrowBack className="w-5 h-5" />
+          Back to Branches
+        </button>
+        <div className="text-center py-12">
+          <p className="text-red-600 dark:text-red-400 font-medium">Invalid business unit ID</p>
+          <p className="text-[hsl(var(--muted-foreground))] text-sm mt-2">
+            Please select a business unit from the branches page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const vesselColumns = [
     {
       key: 'name',
@@ -382,9 +477,10 @@ export function BUProfilePage() {
     },
   ];
 
+  // Show loading state
   if (buLoading) {
     return (
-      <div className="w-full p-8 flex items-center justify-center">
+      <div className="w-full p-8 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-[hsl(var(--primary))]"></div>
           <p className="mt-4 text-[hsl(var(--muted-foreground))] font-medium">Loading BU profile...</p>
@@ -393,9 +489,10 @@ export function BUProfilePage() {
     );
   }
 
+  // Show error state
   if (buError) {
     return (
-      <div className="w-full p-8">
+      <div className="w-full p-8 min-h-screen">
         <button
           onClick={() => navigate('/dashboard/branch')}
           className="mb-4 flex items-center gap-2 text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]"
@@ -419,9 +516,10 @@ export function BUProfilePage() {
     );
   }
 
+  // Show not found state
   if (!businessUnit) {
     return (
-      <div className="w-full p-8">
+      <div className="w-full p-8 min-h-screen">
         <button
           onClick={() => navigate('/dashboard/branch')}
           className="mb-4 flex items-center gap-2 text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]"
@@ -436,11 +534,138 @@ export function BUProfilePage() {
     );
   }
 
-  const metadata = businessUnit.metadata || {};
+  const metadata = businessUnit?.metadata || {};
+
+  // RFQ columns
+  const rfqColumns = [
+    {
+      key: 'rfqNumber',
+      header: 'RFQ Number',
+      render: (rfq: RFQ) => (
+        <div className="font-semibold text-[hsl(var(--foreground))]">{rfq.rfqNumber}</div>
+      ),
+    },
+    {
+      key: 'title',
+      header: 'Title',
+      render: (rfq: RFQ) => (
+        <span className="text-[hsl(var(--foreground))]">{rfq.title}</span>
+      ),
+    },
+    {
+      key: 'vessel',
+      header: 'Vessel',
+      render: (rfq: RFQ) => (
+        <span className="text-[hsl(var(--muted-foreground))]">
+          {rfq.vesselId?.name || 'N/A'}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (rfq: RFQ) => {
+        const statusColors: Record<string, string> = {
+          sent: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+          quoted: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+          ordered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+          completed: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+          cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+        };
+        return (
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            statusColors[rfq.status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+          }`}>
+            {rfq.status.toUpperCase()}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'createdAt',
+      header: 'Created',
+      render: (rfq: RFQ) => (
+        <span className="text-[hsl(var(--muted-foreground))] text-sm">
+          {new Date(rfq.createdAt).toLocaleDateString()}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      render: (rfq: RFQ) => (
+        <button
+          onClick={() => navigate(`/rfqs/${rfq._id}`)}
+          className="text-[hsl(var(--primary))] hover:underline text-sm font-medium"
+        >
+          View
+        </button>
+      ),
+    },
+  ];
+
+  // Payment/Transaction columns
+  const transactionColumns = [
+    {
+      key: 'transactionId',
+      header: 'Transaction ID',
+      render: (payment: Payment) => (
+        <div className="font-mono text-sm text-[hsl(var(--foreground))]">
+          {payment.transactionId || payment._id.substring(0, 8)}
+        </div>
+      ),
+    },
+    {
+      key: 'amount',
+      header: 'Amount',
+      render: (payment: Payment) => (
+        <span className="font-semibold text-[hsl(var(--foreground))]">
+          {payment.currency} {payment.amount.toLocaleString()}
+        </span>
+      ),
+    },
+    {
+      key: 'type',
+      header: 'Type',
+      render: (payment: Payment) => (
+        <span className="text-[hsl(var(--muted-foreground))] capitalize">
+          {payment.paymentType.replace('_', ' ')}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (payment: Payment) => {
+        const statusColors: Record<string, string> = {
+          success: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+          pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+          failed: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+          cancelled: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+        };
+        return (
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            statusColors[payment.status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+          }`}>
+            {payment.status.toUpperCase()}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'date',
+      header: 'Date',
+      render: (payment: Payment) => (
+        <span className="text-[hsl(var(--muted-foreground))] text-sm">
+          {new Date(payment.createdAt).toLocaleDateString()}
+        </span>
+      ),
+    },
+  ];
 
   // Ensure we always render something
   return (
-    <div className="w-full p-8">
+    <div className="w-full p-8 space-y-6">
       {/* Header */}
       <div className="mb-6">
         <button
@@ -452,19 +677,69 @@ export function BUProfilePage() {
         </button>
         <div>
           <h1 className="text-3xl font-bold text-[hsl(var(--foreground))]">{businessUnit.name}</h1>
-          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">
-            {metadata.address || businessUnit.address || 'No address'}
-          </p>
-          <p className="text-sm text-[hsl(var(--muted-foreground))]">
-            {metadata.phoneNumber || businessUnit.phoneNumber || 'No phone number'}
-          </p>
+        </div>
+      </div>
+
+      {/* BU Overall Information Section */}
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
+        <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 flex items-center gap-2">
+          <MdBusiness className="w-6 h-6" />
+          Business Unit Information
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-start gap-3">
+            <MdLocationOn className="w-5 h-5 text-[hsl(var(--muted-foreground))] mt-1" />
+            <div>
+              <p className="text-sm font-semibold text-[hsl(var(--muted-foreground))]">Address</p>
+              <p className="text-[hsl(var(--foreground))]">
+                {metadata.address || businessUnit.address || 'Not provided'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <MdPhone className="w-5 h-5 text-[hsl(var(--muted-foreground))] mt-1" />
+            <div>
+              <p className="text-sm font-semibold text-[hsl(var(--muted-foreground))]">Phone Number</p>
+              <p className="text-[hsl(var(--foreground))]">
+                {metadata.phoneNumber || businessUnit.phoneNumber || 'Not provided'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <MdPerson className="w-5 h-5 text-[hsl(var(--muted-foreground))] mt-1" />
+            <div>
+              <p className="text-sm font-semibold text-[hsl(var(--muted-foreground))]">Representative</p>
+              <p className="text-[hsl(var(--foreground))]">
+                {representative 
+                  ? `${representative.firstName} ${representative.lastName}`.trim() || representative.email
+                  : 'Not assigned'}
+              </p>
+              {representative?.email && (
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">{representative.email}</p>
+              )}
+            </div>
+          </div>
+          {businessUnit.createdAt && (
+            <div className="flex items-start gap-3">
+              <MdHistory className="w-5 h-5 text-[hsl(var(--muted-foreground))] mt-1" />
+              <div>
+                <p className="text-sm font-semibold text-[hsl(var(--muted-foreground))]">Created</p>
+                <p className="text-[hsl(var(--foreground))]">
+                  {new Date(businessUnit.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Vessels Section */}
-      <div className="mb-8 bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Assigned Vessels</h2>
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
+            <MdDirectionsBoat className="w-6 h-6" />
+            Assigned Vessels
+          </h2>
           <button
             onClick={() => setShowAssignVesselModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-medium transition-colors"
@@ -486,10 +761,13 @@ export function BUProfilePage() {
         )}
       </div>
 
-      {/* Staff Section */}
-      <div className="mb-8 bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
+      {/* Employees Section */}
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Assigned Staff</h2>
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
+            <MdPerson className="w-6 h-6" />
+            Assigned Employees
+          </h2>
           <button
             onClick={() => setShowAssignStaffModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-white rounded-lg font-medium transition-colors"
@@ -506,7 +784,80 @@ export function BUProfilePage() {
           <DataTable
             columns={staffColumns}
             data={assignedStaff || []}
-            emptyMessage="No staff assigned to this BU. Click 'Assign Staff' to add staff members."
+            emptyMessage="No employees assigned to this BU. Click 'Assign Staff' to add employees."
+          />
+        )}
+      </div>
+
+      {/* RFQs Section */}
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
+            <MdDescription className="w-6 h-6" />
+            RFQs ({buRFQs.length})
+          </h2>
+        </div>
+        {rfqsLoading ? (
+          <div className="py-8 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-[hsl(var(--primary))]"></div>
+          </div>
+        ) : (
+          <DataTable
+            columns={rfqColumns}
+            data={buRFQs}
+            emptyMessage="No RFQs found for vessels assigned to this BU."
+          />
+        )}
+      </div>
+
+      {/* Budget Section */}
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
+        <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-4 flex items-center gap-2">
+          <MdAttachMoney className="w-6 h-6" />
+          Budget Allocation
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-[hsl(var(--background))] rounded-lg p-4 border border-[hsl(var(--border))]">
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-1">Total Allocated</p>
+            <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+              ${budgetSummary.allocated.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-[hsl(var(--background))] rounded-lg p-4 border border-[hsl(var(--border))]">
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-1">Total Spent</p>
+            <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+              ${budgetSummary.spent.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-[hsl(var(--background))] rounded-lg p-4 border border-[hsl(var(--border))]">
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-1">Remaining</p>
+            <p className="text-2xl font-bold text-[hsl(var(--foreground))]">
+              ${budgetSummary.remaining.toLocaleString()}
+            </p>
+          </div>
+        </div>
+        <p className="text-sm text-[hsl(var(--muted-foreground))] mt-4 italic">
+          Budget tracking will be available once the budget API is integrated.
+        </p>
+      </div>
+
+      {/* Transaction History Section */}
+      <div className="bg-[hsl(var(--card))] rounded-lg border border-[hsl(var(--border))] p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))] flex items-center gap-2">
+            <MdHistory className="w-6 h-6" />
+            Transaction History
+          </h2>
+        </div>
+        {paymentsLoading ? (
+          <div className="py-8 text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-[hsl(var(--primary))]"></div>
+          </div>
+        ) : (
+          <DataTable
+            columns={transactionColumns}
+            data={payments || []}
+            emptyMessage="No transactions found for this business unit."
           />
         )}
       </div>

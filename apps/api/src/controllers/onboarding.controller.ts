@@ -17,6 +17,17 @@ export class OnboardingController {
 
       const invitation = await invitationService.getInvitationByToken(token);
 
+      // If this is a vendor invitation, check if it was invited by a customer
+      let invitedByCustomerName: string | null = null;
+      if (invitation.organizationType === 'vendor' && invitation.organizationId) {
+        const { Organization } = await import('../models/organization.model');
+        const vendorOrg = await Organization.findById(invitation.organizationId);
+        if (vendorOrg?.invitedByOrganizationId) {
+          const customerOrg = await Organization.findById(vendorOrg.invitedByOrganizationId);
+          invitedByCustomerName = customerOrg?.name || null;
+        }
+      }
+
       res.status(200).json({
         success: true,
         data: {
@@ -24,6 +35,7 @@ export class OnboardingController {
           organizationType: invitation.organizationType,
           organizationId: invitation.organizationId,
           expiresAt: invitation.expiresAt,
+          invitedByCustomerName,
         },
       });
     } catch (error: any) {
@@ -187,7 +199,7 @@ export class OnboardingController {
           ...onboarding.toObject(),
           organizationId: onboarding.organizationId,
         },
-        message: 'Customer onboarding approved successfully. Please create license with pricing.',
+        message: 'Customer onboarding approved successfully. License has been created automatically.',
       });
     } catch (error: any) {
       logger.error('❌ Approve customer onboarding error:', error);
@@ -231,7 +243,7 @@ export class OnboardingController {
           ...onboarding.toObject(),
           organizationId: onboarding.organizationId,
         },
-        message: 'Vendor onboarding approved successfully. Please create license with pricing.',
+        message: 'Vendor onboarding approved successfully. License has been created automatically.',
       });
     } catch (error: any) {
       logger.error('Approve vendor onboarding error:', error);

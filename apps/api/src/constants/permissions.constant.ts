@@ -65,6 +65,10 @@ export const PERMISSIONS = {
 
     // Logs
     { key: "auditLogsView", label: "Audit Logs View" },
+
+    // RFQ
+    { key: "adminRfqView", label: "Admin RFQ View" },
+    { key: "adminRfqManage", label: "Admin RFQ Manage" },
   ],
 
   /* ======================================================

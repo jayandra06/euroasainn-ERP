@@ -34,6 +34,10 @@ export const PERMISSION_TO_CASBIN: Record<
   // Logs
   auditLogsView: { obj: "audit_logs", act: "view" },
 
+  // RFQ
+  adminRfqView:   { obj: "admin_rfq", act: "view" },
+  adminRfqManage: { obj: "admin_rfq", act: "manage" },
+
 
  /* ================= TECH ================= */
 

@@ -3,19 +3,22 @@ import { licenseService } from './license.service';
 
 export class BusinessUnitService {
   async createBusinessUnit(organizationId: string, data: Partial<IBusinessUnit>) {
-    // Check license limit
-    const canCreate = await licenseService.checkUsageLimit(organizationId, 'businessUnits');
-    if (!canCreate) {
-      throw new Error('Business unit limit exceeded');
-    }
-
+    // License validation removed - create business unit without license checks
     const businessUnit = new BusinessUnit({
       ...data,
       organizationId,
     });
 
     await businessUnit.save();
-    await licenseService.incrementUsage(organizationId, 'businessUnits');
+    
+    // Try to increment usage if license exists, but don't fail if it doesn't
+    try {
+      await licenseService.incrementUsage(organizationId, 'businessUnits');
+    } catch (usageError: any) {
+      // Log but don't fail business unit creation if usage increment fails
+      console.warn('Failed to increment business unit usage (license may not exist):', usageError.message);
+    }
+    
     return businessUnit;
   }
 

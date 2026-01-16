@@ -150,16 +150,26 @@ export class LicenseService {
   }
 
   async checkUsageLimit(organizationId: string, resource: 'users' | 'vessels' | 'items' | 'employees' | 'businessUnits'): Promise<boolean> {
-    const license = await this.validateLicense(organizationId);
+    try {
+      const license = await this.validateLicense(organizationId);
 
-    const limit = license.usageLimits[resource] || 0;
-    const current = license.currentUsage[resource] || 0;
+      const limit = license.usageLimits[resource] || 0;
+      const current = license.currentUsage[resource] || 0;
 
-    if (limit === 0) {
-      return true; // No limit
+      if (limit === 0) {
+        return true; // No limit
+      }
+
+      return current < limit;
+    } catch (error: any) {
+      // If validateLicense throws "No valid license found", re-throw it
+      if (error.message === 'No valid license found') {
+        throw error;
+      }
+      // For other errors, log and allow (fail open)
+      logger.warn(`License check failed for ${organizationId}, resource ${resource}:`, error.message);
+      return true; // Allow creation if license check fails for other reasons
     }
-
-    return current < limit;
   }
 
   async incrementUsage(organizationId: string, resource: 'users' | 'vessels' | 'items' | 'employees' | 'businessUnits', amount: number = 1) {

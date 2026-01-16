@@ -35,6 +35,61 @@ router.get('/employee', async (req, res) => {
   }
 });
 
+// Customer-vendor invitation routes (public)
+router.post('/vendor-invitation/accept', async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invitation token is required',
+      });
+    }
+
+    const { customerVendorInvitationService } = await import('../services/customer-vendor-invitation.service');
+    const invitation = await customerVendorInvitationService.acceptInvitation(token);
+
+    res.status(200).json({
+      success: true,
+      message: 'Invitation accepted successfully',
+      data: invitation,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to accept invitation',
+    });
+  }
+});
+
+router.post('/vendor-invitation/decline', async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invitation token is required',
+      });
+    }
+
+    const { customerVendorInvitationService } = await import('../services/customer-vendor-invitation.service');
+    const invitation = await customerVendorInvitationService.declineInvitation(token);
+
+    res.status(200).json({
+      success: true,
+      message: 'Invitation declined',
+      data: invitation,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error.message || 'Failed to decline invitation',
+    });
+  }
+});
+
 router.post('/employee', async (req, res) => {
   try {
     const { token, ...formData } = req.body;

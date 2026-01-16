@@ -36,7 +36,7 @@ export class CategoryService {
         if (typeof orgId === 'string' && mongoose.Types.ObjectId.isValid(orgId)) {
           orgId = new mongoose.Types.ObjectId(orgId);
         }
-      } catch (error) {
+      } catch {
         // If conversion fails, use as-is
       }
 

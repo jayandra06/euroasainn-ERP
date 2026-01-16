@@ -238,6 +238,35 @@ export class OrganizationService {
   }
 
   // ------------------------------------------------------
+  // ADD CUSTOMER TO VENDOR VISIBILITY
+  // ------------------------------------------------------
+  async addCustomerToVendorVisibility(vendorOrganizationId: string, customerOrganizationId: string) {
+    const vendor = await Organization.findById(vendorOrganizationId);
+    if (!vendor) {
+      throw new Error('Vendor organization not found');
+    }
+
+    const customerOrgId = new mongoose.Types.ObjectId(customerOrganizationId);
+    
+    // Initialize visibleToCustomerIds if it doesn't exist
+    if (!vendor.visibleToCustomerIds) {
+      vendor.visibleToCustomerIds = [];
+    }
+
+    // Check if customer is already in the visibility list
+    const alreadyVisible = vendor.visibleToCustomerIds.some(
+      (id: any) => id.toString() === customerOrgId.toString()
+    );
+
+    if (!alreadyVisible) {
+      vendor.visibleToCustomerIds.push(customerOrgId);
+      await vendor.save();
+    }
+
+    return vendor;
+  }
+
+  // ------------------------------------------------------
   // DELETE
   // ------------------------------------------------------
   async deleteOrganization(orgId: string) {

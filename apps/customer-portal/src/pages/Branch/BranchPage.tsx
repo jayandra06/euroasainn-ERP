@@ -7,12 +7,14 @@ import { MdAdd } from 'react-icons/md';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-interface User {
+interface Employee {
   _id: string;
   email: string;
   firstName: string;
   lastName: string;
-  fullName?: string;
+  phone?: string;
+  position?: string;
+  department?: string;
 }
 
 interface BusinessUnit {
@@ -40,16 +42,16 @@ export function BranchPage() {
     representativeId: '',
   });
 
-  // Fetch users for representative dropdown
-  const { data: users } = useQuery<User[]>({
-    queryKey: ['customer-users'],
+  // Fetch employees for representative dropdown
+  const { data: employees } = useQuery<Employee[]>({
+    queryKey: ['employees'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/v1/customer/users`, {
+      const response = await fetch(`${API_URL}/api/v1/customer/employees`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
-      if (!response.ok) throw new Error('Failed to fetch users');
+      if (!response.ok) throw new Error('Failed to fetch employees');
       const data = await response.json();
       return data.data || [];
     },
@@ -179,7 +181,7 @@ export function BranchPage() {
               {businessUnits && businessUnits.length > 0 ? (
                 businessUnits.map((unit) => {
                   const metadata = unit.metadata || {};
-                  const representative = users?.find((u) => u._id === (metadata.representativeId || unit.representativeId));
+                  const representative = employees?.find((e) => e._id === (metadata.representativeId || unit.representativeId));
                   return (
                     <tr key={unit._id} className="border-b border-gray-200 dark:border-gray-700">
                       <td className="px-4 py-3 text-sm text-[hsl(var(--foreground))] font-medium">
@@ -278,9 +280,10 @@ export function BranchPage() {
               className="w-full px-4 py-2.5 border-2 rounded-lg bg-[hsl(var(--card))] text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))] focus:border-transparent transition-all border-[hsl(var(--border))]"
             >
               <option value="">Select Representative</option>
-              {users?.map((user) => (
-                <option key={user._id} value={user._id}>
-                  {user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email}
+              {employees?.map((employee) => (
+                <option key={employee._id} value={employee._id}>
+                  {`${employee.firstName || ''} ${employee.lastName || ''}`.trim() || employee.email}
+                  {employee.position ? ` - ${employee.position}` : ''}
                 </option>
               ))}
             </select>

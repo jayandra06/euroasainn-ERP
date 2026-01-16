@@ -127,6 +127,38 @@ export class AuthService {
     }
   }
 
+  /* ---------------- GET CURRENT USER ---------------- */
+  async getCurrentUser(userId: string) {
+    try {
+      const user = await User.findById(userId)
+        .select("-password")
+        .populate("roleId", "name permissions")
+        .lean();
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        portalType: user.portalType,
+        role: user.role,
+        roleName: user.roleName,
+        organizationId: user.organizationId,
+        isActive: user.isActive,
+        lastLogin: user.lastLogin,
+        createdAt: user.createdAt,
+      };
+    } catch (error: any) {
+      logger.error("Get current user error:", error);
+      throw new Error(error.message || "Failed to get user");
+    }
+  }
+
   /* ---------------- LOGOUT ---------------- */
   async logout(token: string, refreshToken: string) {
     try {

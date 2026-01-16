@@ -10,6 +10,7 @@ export interface IQuotation extends Document {
   totalAmount: number;
   currency: string;
   validUntil?: Date;
+  isAdminOffer?: boolean; // Mark admin quotations as special offers
   items: Array<{
     itemId: mongoose.Types.ObjectId;
     quantity: number;
@@ -69,12 +70,12 @@ const QuotationSchema = new Schema<IQuotation>(
         itemId: {
           type: Schema.Types.ObjectId,
           ref: 'Item',
-          required: true,
+          required: false, // Make optional since we may use dummy IDs
         },
         quantity: {
           type: Number,
           required: true,
-          min: 1,
+          min: 0, // Allow 0 for flexibility
         },
         unitPrice: {
           type: Number,
@@ -91,6 +92,11 @@ const QuotationSchema = new Schema<IQuotation>(
     metadata: {
       type: Schema.Types.Mixed,
       default: {},
+    },
+    isAdminOffer: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
   },
   {

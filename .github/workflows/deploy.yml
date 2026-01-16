@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+<<<<<<< HEAD
   workflow_dispatch:
 
 env:
@@ -17,6 +18,21 @@ jobs:
     environment: production
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     
+=======
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    env:
+      NODE_VERSION: '18'
+      SERVER_HOST: 147.93.102.82
+      SERVER_USER: root
+      APP_DIR: /var/www/euroasiann-erp
+      DOMAIN: erp.euroasianngroup.com
+
+>>>>>>> main
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,6 +44,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+<<<<<<< HEAD
         run: npm ci
 
       - name: Build API
@@ -115,3 +132,67 @@ jobs:
           vercel-project-id: ${{ matrix.portal.project-id }}
           vercel-args: '--prod'
           working-directory: apps/${{ matrix.portal.name }}
+=======
+        run: npm ci --legacy-peer-deps
+        working-directory: ./apps/api
+
+      - name: Build API
+        run: npm run build
+        working-directory: ./apps/api
+        env:
+          NODE_ENV: production
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy-package/apps/api/dist
+          mkdir -p deploy-package/deploy
+          cp -r apps/api/dist/* deploy-package/apps/api/dist/
+          cp apps/api/package.json deploy-package/apps/api/
+          cp apps/api/package-lock.json deploy-package/apps/api/ 2>/dev/null || true
+          cp deploy/pm2.config.js deploy-package/deploy/ 2>/dev/null || true
+
+      - name: Create backup on server
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} \
+            "mkdir -p /var/backups/euroasiann-erp && \
+             if [ -d ${{ env.APP_DIR }}/apps/api/dist ]; then \
+               tar -czf /var/backups/euroasiann-erp/backup-\$(date +%Y%m%d-%H%M%S).tar.gz -C ${{ env.APP_DIR }} .; \
+             fi"
+
+      - name: Upload files to server
+        run: |
+          scp -i ~/.ssh/deploy_key -r deploy-package/* ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }}:${{ env.APP_DIR }}/
+
+      - name: Install dependencies on server
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} \
+            "cd ${{ env.APP_DIR }}/apps/api && npm install --production --legacy-peer-deps"
+
+      - name: Restart application
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} \
+            "cd ${{ env.APP_DIR }} && \
+             pm2 restart euroasiann-api || pm2 start deploy/pm2.config.js && \
+             pm2 save"
+
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} \
+            "sleep 5 && curl -f http://localhost:3000/health || exit 1"
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed to**: ${{ env.DOMAIN }}" >> $GITHUB_STEP_SUMMARY
+>>>>>>> main

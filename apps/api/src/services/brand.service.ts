@@ -22,7 +22,7 @@ export class BrandService {
       if (organizationId && typeof organizationId === 'string' && mongoose.Types.ObjectId.isValid(organizationId)) {
         organizationId = new mongoose.Types.ObjectId(organizationId);
       }
-    } catch (error) {
+    } catch {
       // If conversion fails, use as-is
     }
 

@@ -34,7 +34,7 @@ export function RFQsPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch all RFQs
-  const { data: rfqs = [], isLoading } = useQuery<RFQ[]>({
+  const { data: rfqs = [], isLoading, error: queryError } = useQuery<RFQ[]>({
     queryKey: ['admin-rfqs', activeFilter],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -42,8 +42,13 @@ export function RFQsPage() {
         params.append('status', activeFilter);
       }
       const response = await authenticatedFetch(`/api/v1/admin/rfq?${params.toString()}`);
-      if (!response.ok) throw new Error('Failed to fetch RFQs');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch RFQs' }));
+        console.error('RFQ fetch error:', errorData);
+        throw new Error(errorData.error || 'Failed to fetch RFQs');
+      }
       const data = await response.json();
+      console.log('RFQs fetched:', data.data?.length || 0, 'RFQs');
       return data.data || [];
     },
   });
@@ -128,6 +133,12 @@ export function RFQsPage() {
                     Loading RFQs...
                   </td>
                 </tr>
+              ) : queryError ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-red-500 dark:text-red-400">
+                    Error: {queryError instanceof Error ? queryError.message : 'Failed to load RFQs'}
+                  </td>
+                </tr>
               ) : rfqs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-[hsl(var(--muted-foreground))]">
@@ -154,7 +165,11 @@ export function RFQsPage() {
                     const dateStr = date.toLocaleDateString();
                     const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return (
-                      <tr key={rfq._id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <tr 
+                        key={rfq._id} 
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                        onClick={() => navigate(`/dashboard/admin/rfqs/${rfq._id}`)}
+                      >
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-[hsl(var(--foreground))]">{dateStr}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-[hsl(var(--foreground))]">{timeStr}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-[hsl(var(--foreground))]">{rfq.supplyPort || '-'}</td>

@@ -107,11 +107,8 @@ export function OnboardingDataPage() {
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['organizations-with-licenses'] });
-      showToast('Onboarding approved successfully. Please create license with pricing.', 'success');
-      // Redirect to license creation page with organizationId
-      if (data?.data?.organizationId) {
-        window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=customer`;
-      }
+      queryClient.invalidateQueries({ queryKey: ['licenses'] });
+      showToast('Onboarding approved successfully. License has been created automatically.', 'success');
     },
     onError: (error: Error) => {
       console.error('Approve customer onboarding error:', error);
@@ -216,11 +213,8 @@ export function OnboardingDataPage() {
       queryClient.invalidateQueries({ queryKey: ['vendor-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['customer-onboardings'] });
       queryClient.invalidateQueries({ queryKey: ['organizations-with-licenses'] });
-      showToast('Onboarding approved successfully. Please create license with pricing.', 'success');
-      // Redirect to license creation page with organizationId
-      if (data?.data?.organizationId) {
-        window.location.href = `/licenses/create?organizationId=${data.data.organizationId}&type=vendor`;
-      }
+      queryClient.invalidateQueries({ queryKey: ['licenses'] });
+      showToast('Onboarding approved successfully. License has been created automatically.', 'success');
     },
     onError: (error: Error) => {
       console.error('Approve customer onboarding error:', error);

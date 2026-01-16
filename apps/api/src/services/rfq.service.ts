@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 import { RFQ, IRFQ } from '../models/rfq.model';
 import { v4 as uuidv4 } from 'uuid';
-import { licenseService } from './license.service';
 import { organizationService } from './organization.service';
 import { OrganizationType, PortalType } from '../../../../packages/shared/src/types/index.ts';
 import { VendorOnboarding } from '../models/vendor-onboarding.model';
+import { emailService } from './email.service';
+import { logger } from '../config/logger';
 
 export class RFQService {
   generateRFQNumber(): string {
@@ -17,8 +18,12 @@ export class RFQService {
     senderType: 'admin' | 'customer',
     recipientVendorIds: string[]
   ) {
+<<<<<<< HEAD
     // Check license limit (DISABLED FOR NOW)
     // await licenseService.checkUsageLimit(organizationId, 'employees');
+=======
+    // License validation removed - RFQ creation does not require a license
+>>>>>>> main
 
     // Validate recipient vendor IDs
     if (!recipientVendorIds || recipientVendorIds.length === 0) {
@@ -28,17 +33,152 @@ export class RFQService {
     // Convert vendor IDs to ObjectIds
     const vendorObjectIds = recipientVendorIds.map((id) => new mongoose.Types.ObjectId(id));
 
-    const rfq = new RFQ({
-      ...data,
+    // Separate direct RFQ fields from metadata fields
+    const {
+      hullNo,
+      serialNumber,
+      subCategory,
+      equipmentTags,
+      drawingNumber,
+      preferredQuality,
+      typeOfIncoterms,
+      typeOfLogisticContainer,
+      createdDate,
+      leadDate,
+      remarks,
+      items,
+      ...directRFQFields
+    } = data;
+
+    // Build metadata object with ALL fields (preserve even empty values)
+    const metadata: Record<string, any> = {
+      ...(data.metadata || {}),
+    };
+    
+    // Store all form fields in metadata
+    if (hullNo !== undefined) {
+      metadata.hullNo = hullNo;
+      metadata.hullNumber = hullNo;
+    }
+    if (serialNumber !== undefined) metadata.serialNumber = serialNumber;
+    if (subCategory !== undefined) metadata.subCategory = subCategory;
+    if (equipmentTags !== undefined) metadata.equipmentTags = equipmentTags;
+    if (drawingNumber !== undefined) metadata.drawingNumber = drawingNumber;
+    if (preferredQuality !== undefined) metadata.preferredQuality = preferredQuality;
+    if (typeOfIncoterms !== undefined) {
+      metadata.typeOfIncoterms = typeOfIncoterms;
+      metadata.incoterms = typeOfIncoterms;
+    }
+    if (typeOfLogisticContainer !== undefined) {
+      metadata.typeOfLogisticContainer = typeOfLogisticContainer;
+      metadata.logisticContainer = typeOfLogisticContainer;
+    }
+    if (createdDate !== undefined) metadata.createdDate = createdDate;
+    if (leadDate !== undefined) metadata.leadDate = leadDate;
+    if (remarks !== undefined) metadata.remarks = remarks;
+    if (items !== undefined && Array.isArray(items)) {
+      metadata.items = items;
+    }
+
+    // Build RFQ data with direct fields
+    const rfqData: any = {
+      ...directRFQFields,
       organizationId,
       senderType,
       senderId: new mongoose.Types.ObjectId(organizationId),
       recipientVendorIds: vendorObjectIds,
       rfqNumber: this.generateRFQNumber(),
-    });
+      metadata,
+      status: data.status || 'sent', // Set status to 'sent' when RFQ is created and sent to vendors
+    };
+
+    const rfq = new RFQ(rfqData);
 
     await rfq.save();
+    
+    // Send email notifications to all selected vendors
+    try {
+      await this.sendRFQNotificationsToVendors(rfq);
+    } catch (emailError: any) {
+      // Log error but don't fail RFQ creation if email sending fails
+      logger.error(`Failed to send RFQ notification emails: ${emailError.message}`);
+    }
+    
     return rfq;
+  }
+
+  /**
+   * Send RFQ notification emails to all recipient vendors
+   */
+  private async sendRFQNotificationsToVendors(rfq: any) {
+    try {
+      const { Organization } = await import('../models/organization.model');
+      const { User } = await import('../models/user.model');
+      
+      // Get sender organization name
+      const senderOrg = await Organization.findById(rfq.senderId);
+      const customerOrgName = senderOrg?.name || 'Customer Organization';
+      
+      // Get vendor portal URL
+      const vendorPortalUrl = process.env.VENDOR_PORTAL_URL || process.env.FRONTEND_URL || 'http://localhost:4400';
+      const rfqLink = `${vendorPortalUrl}/rfqs/${rfq._id}`;
+      
+      // Get all vendor organizations
+      const vendorOrgs = await Organization.find({
+        _id: { $in: rfq.recipientVendorIds }
+      });
+      
+      logger.info(`📧 Sending RFQ notifications to ${vendorOrgs.length} vendors for RFQ ${rfq.rfqNumber}`);
+      
+      // Send email to each vendor's admin user
+      const emailPromises = vendorOrgs.map(async (vendorOrg: any) => {
+        try {
+          // Find the admin user for this vendor organization (prefer vendor_admin, fallback to any user)
+          let adminUser = await User.findOne({
+            organizationId: vendorOrg._id,
+            portalType: PortalType.VENDOR,
+            role: 'vendor_admin',
+          }).sort({ createdAt: 1 }); // Get the first admin user
+          
+          // If no admin user found, try to find any user in the vendor organization
+          if (!adminUser || !adminUser.email) {
+            adminUser = await User.findOne({
+              organizationId: vendorOrg._id,
+              portalType: PortalType.VENDOR,
+            }).sort({ createdAt: 1 }); // Get the first user
+          }
+          
+          if (!adminUser || !adminUser.email) {
+            logger.warn(`⚠️ No user found for vendor organization ${vendorOrg.name} (${vendorOrg._id})`);
+            return;
+          }
+          
+          const firstName = adminUser.firstName || 'Vendor';
+          const lastName = adminUser.lastName || 'Admin';
+          
+          await emailService.sendRFQNotificationEmail({
+            to: adminUser.email,
+            firstName,
+            lastName,
+            customerOrganizationName: customerOrgName,
+            rfqNumber: rfq.rfqNumber,
+            rfqTitle: rfq.title || 'RFQ',
+            rfqLink,
+          });
+          
+          logger.info(`✅ RFQ notification email sent to ${adminUser.email} for vendor ${vendorOrg.name}`);
+        } catch (vendorEmailError: any) {
+          logger.error(`❌ Failed to send RFQ email to vendor ${vendorOrg.name}: ${vendorEmailError.message}`);
+          // Continue with other vendors even if one fails
+        }
+      });
+      
+      await Promise.allSettled(emailPromises);
+      logger.info(`✅ Completed sending RFQ notifications for RFQ ${rfq.rfqNumber}`);
+    } catch (error: any) {
+      logger.error(`❌ Error in sendRFQNotificationsToVendors: ${error.message}`);
+      throw error;
+    }
   }
 
   async getRFQs(organizationId: string, filters?: any) {
@@ -49,11 +189,25 @@ export class RFQService {
     return await RFQ.find(query).populate('vesselId', 'name imoNumber type');
   }
 
-  async getRFQById(rfqId: string, organizationId: string) {
-    const rfq = await RFQ.findOne({ _id: rfqId, organizationId }).populate('vesselId', 'name imoNumber type');
+  async getRFQById(rfqId: string, organizationId?: string): Promise<any> {
+    const query: any = { _id: rfqId };
+    // If organizationId is provided, filter by it (for customer portal)
+    // If not provided, return any RFQ (for admin portal)
+    if (organizationId) {
+      query.organizationId = organizationId;
+    }
+    
+    const rfq = await RFQ.findOne(query)
+      .populate('vesselId', 'name imoNumber type hullNumber serialNumber metadata')
+      .populate('senderId', 'name type')
+      .populate('recipientVendorIds', 'name type portalType')
+      .lean();
+    
     if (!rfq) {
       throw new Error('RFQ not found');
     }
+    
+    // Convert to plain object and ensure all fields are accessible
     return rfq;
   }
 
@@ -81,30 +235,114 @@ export class RFQService {
    * Returns RFQs where the vendor is in recipientVendorIds
    */
   async getRFQsForVendor(vendorOrganizationId: string, filters?: any) {
+    const vendorObjectId = new mongoose.Types.ObjectId(vendorOrganizationId);
     const query: any = {
-      recipientVendorIds: new mongoose.Types.ObjectId(vendorOrganizationId),
+      recipientVendorIds: { $in: [vendorObjectId] }, // Use $in to match array field
     };
     
-    if (filters?.status) {
-      query.status = filters.status;
+    // Map filter status values to actual RFQ status values
+    if (filters?.status && filters.status !== 'all') {
+      // Map vendor portal filter values to actual status values
+      const statusMap: Record<string, string | string[]> = {
+        'rfq-received': ['draft', 'sent'], // Draft and sent RFQs are "received" by vendor
+        'quote-sent': 'quoted',
+        'order-confirmed': 'ordered',
+        'order-cancelled': 'cancelled',
+        'order-completed': 'completed',
+      };
+      const mappedStatus = statusMap[filters.status] || filters.status;
+      if (Array.isArray(mappedStatus)) {
+        query.status = { $in: mappedStatus };
+      } else {
+        query.status = mappedStatus;
+      }
     }
 
+    logger.info(`[RFQ Service] Querying RFQs for vendor: ${vendorOrganizationId}`);
+    logger.info(`[RFQ Service] Query: ${JSON.stringify(query, null, 2)}`);
+    
     const rfqs = await RFQ.find(query)
-      .populate('vesselId', 'name imoNumber type')
+      .populate('vesselId', 'name imoNumber type hullNumber serialNumber metadata')
       .populate('senderId', 'name type') // Populate sender organization
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean(); // Return plain objects for better performance
+    
+    logger.info(`[RFQ Service] Found ${rfqs.length} RFQs for vendor ${vendorOrganizationId}`);
 
-    return rfqs;
+    // Transform RFQs to include quotation status if vendor has submitted a quotation
+    const { Quotation } = await import('../models/quotation.model');
+    const rfqIds = rfqs.map((rfq: any) => rfq._id);
+    
+    let quotations: any[] = [];
+    if (rfqIds.length > 0) {
+      quotations = await Quotation.find({
+        rfqId: { $in: rfqIds },
+        organizationId: vendorObjectId,
+      }).lean();
+    }
+
+    const quotationMap = new Map();
+    quotations.forEach((q: any) => {
+      const rfqIdStr = q.rfqId?.toString();
+      if (rfqIdStr) {
+        quotationMap.set(rfqIdStr, q.status);
+      }
+    });
+
+    // Add quotation status to RFQs
+    return rfqs.map((rfq: any) => {
+      const rfqIdStr = rfq._id?.toString();
+      const quotationStatus = quotationMap.get(rfqIdStr);
+      // If vendor has submitted a quotation, show 'quoted' status
+      if (quotationStatus === 'submitted' || quotationStatus === 'finalized') {
+        return { ...rfq, status: 'quoted' };
+      }
+      // Otherwise, keep original status (sent/draft = RFQ Received)
+      return rfq;
+    });
+  }
+
+  /**
+   * Get a specific RFQ for a vendor by ID
+   */
+  async getRFQForVendorById(rfqId: string, vendorOrganizationId: string): Promise<any> {
+    const vendorObjectId = new mongoose.Types.ObjectId(vendorOrganizationId);
+    const rfq = await RFQ.findOne({
+      _id: rfqId,
+      recipientVendorIds: { $in: [vendorObjectId] }, // Ensure vendor is a recipient
+    })
+      .populate('vesselId', 'name imoNumber type hullNumber serialNumber metadata')
+      .populate('senderId', 'name type')
+      .lean(); // Return plain JavaScript objects
+    
+    if (!rfq) {
+      throw new Error('RFQ not found or you do not have access to this RFQ');
+    }
+    
+    return rfq;
   }
 
   /**
    * Get all RFQs for admin portal (both from admin and customers)
    */
-  async getAllRFQs(filters?: any) {
+  async getAllRFQs(filters?: any): Promise<any[]> {
     const query: any = {};
     
-    if (filters?.status) {
-      query.status = filters.status;
+    // Map frontend filter status values to actual RFQ status values
+    if (filters?.status && filters.status !== 'all') {
+      const statusMap: Record<string, string | string[]> = {
+        'rfq-received': ['draft', 'sent'], // Draft and sent RFQs are "received"
+        'quote-sent': 'quoted',
+        'order-confirmed': 'ordered',
+        'order-cancelled': 'cancelled',
+        'order-completed': 'completed',
+      };
+      const mappedStatus = statusMap[filters.status] || filters.status;
+      if (Array.isArray(mappedStatus)) {
+        query.status = { $in: mappedStatus };
+      } else {
+        query.status = mappedStatus;
+      }
     }
     
     if (filters?.senderType) {
@@ -115,7 +353,8 @@ export class RFQService {
       .populate('vesselId', 'name imoNumber type')
       .populate('senderId', 'name type') // Populate sender organization
       .populate('organizationId', 'name type') // Populate organization
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean(); // Convert to plain objects for better performance
 
     return rfqs;
   }

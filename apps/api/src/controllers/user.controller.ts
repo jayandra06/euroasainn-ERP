@@ -2,7 +2,7 @@
 import { Response } from "express";
 import { userService } from "../services/user.service";
 import { emailService } from "../services/email.service";
-import { Organization } from "../models/organization.model";
+// import { Organization } from "../models/organization.model";
 import { logger } from "../config/logger";
 import { PortalType } from "../../../../packages/shared/src/types/index";
 import { AuthRequest } from "../middleware/auth.middleware";
@@ -295,12 +295,6 @@ export class UserController {
       };
 
       const result = await userService.inviteUser(data);
-
-      let organizationName = "Euroasiann ERP";
-      if (result.organizationId) {
-        const organization = await Organization.findById(result.organizationId);
-        if (organization) organizationName = organization.name;
-      }
 
       const portalUrlMap: Record<string, string> = {
         [PortalType.ADMIN]: process.env.ADMIN_PORTAL_URL || "",

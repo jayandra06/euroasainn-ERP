@@ -191,26 +191,15 @@ export function EmployeeOnboardingFormPage() {
   useEffect(() => {
     if (invitationData?.data?.invitation) {
       const invitation = invitationData.data.invitation;
-      // Extract country code from phone if it exists
-      let phoneNumber = invitation.phone || '';
-      let countryCode = '+1'; // Default
-      
-      if (phoneNumber) {
-        // Try to extract country code from phone (format: +91XXXXXXXXXX)
-        const match = phoneNumber.match(/^(\+\d{1,3})/);
-        if (match) {
-          countryCode = match[1];
-          phoneNumber = phoneNumber.replace(match[1], '').trim();
-        }
-      }
       
       setFormData((prev) => ({
         ...prev,
         email: invitation.email || prev.email,
-        // Auto-fill fullName and phone from invitation data
+        // Auto-fill fullName from invitation data
         fullName: invitation.fullName || prev.fullName,
-        phone: phoneNumber || prev.phone,
-        phoneCountryCode: countryCode,
+        // Do not auto-fill phone - let employee enter it manually
+        phone: '',
+        phoneCountryCode: '+1', // Default country code
       }));
     }
     if (invitationData?.data?.onboarding) {
@@ -232,6 +221,7 @@ export function EmployeeOnboardingFormPage() {
         ...prev,
         fullName: existing.fullName || prev.fullName,
         email: existing.email || prev.email,
+        // Pre-fill phone only if onboarding already exists (for editing)
         phone: phoneNumber || prev.phone,
         phoneCountryCode: countryCode,
         profilePhoto: existing.profilePhoto || prev.profilePhoto,
@@ -568,13 +558,22 @@ export function EmployeeOnboardingFormPage() {
                     <input
                       type="tel"
                       value={formData.phone}
-                      readOnly
-                      disabled
-                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                      placeholder="Phone number (pre-filled from invitation)"
+                      onChange={(e) => {
+                        setFormData({ ...formData, phone: e.target.value });
+                        if (errors.phone) {
+                          setErrors({ ...errors, phone: '' });
+                        }
+                      }}
+                      className={cn(
+                        'flex-1 min-w-0 px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500',
+                        errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      )}
+                      placeholder="Enter phone number"
+                      required
                     />
                   </div>
                   {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
+                  {errors.phoneCountryCode && <p className="mt-1 text-sm text-red-500">{errors.phoneCountryCode}</p>}
                 </div>
               </div>
             </div>

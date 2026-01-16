@@ -103,6 +103,13 @@ export function CreateEnquiryPage() {
       const data = await response.json();
       return data.data || [];
     },
+    staleTime: Infinity, // Never consider data stale - prevent all refetching
+    gcTime: Infinity, // Keep in cache forever
+    refetchInterval: false, // Explicitly disable automatic refetching (false overrides global default)
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+    refetchOnMount: false, // Disable refetch on component mount
+    refetchOnReconnect: false, // Disable refetch on network reconnect
+    retry: false, // Disable retry on failure to prevent continuous retry attempts
   });
 
   // Fetch vessels
@@ -114,8 +121,13 @@ export function CreateEnquiryPage() {
       const data = await response.json();
       return data.data || [];
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    refetchOnWindowFocus: true, // Refetch when user returns to the tab
+    staleTime: Infinity, // Never consider data stale - prevent all refetching
+    gcTime: Infinity, // Keep in cache forever
+    refetchInterval: false, // Explicitly disable automatic refetching (false overrides global default)
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+    refetchOnMount: false, // Disable refetch on component mount
+    refetchOnReconnect: false, // Disable refetch on network reconnect
+    retry: false, // Disable retry on failure to prevent continuous retry attempts
   });
 
   // Fetch brands (only active)
@@ -127,9 +139,13 @@ export function CreateEnquiryPage() {
       const data = await response.json();
       return data.data || [];
     },
-    staleTime: 300000, // Consider data fresh for 5 minutes
-    refetchInterval: false, // Disable automatic refetching - rely on manual refresh or query invalidation
+    staleTime: Infinity, // Never consider data stale - prevent all refetching
+    gcTime: Infinity, // Keep in cache forever
+    refetchInterval: false, // Explicitly disable automatic refetching (false overrides global default)
     refetchOnWindowFocus: false, // Disable refetch on window focus for better performance
+    refetchOnMount: false, // Disable refetch on component mount
+    refetchOnReconnect: false, // Disable refetch on network reconnect
+    retry: false, // Disable retry on failure to prevent continuous retry attempts
   });
 
   // Fetch categories (only active)
@@ -141,9 +157,13 @@ export function CreateEnquiryPage() {
       const data = await response.json();
       return data.data || [];
     },
-    staleTime: 300000, // Consider data fresh for 5 minutes
-    refetchInterval: false, // Disable automatic refetching - rely on manual refresh or query invalidation
+    staleTime: Infinity, // Never consider data stale - prevent all refetching
+    gcTime: Infinity, // Keep in cache forever
+    refetchInterval: false, // Explicitly disable automatic refetching (false overrides global default)
     refetchOnWindowFocus: false, // Disable refetch on window focus for better performance
+    refetchOnMount: false, // Disable refetch on component mount
+    refetchOnReconnect: false, // Disable refetch on network reconnect
+    retry: false, // Disable retry on failure to prevent continuous retry attempts
   });
 
   // Fetch models (only active, filtered by brand)
@@ -160,9 +180,13 @@ export function CreateEnquiryPage() {
       return data.data || [];
     },
     enabled: !!formData.brand && !!brands && brands.length > 0,
-    staleTime: 300000, // Consider data fresh for 5 minutes
-    refetchInterval: false, // Disable automatic refetching - rely on manual refresh or query invalidation
+    staleTime: Infinity, // Never consider data stale - prevent all refetching
+    gcTime: Infinity, // Keep in cache forever
+    refetchInterval: false, // Explicitly disable automatic refetching (false overrides global default)
     refetchOnWindowFocus: false, // Disable refetch on window focus for better performance
+    refetchOnMount: false, // Disable refetch on component mount
+    refetchOnReconnect: false, // Disable refetch on network reconnect
+    retry: false, // Disable retry on failure to prevent continuous retry attempts
   });
 
   // State for modals
@@ -597,7 +621,7 @@ export function CreateEnquiryPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              HULL No <span className="text-red-500">*</span>
+              HULL No
             </label>
             <input
               type="text"

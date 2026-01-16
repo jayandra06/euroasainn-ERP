@@ -476,8 +476,12 @@ export function RFQsPage() {
                     </td>
                   </tr>
                 ) : (
-                  paginatedRFQs.map((rfq) => (
-                    <tr key={rfq._id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  filteredRFQs.map((rfq) => (
+                    <tr 
+                      key={rfq._id} 
+                      onClick={() => navigate(`/rfqs/${rfq._id}`)}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                    >
                       <td className="px-4 py-3 text-sm text-[hsl(var(--foreground))]">
                         {formatDate(rfq.createdAt)}
                       </td>

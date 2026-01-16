@@ -21,6 +21,7 @@ interface Vendor {
   role?: string;
   isActive: boolean;
   onboardingStatus?: 'pending' | 'completed' | 'approved' | 'rejected';
+  invitationStatus?: 'pending' | 'accepted' | 'declined' | null;
   lastLogin?: string;
   createdAt?: string;
 }
@@ -46,10 +47,25 @@ export function VendorManagementPage() {
         },
       });
 
-      if (!response.ok) throw new Error('Failed to fetch vendors');
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = 'Failed to fetch vendors';
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.error || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
       const data = await response.json();
       return data.data || [];
     },
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchInterval: false, // Disable auto-refresh - rely on manual refetch after invitation
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+    refetchOnMount: true, // Refetch when component mounts to get latest data
+    retry: 1, // Retry once on failure
   });
 
   // Filter vendors by search query and status
@@ -88,7 +104,10 @@ export function VendorManagementPage() {
   }, [vendorsData, searchQuery, activeFilter]);
 
   const handleSuccess = () => {
+    // Invalidate and refetch the vendors query to show the newly invited vendor
     queryClient.invalidateQueries({ queryKey: ['customer-vendors'] });
+    // Also explicitly refetch to ensure the data is updated immediately
+    queryClient.refetchQueries({ queryKey: ['customer-vendors'] });
     setShowInviteModal(false);
   };
 
@@ -131,18 +150,41 @@ export function VendorManagementPage() {
       key: 'onboardingStatus',
       header: 'Status',
       render: (vendor: Vendor) => {
-        // Show onboarding status if available, otherwise fall back to isActive
-        let status = vendor.onboardingStatus || (vendor.isActive ? 'approved' : 'pending');
+        // Priority: invitationStatus > onboardingStatus > isActive
+        let status = 'pending';
+        let label = 'Pending';
         
-        // Map 'completed' to 'pending' since both mean waiting for approval
-        if (status === 'completed') {
-          status = 'pending';
+        if (vendor.invitationStatus) {
+          // Show invitation status for existing vendors
+          status = vendor.invitationStatus;
+          if (status === 'accepted') {
+            label = 'Accepted';
+          } else if (status === 'declined') {
+            label = 'Declined';
+          } else {
+            label = 'Invitation Pending';
+          }
+        } else {
+          // Show onboarding status for new vendors
+          status = vendor.onboardingStatus || (vendor.isActive ? 'approved' : 'pending');
+          // Map 'completed' to 'pending' since both mean waiting for approval
+          if (status === 'completed') {
+            status = 'pending';
+          }
         }
         
         const statusConfig: Record<string, { label: string; className: string }> = {
           pending: {
-            label: 'Pending',
+            label: label === 'Invitation Pending' ? 'Invitation Pending' : 'Pending',
             className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 ring-1 ring-yellow-200 dark:ring-yellow-800',
+          },
+          accepted: {
+            label: 'Accepted',
+            className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 ring-1 ring-emerald-200 dark:ring-emerald-800',
+          },
+          declined: {
+            label: 'Declined',
+            className: 'bg-red-100 text-red-800 dark:bg-red-900/50 ring-1 ring-red-200 dark:ring-red-800',
           },
           approved: {
             label: 'Approved',
